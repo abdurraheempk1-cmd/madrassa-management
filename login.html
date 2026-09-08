@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="ur" dir="rtl"><head><meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>لاگ اِن - مدرسہ شہناز اختر للبنات</title>
+
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+</head><body><main class="login-container">
+
+    <div class="login-logo">
+        📖
+    </div>
+
+    <h1 id="loginTitle">
+        لاگ اِن
+    </h1>
+
+    <p class="madrassa-name">
+        مدرسہ شہناز اختر للبنات
+    </p>
+
+    <p class="address">
+        ہل غورغشتو ضلع بونیر
+    </p>
+
+    <label for="username">
+        صارف نام
+    </label>
+
+    <input
+        type="text"
+        id="username"
+        placeholder="اپنا صارف نام لکھیں"
+        autocomplete="username"
+    >
+
+    <label for="password">
+        پاس ورڈ
+    </label>
+
+    <div class="password-box">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="اپنا پاس ورڈ لکھیں"
+            autocomplete="current-password"
+        >
+
+        <button
+            type="button"
+            id="togglePassword"
+            class="eye-button"
+            aria-label="پاس ورڈ دکھائیں"
+        >
+            👁️
+        </button>
+
+    </div>
+
+    <div class="remember-row">
+
+        <input
+            type="checkbox"
+            id="remember"
+        >
+
+        <label for="remember">
+            مجھے یاد رکھیں
+        </label>
+
+    </div>
+
+    <button id="loginButton">
+        لاگ اِن کریں
+    </button>
+
+    <button
+        id="backButton"
+        class="back-button"
+    >
+        ← واپس جائیں
+    </button>
+
+    <p id="message" class="message"></p>
+
+</main>
+
+<script src="script.js"></script>
+
+</body></html>

@@ -1,0 +1,1476 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  }
+
+body {
+
+font-family:
+    "Noto Nastaliq Urdu",
+    serif;
+
+direction: rtl;
+
+background: #f3f6f9;
+
+min-height: 100vh;
+
+padding: 20px;
+
+color: #172033;
+
+}
+
+/* =========================
+GENERAL
+========================= */
+
+button,
+input,
+select,
+textarea {
+
+font-family:
+    "Noto Nastaliq Urdu",
+    serif;
+
+}
+
+button {
+
+width: 100%;
+
+min-height: 58px;
+
+margin: 7px 0;
+
+padding: 8px 18px;
+
+border: none;
+
+border-radius: 14px;
+
+font-size: 17px;
+
+font-weight: 600;
+
+cursor: pointer;
+
+background: #2563eb;
+
+color: white;
+
+transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+
+}
+
+button:active {
+
+transform: scale(.97);
+
+}
+
+button:hover {
+
+box-shadow:
+    0 7px 18px
+    rgba(37,99,235,.20);
+
+}
+
+.hidden {
+
+display: none !important;
+
+}
+
+/* =========================
+HOME
+========================= */
+
+.container {
+
+width: 100%;
+
+max-width: 450px;
+
+margin: 50px auto 0;
+
+background: white;
+
+padding: 35px 25px 30px;
+
+border-radius: 24px;
+
+text-align: center;
+
+box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.08);
+
+}
+
+.logo,
+.login-logo {
+
+width: 80px;
+
+height: 80px;
+
+margin: 0 auto 18px;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+border-radius: 50%;
+
+background: #eef2ff;
+
+font-size: 45px;
+
+}
+
+.container h1 {
+
+font-size: 27px;
+
+line-height: 1.9;
+
+margin-bottom: 5px;
+
+}
+
+.address {
+
+font-size: 14px;
+
+line-height: 2;
+
+color: #64748b;
+
+margin-bottom: 18px;
+
+}
+
+.system-title {
+
+font-size: 21px;
+
+font-weight: 700;
+
+color: #2563eb;
+
+line-height: 2;
+
+}
+
+.subtitle {
+
+font-size: 14px;
+
+color: #64748b;
+
+line-height: 2;
+
+margin-bottom: 25px;
+
+}
+
+/* =========================
+LOGIN
+========================= */
+
+.login-container {
+
+width: 100%;
+
+max-width: 450px;
+
+margin: 50px auto 0;
+
+background: white;
+
+padding: 30px 25px;
+
+border-radius: 24px;
+
+box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.08);
+
+}
+
+.login-container h1 {
+
+font-size: 25px;
+
+line-height: 1.9;
+
+text-align: center;
+
+margin-bottom: 5px;
+
+}
+
+.madrassa-name {
+
+text-align: center;
+
+font-size: 17px;
+
+font-weight: 600;
+
+color: #2563eb;
+
+line-height: 2;
+
+}
+
+.login-container .address {
+
+text-align: center;
+
+margin-bottom: 25px;
+
+}
+
+.login-container label {
+
+display: block;
+
+font-size: 15px;
+
+font-weight: 600;
+
+color: #334155;
+
+margin-top: 12px;
+
+margin-bottom: 5px;
+
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+
+width: 100%;
+
+height: 54px;
+
+padding: 8px 15px;
+
+border: 1px solid #d7dee7;
+
+border-radius: 12px;
+
+background: #f8fafc;
+
+color: #172033;
+
+font-size: 15px;
+
+direction: rtl;
+
+outline: none;
+
+}
+
+.login-container input:focus {
+
+border-color: #2563eb;
+
+background: white;
+
+box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.10);
+
+}
+
+.password-box {
+
+position: relative;
+
+width: 100%;
+
+}
+
+.password-box input {
+
+padding-left: 55px !important;
+
+}
+
+.eye-button {
+
+position: absolute;
+
+left: 8px;
+
+top: 50%;
+
+transform: translateY(-50%);
+
+width: 42px;
+
+min-height: 42px;
+
+margin: 0;
+
+padding: 0;
+
+background: transparent;
+
+color: #64748b;
+
+box-shadow: none;
+
+font-family: sans-serif;
+
+font-size: 20px;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+}
+
+.eye-button:hover {
+
+background: transparent;
+
+box-shadow: none;
+
+}
+
+.eye-button:active {
+
+transform:
+    translateY(-50%)
+    scale(.90);
+
+}
+
+.remember-row {
+
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+margin: 15px 0;
+
+}
+
+.remember-row input {
+
+width: 18px;
+
+height: 18px;
+
+}
+
+.remember-row label {
+
+margin: 0;
+
+font-size: 14px;
+
+font-weight: 400;
+
+color: #64748b;
+
+}
+
+.back-button {
+
+background: #eef2f7;
+
+color: #475569;
+
+}
+
+.back-button:hover {
+
+background: #e2e8f0;
+
+box-shadow: none;
+
+}
+
+.message {
+
+min-height: 30px;
+
+margin-top: 8px;
+
+text-align: center;
+
+font-size: 14px;
+
+color: #dc2626;
+
+line-height: 2;
+
+}
+
+/* =========================
+DASHBOARD
+========================= */
+
+.dashboard {
+
+width: 100%;
+
+max-width: 900px;
+
+min-height: 90vh;
+
+margin: auto;
+
+padding: 25px;
+
+background: white;
+
+border-radius: 24px;
+
+box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.08);
+
+}
+
+.dashboard-header {
+
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+gap: 15px;
+
+margin-bottom: 22px;
+
+}
+
+.small-title {
+
+font-size: 14px;
+
+color: #2563eb;
+
+line-height: 2;
+
+}
+
+.dashboard-header h1 {
+
+font-size: 27px;
+
+line-height: 1.8;
+
+}
+
+.dashboard-logo {
+
+width: 65px;
+
+height: 65px;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+background: #eef2ff;
+
+border-radius: 18px;
+
+font-size: 34px;
+
+}
+
+.welcome-card {
+
+padding: 20px;
+
+margin-bottom: 22px;
+
+border-radius: 18px;
+
+background: #f1f5ff;
+
+}
+
+.welcome-card h2 {
+
+font-size: 21px;
+
+line-height: 2;
+
+}
+
+.welcome-card p {
+
+font-size: 14px;
+
+color: #64748b;
+
+line-height: 2;
+
+}
+
+/* Stats */
+
+.stats-grid {
+
+display: grid;
+
+grid-template-columns:
+    repeat(4,1fr);
+
+gap: 12px;
+
+margin-bottom: 28px;
+
+}
+
+.stat-card {
+
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+padding: 15px;
+
+background: #f8fafc;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 16px;
+
+}
+
+.stat-icon {
+
+width: 45px;
+
+height: 45px;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+background: #eef2ff;
+
+border-radius: 12px;
+
+font-size: 23px;
+
+}
+
+.stat-card strong {
+
+display: block;
+
+font-size: 22px;
+
+}
+
+.stat-card span {
+
+display: block;
+
+font-size: 12px;
+
+color: #64748b;
+
+line-height: 1.8;
+
+}
+
+.section-title {
+
+font-size: 21px;
+
+margin-bottom: 15px;
+
+line-height: 2;
+
+}
+
+.menu-grid {
+
+display: grid;
+
+grid-template-columns:
+    repeat(3,1fr);
+
+gap: 14px;
+
+}
+
+.menu-card {
+
+min-height: 135px;
+
+padding: 15px;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 18px;
+
+background: white;
+
+color: #172033;
+
+display: flex;
+
+flex-direction: column;
+
+justify-content: center;
+
+align-items: center;
+
+gap: 3px;
+
+}
+
+.menu-icon {
+
+font-family: sans-serif;
+
+font-size: 32px;
+
+line-height: 1.4;
+
+}
+
+.menu-card > span:not(.menu-icon) {
+
+font-size: 16px;
+
+font-weight: 600;
+
+line-height: 1.8;
+
+}
+
+.menu-card small {
+
+font-size: 11px;
+
+color: #64748b;
+
+line-height: 1.8;
+
+}
+
+.logout-button {
+
+margin-top: 25px;
+
+background: #eef2f7;
+
+color: #475569;
+
+}
+
+.logout-button:hover {
+
+background: #e2e8f0;
+
+box-shadow: none;
+
+}
+
+/* =========================
+STUDENTS
+========================= */
+
+.students-page {
+
+width: 100%;
+
+max-width: 1000px;
+
+margin: auto;
+
+}
+
+.students-header {
+
+background: white;
+
+padding: 20px;
+
+border-radius: 20px;
+
+display: flex;
+
+align-items: center;
+
+gap: 15px;
+
+margin-bottom: 15px;
+
+box-shadow:
+    0 8px 25px
+    rgba(0,0,0,.06);
+
+}
+
+.students-header .back-button {
+
+width: auto;
+
+min-width: 100px;
+
+margin: 0;
+
+}
+
+.students-header h1 {
+
+font-size: 25px;
+
+line-height: 1.8;
+
+}
+
+.students-header p {
+
+color: #64748b;
+
+font-size: 13px;
+
+line-height: 2;
+
+}
+
+.student-actions {
+
+margin-bottom: 15px;
+
+}
+
+.primary-button {
+
+background: #2563eb;
+
+}
+
+.students-summary {
+
+background: #f1f5ff;
+
+border-radius: 15px;
+
+padding: 15px 18px;
+
+margin-bottom: 15px;
+
+font-size: 16px;
+
+}
+
+.students-summary span {
+
+color: #2563eb;
+
+font-size: 22px;
+
+font-weight: 700;
+
+margin-right: 8px;
+
+}
+
+/* Form */
+
+.student-form-card {
+
+background: white;
+
+padding: 22px;
+
+border-radius: 20px;
+
+margin-bottom: 20px;
+
+box-shadow:
+    0 8px 25px
+    rgba(0,0,0,.06);
+
+}
+
+.student-form-card h2 {
+
+font-size: 22px;
+
+line-height: 2;
+
+margin-bottom: 15px;
+
+}
+
+.form-section {
+
+border: 1px solid #e2e8f0;
+
+border-radius: 16px;
+
+padding: 18px;
+
+margin-bottom: 18px;
+
+}
+
+.form-section h3 {
+
+font-size: 18px;
+
+margin-bottom: 14px;
+
+line-height: 2;
+
+}
+
+.form-grid {
+
+display: grid;
+
+grid-template-columns:
+    repeat(2,1fr);
+
+gap: 14px;
+
+}
+
+.form-group {
+
+display: flex;
+
+flex-direction: column;
+
+}
+
+.form-group.full-width {
+
+grid-column: 1 / -1;
+
+}
+
+.form-group label {
+
+font-size: 14px;
+
+font-weight: 600;
+
+margin-bottom: 5px;
+
+color: #334155;
+
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+.student-list-header input {
+
+width: 100%;
+
+border: 1px solid #d7dee7;
+
+border-radius: 11px;
+
+background: #f8fafc;
+
+padding: 10px 13px;
+
+font-size: 14px;
+
+outline: none;
+
+color: #172033;
+
+}
+
+.form-group input,
+.form-group select {
+
+height: 50px;
+
+}
+
+.form-group textarea {
+
+resize: vertical;
+
+min-height: 85px;
+
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+
+border-color: #2563eb;
+
+background: white;
+
+box-shadow:
+    0 0 0 3px
+    rgba(37,99,235,.08);
+
+}
+
+/* Important transfer fix */
+
+.transfer-fields.hidden {
+
+display: none !important;
+
+}
+
+/* Mahram */
+
+.mahram-warning {
+
+background: #fff7ed;
+
+border: 1px solid #fed7aa;
+
+padding: 13px;
+
+border-radius: 12px;
+
+font-size: 13px;
+
+line-height: 2;
+
+margin-bottom: 15px;
+
+}
+
+.mahram-card {
+
+border: 1px solid #e2e8f0;
+
+border-radius: 15px;
+
+padding: 15px;
+
+margin-bottom: 12px;
+
+background: #f8fafc;
+
+}
+
+.mahram-header {
+
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+margin-bottom: 10px;
+
+}
+
+.mahram-header strong {
+
+font-size: 16px;
+
+}
+
+.remove-mahram {
+
+width: auto;
+
+min-height: 40px;
+
+margin: 0;
+
+padding: 5px 12px;
+
+background: #fee2e2;
+
+color: #b91c1c;
+
+font-size: 14px;
+
+}
+
+.add-mahram-button {
+
+background: #475569;
+
+margin-top: 8px;
+
+}
+
+.mahram-confirm {
+
+margin-top: 12px;
+
+font-size: 13px;
+
+line-height: 2;
+
+}
+
+.mahram-confirm input {
+
+width: 18px;
+
+height: 18px;
+
+vertical-align: middle;
+
+}
+
+/* Form buttons */
+
+.form-buttons {
+
+display: grid;
+
+grid-template-columns:
+    1fr 1fr;
+
+gap: 12px;
+
+}
+
+.form-buttons button {
+
+margin: 0;
+
+}
+
+.save-button {
+
+background: #16a34a;
+
+}
+
+.cancel-button {
+
+background: #eef2f7;
+
+color: #475569;
+
+}
+
+/* Student List */
+
+.student-list-section {
+
+background: white;
+
+padding: 20px;
+
+border-radius: 20px;
+
+box-shadow:
+    0 8px 25px
+    rgba(0,0,0,.06);
+
+}
+
+.student-list-header {
+
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+gap: 15px;
+
+margin-bottom: 18px;
+
+}
+
+.student-list-header h2 {
+
+font-size: 21px;
+
+line-height: 2;
+
+}
+
+.student-list-header input {
+
+max-width: 300px;
+
+height: 48px;
+
+}
+
+/* Student Card */
+
+.student-card {
+
+border: 1px solid #e2e8f0;
+
+border-radius: 18px;
+
+padding: 17px;
+
+margin-bottom: 13px;
+
+background: #ffffff;
+
+}
+
+.student-card-header {
+
+display: flex;
+
+align-items: center;
+
+gap: 12px;
+
+}
+
+.student-avatar {
+
+width: 55px;
+
+height: 55px;
+
+border-radius: 15px;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+background: #eef2ff;
+
+font-size: 28px;
+
+}
+
+.student-card h3 {
+
+font-size: 19px;
+
+line-height: 1.8;
+
+}
+
+.student-card-header span {
+
+font-size: 12px;
+
+color: #64748b;
+
+}
+
+.student-badges {
+
+display: flex;
+
+flex-wrap: wrap;
+
+gap: 7px;
+
+margin: 12px 0;
+
+}
+
+.student-badges span {
+
+background: #f1f5ff;
+
+padding: 5px 10px;
+
+border-radius: 20px;
+
+font-size: 12px;
+
+}
+
+.student-info {
+
+background: #f8fafc;
+
+border-radius: 12px;
+
+padding: 10px 13px;
+
+}
+
+.student-info p {
+
+font-size: 13px;
+
+line-height: 2;
+
+color: #475569;
+
+}
+
+.student-card-buttons {
+
+display: grid;
+
+grid-template-columns:
+    repeat(3,1fr);
+
+gap: 8px;
+
+margin-top: 12px;
+
+}
+
+.student-card-buttons button {
+
+min-height: 45px;
+
+margin: 0;
+
+padding: 5px;
+
+font-size: 13px;
+
+}
+
+.view-student {
+
+background: #2563eb;
+
+}
+
+.edit-student {
+
+background: #475569;
+
+}
+
+.delete-student {
+
+background: #dc2626;
+
+}
+
+.empty-students {
+
+text-align: center;
+
+padding: 45px 20px;
+
+color: #64748b;
+
+}
+
+.empty-icon {
+
+font-size: 50px;
+
+margin-bottom: 8px;
+
+}
+
+.empty-students h3 {
+
+font-size: 19px;
+
+color: #334155;
+
+line-height: 2;
+
+}
+
+.empty-students p {
+
+font-size: 13px;
+
+line-height: 2;
+
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+body {
+
+    padding: 10px;
+
+    align-items: flex-start;
+}
+
+
+.container,
+.login-container {
+
+    margin-top: 20px;
+
+    padding: 25px 18px;
+
+    border-radius: 20px;
+}
+
+
+.logo,
+.login-logo {
+
+    width: 72px;
+
+    height: 72px;
+
+    font-size: 40px;
+}
+
+
+.container h1 {
+
+    font-size: 23px;
+}
+
+
+.login-container h1 {
+
+    font-size: 22px;
+}
+
+
+button {
+
+    min-height: 56px;
+
+    font-size: 16px;
+}
+
+
+.dashboard {
+
+    min-height:
+        calc(100vh - 20px);
+
+    padding: 20px 14px;
+
+    border-radius: 20px;
+}
+
+
+.dashboard-header h1 {
+
+    font-size: 23px;
+}
+
+
+.dashboard-logo {
+
+    width: 55px;
+
+    height: 55px;
+
+    font-size: 29px;
+}
+
+
+.stats-grid {
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+}
+
+
+.menu-grid {
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+}
+
+
+.menu-card {
+
+    min-height: 125px;
+
+    padding: 10px;
+}
+
+
+.students-header {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+}
+
+
+.students-header .back-button {
+
+    width: 100%;
+}
+
+
+.form-grid {
+
+    grid-template-columns:
+        1fr;
+}
+
+
+.form-group.full-width {
+
+    grid-column: auto;
+}
+
+
+.student-list-header {
+
+    flex-direction: column;
+
+    align-items: stretch;
+}
+
+
+.student-list-header input {
+
+    max-width: none;
+}
+
+
+.student-card-buttons {
+
+    grid-template-columns:
+        1fr;
+}
+
+
+.form-buttons {
+
+    grid-template-columns:
+        1fr;
+}
+
+}

@@ -1,0 +1,414 @@
+<!DOCTYPE html><html lang="ur" dir="rtl"><head><meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>طالبات کا نظام</title>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
+<link rel="stylesheet" href="style.css">
+
+</head><body><div class="students-page"><div class="students-header">
+
+    <button
+        type="button"
+        id="backToDashboard"
+        class="back-button"
+    >
+        ↩️ واپس
+    </button>
+
+    <div>
+        <h1>👧 طالبات کا نظام</h1>
+        <p>مدرسہ شہناز اختر للبنات</p>
+    </div>
+
+</div>
+
+<div class="student-actions">
+
+    <button
+        type="button"
+        id="showStudentForm"
+        class="primary-button"
+    >
+        ➕ نئی طالبہ شامل کریں
+    </button>
+
+</div>
+
+<div class="students-summary">
+
+    <strong>
+        کل داخل شدہ طالبات:
+    </strong>
+
+    <span id="studentCount">
+        0
+    </span>
+
+</div>
+
+<div
+    id="studentFormContainer"
+    class="student-form-card hidden"
+>
+
+    <h2 id="formTitle">
+        ➕ نئی طالبہ شامل کریں
+    </h2>
+
+    <form id="studentForm">
+
+        <input
+            type="hidden"
+            id="editStudentId"
+        >
+
+        <div class="form-section">
+
+            <h3>
+                📋 داخلہ کی معلومات
+            </h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="admissionType">
+                        داخلہ کی قسم
+                    </label>
+
+                    <select id="admissionType" required>
+
+                        <option value="">
+                            منتخب کریں
+                        </option>
+
+                        <option value="new">
+                            🆕 نیا داخلہ
+                        </option>
+
+                        <option value="transfer">
+                            🔄 دوسرے مدرسہ سے منتقل شدہ
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="admissionNo">
+                        داخلہ نمبر
+                    </label>
+
+                    <input
+                        type="text"
+                        id="admissionNo"
+                        placeholder="مثلاً ST-001"
+                        required
+                    >
+
+                </div>
+
+                <div
+                    class="form-group transfer-fields hidden"
+                    id="previousMadrassaGroup"
+                >
+
+                    <label for="previousMadrassa">
+                        سابقہ مدرسہ کا نام
+                    </label>
+
+                    <input
+                        type="text"
+                        id="previousMadrassa"
+                        placeholder="سابقہ مدرسہ کا نام"
+                    >
+
+                </div>
+
+                <div
+                    class="form-group transfer-fields hidden"
+                    id="transferDateGroup"
+                >
+
+                    <label for="transferDate">
+                        منتقلی کی تاریخ
+                    </label>
+
+                    <input
+                        type="date"
+                        id="transferDate"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-section">
+
+            <h3>
+                👧 طالبہ کی معلومات
+            </h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="studentName">
+                        طالبہ کا نام
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        placeholder="طالبہ کا نام"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="fatherName">
+                        والد کا نام
+                    </label>
+
+                    <input
+                        type="text"
+                        id="fatherName"
+                        placeholder="والد کا نام"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="guardianName">
+                        سرپرست کا نام
+                    </label>
+
+                    <input
+                        type="text"
+                        id="guardianName"
+                        placeholder="سرپرست کا نام"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="studentCNIC">
+                        طالبہ کا CNIC
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentCNIC"
+                        placeholder="XXXXX-XXXXXXX-X"
+                        maxlength="15"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="dateOfBirth">
+                        تاریخ پیدائش
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dateOfBirth"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="studentClass">
+                        کلاس
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentClass"
+                        placeholder="مثلاً ناظرہ، حفظ، اول"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        رابطہ نمبر
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="03XXXXXXXXX"
+                        maxlength="11"
+                        inputmode="numeric"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="admissionDate">
+                        داخلہ کی تاریخ
+                    </label>
+
+                    <input
+                        type="date"
+                        id="admissionDate"
+                    >
+
+                </div>
+
+                <div class="form-group full-width">
+
+                    <label for="address">
+                        مستقل پتہ
+                    </label>
+
+                    <textarea
+                        id="address"
+                        rows="3"
+                        placeholder="مکمل پتہ"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-section">
+
+            <h3>
+                🏠 رہائش
+            </h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="residenceType">
+                        رہائش کی قسم
+                    </label>
+
+                    <select id="residenceType" required>
+
+                        <option value="">
+                            منتخب کریں
+                        </option>
+
+                        <option value="home">
+                            🏠 گھر سے آنے والی
+                        </option>
+
+                        <option value="hostel">
+                            🛏️ مدرسہ ہاسٹل
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="mahramSection"
+            class="form-section hidden"
+        >
+
+            <h3>
+                🔐 مجاز شرعی محرم
+            </h3>
+
+            <div class="mahram-warning">
+
+                ⚠️ <strong>اہم:</strong>
+
+                صرف شرعی محرم کو درج کریں۔
+
+                کزن، بہنوئی یا کوئی غیر محرم شخص
+                اس فہرست میں شامل نہ کریں۔
+
+                <br>
+
+                زیادہ سے زیادہ
+                <strong>5 محرم</strong>
+                درج کیے جا سکتے ہیں۔
+
+            </div>
+
+            <div id="mahramList"></div>
+
+            <button
+                type="button"
+                id="addMahram"
+                class="add-mahram-button"
+            >
+                ➕ محرم شامل کریں
+            </button>
+
+        </div>
+
+        <div class="form-buttons">
+
+            <button
+                type="submit"
+                class="save-button"
+            >
+                💾 محفوظ کریں
+            </button>
+
+            <button
+                type="button"
+                id="cancelStudentForm"
+                class="cancel-button"
+            >
+                ❌ منسوخ
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<div class="student-list-section">
+
+    <div class="student-list-header">
+
+        <h2>
+            📚 داخل شدہ طالبات
+        </h2>
+
+        <input
+            type="search"
+            id="studentSearch"
+            placeholder="🔎 نام یا داخلہ نمبر تلاش کریں"
+        >
+
+    </div>
+
+    <div id="studentsList"></div>
+
+</div>
+
+</div><script src="script.js"></script></body></html>
