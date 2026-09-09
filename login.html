@@ -1,103 +1,143 @@
-<!DOCTYPE html><html lang="ur" dir="rtl"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<head>
 
-<title>لاگ اِن - مدرسہ شہناز اختر للبنات</title>
+    <meta charset="UTF-8">
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+    <title>لاگ اِن - مدرسہ شہناز اختر للبنات</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
-      rel="stylesheet">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-<link rel="stylesheet" href="style.css">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-</head><body><main class="login-container">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
 
-    <div class="login-logo">
-        📖
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-logo">
+            🔐
+        </div>
+
+        <h1>
+            لاگ اِن
+        </h1>
+
+        <div class="madrassa-name">
+            مدرسہ شہناز اختر للبنات
+        </div>
+
+        <p class="address">
+            گاؤں غرشٹو، ضلع بونیر
+        </p>
+
+
+        <form id="loginForm">
+
+            <label for="username">
+                صارف نام
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                autocomplete="username"
+                placeholder="صارف نام درج کریں"
+                required
+            >
+
+
+            <label for="password">
+                پاس ورڈ
+            </label>
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    placeholder="پاس ورڈ درج کریں"
+                    required
+                >
+
+                <button
+                    type="button"
+                    id="togglePassword"
+                    class="eye-button"
+                    aria-label="پاس ورڈ دکھائیں"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+
+            <div class="remember-row">
+
+                <input
+                    type="checkbox"
+                    id="rememberMe"
+                    name="rememberMe"
+                >
+
+                <label for="rememberMe">
+                    مجھے یاد رکھیں
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="loginButton"
+            >
+                🔐 لاگ اِن
+            </button>
+
+            <button
+                type="button"
+                id="backButton"
+                class="back-button"
+            >
+                ↩️ واپس جائیں
+            </button>
+
+
+            <div
+                id="loginMessage"
+                class="message"
+            ></div>
+
+        </form>
+
     </div>
 
-    <h1 id="loginTitle">
-        لاگ اِن
-    </h1>
 
-    <p class="madrassa-name">
-        مدرسہ شہناز اختر للبنات
-    </p>
+    <!-- Supabase MUST load before script.js -->
 
-    <p class="address">
-        ہل غورغشتو ضلع بونیر
-    </p>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <label for="username">
-        صارف نام
-    </label>
+    <!-- script.js loaded ONLY ONCE -->
 
-    <input
-        type="text"
-        id="username"
-        placeholder="اپنا صارف نام لکھیں"
-        autocomplete="username"
-    >
+    <script src="script.js"></script>
 
-    <label for="password">
-        پاس ورڈ
-    </label>
+</body>
 
-    <div class="password-box">
-
-        <input
-            type="password"
-            id="password"
-            placeholder="اپنا پاس ورڈ لکھیں"
-            autocomplete="current-password"
-        >
-
-        <button
-            type="button"
-            id="togglePassword"
-            class="eye-button"
-            aria-label="پاس ورڈ دکھائیں"
-        >
-            👁️
-        </button>
-
-    </div>
-
-    <div class="remember-row">
-
-        <input
-            type="checkbox"
-            id="remember"
-        >
-
-        <label for="remember">
-            مجھے یاد رکھیں
-        </label>
-
-    </div>
-
-    <button id="loginButton">
-        لاگ اِن کریں
-    </button>
-
-    <button
-        id="backButton"
-        class="back-button"
-    >
-        ← واپس جائیں
-    </button>
-
-    <p id="message" class="message"></p>
-
-</main>
-
-<script src="script.js"></script>
-
-</body></html>
+</html>
