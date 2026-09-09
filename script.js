@@ -1,426 +1,763 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-/* =====================================================
-   GLOBAL LOGIN / SESSION
-===================================================== */
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
 
-const INACTIVITY_LIMIT = 5 * 60 * 1000;
+    const SUPABASE_URL =
+        "https://ggtnetudnjsmsmitvjmb.supabase.co";
 
-let inactivityTimer = null;
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_AxbfXMmjCRPS3N7ILRUbQA_U20DE6-s";
 
+    let supabaseClient = null;
 
-function isLoggedIn() {
+    if (
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
+    ) {
 
-    return localStorage.getItem("loggedIn") === "true";
-}
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY
+            );
 
+    } else {
 
-function autoSaveCurrentWork() {
-
-    const studentForm =
-        document.getElementById("studentForm");
-
-    if (!studentForm) {
-        return;
-    }
-
-    const formData = {};
-
-    studentForm
-        .querySelectorAll("input, select, textarea")
-        .forEach(function (field) {
-
-            if (!field.id) {
-                return;
-            }
-
-            if (field.type === "checkbox") {
-
-                formData[field.id] =
-                    field.checked;
-
-            } else {
-
-                formData[field.id] =
-                    field.value;
-            }
-        });
-
-
-    const mahrams = [];
-
-    document
-        .querySelectorAll(".mahram-card")
-        .forEach(function (card) {
-
-            mahrams.push({
-
-                name:
-                    card.querySelector(".mahram-name")?.value || "",
-
-                relation:
-                    card.querySelector(".mahram-relation")?.value || "",
-
-                phone:
-                    card.querySelector(".mahram-phone")?.value || "",
-
-                cnic:
-                    card.querySelector(".mahram-cnic")?.value || "",
-
-                approved:
-                    card.querySelector(".mahram-approved")?.checked || false
-            });
-        });
-
-
-    formData.mahrams = mahrams;
-
-
-    const hasData =
-        Object.keys(formData).some(function (key) {
-
-            if (key === "mahrams") {
-                return formData[key].length > 0;
-            }
-
-            return String(formData[key] || "").trim() !== "";
-        });
-
-
-    if (hasData) {
-
-        localStorage.setItem(
-            "studentDraft",
-            JSON.stringify(formData)
+        console.error(
+            "Supabase library is not loaded."
         );
-    }
-}
 
-
-function clearStudentDraft() {
-
-    localStorage.removeItem("studentDraft");
-}
-
-
-function autoLogout() {
-
-    autoSaveCurrentWork();
-
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("userRole");
-
-    alert(
-        "⏰ 5 منٹ تک ویب سائٹ استعمال نہ ہونے کی وجہ سے آپ کو خودکار طور پر لاگ آؤٹ کر دیا گیا ہے۔\n\nآپ کا موجودہ کام محفوظ کر دیا گیا ہے۔"
-    );
-
-    window.location.href = "index.html";
-}
-
-
-function resetInactivityTimer() {
-
-    if (!isLoggedIn()) {
-        return;
     }
 
 
-    clearTimeout(inactivityTimer);
+    /* =====================================================
+       GLOBAL VARIABLES
+    ===================================================== */
+
+    const INACTIVITY_LIMIT =
+        5 * 60 * 1000;
+
+    let inactivityTimer = null;
+
+    let studentsCache = [];
 
 
-    inactivityTimer =
-        setTimeout(
-            autoLogout,
-            INACTIVITY_LIMIT
+    /* =====================================================
+       LOGIN / SESSION
+    ===================================================== */
+
+    function isLoggedIn() {
+
+        return (
+            localStorage.getItem("loggedIn") === "true"
         );
-}
+
+    }
 
 
-if (isLoggedIn()) {
+    function getUserRole() {
+
+        return (
+            localStorage.getItem("userRole") || ""
+        );
+
+    }
+
+
+    /* =====================================================
+       SUPABASE CHECK
+    ===================================================== */
+
+    function checkSupabase() {
+
+        if (!supabaseClient) {
+
+            alert(
+                "Supabase سے رابطہ قائم نہیں ہو سکا۔\n\n" +
+                "براہِ کرم صفحہ دوبارہ کھولیں۔"
+            );
+
+            return false;
+
+        }
+
+        return true;
+
+    }
+
+
+    /* =====================================================
+       AUTO SAVE
+    ===================================================== */
+
+    function autoSaveCurrentWork() {
+
+        const studentForm =
+            document.getElementById(
+                "studentForm"
+            );
+
+        if (!studentForm) {
+            return;
+        }
+
+
+        try {
+
+            const formData = {};
+
+
+            studentForm
+                .querySelectorAll(
+                    "input, select, textarea"
+                )
+                .forEach(
+                    function (input) {
+
+                        if (!input.id) {
+                            return;
+                        }
+
+
+                        if (
+                            input.type ===
+                            "checkbox"
+                        ) {
+
+                            formData[input.id] =
+                                input.checked;
+
+                        } else {
+
+                            formData[input.id] =
+                                input.value;
+
+                        }
+
+                    }
+                );
+
+
+            const mahramList =
+                document.getElementById(
+                    "mahramList"
+                );
+
+
+            if (mahramList) {
+
+                formData.mahrams = [];
+
+
+                mahramList
+                    .querySelectorAll(
+                        ".mahram-card"
+                    )
+                    .forEach(
+                        function (card) {
+
+                            const name =
+                                card.querySelector(
+                                    ".mahram-name"
+                                );
+
+                            const relation =
+                                card.querySelector(
+                                    ".mahram-relation"
+                                );
+
+                            const cnic =
+                                card.querySelector(
+                                    ".mahram-cnic"
+                                );
+
+                            const phone =
+                                card.querySelector(
+                                    ".mahram-phone"
+                                );
+
+                            const approved =
+                                card.querySelector(
+                                    ".mahram-approved"
+                                );
+
+
+                            formData.mahrams.push({
+
+                                name:
+                                    name
+                                        ? name.value
+                                        : "",
+
+                                relation:
+                                    relation
+                                        ? relation.value
+                                        : "",
+
+                                cnic:
+                                    cnic
+                                        ? cnic.value
+                                        : "",
+
+                                phone:
+                                    phone
+                                        ? phone.value
+                                        : "",
+
+                                approved:
+                                    approved
+                                        ? approved.checked
+                                        : false
+
+                            });
+
+                        }
+                    );
+
+            }
+
+
+            localStorage.setItem(
+                "studentDraft",
+                JSON.stringify(formData)
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Auto save error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    function restoreStudentDraft() {
+
+        const studentForm =
+            document.getElementById(
+                "studentForm"
+            );
+
+        if (!studentForm) {
+            return;
+        }
+
+
+        const saved =
+            localStorage.getItem(
+                "studentDraft"
+            );
+
+
+        if (!saved) {
+            return;
+        }
+
+
+        try {
+
+            const formData =
+                JSON.parse(saved);
+
+
+            Object.keys(formData).forEach(
+                function (key) {
+
+                    if (key === "mahrams") {
+                        return;
+                    }
+
+
+                    const field =
+                        document.getElementById(
+                            key
+                        );
+
+
+                    if (!field) {
+                        return;
+                    }
+
+
+                    if (
+                        field.type ===
+                        "checkbox"
+                    ) {
+
+                        field.checked =
+                            formData[key] === true;
+
+                    } else {
+
+                        field.value =
+                            formData[key];
+
+                    }
+
+                }
+            );
+
+
+            updateTransferFields();
+
+            updateResidence();
+
+
+            if (
+                Array.isArray(
+                    formData.mahrams
+                )
+            ) {
+
+                const mahramList =
+                    document.getElementById(
+                        "mahramList"
+                    );
+
+
+                if (mahramList) {
+
+                    mahramList.innerHTML = "";
+
+
+                    formData.mahrams.forEach(
+                        function (data) {
+
+                            createMahram(
+                                data
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Restore draft error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    function clearStudentDraft() {
+
+        localStorage.removeItem(
+            "studentDraft"
+        );
+
+    }
+
+
+    /* =====================================================
+       AUTO LOGOUT
+    ===================================================== */
+
+    function resetInactivityTimer() {
+
+        if (inactivityTimer) {
+
+            clearTimeout(
+                inactivityTimer
+            );
+
+        }
+
+
+        if (!isLoggedIn()) {
+            return;
+        }
+
+
+        inactivityTimer =
+            setTimeout(
+                function () {
+
+                    autoSaveCurrentWork();
+
+
+                    localStorage.removeItem(
+                        "loggedIn"
+                    );
+
+                    localStorage.removeItem(
+                        "userRole"
+                    );
+
+
+                    alert(
+                        "آپ کی سرگرمی 5 منٹ سے نہیں ہوئی۔\n\n" +
+                        "حفاظتی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
+                    );
+
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                INACTIVITY_LIMIT
+            );
+
+    }
+
 
     [
         "click",
-        "touchstart",
-        "touchmove",
         "mousemove",
+        "mousedown",
         "keydown",
-        "scroll",
-        "input",
-        "change"
-    ].forEach(function (eventName) {
+        "touchstart",
+        "scroll"
+    ].forEach(
+        function (eventName) {
 
-        document.addEventListener(
-            eventName,
-            resetInactivityTimer,
-            true
-        );
-    });
+            document.addEventListener(
+                eventName,
+                resetInactivityTimer,
+                true
+            );
 
-
-    resetInactivityTimer();
-}
-
-
-/* =====================================================
-   HOME PAGE
-===================================================== */
-
-const adminButton =
-    document.getElementById("adminButton");
-
-const teacherButton =
-    document.getElementById("teacherButton");
-
-const studentButton =
-    document.getElementById("studentButton");
-
-
-if (adminButton) {
-
-    adminButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "login.html?role=admin";
         }
     );
-}
 
 
-if (teacherButton) {
-
-    teacherButton.addEventListener(
-        "click",
+    window.addEventListener(
+        "beforeunload",
         function () {
 
-            window.location.href =
-                "login.html?role=teacher";
+            autoSaveCurrentWork();
+
         }
     );
-}
 
 
-if (studentButton) {
+    /* =====================================================
+       HOME PAGE BUTTONS
+    ===================================================== */
 
-    studentButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "login.html?role=student";
-        }
-    );
-}
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-const loginTitle =
-    document.getElementById("loginTitle");
-
-const usernameInput =
-    document.getElementById("username");
-
-const passwordInput =
-    document.getElementById("password");
-
-const togglePassword =
-    document.getElementById("togglePassword");
-
-const loginButton =
-    document.getElementById("loginButton");
-
-const backButton =
-    document.getElementById("backButton");
-
-const message =
-    document.getElementById("message");
-
-const rememberInput =
-    document.getElementById("remember");
-
-
-const urlParams =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const role =
-    urlParams.get("role");
-
-
-if (loginTitle && role) {
-
-    if (role === "admin") {
-
-        loginTitle.textContent =
-            "👑 ایڈمن لاگ اِن";
-    }
-
-    if (role === "teacher") {
-
-        loginTitle.textContent =
-            "👩‍🏫 استادہ لاگ اِن";
-    }
-
-    if (role === "student") {
-
-        loginTitle.textContent =
-            "👧 طالبہ لاگ اِن";
-    }
-}
-
-
-/* Remember Me */
-
-if (
-    usernameInput &&
-    passwordInput &&
-    role
-) {
-
-    const savedRemember =
-        localStorage.getItem(
-            "rememberMe"
+    const adminButton =
+        document.getElementById(
+            "adminButton"
         );
 
-    const savedRole =
-        localStorage.getItem(
-            "rememberRole"
+    const teacherButton =
+        document.getElementById(
+            "teacherButton"
+        );
+
+    const studentButton =
+        document.getElementById(
+            "studentButton"
         );
 
 
-    if (
-        savedRemember === "true" &&
-        savedRole === role
-    ) {
+    if (adminButton) {
 
-        usernameInput.value =
-            localStorage.getItem(
-                "savedUsername"
-            ) || "";
+        adminButton.addEventListener(
+            "click",
+            function () {
 
+                window.location.href =
+                    "login.html?role=admin";
 
-        passwordInput.value =
-            localStorage.getItem(
-                "savedPassword"
-            ) || "";
-
-
-        if (rememberInput) {
-
-            rememberInput.checked =
-                true;
-        }
-    }
-}
-
-
-/* Password Eye */
-
-if (
-    togglePassword &&
-    passwordInput
-) {
-
-    togglePassword.addEventListener(
-        "click",
-        function () {
-
-            if (
-                passwordInput.type ===
-                "password"
-            ) {
-
-                passwordInput.type =
-                    "text";
-
-                togglePassword.textContent =
-                    "🙈";
-
-                togglePassword.setAttribute(
-                    "aria-label",
-                    "پاس ورڈ چھپائیں"
-                );
-
-            } else {
-
-                passwordInput.type =
-                    "password";
-
-                togglePassword.textContent =
-                    "👁️";
-
-                togglePassword.setAttribute(
-                    "aria-label",
-                    "پاس ورڈ دکھائیں"
-                );
             }
-        }
-    );
-}
+        );
+
+    }
 
 
-/* Login */
+    if (teacherButton) {
 
-if (
-    loginButton &&
-    usernameInput &&
-    passwordInput
-) {
+        teacherButton.addEventListener(
+            "click",
+            function () {
 
-    loginButton.addEventListener(
-        "click",
-        function () {
+                window.location.href =
+                    "login.html?role=teacher";
 
-            const username =
-                usernameInput.value.trim();
+            }
+        );
 
-            const password =
-                passwordInput.value.trim();
+    }
 
 
-            let correctUsername = "";
-            let correctPassword = "";
+    if (studentButton) {
 
+        studentButton.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "login.html?role=student";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN PAGE
+    ===================================================== */
+
+    const loginButton =
+        document.getElementById(
+            "loginButton"
+        );
+
+
+    if (loginButton) {
+
+        const usernameInput =
+            document.getElementById(
+                "username"
+            );
+
+        const passwordInput =
+            document.getElementById(
+                "password"
+            );
+
+        const message =
+            document.getElementById(
+                "loginMessage"
+            ) ||
+            document.getElementById(
+                "message"
+            );
+
+        const rememberInput =
+            document.getElementById(
+                "rememberMe"
+            ) ||
+            document.getElementById(
+                "remember"
+            );
+
+        const togglePassword =
+            document.getElementById(
+                "togglePassword"
+            );
+
+        const backButton =
+            document.getElementById(
+                "backButton"
+            );
+
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const role =
+            params.get("role") ||
+            "admin";
+
+
+        const loginTitle =
+            document.getElementById(
+                "loginTitle"
+            );
+
+
+        if (loginTitle) {
 
             if (role === "admin") {
 
-                correctUsername =
-                    "admin";
+                loginTitle.textContent =
+                    "ایڈمن لاگ اِن";
 
-                correctPassword =
-                    "admin123";
+            } else if (
+                role === "teacher"
+            ) {
+
+                loginTitle.textContent =
+                    "استادہ لاگ اِن";
+
+            } else {
+
+                loginTitle.textContent =
+                    "طالبہ لاگ اِن";
+
             }
 
-
-            if (role === "teacher") {
-
-                correctUsername =
-                    "teacher";
-
-                correctPassword =
-                    "teacher123";
-            }
+        }
 
 
-            if (role === "student") {
+        if (
+            usernameInput &&
+            passwordInput &&
+            rememberInput
+        ) {
 
-                correctUsername =
-                    "student";
+            const savedUsername =
+                localStorage.getItem(
+                    "savedUsername"
+                );
 
-                correctPassword =
-                    "student123";
-            }
+            const savedPassword =
+                localStorage.getItem(
+                    "savedPassword"
+                );
 
 
             if (
-                username === correctUsername &&
-                password === correctPassword
+                savedUsername &&
+                savedPassword
             ) {
+
+                usernameInput.value =
+                    savedUsername;
+
+                passwordInput.value =
+                    savedPassword;
+
+                rememberInput.checked =
+                    true;
+
+            }
+
+        }
+
+
+        if (togglePassword) {
+
+            togglePassword.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        passwordInput &&
+                        passwordInput.type ===
+                        "password"
+                    ) {
+
+                        passwordInput.type =
+                            "text";
+
+                        togglePassword.textContent =
+                            "🙈";
+
+                    } else if (
+                        passwordInput
+                    ) {
+
+                        passwordInput.type =
+                            "password";
+
+                        togglePassword.textContent =
+                            "👁️";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        loginButton.addEventListener(
+            "click",
+            function () {
+
+                const username =
+                    usernameInput
+                        ? usernameInput.value.trim()
+                        : "";
+
+                const password =
+                    passwordInput
+                        ? passwordInput.value
+                        : "";
+
+
+                if (
+                    username === "" ||
+                    password === ""
+                ) {
+
+                    if (message) {
+
+                        message.textContent =
+                            "براہِ کرم صارف نام اور پاس ورڈ درج کریں۔";
+
+                        message.style.color =
+                            "red";
+
+                    }
+
+                    return;
+
+                }
+
+
+                let validLogin = false;
+
+
+                if (
+                    role === "admin" &&
+                    username === "admin" &&
+                    password === "admin123"
+                ) {
+
+                    validLogin = true;
+
+                }
+
+
+                if (
+                    role === "teacher" &&
+                    username === "teacher" &&
+                    password === "teacher123"
+                ) {
+
+                    validLogin = true;
+
+                }
+
+
+                if (
+                    role === "student" &&
+                    username === "student" &&
+                    password === "student123"
+                ) {
+
+                    validLogin = true;
+
+                }
+
+
+                if (!validLogin) {
+
+                    if (message) {
+
+                        message.textContent =
+                            "صارف نام یا پاس ورڈ غلط ہے۔";
+
+                        message.style.color =
+                            "red";
+
+                    }
+
+                    return;
+
+                }
+
 
                 localStorage.setItem(
                     "loggedIn",
@@ -439,16 +776,6 @@ if (
                 ) {
 
                     localStorage.setItem(
-                        "rememberMe",
-                        "true"
-                    );
-
-                    localStorage.setItem(
-                        "rememberRole",
-                        role
-                    );
-
-                    localStorage.setItem(
                         "savedUsername",
                         username
                     );
@@ -461,1002 +788,2568 @@ if (
                 } else {
 
                     localStorage.removeItem(
-                        "rememberMe"
-                    );
-
-                    localStorage.removeItem(
-                        "rememberRole"
-                    );
-
-                    localStorage.removeItem(
                         "savedUsername"
                     );
 
                     localStorage.removeItem(
                         "savedPassword"
                     );
+
                 }
+
+
+                resetInactivityTimer();
 
 
                 window.location.href =
                     "dashboard.html";
 
-            } else {
-
-                if (message) {
-
-                    message.textContent =
-                        "❌ صارف نام یا پاس ورڈ غلط ہے۔";
-                }
             }
-        }
-    );
-}
-
-
-/* Back */
-
-if (backButton) {
-
-    backButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "index.html";
-        }
-    );
-}
-
-
-/* =====================================================
-   PAGE PROTECTION
-===================================================== */
-
-const currentPage =
-    window.location.pathname;
-
-
-if (
-    (
-        currentPage.includes("dashboard.html") ||
-        currentPage.includes("students.html")
-    ) &&
-    !isLoggedIn()
-) {
-
-    window.location.href =
-        "index.html";
-
-    return;
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-const dashboardTitle =
-    document.getElementById(
-        "dashboardTitle"
-    );
-
-
-const userRole =
-    localStorage.getItem(
-        "userRole"
-    );
-
-
-if (dashboardTitle) {
-
-    if (userRole === "admin") {
-
-        dashboardTitle.textContent =
-            "👑 ایڈمن ڈیش بورڈ";
-    }
-
-    if (userRole === "teacher") {
-
-        dashboardTitle.textContent =
-            "👩‍🏫 استادہ ڈیش بورڈ";
-    }
-
-    if (userRole === "student") {
-
-        dashboardTitle.textContent =
-            "👧 طالبہ ڈیش بورڈ";
-    }
-}
-
-
-function getStudents() {
-
-    const data =
-        localStorage.getItem("students");
-
-
-    if (!data) {
-        return [];
-    }
-
-
-    try {
-
-        const parsed =
-            JSON.parse(data);
-
-        return Array.isArray(parsed)
-            ? parsed
-            : [];
-
-    } catch (error) {
-
-        return [];
-    }
-}
-
-
-function saveStudents(students) {
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-}
-
-
-function updateDashboardStudentCount() {
-
-    const studentTotal =
-        document.getElementById(
-            "studentTotal"
         );
 
 
-    if (studentTotal) {
+        if (backButton) {
 
-        studentTotal.textContent =
-            getStudents().length;
+            backButton.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+        }
+
     }
-}
 
 
-if (
-    currentPage.includes(
-        "dashboard.html"
-    )
-) {
+    /* =====================================================
+       PAGE PROTECTION
+    ===================================================== */
 
-    updateDashboardStudentCount();
-}
-
-
-/* Logout */
-
-const logoutButton =
-    document.getElementById(
-        "logoutButton"
-    );
+    const currentPage =
+        window.location.pathname
+            .split("/")
+            .pop()
+            .toLowerCase();
 
 
-if (logoutButton) {
+    if (
+        currentPage === "dashboard.html" ||
+        currentPage === "students.html"
+    ) {
 
-    logoutButton.addEventListener(
-        "click",
-        function () {
-
-            clearTimeout(
-                inactivityTimer
-            );
-
-
-            localStorage.removeItem(
-                "loggedIn"
-            );
-
-            localStorage.removeItem(
-                "userRole"
-            );
-
+        if (!isLoggedIn()) {
 
             window.location.href =
                 "index.html";
+
+            return;
+
         }
-    );
-}
 
+        resetInactivityTimer();
 
-/* Dashboard Menu */
-
-const menuCards =
-    document.querySelectorAll(
-        ".menu-card"
-    );
-
-
-menuCards.forEach(function (card) {
-
-    card.addEventListener(
-        "click",
-        function () {
-
-            const page =
-                card.getAttribute(
-                    "data-page"
-                );
-
-
-            if (page === "students") {
-
-                window.location.href =
-                    "students.html";
-
-            } else {
-
-                alert(
-                    "یہ نظام اگلے مرحلے میں تیار کیا جائے گا۔"
-                );
-            }
-        }
-    );
-});
-
-
-/* =====================================================
-   STUDENTS PAGE
-===================================================== */
-
-const studentForm =
-    document.getElementById(
-        "studentForm"
-    );
-
-
-const studentsList =
-    document.getElementById(
-        "studentsList"
-    );
-
-
-if (
-    !studentForm ||
-    !studentsList
-) {
-
-    return;
-}
-
-
-const studentFormContainer =
-    document.getElementById(
-        "studentFormContainer"
-    );
-
-const showStudentForm =
-    document.getElementById(
-        "showStudentForm"
-    );
-
-const cancelStudentForm =
-    document.getElementById(
-        "cancelStudentForm"
-    );
-
-const formTitle =
-    document.getElementById(
-        "formTitle"
-    );
-
-const editStudentId =
-    document.getElementById(
-        "editStudentId"
-    );
-
-const admissionType =
-    document.getElementById(
-        "admissionType"
-    );
-
-const admissionNo =
-    document.getElementById(
-        "admissionNo"
-    );
-
-const previousMadrassa =
-    document.getElementById(
-        "previousMadrassa"
-    );
-
-const transferDate =
-    document.getElementById(
-        "transferDate"
-    );
-
-const studentName =
-    document.getElementById(
-        "studentName"
-    );
-
-const fatherName =
-    document.getElementById(
-        "fatherName"
-    );
-
-const guardianName =
-    document.getElementById(
-        "guardianName"
-    );
-
-const studentCNIC =
-    document.getElementById(
-        "studentCNIC"
-    );
-
-const dateOfBirth =
-    document.getElementById(
-        "dateOfBirth"
-    );
-
-const studentClass =
-    document.getElementById(
-        "studentClass"
-    );
-
-const phone =
-    document.getElementById(
-        "phone"
-    );
-
-const admissionDate =
-    document.getElementById(
-        "admissionDate"
-    );
-
-const address =
-    document.getElementById(
-        "address"
-    );
-
-const residenceType =
-    document.getElementById(
-        "residenceType"
-    );
-
-const mahramSection =
-    document.getElementById(
-        "mahramSection"
-    );
-
-const mahramList =
-    document.getElementById(
-        "mahramList"
-    );
-
-const addMahram =
-    document.getElementById(
-        "addMahram"
-    );
-
-const studentSearch =
-    document.getElementById(
-        "studentSearch"
-    );
-
-const studentCount =
-    document.getElementById(
-        "studentCount"
-    );
-
-const backToDashboard =
-    document.getElementById(
-        "backToDashboard"
-    );
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function onlyDigits(value) {
-
-    return String(value || "")
-        .replace(/\D/g, "");
-}
-
-
-function formatCNIC(value) {
-
-    const digits =
-        onlyDigits(value)
-            .slice(0, 13);
-
-
-    if (digits.length <= 5) {
-        return digits;
     }
 
 
-    if (digits.length <= 12) {
+    /* =====================================================
+       SUPABASE ROW → JAVASCRIPT STUDENT
+    ===================================================== */
+
+    function dbRowToStudent(row) {
+
+        return {
+
+            id:
+                row.id,
+
+            admissionType:
+                row.admission_type || "",
+
+            admissionNo:
+                row.admission_no || "",
+
+            previousMadrassa:
+                row.previous_madrassa || "",
+
+            transferDate:
+                row.transfer_date || "",
+
+            name:
+                row.name || "",
+
+            fatherName:
+                row.father_name || "",
+
+            guardianName:
+                row.guardian_name || "",
+
+            studentCNIC:
+                row.cnic || "",
+
+            dateOfBirth:
+                row.date_of_birth || "",
+
+            studentClass:
+                row.student_class || "",
+
+            phone:
+                row.phone || "",
+
+            admissionDate:
+                row.admission_date || "",
+
+            address:
+                row.address || "",
+
+            residenceType:
+                row.residence_type || "",
+
+            mahrams:
+                Array.isArray(row.mahrams)
+                    ? row.mahrams
+                    : []
+
+        };
+
+    }
+
+
+    /* =====================================================
+       LOAD STUDENTS FROM SUPABASE
+       TABLE = Students
+    ===================================================== */
+
+    async function loadStudentsFromSupabase() {
+
+        if (!checkSupabase()) {
+            return [];
+        }
+
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("Students")
+            .select("*")
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Students load error:",
+                error
+            );
+
+
+            alert(
+                "طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔\n\n" +
+                "اصل وجہ:\n" +
+                error.message +
+                (
+                    error.code
+                        ? "\n\nError Code: " +
+                          error.code
+                        : ""
+                )
+            );
+
+
+            return [];
+
+        }
+
+
+        studentsCache =
+            data || [];
+
+
+        console.log(
+            "Students loaded from Supabase:",
+            studentsCache
+        );
+
+
+        return studentsCache;
+
+    }
+
+
+    /* =====================================================
+       VALIDATION
+    ===================================================== */
+
+    function getDigits(value) {
+
+        return String(
+            value || ""
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+    }
+
+
+    function isValidPhone(phone) {
+
+        return (
+            getDigits(phone).length === 11
+        );
+
+    }
+
+
+    function isValidCNIC(cnic) {
+
+        return (
+            getDigits(cnic).length === 13
+        );
+
+    }
+
+
+    function isValidUrduName(name) {
+
+        const value =
+            String(
+                name || ""
+            ).trim();
+
+
+        if (value === "") {
+            return false;
+        }
+
+
+        return /^[\u0600-\u06FF\s\u200C\u200D]+$/
+            .test(value);
+
+    }
+
+
+    function formatCNIC(value) {
+
+        const digits =
+            getDigits(value)
+                .slice(0, 13);
+
+
+        if (
+            digits.length <= 5
+        ) {
+
+            return digits;
+
+        }
+
+
+        if (
+            digits.length <= 12
+        ) {
+
+            return (
+                digits.slice(0, 5) +
+                "-" +
+                digits.slice(5)
+            );
+
+        }
+
 
         return (
             digits.slice(0, 5) +
             "-" +
-            digits.slice(5)
-        );
-    }
-
-
-    return (
-        digits.slice(0, 5) +
-        "-" +
-        digits.slice(5, 12) +
-        "-" +
-        digits.slice(12)
-    );
-}
-
-
-function isValidCNIC(value) {
-
-    return (
-        onlyDigits(value).length === 13
-    );
-}
-
-
-function isValidPhone(value) {
-
-    return (
-        onlyDigits(value).length === 11
-    );
-}
-
-
-const urduNamePattern =
-    /^[\u0600-\u06FF\s\u200C\u200D]+$/;
-
-
-function isValidUrduName(value) {
-
-    const name =
-        String(value || "").trim();
-
-
-    if (!name) {
-        return false;
-    }
-
-
-    return urduNamePattern.test(name);
-}
-
-
-function validateName(
-    input,
-    label
-) {
-
-    if (!input) {
-        return true;
-    }
-
-
-    const value =
-        input.value.trim();
-
-
-    if (!value) {
-        return true;
-    }
-
-
-    if (!isValidUrduName(value)) {
-
-        alert(
-            "⚠️ " +
-            label +
-            " صرف اردو حروف میں لکھیں۔"
+            digits.slice(5, 12) +
+            "-" +
+            digits.slice(12)
         );
 
-        input.focus();
-
-        return false;
     }
 
 
-    return true;
-}
+    /* =====================================================
+       CNIC FORMATTING
+    ===================================================== */
+
+    const studentCNIC =
+        document.getElementById(
+            "studentCNIC"
+        );
 
 
-function escapeHTML(value) {
+    if (studentCNIC) {
 
-    return String(value || "")
+        studentCNIC.addEventListener(
+            "input",
+            function () {
 
-        .replace(/&/g, "&amp;")
+                this.value =
+                    formatCNIC(
+                        this.value
+                    );
 
-        .replace(/</g, "&lt;")
+            }
+        );
 
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
-}
+    }
 
 
-/* =====================================================
-   INPUT FORMATTING
-===================================================== */
+    /* =====================================================
+       MAHRAM
+    ===================================================== */
 
-if (phone) {
+    const addMahram =
+        document.getElementById(
+            "addMahram"
+        );
 
-    phone.addEventListener(
-        "input",
-        function () {
+    const mahramList =
+        document.getElementById(
+            "mahramList"
+        );
 
-            this.value =
-                onlyDigits(
-                    this.value
-                ).slice(0, 11);
+
+    const MAHRAM_RELATIONS = [
+
+        "والد",
+        "دادا",
+        "نانا",
+        "سگا بھائی",
+        "باپ شریک بھائی",
+        "ماں شریک بھائی",
+        "بیٹا",
+        "پوتا",
+        "نواسہ",
+        "چچا",
+        "تایا",
+        "ماموں",
+        "بھتیجا",
+        "بھانجا"
+
+    ];
+
+
+    function createMahram(data) {
+
+        if (!mahramList) {
+            return;
         }
-    );
-}
 
 
-if (studentCNIC) {
-
-    studentCNIC.addEventListener(
-        "input",
-        function () {
-
-            this.value =
-                formatCNIC(
-                    this.value
-                );
-        }
-    );
-}
+        const currentCount =
+            mahramList.querySelectorAll(
+                ".mahram-card"
+            ).length;
 
 
-/* =====================================================
-   TRANSFER FIELDS FIX
-===================================================== */
+        if (currentCount >= 5) {
 
-function updateTransferFields() {
-
-    const fields =
-        document.querySelectorAll(
-            ".transfer-fields"
-        );
-
-
-    const isTransfer =
-        admissionType &&
-        admissionType.value ===
-        "transfer";
-
-
-    fields.forEach(function (field) {
-
-        if (isTransfer) {
-
-            field.classList.remove(
-                "hidden"
+            alert(
+                "زیادہ سے زیادہ 5 محرم شامل کیے جا سکتے ہیں۔"
             );
 
-        } else {
+            return;
 
-            field.classList.add(
-                "hidden"
+        }
+
+
+        data =
+            data || {};
+
+
+        const card =
+            document.createElement(
+                "div"
             );
-        }
-    });
 
 
-    if (!isTransfer) {
+        card.className =
+            "mahram-card";
 
-        if (previousMadrassa) {
-            previousMadrassa.value = "";
-        }
 
-        if (transferDate) {
-            transferDate.value = "";
-        }
-    }
-}
+        let relationOptions =
+            '<option value="">رشتہ منتخب کریں</option>';
 
 
-if (admissionType) {
+        MAHRAM_RELATIONS.forEach(
+            function (relation) {
 
-    admissionType.addEventListener(
-        "change",
-        updateTransferFields
-    );
+                const selected =
+                    data.relation === relation
+                        ? " selected"
+                        : "";
 
 
-    updateTransferFields();
-}
+                relationOptions +=
+                    '<option value="' +
+                    escapeHTML(relation) +
+                    '"' +
+                    selected +
+                    ">" +
+                    escapeHTML(relation) +
+                    "</option>";
 
-
-/* =====================================================
-   RESIDENCE
-===================================================== */
-
-function updateResidence() {
-
-    if (
-        residenceType &&
-        residenceType.value ===
-        "hostel"
-    ) {
-
-        mahramSection.classList.remove(
-            "hidden"
-        );
-
-    } else {
-
-        mahramSection.classList.add(
-            "hidden"
-        );
-
-        mahramList.innerHTML = "";
-    }
-}
-
-
-if (residenceType) {
-
-    residenceType.addEventListener(
-        "change",
-        updateResidence
-    );
-}
-
-
-/* =====================================================
-   MAHRAMS
-===================================================== */
-
-const mahramRelations = [
-
-    "والد",
-    "دادا",
-    "نانا",
-    "سگا بھائی",
-    "باپ شریک بھائی",
-    "ماں شریک بھائی",
-    "بیٹا",
-    "پوتا",
-    "نواسہ",
-    "چچا",
-    "تایا",
-    "ماموں",
-    "بھتیجا",
-    "بھانجا"
-];
-
-
-function createMahram(data = {}) {
-
-    const current =
-        mahramList.querySelectorAll(
-            ".mahram-card"
-        ).length;
-
-
-    if (current >= 5) {
-
-        alert(
-            "⚠️ زیادہ سے زیادہ 5 محرم درج کیے جا سکتے ہیں۔"
-        );
-
-        return;
-    }
-
-
-    const card =
-        document.createElement("div");
-
-
-    card.className =
-        "mahram-card";
-
-
-    let relationOptions =
-        `<option value="">رشتہ منتخب کریں</option>`;
-
-
-    mahramRelations.forEach(
-        function (relation) {
-
-            relationOptions +=
-                `<option value="${escapeHTML(relation)}"
-                ${data.relation === relation ? "selected" : ""}>
-                ${escapeHTML(relation)}
-                </option>`;
-        }
-    );
-
-
-    card.innerHTML = `
-
-        <div class="mahram-header">
-
-            <strong>
-                👤 محرم نمبر ${current + 1}
-            </strong>
-
-            <button
-                type="button"
-                class="remove-mahram"
-            >
-                ❌
-            </button>
-
-        </div>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>
-                    محرم کا نام
-                </label>
-
-                <input
-                    type="text"
-                    class="mahram-name"
-                    placeholder="پورا نام"
-                    value="${escapeHTML(data.name)}"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    رشتہ
-                </label>
-
-                <select
-                    class="mahram-relation"
-                    required
-                >
-                    ${relationOptions}
-                </select>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    موبائل نمبر
-                </label>
-
-                <input
-                    type="tel"
-                    class="mahram-phone"
-                    placeholder="03XXXXXXXXX"
-                    maxlength="11"
-                    inputmode="numeric"
-                    value="${escapeHTML(data.phone)}"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    CNIC نمبر
-                </label>
-
-                <input
-                    type="text"
-                    class="mahram-cnic"
-                    placeholder="XXXXX-XXXXXXX-X"
-                    maxlength="15"
-                    inputmode="numeric"
-                    value="${escapeHTML(formatCNIC(data.cnic))}"
-                    required
-                >
-
-            </div>
-
-        </div>
-
-        <div class="mahram-confirm">
-
-            <label>
-
-                <input
-                    type="checkbox"
-                    class="mahram-approved"
-                    ${data.approved ? "checked" : ""}
-                >
-
-                میں تصدیق کرتا/کرتی ہوں کہ یہ شخص
-                طالبہ کا شرعی محرم ہے۔
-
-            </label>
-
-        </div>
-    `;
-
-
-    mahramList.appendChild(card);
-
-
-    const mahramPhone =
-        card.querySelector(
-            ".mahram-phone"
+            }
         );
 
 
-    mahramPhone.addEventListener(
-        "input",
-        function () {
+        card.innerHTML =
 
-            this.value =
-                onlyDigits(
-                    this.value
-                ).slice(0, 11);
-        }
-    );
+            '<div class="form-grid">' +
+
+            '<div class="form-group">' +
+
+            '<label>محرم کا نام</label>' +
+
+            '<input type="text" ' +
+            'class="mahram-name" ' +
+            'value="' +
+            escapeHTML(
+                data.name || ""
+            ) +
+            '" ' +
+            'placeholder="محرم کا نام">' +
+
+            "</div>" +
 
 
-    const mahramCNIC =
-        card.querySelector(
-            ".mahram-cnic"
+            '<div class="form-group">' +
+
+            '<label>رشتہ</label>' +
+
+            '<select class="mahram-relation">' +
+
+            relationOptions +
+
+            "</select>" +
+
+            "</div>" +
+
+
+            '<div class="form-group">' +
+
+            '<label>شناختی کارڈ نمبر</label>' +
+
+            '<input type="text" ' +
+            'class="mahram-cnic" ' +
+            'inputmode="numeric" ' +
+            'maxlength="15" ' +
+            'value="' +
+            escapeHTML(
+                data.cnic || ""
+            ) +
+            '" ' +
+            'placeholder="XXXXX-XXXXXXX-X">' +
+
+            "</div>" +
+
+
+            '<div class="form-group">' +
+
+            '<label>موبائل نمبر</label>' +
+
+            '<input type="tel" ' +
+            'class="mahram-phone" ' +
+            'inputmode="numeric" ' +
+            'maxlength="11" ' +
+            'value="' +
+            escapeHTML(
+                data.phone || ""
+            ) +
+            '" ' +
+            'placeholder="03XXXXXXXXX">' +
+
+            "</div>" +
+
+            "</div>" +
+
+
+            '<div class="form-group">' +
+
+            '<label class="mahram-confirm">' +
+
+            '<input type="checkbox" ' +
+            'class="mahram-approved" ' +
+            (
+                data.approved
+                    ? "checked"
+                    : ""
+            ) +
+            ">" +
+
+            "<span> محرم کی منظوری ہے</span>" +
+
+            "</label>" +
+
+            "</div>" +
+
+
+            '<button type="button" ' +
+            'class="remove-mahram">' +
+            "محرم حذف کریں" +
+            "</button>";
+
+
+        mahramList.appendChild(
+            card
         );
 
 
-    mahramCNIC.addEventListener(
-        "input",
-        function () {
+        const cnicInput =
+            card.querySelector(
+                ".mahram-cnic"
+            );
 
-            this.value =
-                formatCNIC(
-                    this.value
+
+        if (cnicInput) {
+
+            cnicInput.addEventListener(
+                "input",
+                function () {
+
+                    this.value =
+                        formatCNIC(
+                            this.value
+                        );
+
+                }
+            );
+
+        }
+
+
+        const removeButton =
+            card.querySelector(
+                ".remove-mahram"
+            );
+
+
+        if (removeButton) {
+
+            removeButton.addEventListener(
+                "click",
+                function () {
+
+                    card.remove();
+
+                    autoSaveCurrentWork();
+
+                }
+            );
+
+        }
+
+
+        card.querySelectorAll(
+            "input, select"
+        ).forEach(
+            function (input) {
+
+                input.addEventListener(
+                    "input",
+                    autoSaveCurrentWork
                 );
+
+                input.addEventListener(
+                    "change",
+                    autoSaveCurrentWork
+                );
+
+            }
+        );
+
+    }
+
+
+    if (addMahram) {
+
+        addMahram.addEventListener(
+            "click",
+            function () {
+
+                createMahram();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       TRANSFER ADMISSION
+    ===================================================== */
+
+    function updateTransferFields() {
+
+        const admissionType =
+            document.getElementById(
+                "admissionType"
+            );
+
+        const previousMadrassaGroup =
+            document.getElementById(
+                "previousMadrassaGroup"
+            );
+
+        const transferDateGroup =
+            document.getElementById(
+                "transferDateGroup"
+            );
+
+
+        if (!admissionType) {
+            return;
         }
-    );
 
 
-    card.querySelector(
-        ".remove-mahram"
-    ).addEventListener(
-        "click",
-        function () {
+        const value =
+            String(
+                admissionType.value || ""
+            )
+                .trim()
+                .toLowerCase();
 
-            card.remove();
 
-            refreshMahramNumbers();
+        const isTransfer =
+            value === "transfer" ||
+            value === "منتقلی" ||
+            value === "منتقل شدہ";
+
+
+        if (previousMadrassaGroup) {
+
+            previousMadrassaGroup.classList.toggle(
+                "hidden",
+                !isTransfer
+            );
+
         }
-    );
-}
 
 
-function refreshMahramNumbers() {
+        if (transferDateGroup) {
 
-    mahramList
-        .querySelectorAll(
-            ".mahram-card"
+            transferDateGroup.classList.toggle(
+                "hidden",
+                !isTransfer
+            );
+
+        }
+
+    }
+
+
+    const admissionType =
+        document.getElementById(
+            "admissionType"
+        );
+
+
+    if (admissionType) {
+
+        admissionType.addEventListener(
+            "change",
+            function () {
+
+                updateTransferFields();
+
+                autoSaveCurrentWork();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       RESIDENCE / HOSTEL
+    ===================================================== */
+
+    function updateResidence() {
+
+        const residenceType =
+            document.getElementById(
+                "residenceType"
+            );
+
+        const mahramSection =
+            document.getElementById(
+                "mahramSection"
+            );
+
+
+        if (!residenceType) {
+            return;
+        }
+
+
+        const value =
+            String(
+                residenceType.value || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        const isHostel =
+            value === "hostel" ||
+            value === "ہاسٹل" ||
+            value === "ہاسٹل رہائش";
+
+
+        if (mahramSection) {
+
+            mahramSection.classList.toggle(
+                "hidden",
+                !isHostel
+            );
+
+        }
+
+    }
+
+
+    const residenceType =
+        document.getElementById(
+            "residenceType"
+        );
+
+
+    if (residenceType) {
+
+        residenceType.addEventListener(
+            "change",
+            function () {
+
+                updateResidence();
+
+                autoSaveCurrentWork();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(value) {
+
+        return String(
+            value ?? ""
         )
-        .forEach(
-            function (card, index) {
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
 
-                const title =
-                    card.querySelector(
-                        "strong"
+    }
+
+
+    /* =====================================================
+       STUDENT FORM ELEMENTS
+    ===================================================== */
+
+    const studentForm =
+        document.getElementById(
+            "studentForm"
+        );
+
+    const studentFormContainer =
+        document.getElementById(
+            "studentFormContainer"
+        );
+
+    const showStudentForm =
+        document.getElementById(
+            "showStudentForm"
+        );
+
+    const cancelStudentForm =
+        document.getElementById(
+            "cancelStudentForm"
+        );
+
+    const studentsList =
+        document.getElementById(
+            "studentsList"
+        );
+
+    const studentSearch =
+        document.getElementById(
+            "studentSearch"
+        );
+
+    const studentCount =
+        document.getElementById(
+            "studentCount"
+        );
+
+    const editStudentId =
+        document.getElementById(
+            "editStudentId"
+        );
+
+
+    /* =====================================================
+       SHOW NEW STUDENT FORM
+    ===================================================== */
+
+    function showFormForNewStudent() {
+
+        if (!studentForm) {
+            return;
+        }
+
+
+        studentForm.reset();
+
+
+        if (editStudentId) {
+
+            editStudentId.value = "";
+
+        }
+
+
+        const formTitle =
+            document.getElementById(
+                "formTitle"
+            );
+
+
+        if (formTitle) {
+
+            formTitle.textContent =
+                "نئی طالبہ کا داخلہ";
+
+        }
+
+
+        if (mahramList) {
+
+            mahramList.innerHTML = "";
+
+        }
+
+
+        clearStudentDraft();
+
+
+        updateTransferFields();
+
+        updateResidence();
+
+
+        if (studentFormContainer) {
+
+            studentFormContainer.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    function hideStudentForm() {
+
+        if (studentFormContainer) {
+
+            studentFormContainer.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    if (showStudentForm) {
+
+        showStudentForm.addEventListener(
+            "click",
+            function () {
+
+                showFormForNewStudent();
+
+            }
+        );
+
+    }
+
+
+    if (cancelStudentForm) {
+
+        cancelStudentForm.addEventListener(
+            "click",
+            function () {
+
+                hideStudentForm();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       FORM AUTO SAVE EVENTS
+    ===================================================== */
+
+    if (studentForm) {
+
+        studentForm
+            .querySelectorAll(
+                "input, select, textarea"
+            )
+            .forEach(
+                function (input) {
+
+                    input.addEventListener(
+                        "input",
+                        autoSaveCurrentWork
+                    );
+
+                    input.addEventListener(
+                        "change",
+                        autoSaveCurrentWork
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       COLLECT MAHRAMS
+    ===================================================== */
+
+    function collectMahrams() {
+
+        const result = [];
+
+
+        if (!mahramList) {
+            return result;
+        }
+
+
+        mahramList
+            .querySelectorAll(
+                ".mahram-card"
+            )
+            .forEach(
+                function (card) {
+
+                    const name =
+                        card.querySelector(
+                            ".mahram-name"
+                        );
+
+                    const relation =
+                        card.querySelector(
+                            ".mahram-relation"
+                        );
+
+                    const cnic =
+                        card.querySelector(
+                            ".mahram-cnic"
+                        );
+
+                    const phone =
+                        card.querySelector(
+                            ".mahram-phone"
+                        );
+
+                    const approved =
+                        card.querySelector(
+                            ".mahram-approved"
+                        );
+
+
+                    result.push({
+
+                        name:
+                            name
+                                ? name.value.trim()
+                                : "",
+
+                        relation:
+                            relation
+                                ? relation.value
+                                : "",
+
+                        cnic:
+                            cnic
+                                ? cnic.value.trim()
+                                : "",
+
+                        phone:
+                            phone
+                                ? phone.value.trim()
+                                : "",
+
+                        approved:
+                            approved
+                                ? approved.checked
+                                : false
+
+                    });
+
+                }
+            );
+
+
+        return result;
+
+    }
+
+
+    /* =====================================================
+       GET FORM DATA
+    ===================================================== */
+
+    function getStudentFormData() {
+
+        function getValue(id) {
+
+            const field =
+                document.getElementById(id);
+
+            return field
+                ? field.value.trim()
+                : "";
+
+        }
+
+
+        return {
+
+            admissionType:
+                getValue(
+                    "admissionType"
+                ),
+
+            admissionNo:
+                getValue(
+                    "admissionNo"
+                ),
+
+            previousMadrassa:
+                getValue(
+                    "previousMadrassa"
+                ),
+
+            transferDate:
+                (
+                    document.getElementById(
+                        "transferDate"
+                    ) || {}
+                ).value || "",
+
+            name:
+                getValue(
+                    "studentName"
+                ),
+
+            fatherName:
+                getValue(
+                    "fatherName"
+                ),
+
+            guardianName:
+                getValue(
+                    "guardianName"
+                ),
+
+            studentCNIC:
+                getValue(
+                    "studentCNIC"
+                ),
+
+            dateOfBirth:
+                (
+                    document.getElementById(
+                        "dateOfBirth"
+                    ) || {}
+                ).value || "",
+
+            studentClass:
+                getValue(
+                    "studentClass"
+                ),
+
+            phone:
+                getValue(
+                    "phone"
+                ),
+
+            admissionDate:
+                (
+                    document.getElementById(
+                        "admissionDate"
+                    ) || {}
+                ).value || "",
+
+            address:
+                getValue(
+                    "address"
+                ),
+
+            residenceType:
+                getValue(
+                    "residenceType"
+                ),
+
+            mahrams:
+                collectMahrams()
+
+        };
+
+    }
+
+
+    /* =====================================================
+       VALIDATE STUDENT
+    ===================================================== */
+
+    function validateStudent(student) {
+
+        if (!student.admissionType) {
+
+            alert(
+                "براہِ کرم داخلہ کی قسم منتخب کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.admissionNo) {
+
+            alert(
+                "براہِ کرم داخلہ نمبر درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidUrduName(
+                student.name
+            )
+        ) {
+
+            alert(
+                "طالبہ کا نام صرف اردو حروف میں درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidUrduName(
+                student.fatherName
+            )
+        ) {
+
+            alert(
+                "والد کا نام صرف اردو حروف میں درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidUrduName(
+                student.guardianName
+            )
+        ) {
+
+            alert(
+                "سرپرست کا نام صرف اردو حروف میں درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidCNIC(
+                student.studentCNIC
+            )
+        ) {
+
+            alert(
+                "شناختی کارڈ نمبر 13 ہندسوں پر مشتمل ہونا چاہیے۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidPhone(
+                student.phone
+            )
+        ) {
+
+            alert(
+                "موبائل نمبر 11 ہندسوں پر مشتمل ہونا چاہیے۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.dateOfBirth) {
+
+            alert(
+                "براہِ کرم تاریخ پیدائش درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.studentClass) {
+
+            alert(
+                "براہِ کرم جماعت منتخب کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.admissionDate) {
+
+            alert(
+                "براہِ کرم داخلہ کی تاریخ درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.address) {
+
+            alert(
+                "براہِ کرم پتہ درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (!student.residenceType) {
+
+            alert(
+                "براہِ کرم رہائش کی قسم منتخب کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        const residenceValue =
+            String(
+                student.residenceType
+            )
+                .trim()
+                .toLowerCase();
+
+
+        const isHostel =
+            residenceValue === "hostel" ||
+            residenceValue === "ہاسٹل" ||
+            residenceValue === "ہاسٹل رہائش";
+
+
+        if (isHostel) {
+
+            if (
+                student.mahrams.length < 1
+            ) {
+
+                alert(
+                    "ہاسٹل طالبہ کے لیے کم از کم ایک محرم کی معلومات ضروری ہیں۔"
+                );
+
+                return false;
+
+            }
+
+
+            if (
+                student.mahrams.length > 5
+            ) {
+
+                alert(
+                    "زیادہ سے زیادہ 5 محرم شامل کیے جا سکتے ہیں۔"
+                );
+
+                return false;
+
+            }
+
+
+            for (
+                let i = 0;
+                i < student.mahrams.length;
+                i++
+            ) {
+
+                const mahram =
+                    student.mahrams[i];
+
+
+                if (
+                    !isValidUrduName(
+                        mahram.name
+                    )
+                ) {
+
+                    alert(
+                        "محرم نمبر " +
+                        (i + 1) +
+                        " کا نام درست اردو میں درج کریں۔"
+                    );
+
+                    return false;
+
+                }
+
+
+                if (!mahram.relation) {
+
+                    alert(
+                        "محرم نمبر " +
+                        (i + 1) +
+                        " کا رشتہ منتخب کریں۔"
+                    );
+
+                    return false;
+
+                }
+
+
+                if (
+                    !isValidCNIC(
+                        mahram.cnic
+                    )
+                ) {
+
+                    alert(
+                        "محرم نمبر " +
+                        (i + 1) +
+                        " کا شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔"
+                    );
+
+                    return false;
+
+                }
+
+
+                if (
+                    !isValidPhone(
+                        mahram.phone
+                    )
+                ) {
+
+                    alert(
+                        "محرم نمبر " +
+                        (i + 1) +
+                        " کا موبائل نمبر 11 ہندسوں کا ہونا چاہیے۔"
+                    );
+
+                    return false;
+
+                }
+
+
+                if (!mahram.approved) {
+
+                    alert(
+                        "محرم نمبر " +
+                        (i + 1) +
+                        " کی منظوری ضروری ہے۔"
+                    );
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* =====================================================
+       DATABASE DATA
+    ===================================================== */
+
+    function createDatabaseStudentData(student) {
+
+        return {
+
+            admission_no:
+                student.admissionNo || null,
+
+            admission_type:
+                student.admissionType || null,
+
+            name:
+                student.name || null,
+
+            father_name:
+                student.fatherName || null,
+
+            guardian_name:
+                student.guardianName || null,
+
+            cnic:
+                student.studentCNIC || null,
+
+            phone:
+                student.phone || null,
+
+            date_of_birth:
+                student.dateOfBirth || null,
+
+            student_class:
+                student.studentClass || null,
+
+            admission_date:
+                student.admissionDate || null,
+
+            address:
+                student.address || null,
+
+            residence_type:
+                student.residenceType || null,
+
+            previous_madrassa:
+                student.previousMadrassa || null,
+
+            transfer_date:
+                student.transferDate || null,
+
+            mahrams:
+                Array.isArray(
+                    student.mahrams
+                )
+                    ? student.mahrams
+                    : []
+
+        };
+
+    }
+
+
+    /* =====================================================
+       STUDENT FORM SUBMIT
+    ===================================================== */
+
+    if (studentForm) {
+
+        studentForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const submitButton =
+                    studentForm.querySelector(
+                        'button[type="submit"]'
                     );
 
 
-                if (title) {
+                if (submitButton) {
 
-                    title.textContent =
-                        "👤 محرم نمبر " +
-                        (index + 1);
+                    submitButton.disabled =
+                        true;
+
                 }
+
+
+                try {
+
+                    if (!checkSupabase()) {
+                        return;
+                    }
+
+
+                    const student =
+                        getStudentFormData();
+
+
+                    if (
+                        !validateStudent(
+                            student
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const rawStudents =
+                        await loadStudentsFromSupabase();
+
+
+                    const students =
+                        rawStudents.map(
+                            dbRowToStudent
+                        );
+
+
+                    const currentId =
+                        editStudentId
+                            ? editStudentId.value
+                            : "";
+
+
+                    /* =====================================
+                       DUPLICATE ADMISSION NUMBER
+                    ===================================== */
+
+                    const duplicateAdmission =
+                        students.find(
+                            function (item) {
+
+                                const sameAdmission =
+                                    String(
+                                        item.admissionNo ||
+                                        ""
+                                    )
+                                        .trim()
+                                        .toLowerCase() ===
+                                    String(
+                                        student.admissionNo ||
+                                        ""
+                                    )
+                                        .trim()
+                                        .toLowerCase();
+
+
+                                const sameRecord =
+                                    currentId !== "" &&
+                                    String(item.id) ===
+                                    String(currentId);
+
+
+                                return (
+                                    sameAdmission &&
+                                    !sameRecord
+                                );
+
+                            }
+                        );
+
+
+                    if (duplicateAdmission) {
+
+                        alert(
+                            "یہ داخلہ نمبر پہلے سے موجود ہے۔ براہِ کرم دوسرا داخلہ نمبر استعمال کریں۔"
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =====================================
+                       DUPLICATE CNIC
+                    ===================================== */
+
+                    const newCNIC =
+                        getDigits(
+                            student.studentCNIC
+                        );
+
+
+                    const duplicateCNIC =
+                        students.find(
+                            function (item) {
+
+                                const oldCNIC =
+                                    getDigits(
+                                        item.studentCNIC
+                                    );
+
+
+                                const sameRecord =
+                                    currentId !== "" &&
+                                    String(item.id) ===
+                                    String(currentId);
+
+
+                                return (
+                                    oldCNIC !== "" &&
+                                    oldCNIC === newCNIC &&
+                                    !sameRecord
+                                );
+
+                            }
+                        );
+
+
+                    if (duplicateCNIC) {
+
+                        alert(
+                            "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const dbData =
+                        createDatabaseStudentData(
+                            student
+                        );
+
+
+                    /* =====================================
+                       UPDATE
+                    ===================================== */
+
+                    if (currentId !== "") {
+
+                        const {
+                            error
+                        } = await supabaseClient
+                            .from("Students")
+                            .update(dbData)
+                            .eq(
+                                "id",
+                                currentId
+                            );
+
+
+                        if (error) {
+
+                            console.error(
+                                "Student update error:",
+                                error
+                            );
+
+
+                            alert(
+                                "طالبہ کی معلومات اپ ڈیٹ نہیں ہو سکیں۔\n\n" +
+                                "اصل وجہ:\n" +
+                                (
+                                    error.message ||
+                                    "نامعلوم database error"
+                                ) +
+                                (
+                                    error.code
+                                        ? "\n\nError Code: " +
+                                          error.code
+                                        : ""
+                                ) +
+                                (
+                                    error.details
+                                        ? "\n\nتفصیل:\n" +
+                                          error.details
+                                        : ""
+                                ) +
+                                (
+                                    error.hint
+                                        ? "\n\nمشورہ:\n" +
+                                          error.hint
+                                        : ""
+                                )
+                            );
+
+                            return;
+
+                        }
+
+
+                        alert(
+                            "طالبہ کی معلومات کامیابی سے اپ ڈیٹ ہو گئی ہیں۔"
+                        );
+
+                    }
+
+
+                    /* =====================================
+                       INSERT
+                    ===================================== */
+
+                    else {
+
+                        const {
+                            error
+                        } = await supabaseClient
+                            .from("Students")
+                            .insert([
+                                dbData
+                            ]);
+
+
+                        if (error) {
+
+                            console.error(
+                                "Student save error:",
+                                error
+                            );
+
+
+                            alert(
+                                "نئی طالبہ محفوظ نہیں ہو سکی۔\n\n" +
+                                "اصل وجہ:\n" +
+                                (
+                                    error.message ||
+                                    "نامعلوم database error"
+                                ) +
+                                (
+                                    error.code
+                                        ? "\n\nError Code: " +
+                                          error.code
+                                        : ""
+                                ) +
+                                (
+                                    error.details
+                                        ? "\n\nتفصیل:\n" +
+                                          error.details
+                                        : ""
+                                ) +
+                                (
+                                    error.hint
+                                        ? "\n\nمشورہ:\n" +
+                                          error.hint
+                                        : ""
+                                )
+                            );
+
+
+                            return;
+
+                        }
+
+
+                        alert(
+                            "نئی طالبہ کامیابی سے محفوظ ہو گئی ہے۔"
+                        );
+
+                    }
+
+
+                    /* =====================================
+                       CLEAN UP
+                    ===================================== */
+
+                    clearStudentDraft();
+
+                    studentForm.reset();
+
+
+                    if (editStudentId) {
+
+                        editStudentId.value = "";
+
+                    }
+
+
+                    if (mahramList) {
+
+                        mahramList.innerHTML = "";
+
+                    }
+
+
+                    const formTitle =
+                        document.getElementById(
+                            "formTitle"
+                        );
+
+
+                    if (formTitle) {
+
+                        formTitle.textContent =
+                            "نئی طالبہ کا داخلہ";
+
+                    }
+
+
+                    updateTransferFields();
+
+                    updateResidence();
+
+                    hideStudentForm();
+
+
+                    await displayStudents();
+
+                    await updateDashboardStudentCount();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Student submit error:",
+                        error
+                    );
+
+
+                    alert(
+                        "طالبہ محفوظ نہیں ہو سکی۔\n\n" +
+                        "اصل وجہ:\n" +
+                        (
+                            error.message ||
+                            "سسٹم میں نامعلوم مسئلہ پیش آیا ہے۔"
+                        )
+                    );
+
+
+                } finally {
+
+                    if (submitButton) {
+
+                        submitButton.disabled =
+                            false;
+
+                    }
+
+                }
+
             }
         );
-}
 
-
-if (addMahram) {
-
-    addMahram.addEventListener(
-        "click",
-        function () {
-
-            createMahram();
-        }
-    );
-}
-
-
-function getMahramData() {
-
-    const mahrams = [];
-
-
-    mahramList
-        .querySelectorAll(
-            ".mahram-card"
-        )
-        .forEach(
-            function (card) {
-
-                mahrams.push({
-
-                    name:
-                        card.querySelector(
-                            ".mahram-name"
-                        ).value.trim(),
-
-                    relation:
-                        card.querySelector(
-                            ".mahram-relation"
-                        ).value,
-
-                    phone:
-                        card.querySelector(
-                            ".mahram-phone"
-                        ).value.trim(),
-
-                    cnic:
-                        card.querySelector(
-                            ".mahram-cnic"
-                        ).value.trim(),
-
-                    approved:
-                        card.querySelector(
-                            ".mahram-approved"
-                        ).checked
-                });
-            }
-        );
-
-
-    return mahrams;
-}
-
-
-/* =====================================================
-   DRAFT RESTORE
-===================================================== */
-
-function restoreStudentDraft() {
-
-    const draft =
-        localStorage.getItem(
-            "studentDraft"
-        );
-
-
-    if (!draft) {
-        return;
     }
 
 
-    try {
+    /* =====================================================
+       DISPLAY STUDENTS
+    ===================================================== */
 
-        const data =
-            JSON.parse(draft);
+    async function displayStudents(
+        searchTerm = ""
+    ) {
+
+        if (!studentsList) {
+            return;
+        }
 
 
-        Object.keys(data).forEach(
-            function (key) {
+        const rawStudents =
+            await loadStudentsFromSupabase();
 
-                if (
-                    key === "mahrams"
-                ) {
-                    return;
+
+        const students =
+            rawStudents.map(
+                dbRowToStudent
+            );
+
+
+        if (studentCount) {
+
+            studentCount.textContent =
+                students.length;
+
+        }
+
+
+        const search =
+            String(
+                searchTerm || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        let filteredStudents =
+            students;
+
+
+        if (search !== "") {
+
+            filteredStudents =
+                students.filter(
+                    function (student) {
+
+                        return (
+
+                            String(
+                                student.name || ""
+                            )
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            String(
+                                student.admissionNo || ""
+                            )
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            String(
+                                student.phone || ""
+                            )
+                                .includes(search)
+
+                        );
+
+                    }
+                );
+
+        }
+
+
+        studentsList.innerHTML = "";
+
+
+        if (
+            filteredStudents.length === 0
+        ) {
+
+            studentsList.innerHTML =
+
+                '<div class="empty-students">' +
+
+                '<div class="empty-icon">👧</div>' +
+
+                "<h3>" +
+
+                (
+                    search
+                        ? "تلاش کے مطابق کوئی طالبہ نہیں ملی۔"
+                        : "ابھی کوئی طالبہ محفوظ نہیں ہے۔"
+                ) +
+
+                "</h3>" +
+
+                "</div>";
+
+
+            return;
+
+        }
+
+
+        filteredStudents.forEach(
+            function (student) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "student-card";
+
+
+                const residence =
+                    student.residenceType ||
+                    "درج نہیں";
+
+
+                card.innerHTML =
+
+                    '<div class="student-card-header">' +
+
+                    '<div class="student-avatar">👧</div>' +
+
+                    '<div>' +
+
+                    "<h3>" +
+
+                    escapeHTML(
+                        student.name ||
+                        "نام درج نہیں"
+                    ) +
+
+                    "</h3>" +
+
+                    "<span>" +
+
+                    "داخلہ نمبر: " +
+
+                    escapeHTML(
+                        student.admissionNo ||
+                        "درج نہیں"
+                    ) +
+
+                    "</span>" +
+
+                    "</div>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-badges">' +
+
+                    "<span>" +
+
+                    escapeHTML(
+                        student.studentClass ||
+                        "کلاس درج نہیں"
+                    ) +
+
+                    "</span>" +
+
+                    "<span>" +
+
+                    escapeHTML(
+                        residence
+                    ) +
+
+                    "</span>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-info">' +
+
+                    "<p>" +
+
+                    "<strong>والد کا نام:</strong> " +
+
+                    escapeHTML(
+                        student.fatherName ||
+                        "درج نہیں"
+                    ) +
+
+                    "</p>" +
+
+
+                    "<p>" +
+
+                    "<strong>موبائل:</strong> " +
+
+                    escapeHTML(
+                        student.phone ||
+                        "درج نہیں"
+                    ) +
+
+                    "</p>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-card-buttons">' +
+
+                    '<button type="button" ' +
+                    'class="view-student" ' +
+                    'data-id="' +
+                    escapeHTML(
+                        String(student.id)
+                    ) +
+                    '">' +
+
+                    "دیکھیں" +
+
+                    "</button>" +
+
+
+                    '<button type="button" ' +
+                    'class="edit-student" ' +
+                    'data-id="' +
+                    escapeHTML(
+                        String(student.id)
+                    ) +
+                    '">' +
+
+                    "ترمیم" +
+
+                    "</button>" +
+
+
+                    '<button type="button" ' +
+                    'class="delete-student" ' +
+                    'data-id="' +
+                    escapeHTML(
+                        String(student.id)
+                    ) +
+                    '">' +
+
+                    "حذف کریں" +
+
+                    "</button>" +
+
+                    "</div>";
+
+
+                studentsList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+        studentsList
+            .querySelectorAll(
+                ".view-student"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            viewStudent(
+                                this.dataset.id
+                            );
+
+                        }
+                    );
+
                 }
+            );
 
+
+        studentsList
+            .querySelectorAll(
+                ".edit-student"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            editStudent(
+                                this.dataset.id
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        studentsList
+            .querySelectorAll(
+                ".delete-student"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            deleteStudent(
+                                this.dataset.id
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       VIEW STUDENT
+    ===================================================== */
+
+    async function viewStudent(id) {
+
+        const rawStudents =
+            await loadStudentsFromSupabase();
+
+
+        const student =
+            rawStudents
+                .map(
+                    dbRowToStudent
+                )
+                .find(
+                    function (item) {
+
+                        return (
+                            String(item.id) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+        if (!student) {
+
+            alert(
+                "طالبہ کی معلومات نہیں مل سکیں۔"
+            );
+
+            return;
+
+        }
+
+
+        let text =
+
+            "👧 طالبہ کی مکمل معلومات\n\n" +
+
+            "داخلہ نمبر: " +
+            (
+                student.admissionNo ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "داخلہ کی قسم: " +
+            (
+                student.admissionType ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "نام: " +
+            (
+                student.name ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "والد کا نام: " +
+            (
+                student.fatherName ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "سرپرست کا نام: " +
+            (
+                student.guardianName ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "شناختی کارڈ نمبر: " +
+            (
+                student.studentCNIC ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "تاریخ پیدائش: " +
+            (
+                student.dateOfBirth ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "جماعت: " +
+            (
+                student.studentClass ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "موبائل نمبر: " +
+            (
+                student.phone ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "داخلہ کی تاریخ: " +
+            (
+                student.admissionDate ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "پتہ: " +
+            (
+                student.address ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "رہائش: " +
+            (
+                student.residenceType ||
+                "درج نہیں"
+            );
+
+
+        if (student.previousMadrassa) {
+
+            text +=
+                "\n\nپچھلا مدرسہ: " +
+                student.previousMadrassa;
+
+        }
+
+
+        if (student.transferDate) {
+
+            text +=
+                "\n\nمنتقلی کی تاریخ: " +
+                student.transferDate;
+
+        }
+
+
+        if (
+            Array.isArray(
+                student.mahrams
+            ) &&
+            student.mahrams.length > 0
+        ) {
+
+            text +=
+                "\n\nمحرم کی معلومات:\n";
+
+
+            student.mahrams.forEach(
+                function (
+                    mahram,
+                    index
+                ) {
+
+                    text +=
+
+                        "\n" +
+                        (index + 1) +
+                        ". نام: " +
+                        (
+                            mahram.name ||
+                            "درج نہیں"
+                        ) +
+
+                        "\nرشتہ: " +
+                        (
+                            mahram.relation ||
+                            "درج نہیں"
+                        ) +
+
+                        "\nشناختی کارڈ: " +
+                        (
+                            mahram.cnic ||
+                            "درج نہیں"
+                        ) +
+
+                        "\nموبائل: " +
+                        (
+                            mahram.phone ||
+                            "درج نہیں"
+                        ) +
+
+                        "\nمنظوری: " +
+                        (
+                            mahram.approved
+                                ? "ہاں"
+                                : "نہیں"
+                        ) +
+
+                        "\n";
+
+                }
+            );
+
+        }
+
+
+        alert(text);
+
+    }
+
+
+    /* =====================================================
+       EDIT STUDENT
+    ===================================================== */
+
+    async function editStudent(id) {
+
+        const rawStudents =
+            await loadStudentsFromSupabase();
+
+
+        const student =
+            rawStudents
+                .map(
+                    dbRowToStudent
+                )
+                .find(
+                    function (item) {
+
+                        return (
+                            String(item.id) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+        if (!student) {
+
+            alert(
+                "طالبہ کی معلومات نہیں مل سکیں۔"
+            );
+
+            return;
+
+        }
+
+
+        if (studentFormContainer) {
+
+            studentFormContainer.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        if (editStudentId) {
+
+            editStudentId.value =
+                String(student.id);
+
+        }
+
+
+        const formTitle =
+            document.getElementById(
+                "formTitle"
+            );
+
+
+        if (formTitle) {
+
+            formTitle.textContent =
+                "طالبہ کی معلومات میں ترمیم";
+
+        }
+
+
+        const fieldMap = {
+
+            admissionType:
+                student.admissionType,
+
+            admissionNo:
+                student.admissionNo,
+
+            previousMadrassa:
+                student.previousMadrassa,
+
+            transferDate:
+                student.transferDate,
+
+            studentName:
+                student.name,
+
+            fatherName:
+                student.fatherName,
+
+            guardianName:
+                student.guardianName,
+
+            studentCNIC:
+                student.studentCNIC,
+
+            dateOfBirth:
+                student.dateOfBirth,
+
+            studentClass:
+                student.studentClass,
+
+            phone:
+                student.phone,
+
+            admissionDate:
+                student.admissionDate,
+
+            address:
+                student.address,
+
+            residenceType:
+                student.residenceType
+
+        };
+
+
+        Object.keys(fieldMap).forEach(
+            function (key) {
 
                 const field =
                     document.getElementById(
@@ -1464,1373 +3357,418 @@ function restoreStudentDraft() {
                     );
 
 
-                if (!field) {
-                    return;
-                }
-
-
-                if (
-                    field.type ===
-                    "checkbox"
-                ) {
-
-                    field.checked =
-                        Boolean(
-                            data[key]
-                        );
-
-                } else {
+                if (field) {
 
                     field.value =
-                        data[key] || "";
+                        fieldMap[key] || "";
+
                 }
+
             }
         );
 
 
         updateTransferFields();
+
         updateResidence();
 
 
-        if (
-            Array.isArray(
-                data.mahrams
-            ) &&
-            data.mahrams.length > 0
-        ) {
+        if (mahramList) {
 
             mahramList.innerHTML = "";
 
 
-            data.mahrams.forEach(
-                function (mahram) {
-
-                    createMahram(
-                        mahram
-                    );
-                }
-            );
-        }
-
-
-        const hasDraftData =
-            Object.keys(data).some(
-                function (key) {
-
-                    if (
-                        key === "mahrams"
-                    ) {
-
-                        return (
-                            data.mahrams &&
-                            data.mahrams.length
-                        );
-                    }
-
-                    return String(
-                        data[key] || ""
-                    ).trim() !== "";
-                }
-            );
-
-
-        if (hasDraftData) {
-
-            studentFormContainer.classList.remove(
-                "hidden"
-            );
-
-
-            formTitle.textContent =
-                "📝 محفوظ شدہ کام جاری رکھیں";
-
-
-            const continueDraft =
-                confirm(
-                    "آپ کا پچھلا نامکمل کام محفوظ ہے۔ کیا آپ اسے جاری رکھنا چاہتے ہیں؟"
-                );
-
-
-            if (!continueDraft) {
-
-                clearStudentDraft();
-
-                resetStudentForm();
-            }
-        }
-
-    } catch (error) {
-
-        clearStudentDraft();
-    }
-}
-
-
-/* =====================================================
-   RESET FORM
-===================================================== */
-
-function resetStudentForm() {
-
-    studentForm.reset();
-
-
-    editStudentId.value = "";
-
-
-    mahramList.innerHTML = "";
-
-
-    mahramSection.classList.add(
-        "hidden"
-    );
-
-
-    formTitle.textContent =
-        "➕ نئی طالبہ شامل کریں";
-
-
-    updateTransferFields();
-}
-
-
-/* =====================================================
-   SHOW FORM
-===================================================== */
-
-if (showStudentForm) {
-
-    showStudentForm.addEventListener(
-        "click",
-        function () {
-
-            resetStudentForm();
-
-            studentFormContainer.classList.remove(
-                "hidden"
-            );
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-    );
-}
-
-
-/* =====================================================
-   CANCEL
-===================================================== */
-
-if (cancelStudentForm) {
-
-    cancelStudentForm.addEventListener(
-        "click",
-        function () {
-
-            resetStudentForm();
-
-            clearStudentDraft();
-
-            studentFormContainer.classList.add(
-                "hidden"
-            );
-        }
-    );
-}
-
-
-/* =====================================================
-   SAVE STUDENT
-===================================================== */
-
-studentForm.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-
-        if (!studentForm.checkValidity()) {
-
-            studentForm.reportValidity();
-
-            return;
-        }
-
-
-        if (
-            !validateName(
-                studentName,
-                "طالبہ کا نام"
-            )
-        ) {
-            return;
-        }
-
-
-        if (
-            !validateName(
-                fatherName,
-                "والد کا نام"
-            )
-        ) {
-            return;
-        }
-
-
-        if (
-            !validateName(
-                guardianName,
-                "سرپرست کا نام"
-            )
-        ) {
-            return;
-        }
-
-
-        /* Student CNIC */
-
-        if (
-            studentCNIC &&
-            studentCNIC.value.trim()
-        ) {
-
             if (
-                !isValidCNIC(
-                    studentCNIC.value
+                Array.isArray(
+                    student.mahrams
                 )
             ) {
 
-                alert(
-                    "⚠️ طالبہ کا CNIC لازماً 13 digits کا ہونا چاہیے۔"
+                student.mahrams.forEach(
+                    function (mahram) {
+
+                        createMahram(
+                            mahram
+                        );
+
+                    }
                 );
 
-                studentCNIC.focus();
-
-                return;
             }
+
         }
 
 
-        /* Phone */
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
 
-        const studentPhone =
-            onlyDigits(
-                phone.value
-            );
-
-
-        if (!isValidPhone(studentPhone)) {
-
-            alert(
-                "⚠️ رابطہ نمبر لازماً 11 digits کا ہونا چاہیے۔"
-            );
-
-            phone.focus();
-
-            return;
-        }
+    }
 
 
-        phone.value =
-            studentPhone;
+    /* =====================================================
+       DELETE STUDENT
+    ===================================================== */
+
+    async function deleteStudent(id) {
+
+        const rawStudents =
+            await loadStudentsFromSupabase();
 
 
-        /* Transfer */
-
-        if (
-            admissionType.value ===
-            "transfer"
-        ) {
-
-            if (
-                !previousMadrassa.value.trim()
-            ) {
-
-                alert(
-                    "⚠️ سابقہ مدرسہ کا نام درج کریں۔"
-                );
-
-                previousMadrassa.focus();
-
-                return;
-            }
-
-
-            if (!transferDate.value) {
-
-                alert(
-                    "⚠️ منتقلی کی تاریخ درج کریں۔"
-                );
-
-                transferDate.focus();
-
-                return;
-            }
-        }
-
-
-        const students =
-            getStudents();
-
-
-        /* Duplicate admission */
-
-        const duplicateAdmission =
-            students.some(
-                function (student) {
+        const student =
+            rawStudents.find(
+                function (item) {
 
                     return (
-
-                        String(
-                            student.admissionNo
-                        )
-                        .trim()
-                        .toLowerCase() ===
-
-                        admissionNo.value
-                            .trim()
-                            .toLowerCase()
-
-                        &&
-
-                        String(
-                            student.id
-                        ) !==
-                        String(
-                            editStudentId.value
-                        )
+                        String(item.id) ===
+                        String(id)
                     );
+
                 }
             );
 
 
-        if (duplicateAdmission) {
+        if (!student) {
 
             alert(
-                "⚠️ یہ داخلہ نمبر پہلے سے موجود ہے۔"
+                "طالبہ کی معلومات نہیں مل سکیں۔"
             );
 
-            admissionNo.focus();
+            return;
 
+        }
+
+
+        const studentName =
+            student.name ||
+            "یہ طالبہ";
+
+
+        const confirmed =
+            confirm(
+                "کیا آپ واقعی \"" +
+                studentName +
+                "\" کو حذف کرنا چاہتے ہیں؟\n\n" +
+                "یہ عمل واپس نہیں کیا جا سکتا۔"
+            );
+
+
+        if (!confirmed) {
             return;
         }
 
 
-        /* Duplicate CNIC */
-
-        if (
-            studentCNIC &&
-            studentCNIC.value.trim()
-        ) {
-
-            const duplicateCNIC =
-                students.some(
-                    function (student) {
-
-                        return (
-
-                            onlyDigits(
-                                student.studentCNIC
-                            ) ===
-                            onlyDigits(
-                                studentCNIC.value
-                            )
-
-                            &&
-
-                            String(
-                                student.id
-                            ) !==
-                            String(
-                                editStudentId.value
-                            )
-                        );
-                    }
-                );
-
-
-            if (duplicateCNIC) {
-
-                alert(
-                    "⚠️ یہ CNIC پہلے سے موجود ہے۔"
-                );
-
-                studentCNIC.focus();
-
-                return;
-            }
+        if (!checkSupabase()) {
+            return;
         }
 
 
-        /* Mahram */
-
-        let mahrams = [];
-
-
-        if (
-            residenceType.value ===
-            "hostel"
-        ) {
-
-            mahrams =
-                getMahramData();
-
-
-            if (
-                mahrams.length === 0
-            ) {
-
-                alert(
-                    "⚠️ ہاسٹل کی طالبہ کے لیے کم از کم ایک محرم درج کریں۔"
-                );
-
-                return;
-            }
-
-
-            for (
-                let i = 0;
-                i < mahrams.length;
-                i++
-            ) {
-
-                if (
-                    !isValidUrduName(
-                        mahrams[i].name
-                    )
-                ) {
-
-                    alert(
-                        "⚠️ محرم نمبر " +
-                        (i + 1) +
-                        " کا نام صرف اردو حروف میں لکھیں۔"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    !isValidPhone(
-                        mahrams[i].phone
-                    )
-                ) {
-
-                    alert(
-                        "⚠️ محرم نمبر " +
-                        (i + 1) +
-                        " کا موبائل نمبر 11 digits کا ہونا چاہیے۔"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    !isValidCNIC(
-                        mahrams[i].cnic
-                    )
-                ) {
-
-                    alert(
-                        "⚠️ محرم نمبر " +
-                        (i + 1) +
-                        " کا CNIC 13 digits کا ہونا چاہیے۔"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    !mahrams[i].approved
-                ) {
-
-                    alert(
-                        "⚠️ ہر محرم کے لیے تصدیق ضروری ہے۔"
-                    );
-
-                    return;
-                }
-            }
-        }
-
-
-        const studentData = {
-
-            admissionType:
-                admissionType.value,
-
-            admissionNo:
-                admissionNo.value.trim(),
-
-            previousMadrassa:
-                admissionType.value ===
-                "transfer"
-                ? previousMadrassa.value.trim()
-                : "",
-
-            transferDate:
-                admissionType.value ===
-                "transfer"
-                ? transferDate.value
-                : "",
-
-            name:
-                studentName.value.trim(),
-
-            fatherName:
-                fatherName.value.trim(),
-
-            guardianName:
-                guardianName.value.trim(),
-
-            studentCNIC:
-                studentCNIC
-                ? studentCNIC.value.trim()
-                : "",
-
-            dateOfBirth:
-                dateOfBirth.value,
-
-            studentClass:
-                studentClass.value.trim(),
-
-            phone:
-                phone.value.trim(),
-
-            admissionDate:
-                admissionDate.value,
-
-            address:
-                address.value.trim(),
-
-            residenceType:
-                residenceType.value,
-
-            mahrams:
-                mahrams
-        };
-
-
-        if (editStudentId.value) {
-
-            const index =
-                students.findIndex(
-                    function (student) {
-
-                        return (
-                            String(
-                                student.id
-                            ) ===
-                            String(
-                                editStudentId.value
-                            )
-                        );
-                    }
-                );
-
-
-            if (index !== -1) {
-
-                students[index] = {
-
-                    ...students[index],
-
-                    ...studentData
-                };
-
-
-                saveStudents(
-                    students
-                );
-
-
-                alert(
-                    "✅ طالبہ کی معلومات کامیابی سے تبدیل ہو گئی ہیں۔"
-                );
-            }
-
-        } else {
-
-            studentData.id =
-                Date.now();
-
-
-            students.push(
-                studentData
+        const {
+            error
+        } = await supabaseClient
+            .from("Students")
+            .delete()
+            .eq(
+                "id",
+                id
             );
 
 
-            saveStudents(
-                students
+        if (error) {
+
+            console.error(
+                "Student delete error:",
+                error
             );
 
 
             alert(
-                "✅ نئی طالبہ کامیابی سے محفوظ ہو گئی۔"
+                "طالبہ حذف نہیں ہو سکی۔\n\n" +
+                "اصل وجہ:\n" +
+                (
+                    error.message ||
+                    "نامعلوم database error"
+                ) +
+                (
+                    error.code
+                        ? "\n\nError Code: " +
+                          error.code
+                        : ""
+                )
             );
+
+            return;
+
         }
 
 
-        clearStudentDraft();
-
-
-        resetStudentForm();
-
-
-        studentFormContainer.classList.add(
-            "hidden"
+        alert(
+            "طالبہ کامیابی سے حذف کر دی گئی ہے۔"
         );
 
+
+        await displayStudents();
+
+        await updateDashboardStudentCount();
+
+    }
+
+
+    /* =====================================================
+       SEARCH
+    ===================================================== */
+
+    if (studentSearch) {
+
+        studentSearch.addEventListener(
+            "input",
+            function () {
+
+                displayStudents(
+                    this.value
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       DASHBOARD STUDENT COUNT
+    ===================================================== */
+
+    async function updateDashboardStudentCount() {
+
+        const studentTotal =
+            document.getElementById(
+                "studentTotal"
+            );
+
+
+        if (!studentTotal) {
+            return;
+        }
+
+
+        const rawStudents =
+            await loadStudentsFromSupabase();
+
+
+        studentTotal.textContent =
+            rawStudents.length;
+
+    }
+
+
+    /* =====================================================
+       DASHBOARD WELCOME
+    ===================================================== */
+
+    const dashboardTitle =
+        document.getElementById(
+            "dashboardTitle"
+        ) ||
+        document.getElementById(
+            "dashboardWelcome"
+        ) ||
+        document.querySelector(
+            ".dashboard-header h1"
+        );
+
+
+    if (dashboardTitle) {
+
+        const role =
+            getUserRole();
+
+
+        if (role === "admin") {
+
+            dashboardTitle.textContent =
+                "خوش آمدید، ایڈمن";
+
+        } else if (
+            role === "teacher"
+        ) {
+
+            dashboardTitle.textContent =
+                "خوش آمدید، استادہ";
+
+        } else if (
+            role === "student"
+        ) {
+
+            dashboardTitle.textContent =
+                "خوش آمدید، طالبہ";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       DASHBOARD MENU
+    ===================================================== */
+
+    document.querySelectorAll(
+        ".menu-card"
+    ).forEach(
+        function (card) {
+
+            card.addEventListener(
+                "click",
+                function () {
+
+                    const page =
+                        this.dataset.page;
+
+
+                    if (
+                        page === "students"
+                    ) {
+
+                        window.location.href =
+                            "students.html";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       DIRECT STUDENTS BUTTON FALLBACK
+    ===================================================== */
+
+    const studentsMenu =
+        document.getElementById(
+            "studentsMenu"
+        );
+
+
+    if (studentsMenu) {
+
+        studentsMenu.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "students.html";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BACK TO DASHBOARD
+    ===================================================== */
+
+    const backToDashboard =
+        document.getElementById(
+            "backToDashboard"
+        );
+
+
+    if (backToDashboard) {
+
+        backToDashboard.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
+
+    document
+        .querySelectorAll(
+            "#logoutButton, .logout-button, [data-action='logout']"
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        autoSaveCurrentWork();
+
+
+                        localStorage.removeItem(
+                            "loggedIn"
+                        );
+
+                        localStorage.removeItem(
+                            "userRole"
+                        );
+
+
+                        window.location.href =
+                            "index.html";
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       INITIALIZE STUDENT PAGE
+    ===================================================== */
+
+    if (
+        currentPage === "students.html"
+    ) {
+
+        updateTransferFields();
+
+        updateResidence();
+
+        restoreStudentDraft();
 
         displayStudents();
-    }
-);
 
-
-/* =====================================================
-   DISPLAY STUDENTS
-===================================================== */
-
-function displayStudents() {
-
-    const students =
-        getStudents();
-
-
-    if (studentCount) {
-
-        studentCount.textContent =
-            students.length;
     }
 
 
-    const searchText =
-        studentSearch
-        ? studentSearch.value
-            .trim()
-            .toLowerCase()
-        : "";
-
-
-    const filtered =
-        students.filter(
-            function (student) {
-
-                const name =
-                    String(
-                        student.name || ""
-                    ).toLowerCase();
-
-
-                const admission =
-                    String(
-                        student.admissionNo || ""
-                    ).toLowerCase();
-
-
-                const phoneNumber =
-                    String(
-                        student.phone || ""
-                    ).toLowerCase();
-
-
-                return (
-                    name.includes(
-                        searchText
-                    ) ||
-
-                    admission.includes(
-                        searchText
-                    ) ||
-
-                    phoneNumber.includes(
-                        searchText
-                    )
-                );
-            }
-        );
-
-
-    if (filtered.length === 0) {
-
-        studentsList.innerHTML = `
-
-            <div class="empty-students">
-
-                <div class="empty-icon">
-                    👧
-                </div>
-
-                <h3>
-                    ${
-                        students.length === 0
-                        ? "ابھی کوئی طالبہ شامل نہیں"
-                        : "کوئی طالبہ نہیں ملی"
-                    }
-                </h3>
-
-                <p>
-                    ${
-                        students.length === 0
-                        ? "نئی طالبہ شامل کرنے کے لیے اوپر والے بٹن پر کلک کریں۔"
-                        : "نام، فون یا داخلہ نمبر دوبارہ چیک کریں۔"
-                    }
-                </p>
-
-            </div>
-        `;
-
-        return;
-    }
-
-
-    studentsList.innerHTML =
-        filtered
-        .map(
-            function (student) {
-
-                const admission =
-                    student.admissionType ===
-                    "transfer"
-                    ? "🔄 منتقل شدہ"
-                    : "🆕 نیا داخلہ";
-
-
-                const residence =
-                    student.residenceType ===
-                    "hostel"
-                    ? "🛏️ ہاسٹل"
-                    : "🏠 گھر";
-
-
-                return `
-
-                    <div class="student-card">
-
-                        <div class="student-card-header">
-
-                            <div class="student-avatar">
-                                👧
-                            </div>
-
-                            <div>
-
-                                <h3>
-                                    ${escapeHTML(
-                                        student.name
-                                    )}
-                                </h3>
-
-                                <span>
-                                    داخلہ نمبر:
-                                    ${escapeHTML(
-                                        student.admissionNo
-                                    )}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                        <div class="student-badges">
-
-                            <span>
-                                ${admission}
-                            </span>
-
-                            <span>
-                                ${residence}
-                            </span>
-
-                        </div>
-
-                        <div class="student-info">
-
-                            <p>
-
-                                <strong>
-                                    👨 والد:
-                                </strong>
-
-                                ${
-                                    escapeHTML(
-                                        student.fatherName
-                                    ) ||
-                                    "درج نہیں"
-                                }
-
-                            </p>
-
-                            <p>
-
-                                <strong>
-                                    🎓 کلاس:
-                                </strong>
-
-                                ${
-                                    escapeHTML(
-                                        student.studentClass
-                                    ) ||
-                                    "درج نہیں"
-                                }
-
-                            </p>
-
-                            <p>
-
-                                <strong>
-                                    📞 رابطہ:
-                                </strong>
-
-                                ${
-                                    escapeHTML(
-                                        student.phone
-                                    ) ||
-                                    "درج نہیں"
-                                }
-
-                            </p>
-
-                        </div>
-
-                        <div class="student-card-buttons">
-
-                            <button
-                                type="button"
-                                class="view-student"
-                                data-id="${student.id}"
-                            >
-                                👁️ دیکھیں
-                            </button>
-
-                            <button
-                                type="button"
-                                class="edit-student"
-                                data-id="${student.id}"
-                            >
-                                ✏️ ترمیم
-                            </button>
-
-                            <button
-                                type="button"
-                                class="delete-student"
-                                data-id="${student.id}"
-                            >
-                                🗑️ حذف
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }
-        )
-        .join("");
-
-
-    document
-        .querySelectorAll(
-            ".view-student"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        viewStudent(
-                            Number(
-                                button.dataset.id
-                            )
-                        );
-                    }
-                );
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            ".edit-student"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        editStudent(
-                            Number(
-                                button.dataset.id
-                            )
-                        );
-                    }
-                );
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            ".delete-student"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        deleteStudent(
-                            Number(
-                                button.dataset.id
-                            )
-                        );
-                    }
-                );
-            }
-        );
-}
-
-
-/* =====================================================
-   EDIT
-===================================================== */
-
-function editStudent(id) {
-
-    const student =
-        getStudents().find(
-            function (item) {
-
-                return (
-                    Number(item.id) ===
-                    Number(id)
-                );
-            }
-        );
-
-
-    if (!student) {
-        return;
-    }
-
-
-    editStudentId.value =
-        student.id;
-
-
-    admissionType.value =
-        student.admissionType || "";
-
-
-    admissionNo.value =
-        student.admissionNo || "";
-
-
-    previousMadrassa.value =
-        student.previousMadrassa || "";
-
-
-    transferDate.value =
-        student.transferDate || "";
-
-
-    studentName.value =
-        student.name || "";
-
-
-    fatherName.value =
-        student.fatherName || "";
-
-
-    guardianName.value =
-        student.guardianName || "";
-
-
-    if (studentCNIC) {
-
-        studentCNIC.value =
-            formatCNIC(
-                student.studentCNIC || ""
-            );
-    }
-
-
-    dateOfBirth.value =
-        student.dateOfBirth || "";
-
-
-    studentClass.value =
-        student.studentClass || "";
-
-
-    phone.value =
-        onlyDigits(
-            student.phone || ""
-        ).slice(0, 11);
-
-
-    admissionDate.value =
-        student.admissionDate || "";
-
-
-    address.value =
-        student.address || "";
-
-
-    residenceType.value =
-        student.residenceType || "";
-
-
-    updateTransferFields();
-
-
-    updateResidence();
-
-
-    mahramList.innerHTML = "";
-
+    /* =====================================================
+       INITIALIZE DASHBOARD
+    ===================================================== */
 
     if (
-        student.residenceType ===
-        "hostel" &&
-        Array.isArray(
-            student.mahrams
-        )
+        currentPage === "dashboard.html"
     ) {
 
-        student.mahrams.forEach(
-            function (mahram) {
+        updateDashboardStudentCount();
 
-                createMahram(
-                    mahram
-                );
-            }
-        );
     }
 
 
-    formTitle.textContent =
-        "✏️ طالبہ کی معلومات میں ترمیم";
+    /* =====================================================
+       GLOBAL INITIALIZATION
+    ===================================================== */
 
+    if (isLoggedIn()) {
 
-    studentFormContainer.classList.remove(
-        "hidden"
-    );
+        resetInactivityTimer();
 
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-    });
-}
-
-
-/* =====================================================
-   VIEW
-===================================================== */
-
-function viewStudent(id) {
-
-    const student =
-        getStudents().find(
-            function (item) {
-
-                return (
-                    Number(item.id) ===
-                    Number(id)
-                );
-            }
-        );
-
-
-    if (!student) {
-        return;
     }
-
-
-    let text =
-
-        "👧 طالبہ کی مکمل معلومات\n\n" +
-
-        "داخلہ نمبر: " +
-        (
-            student.admissionNo ||
-            "درج نہیں"
-        ) +
-
-        "\nداخلہ کی قسم: " +
-
-        (
-            student.admissionType ===
-            "transfer"
-            ? "دوسرے مدرسہ سے منتقل شدہ"
-            : "نیا داخلہ"
-        ) +
-
-        "\nنام: " +
-        (
-            student.name ||
-            "درج نہیں"
-        ) +
-
-        "\nوالد کا نام: " +
-        (
-            student.fatherName ||
-            "درج نہیں"
-        ) +
-
-        "\nسرپرست: " +
-        (
-            student.guardianName ||
-            "درج نہیں"
-        ) +
-
-        "\nCNIC: " +
-        (
-            student.studentCNIC ||
-            "درج نہیں"
-        ) +
-
-        "\nتاریخ پیدائش: " +
-        (
-            student.dateOfBirth ||
-            "درج نہیں"
-        ) +
-
-        "\nکلاس: " +
-        (
-            student.studentClass ||
-            "درج نہیں"
-        ) +
-
-        "\nرابطہ: " +
-        (
-            student.phone ||
-            "درج نہیں"
-        ) +
-
-        "\nداخلہ تاریخ: " +
-        (
-            student.admissionDate ||
-            "درج نہیں"
-        ) +
-
-        "\nرہائش: " +
-
-        (
-            student.residenceType ===
-            "hostel"
-            ? "مدرسہ ہاسٹل"
-            : "گھر"
-        ) +
-
-        "\nپتہ: " +
-
-        (
-            student.address ||
-            "درج نہیں"
-        );
-
-
-    if (
-        student.admissionType ===
-        "transfer"
-    ) {
-
-        text +=
-
-            "\n\n🏫 سابقہ مدرسہ: " +
-
-            (
-                student.previousMadrassa ||
-                "درج نہیں"
-            ) +
-
-            "\nمنتقلی کی تاریخ: " +
-
-            (
-                student.transferDate ||
-                "درج نہیں"
-            );
-    }
-
-
-    if (
-        student.residenceType ===
-        "hostel" &&
-        Array.isArray(
-            student.mahrams
-        ) &&
-        student.mahrams.length
-    ) {
-
-        text +=
-            "\n\n🔐 مجاز شرعی محرم:";
-
-
-        student.mahrams.forEach(
-            function (
-                mahram,
-                index
-            ) {
-
-                text +=
-
-                    "\n\n" +
-                    (index + 1) +
-                    ". " +
-                    (
-                        mahram.name ||
-                        ""
-                    ) +
-
-                    "\nرشتہ: " +
-                    (
-                        mahram.relation ||
-                        ""
-                    ) +
-
-                    "\nفون: " +
-                    (
-                        mahram.phone ||
-                        ""
-                    ) +
-
-                    "\nCNIC: " +
-                    (
-                        mahram.cnic ||
-                        ""
-                    ) +
-
-                    "\nتصدیق: " +
-
-                    (
-                        mahram.approved
-                        ? "تصدیق شدہ"
-                        : "غیر تصدیق شدہ"
-                    );
-            }
-        );
-    }
-
-
-    alert(text);
-}
-
-
-/* =====================================================
-   DELETE
-===================================================== */
-
-function deleteStudent(id) {
-
-    const students =
-        getStudents();
-
-
-    const student =
-        students.find(
-            function (item) {
-
-                return (
-                    Number(item.id) ===
-                    Number(id)
-                );
-            }
-        );
-
-
-    if (!student) {
-        return;
-    }
-
-
-    const confirmed =
-        confirm(
-            "کیا آپ واقعی " +
-            student.name +
-            " کا ریکارڈ حذف کرنا چاہتے ہیں؟"
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    const remaining =
-        students.filter(
-            function (item) {
-
-                return (
-                    Number(item.id) !==
-                    Number(id)
-                );
-            }
-        );
-
-
-    saveStudents(
-        remaining
-    );
-
-
-    displayStudents();
-
-
-    alert(
-        "✅ طالبہ کا ریکارڈ حذف کر دیا گیا ہے۔"
-    );
-}
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-if (studentSearch) {
-
-    studentSearch.addEventListener(
-        "input",
-        displayStudents
-    );
-}
-
-
-/* =====================================================
-   BACK
-===================================================== */
-
-if (backToDashboard) {
-
-    backToDashboard.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "dashboard.html";
-        }
-    );
-}
-
-
-/* =====================================================
-   START
-===================================================== */
-
-displayStudents();
-
-restoreStudentDraft();
 
 });
