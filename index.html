@@ -1,60 +1,76 @@
-<!DOCTYPE html><html lang="ur" dir="rtl"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<head>
 
-<title>مدرسہ شہناز اختر للبنات</title>
+    <meta charset="UTF-8">
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+    <title>مدرسہ شہناز اختر للبنات</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
-      rel="stylesheet">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-<link rel="stylesheet" href="style.css">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-</head><body><main class="container">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
 
-    <div class="logo">
-        📖
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">
+            🕌
+        </div>
+
+        <h1>
+            مدرسہ شہناز اختر للبنات
+        </h1>
+
+        <p class="address">
+            گاؤں غرشٹو، ضلع بونیر
+        </p>
+
+        <div class="system-title">
+            مدرسہ مینجمنٹ سسٹم
+        </div>
+
+        <p class="subtitle">
+            براہِ کرم اپنا اکاؤنٹ منتخب کریں
+        </p>
+
+
+        <button id="adminButton">
+            👑 ایڈمن لاگ اِن
+        </button>
+
+        <button id="teacherButton">
+            👩‍🏫 ٹیچر لاگ اِن
+        </button>
+
+        <button id="studentButton">
+            👧 طالبہ لاگ اِن
+        </button>
+
     </div>
 
-    <h1>
-        مدرسہ شہناز اختر للبنات
-    </h1>
 
-    <p class="address">
-        پتہ: ہل غورغشتو ضلع بونیر
-    </p>
+    <!-- Supabase MUST load before script.js -->
 
-    <p class="system-title">
-        مدرسہ مینجمنٹ سسٹم
-    </p>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <p class="subtitle">
-        تعلیمی و انتظامی نظام
-    </p>
-
-    <button id="adminButton">
-        👑 ایڈمن لاگ اِن
-    </button>
-
-    <button id="teacherButton">
-        👩‍🏫 استادہ لاگ اِن
-    </button>
-
-    <button id="studentButton">
-    👧 طالبہ لاگ اِن
-</button>
-
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
+
 </html>
