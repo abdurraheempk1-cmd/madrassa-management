@@ -1,142 +1,221 @@
-<!DOCTYPE html><html lang="ur" dir="rtl"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<head>
 
-<title>ایڈمن ڈیش بورڈ</title>
+    <meta charset="UTF-8">
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+    <title>ڈیش بورڈ - مدرسہ شہناز اختر للبنات</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
-      rel="stylesheet">
 
-<link rel="stylesheet" href="style.css">
+    <!-- Google Font -->
 
-</head><body><main class="dashboard" id="dashboard">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-    <header class="dashboard-header">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-        <div>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
 
-            <p class="small-title">
-                مدرسہ شہناز اختر للبنات
+
+    <!-- Main CSS -->
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <div class="dashboard">
+
+
+        <!-- =========================
+             DASHBOARD HEADER
+        ========================== -->
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <div class="small-title">
+                    مدرسہ مینجمنٹ سسٹم
+                </div>
+
+                <h1>
+                    ڈیش بورڈ
+                </h1>
+
+            </div>
+
+
+            <div class="dashboard-logo">
+                🕌
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             WELCOME
+        ========================== -->
+
+        <div class="welcome-card">
+
+            <h2 id="welcomeMessage">
+                خوش آمدید
+            </h2>
+
+            <p>
+                مدرسہ شہناز اختر للبنات کے انتظامی نظام میں خوش آمدید۔
             </p>
 
-            <h1 id="dashboardTitle">
-                ڈیش بورڈ
-            </h1>
+        </div>
+
+
+
+        <!-- =========================
+             STATISTICS
+        ========================== -->
+
+        <div class="stats-grid">
+
+
+            <!-- طالبات -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👧
+                </div>
+
+                <div>
+
+                    <strong id="studentTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        کل طالبات
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- اساتذہ -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👩‍🏫
+                </div>
+
+                <div>
+
+                    <strong>
+                        0
+                    </strong>
+
+                    <span>
+                        کل اساتذہ
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ہاسٹل -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🏠
+                </div>
+
+                <div>
+
+                    <strong>
+                        0
+                    </strong>
+
+                    <span>
+                        ہاسٹل
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- کلاسز -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📚
+                </div>
+
+                <div>
+
+                    <strong>
+                        0
+                    </strong>
+
+                    <span>
+                        کلاسز
+                    </span>
+
+                </div>
+
+            </div>
+
 
         </div>
 
-        <div class="dashboard-logo">
-            📖
-        </div>
 
-    </header>
 
-    <section class="welcome-card">
-
-        <h2>
-            السلام علیکم!
-        </h2>
-
-        <p>
-            مدرسہ مینجمنٹ سسٹم میں خوش آمدید
-        </p>
-
-    </section>
-
-    <section class="stats-grid">
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                👧
-            </div>
-
-            <div>
-                <strong id="studentTotal">
-                    0
-                </strong>
-
-                <span>
-                    طالبات
-                </span>
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                👩‍🏫
-            </div>
-
-            <div>
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    استادہ
-                </span>
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                🏫
-            </div>
-
-            <div>
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    کلاسز
-                </span>
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                💰
-            </div>
-
-            <div>
-                <strong>
-                    0
-                </strong>
-
-                <span>
-                    فیس
-                </span>
-            </div>
-
-        </div>
-
-    </section>
-
-    <section>
+        <!-- =========================
+             MAIN MENU TITLE
+        ========================== -->
 
         <h2 class="section-title">
-            انتظامی نظام
+            مین مینو
         </h2>
+
+
+
+        <!-- =========================
+             MAIN MENU
+        ========================== -->
 
         <div class="menu-grid">
 
-            <button class="menu-card"
-                    data-page="students">
+
+            <!-- =====================
+                 STUDENTS
+            ====================== -->
+
+            <button
+                type="button"
+                class="menu-card"
+                id="studentsMenu"
+                data-page="students"
+            >
 
                 <span class="menu-icon">
                     👧
@@ -152,59 +231,43 @@
 
             </button>
 
-            <button class="menu-card"
-                    data-page="teachers">
+
+
+            <!-- =====================
+                 TEACHERS
+            ====================== -->
+
+            <button
+                type="button"
+                class="menu-card"
+                id="teachersMenu"
+            >
 
                 <span class="menu-icon">
                     👩‍🏫
                 </span>
 
                 <span>
-                    استادہ
+                    اساتذہ
                 </span>
 
                 <small>
-                    استادہ کا ریکارڈ
+                    اساتذہ کا ریکارڈ
                 </small>
 
             </button>
 
-            <button class="menu-card"
-                    data-page="classes">
 
-                <span class="menu-icon">
-                    🏫
-                </span>
 
-                <span>
-                    کلاسز
-                </span>
+            <!-- =====================
+                 ATTENDANCE
+            ====================== -->
 
-                <small>
-                    کلاس مینجمنٹ
-                </small>
-
-            </button>
-
-            <button class="menu-card"
-                    data-page="subjects">
-
-                <span class="menu-icon">
-                    📚
-                </span>
-
-                <span>
-                    مضامین
-                </span>
-
-                <small>
-                    مضامین کا ریکارڈ
-                </small>
-
-            </button>
-
-            <button class="menu-card"
-                    data-page="attendance">
+            <button
+                type="button"
+                class="menu-card"
+                id="attendanceMenu"
+            >
 
                 <span class="menu-icon">
                     📋
@@ -215,13 +278,48 @@
                 </span>
 
                 <small>
-                    حاضری کا نظام
+                    روزانہ حاضری
                 </small>
 
             </button>
 
-            <button class="menu-card"
-                    data-page="fees">
+
+
+            <!-- =====================
+                 HOSTEL
+            ====================== -->
+
+            <button
+                type="button"
+                class="menu-card"
+                id="hostelMenu"
+            >
+
+                <span class="menu-icon">
+                    🏠
+                </span>
+
+                <span>
+                    ہاسٹل
+                </span>
+
+                <small>
+                    ہاسٹل کا ریکارڈ
+                </small>
+
+            </button>
+
+
+
+            <!-- =====================
+                 FEES
+            ====================== -->
+
+            <button
+                type="button"
+                class="menu-card"
+                id="feesMenu"
+            >
 
                 <span class="menu-icon">
                     💰
@@ -232,33 +330,25 @@
                 </span>
 
                 <small>
-                    فیس مینجمنٹ
+                    فیس کا ریکارڈ
                 </small>
 
             </button>
 
-            <button class="menu-card"
-                    data-page="results">
+
+
+            <!-- =====================
+                 REPORTS
+            ====================== -->
+
+            <button
+                type="button"
+                class="menu-card"
+                id="reportsMenu"
+            >
 
                 <span class="menu-icon">
                     📊
-                </span>
-
-                <span>
-                    نتائج
-                </span>
-
-                <small>
-                    امتحان اور نتائج
-                </small>
-
-            </button>
-
-            <button class="menu-card"
-                    data-page="reports">
-
-                <span class="menu-icon">
-                    📈
                 </span>
 
                 <span>
@@ -266,58 +356,52 @@
                 </span>
 
                 <small>
-                    تفصیلی رپورٹس
+                    مختلف رپورٹس
                 </small>
 
             </button>
 
-            <button class="menu-card"
-                    data-page="users">
-
-                <span class="menu-icon">
-                    🔐
-                </span>
-
-                <span>
-                    صارفین
-                </span>
-
-                <small>
-                    Login Management
-                </small>
-
-            </button>
-
-            <button class="menu-card"
-                    data-page="settings">
-
-                <span class="menu-icon">
-                    ⚙️
-                </span>
-
-                <span>
-                    سیٹنگز
-                </span>
-
-                <small>
-                    نظام کی ترتیبات
-                </small>
-
-            </button>
 
         </div>
 
-    </section>
 
-    <button
-        id="logoutButton"
-        class="logout-button"
-    >
-        🚪 لاگ آؤٹ
-    </button>
 
-</main>
+        <!-- =========================
+             LOGOUT
+        ========================== -->
 
-<script src="script.js"></script>
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button"
+        >
 
-</body></html>
+            🚪 لاگ آؤٹ
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         SUPABASE
+         MUST LOAD FIRST
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+
+    <!-- =========================
+         MAIN JAVASCRIPT
+         LOAD ONLY ONCE
+    ========================== -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
