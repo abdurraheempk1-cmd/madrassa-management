@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let studentsCache = [];
 
+    let teachersCache = [];
+
 
     /* =====================================================
        LOGIN / SESSION
@@ -838,7 +840,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (
         currentPage === "dashboard.html" ||
-        currentPage === "students.html"
+        currentPage === "students.html" ||
+        currentPage === "teachers.html"
     ) {
 
         if (!isLoggedIn()) {
@@ -851,6 +854,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         resetInactivityTimer();
+
+    }
+
+
+    /* =====================================================
+       TEACHER PAGE ADMIN PROTECTION
+    ===================================================== */
+
+    if (
+        currentPage === "teachers.html"
+    ) {
+
+        if (
+            getUserRole() !== "admin"
+        ) {
+
+            alert(
+                "اساتذہ کے انتظام کے لیے صرف ایڈمن کو اجازت ہے۔"
+            );
+
+            window.location.href =
+                "dashboard.html";
+
+            return;
+
+        }
 
     }
 
@@ -2368,10 +2397,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             : "";
 
 
-                    /* =====================================
-                       DUPLICATE ADMISSION NUMBER
-                    ===================================== */
-
                     const duplicateAdmission =
                         students.find(
                             function (item) {
@@ -2416,10 +2441,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     }
 
-
-                    /* =====================================
-                       DUPLICATE CNIC
-                    ===================================== */
 
                     const newCNIC =
                         getDigits(
@@ -2469,10 +2490,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             student
                         );
 
-
-                    /* =====================================
-                       UPDATE
-                    ===================================== */
 
                     if (currentId !== "") {
 
@@ -2534,10 +2551,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    /* =====================================
-                       INSERT
-                    ===================================== */
-
                     else {
 
                         const {
@@ -2596,10 +2609,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     }
 
-
-                    /* =====================================
-                       CLEAN UP
-                    ===================================== */
 
                     clearStudentDraft();
 
@@ -3517,7 +3526,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       SEARCH
+       STUDENT SEARCH
     ===================================================== */
 
     if (studentSearch) {
@@ -3559,6 +3568,1378 @@ document.addEventListener("DOMContentLoaded", function () {
 
         studentTotal.textContent =
             rawStudents.length;
+
+    }
+
+
+    /* =====================================================
+       TEACHER MANAGEMENT
+       TABLE = Teachers
+    ===================================================== */
+
+    function dbRowToTeacher(row) {
+
+        return {
+
+            id:
+                row.id,
+
+            teacherCode:
+                row.teacher_code || "",
+
+            name:
+                row.name || "",
+
+            fatherName:
+                row.father_name || "",
+
+            phone:
+                row.phone || "",
+
+            cnic:
+                row.cnic || "",
+
+            address:
+                row.address || "",
+
+            qualification:
+                row.qualification || "",
+
+            joiningDate:
+                row.joining_date || "",
+
+            status:
+                row.status || "pending",
+
+            createdAt:
+                row.created_at || "",
+
+            updatedAt:
+                row.updated_at || ""
+
+        };
+
+    }
+
+
+    async function loadTeachersFromSupabase() {
+
+        if (!checkSupabase()) {
+            return [];
+        }
+
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("Teachers")
+            .select("*")
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Teachers load error:",
+                error
+            );
+
+
+            alert(
+                "اساتذہ کا ریکارڈ لوڈ نہیں ہو سکا۔\n\n" +
+                "اصل وجہ:\n" +
+                (
+                    error.message ||
+                    "نامعلوم database error"
+                ) +
+                (
+                    error.code
+                        ? "\n\nError Code: " +
+                          error.code
+                        : ""
+                )
+            );
+
+
+            return [];
+
+        }
+
+
+        teachersCache =
+            data || [];
+
+
+        return teachersCache;
+
+    }
+
+
+    function normalizeTeacherStatus(status) {
+
+        const value =
+            String(
+                status || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            value === "active" ||
+            value === "فعال"
+        ) {
+
+            return "active";
+
+        }
+
+
+        if (
+            value === "disabled" ||
+            value === "غیر فعال"
+        ) {
+
+            return "disabled";
+
+        }
+
+
+        return "pending";
+
+    }
+
+
+    function teacherStatusText(status) {
+
+        const normalized =
+            normalizeTeacherStatus(
+                status
+            );
+
+
+        if (
+            normalized === "active"
+        ) {
+
+            return "فعال";
+
+        }
+
+
+        if (
+            normalized === "disabled"
+        ) {
+
+            return "غیر فعال";
+
+        }
+
+
+        return "زیرِ منظوری";
+
+    }
+
+
+    function isValidTeacherCode(code) {
+
+        return (
+            String(
+                code || ""
+            ).trim().length > 0
+        );
+
+    }
+
+
+    function getTeacherFormData() {
+
+        function getValue(id) {
+
+            const field =
+                document.getElementById(
+                    id
+                );
+
+            return field
+                ? field.value.trim()
+                : "";
+
+        }
+
+
+        return {
+
+            teacherCode:
+                getValue(
+                    "teacherCode"
+                ),
+
+            name:
+                getValue(
+                    "teacherName"
+                ),
+
+            fatherName:
+                getValue(
+                    "teacherFatherName"
+                ),
+
+            phone:
+                getValue(
+                    "teacherPhone"
+                ),
+
+            cnic:
+                getValue(
+                    "teacherCNIC"
+                ),
+
+            qualification:
+                getValue(
+                    "teacherQualification"
+                ),
+
+            joiningDate:
+                (
+                    document.getElementById(
+                        "teacherJoiningDate"
+                    ) || {}
+                ).value || "",
+
+            address:
+                getValue(
+                    "teacherAddress"
+                )
+
+        };
+
+    }
+
+
+    function validateTeacher(teacher) {
+
+        if (
+            !isValidTeacherCode(
+                teacher.teacherCode
+            )
+        ) {
+
+            alert(
+                "براہِ کرم Teacher Code درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !isValidUrduName(
+                teacher.name
+            )
+        ) {
+
+            alert(
+                "Teacher کا نام صرف اردو حروف میں درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            teacher.fatherName &&
+            !isValidUrduName(
+                teacher.fatherName
+            )
+        ) {
+
+            alert(
+                "والد کا نام صرف اردو حروف میں درج کریں۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            teacher.phone &&
+            !isValidPhone(
+                teacher.phone
+            )
+        ) {
+
+            alert(
+                "Teacher کا موبائل نمبر 11 ہندسوں کا ہونا چاہیے۔"
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            teacher.cnic &&
+            !isValidCNIC(
+                teacher.cnic
+            )
+        ) {
+
+            alert(
+                "Teacher کا CNIC 13 ہندسوں کا ہونا چاہیے۔"
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+    function createDatabaseTeacherData(teacher) {
+
+        return {
+
+            teacher_code:
+                teacher.teacherCode || null,
+
+            name:
+                teacher.name || null,
+
+            father_name:
+                teacher.fatherName || null,
+
+            phone:
+                teacher.phone || null,
+
+            cnic:
+                teacher.cnic || null,
+
+            address:
+                teacher.address || null,
+
+            qualification:
+                teacher.qualification || null,
+
+            joining_date:
+                teacher.joiningDate || null,
+
+            status:
+                "pending"
+
+        };
+
+    }
+
+
+    const teacherForm =
+        document.getElementById(
+            "teacherForm"
+        );
+
+    const teacherFormContainer =
+        document.getElementById(
+            "teacherFormContainer"
+        );
+
+    const showTeacherForm =
+        document.getElementById(
+            "showTeacherForm"
+        );
+
+    const cancelTeacherButton =
+        document.getElementById(
+            "cancelTeacherButton"
+        );
+
+    const teacherSearch =
+        document.getElementById(
+            "teacherSearch"
+        );
+
+    const teacherList =
+        document.getElementById(
+            "teacherList"
+        );
+
+    const teacherTotal =
+        document.getElementById(
+            "teacherTotal"
+        );
+
+    const activeTeacherTotal =
+        document.getElementById(
+            "activeTeacherTotal"
+        );
+
+    const pendingTeacherTotal =
+        document.getElementById(
+            "pendingTeacherTotal"
+        );
+
+    const teacherListCount =
+        document.getElementById(
+            "teacherListCount"
+        );
+
+
+    function showTeacherFormPanel() {
+
+        if (
+            getUserRole() !== "admin"
+        ) {
+
+            alert(
+                "صرف ایڈمن Teacher شامل کر سکتا ہے۔"
+            );
+
+            return;
+
+        }
+
+
+        if (teacherForm) {
+
+            teacherForm.reset();
+
+        }
+
+
+        if (teacherFormContainer) {
+
+            teacherFormContainer.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    function hideTeacherFormPanel() {
+
+        if (teacherFormContainer) {
+
+            teacherFormContainer.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    if (showTeacherForm) {
+
+        showTeacherForm.addEventListener(
+            "click",
+            function () {
+
+                showTeacherFormPanel();
+
+            }
+        );
+
+    }
+
+
+    if (cancelTeacherButton) {
+
+        cancelTeacherButton.addEventListener(
+            "click",
+            function () {
+
+                hideTeacherFormPanel();
+
+            }
+        );
+
+    }
+
+
+    if (teacherForm) {
+
+        teacherForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (
+                    getUserRole() !== "admin"
+                ) {
+
+                    alert(
+                        "صرف ایڈمن Teacher شامل کر سکتا ہے۔"
+                    );
+
+                    return;
+
+                }
+
+
+                const saveButton =
+                    document.getElementById(
+                        "saveTeacherButton"
+                    );
+
+
+                if (saveButton) {
+
+                    saveButton.disabled =
+                        true;
+
+                }
+
+
+                try {
+
+                    if (!checkSupabase()) {
+                        return;
+                    }
+
+
+                    const teacher =
+                        getTeacherFormData();
+
+
+                    if (
+                        !validateTeacher(
+                            teacher
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const rawTeachers =
+                        await loadTeachersFromSupabase();
+
+
+                    const teachers =
+                        rawTeachers.map(
+                            dbRowToTeacher
+                        );
+
+
+                    const duplicateCode =
+                        teachers.find(
+                            function (item) {
+
+                                return (
+                                    String(
+                                        item.teacherCode ||
+                                        ""
+                                    )
+                                        .trim()
+                                        .toLowerCase() ===
+                                    String(
+                                        teacher.teacherCode ||
+                                        ""
+                                    )
+                                        .trim()
+                                        .toLowerCase()
+                                );
+
+                            }
+                        );
+
+
+                    if (duplicateCode) {
+
+                        alert(
+                            "یہ Teacher Code پہلے سے موجود ہے۔ براہِ کرم دوسرا Code استعمال کریں۔"
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (teacher.cnic) {
+
+                        const newCNIC =
+                            getDigits(
+                                teacher.cnic
+                            );
+
+
+                        const duplicateCNIC =
+                            teachers.find(
+                                function (item) {
+
+                                    return (
+                                        item.cnic &&
+                                        getDigits(
+                                            item.cnic
+                                        ) ===
+                                        newCNIC
+                                    );
+
+                                }
+                            );
+
+
+                        if (duplicateCNIC) {
+
+                            alert(
+                                "یہ Teacher CNIC پہلے سے موجود ہے۔"
+                            );
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    const dbData =
+                        createDatabaseTeacherData(
+                            teacher
+                        );
+
+
+                    const {
+                        data,
+                        error
+                    } = await supabaseClient
+                        .from("Teachers")
+                        .insert([
+                            dbData
+                        ])
+                        .select()
+                        .single();
+
+
+                    if (error) {
+
+                        console.error(
+                            "Teacher save error:",
+                            error
+                        );
+
+
+                        alert(
+                            "Teacher محفوظ نہیں ہو سکا۔\n\n" +
+                            "اصل وجہ:\n" +
+                            (
+                                error.message ||
+                                "نامعلوم database error"
+                            ) +
+                            (
+                                error.code
+                                    ? "\n\nError Code: " +
+                                      error.code
+                                    : ""
+                            ) +
+                            (
+                                error.details
+                                    ? "\n\nتفصیل:\n" +
+                                      error.details
+                                    : ""
+                            ) +
+                            (
+                                error.hint
+                                    ? "\n\nمشورہ:\n" +
+                                      error.hint
+                                    : ""
+                            )
+                        );
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "Teacher saved:",
+                        data
+                    );
+
+
+                    alert(
+                        "Teacher کامیابی سے محفوظ ہو گیا ہے۔\n\n" +
+                        "Status: زیرِ منظوری"
+                    );
+
+
+                    teacherForm.reset();
+
+                    hideTeacherFormPanel();
+
+                    await displayTeachers();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Teacher submit error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Teacher محفوظ نہیں ہو سکا۔\n\n" +
+                        "اصل وجہ:\n" +
+                        (
+                            error.message ||
+                            "سسٹم میں نامعلوم مسئلہ پیش آیا ہے۔"
+                        )
+                    );
+
+
+                } finally {
+
+                    if (saveButton) {
+
+                        saveButton.disabled =
+                            false;
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    async function viewTeacher(id) {
+
+        const rawTeachers =
+            await loadTeachersFromSupabase();
+
+
+        const teacher =
+            rawTeachers
+                .map(
+                    dbRowToTeacher
+                )
+                .find(
+                    function (item) {
+
+                        return (
+                            String(item.id) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+        if (!teacher) {
+
+            alert(
+                "Teacher کی معلومات نہیں مل سکیں۔"
+            );
+
+            return;
+
+        }
+
+
+        const text =
+
+            "👩‍🏫 Teacher کی مکمل معلومات\n\n" +
+
+            "Teacher Code: " +
+            (
+                teacher.teacherCode ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "نام: " +
+            (
+                teacher.name ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "والد کا نام: " +
+            (
+                teacher.fatherName ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "موبائل: " +
+            (
+                teacher.phone ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "CNIC: " +
+            (
+                teacher.cnic ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "تعلیمی قابلیت: " +
+            (
+                teacher.qualification ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "Joining Date: " +
+            (
+                teacher.joiningDate ||
+                "درج نہیں"
+            ) +
+
+            "\n\n" +
+
+            "Status: " +
+            teacherStatusText(
+                teacher.status
+            ) +
+
+            "\n\n" +
+
+            "پتہ: " +
+            (
+                teacher.address ||
+                "درج نہیں"
+            );
+
+
+        alert(text);
+
+    }
+
+
+    async function deleteTeacher(id) {
+
+        if (
+            getUserRole() !== "admin"
+        ) {
+
+            alert(
+                "صرف ایڈمن Teacher حذف کر سکتا ہے۔"
+            );
+
+            return;
+
+        }
+
+
+        const rawTeachers =
+            await loadTeachersFromSupabase();
+
+
+        const teacher =
+            rawTeachers.find(
+                function (item) {
+
+                    return (
+                        String(item.id) ===
+                        String(id)
+                    );
+
+                }
+            );
+
+
+        if (!teacher) {
+
+            alert(
+                "Teacher کی معلومات نہیں مل سکیں۔"
+            );
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                "کیا آپ واقعی \"" +
+                (
+                    teacher.name ||
+                    "اس Teacher"
+                ) +
+                "\" کو حذف کرنا چاہتے ہیں؟\n\n" +
+                "یہ عمل واپس نہیں کیا جا سکتا۔"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        if (!checkSupabase()) {
+            return;
+        }
+
+
+        const {
+            error
+        } = await supabaseClient
+            .from("Teachers")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Teacher delete error:",
+                error
+            );
+
+
+            alert(
+                "Teacher حذف نہیں ہو سکا۔\n\n" +
+                "اصل وجہ:\n" +
+                (
+                    error.message ||
+                    "نامعلوم database error"
+                ) +
+                (
+                    error.code
+                        ? "\n\nError Code: " +
+                          error.code
+                        : ""
+                )
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "Teacher کامیابی سے حذف کر دیا گیا ہے۔"
+        );
+
+
+        await displayTeachers();
+
+    }
+
+
+    async function displayTeachers(
+        searchTerm = ""
+    ) {
+
+        if (!teacherList) {
+            return;
+        }
+
+
+        const rawTeachers =
+            await loadTeachersFromSupabase();
+
+
+        const teachers =
+            rawTeachers.map(
+                dbRowToTeacher
+            );
+
+
+        const total =
+            teachers.length;
+
+
+        const active =
+            teachers.filter(
+                function (teacher) {
+
+                    return (
+                        normalizeTeacherStatus(
+                            teacher.status
+                        ) === "active"
+                    );
+
+                }
+            ).length;
+
+
+        const pending =
+            teachers.filter(
+                function (teacher) {
+
+                    return (
+                        normalizeTeacherStatus(
+                            teacher.status
+                        ) === "pending"
+                    );
+
+                }
+            ).length;
+
+
+        if (teacherTotal) {
+
+            teacherTotal.textContent =
+                total;
+
+        }
+
+
+        if (activeTeacherTotal) {
+
+            activeTeacherTotal.textContent =
+                active;
+
+        }
+
+
+        if (pendingTeacherTotal) {
+
+            pendingTeacherTotal.textContent =
+                pending;
+
+        }
+
+
+        const search =
+            String(
+                searchTerm || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        let filteredTeachers =
+            teachers;
+
+
+        if (search !== "") {
+
+            filteredTeachers =
+                teachers.filter(
+                    function (teacher) {
+
+                        return (
+
+                            String(
+                                teacher.name || ""
+                            )
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            String(
+                                teacher.teacherCode || ""
+                            )
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            String(
+                                teacher.phone || ""
+                            )
+                                .includes(search)
+
+                            ||
+
+                            String(
+                                teacher.cnic || ""
+                            )
+                                .includes(search)
+
+                        );
+
+                    }
+                );
+
+        }
+
+
+        if (teacherListCount) {
+
+            teacherListCount.textContent =
+                filteredTeachers.length;
+
+        }
+
+
+        teacherList.innerHTML = "";
+
+
+        if (
+            filteredTeachers.length === 0
+        ) {
+
+            teacherList.innerHTML =
+
+                '<div class="empty-state">' +
+
+                (
+                    search
+                        ? "تلاش کے مطابق کوئی Teacher نہیں ملا۔"
+                        : "ابھی کوئی Teacher موجود نہیں۔"
+                ) +
+
+                "</div>";
+
+            return;
+
+        }
+
+
+        filteredTeachers.forEach(
+            function (teacher) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "student-card";
+
+
+                const status =
+                    normalizeTeacherStatus(
+                        teacher.status
+                    );
+
+
+                let statusClass =
+                    "pending";
+
+
+                if (
+                    status === "active"
+                ) {
+
+                    statusClass =
+                        "active";
+
+                }
+
+
+                if (
+                    status === "disabled"
+                ) {
+
+                    statusClass =
+                        "disabled";
+
+                }
+
+
+                card.innerHTML =
+
+                    '<div class="student-card-header">' +
+
+                    '<div class="student-avatar">👩‍🏫</div>' +
+
+                    '<div>' +
+
+                    "<h3>" +
+
+                    escapeHTML(
+                        teacher.name ||
+                        "نام درج نہیں"
+                    ) +
+
+                    "</h3>" +
+
+                    "<span>" +
+
+                    "Teacher Code: " +
+
+                    escapeHTML(
+                        teacher.teacherCode ||
+                        "درج نہیں"
+                    ) +
+
+                    "</span>" +
+
+                    "</div>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-badges">' +
+
+                    "<span>" +
+
+                    escapeHTML(
+                        teacher.qualification ||
+                        "قابلیت درج نہیں"
+                    ) +
+
+                    "</span>" +
+
+                    "<span>" +
+
+                    escapeHTML(
+                        teacherStatusText(
+                            teacher.status
+                        )
+                    ) +
+
+                    "</span>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-info">' +
+
+                    "<p>" +
+
+                    "<strong>موبائل:</strong> " +
+
+                    escapeHTML(
+                        teacher.phone ||
+                        "درج نہیں"
+                    ) +
+
+                    "</p>" +
+
+
+                    "<p>" +
+
+                    "<strong>Joining Date:</strong> " +
+
+                    escapeHTML(
+                        teacher.joiningDate ||
+                        "درج نہیں"
+                    ) +
+
+                    "</p>" +
+
+                    "</div>" +
+
+
+                    '<div class="student-card-buttons">' +
+
+                    '<button type="button" ' +
+                    'class="view-teacher" ' +
+                    'data-id="' +
+                    escapeHTML(
+                        String(teacher.id)
+                    ) +
+                    '">' +
+
+                    "دیکھیں" +
+
+                    "</button>" +
+
+
+                    '<button type="button" ' +
+                    'class="delete-teacher" ' +
+                    'data-id="' +
+                    escapeHTML(
+                        String(teacher.id)
+                    ) +
+                    '">' +
+
+                    "حذف کریں" +
+
+                    "</button>" +
+
+                    "</div>";
+
+
+                teacherList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+        teacherList
+            .querySelectorAll(
+                ".view-teacher"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            viewTeacher(
+                                this.dataset.id
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        teacherList
+            .querySelectorAll(
+                ".delete-teacher"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            deleteTeacher(
+                                this.dataset.id
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    if (teacherSearch) {
+
+        teacherSearch.addEventListener(
+            "input",
+            function () {
+
+                displayTeachers(
+                    this.value
+                );
+
+            }
+        );
 
     }
 
@@ -3635,6 +5016,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     }
 
+
+                    if (
+                        page === "teachers"
+                    ) {
+
+                        window.location.href =
+                            "teachers.html";
+
+                    }
+
                 }
             );
 
@@ -3660,6 +5051,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 window.location.href =
                     "students.html";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       DIRECT TEACHERS BUTTON FALLBACK
+    ===================================================== */
+
+    const teachersMenu =
+        document.getElementById(
+            "teachersMenu"
+        );
+
+
+    if (teachersMenu) {
+
+        teachersMenu.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    getUserRole() !== "admin"
+                ) {
+
+                    alert(
+                        "اساتذہ کے انتظام کے لیے صرف ایڈمن کو اجازت ہے۔"
+                    );
+
+                    return;
+
+                }
+
+
+                window.location.href =
+                    "teachers.html";
 
             }
         );
@@ -3744,6 +5173,19 @@ document.addEventListener("DOMContentLoaded", function () {
         restoreStudentDraft();
 
         displayStudents();
+
+    }
+
+
+    /* =====================================================
+       INITIALIZE TEACHER PAGE
+    ===================================================== */
+
+    if (
+        currentPage === "teachers.html"
+    ) {
+
+        displayTeachers();
 
     }
 
