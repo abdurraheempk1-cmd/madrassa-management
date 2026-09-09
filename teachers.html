@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اساتذہ - مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+<div class="students-page">
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <div class="students-header">
+
+        <button
+            type="button"
+            id="backToDashboard"
+            class="back-button"
+        >
+            ↩️ ڈیش بورڈ
+        </button>
+
+        <div>
+
+            <h1>
+                👩‍🏫 اساتذہ
+            </h1>
+
+            <p class="address">
+                مدرسہ شہناز اختر للبنات
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button"
+        >
+            🚪 لاگ آؤٹ
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         TEACHER STATISTICS
+    ================================================== -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                👩‍🏫
+            </div>
+
+            <div class="stat-title">
+                کل اساتذہ
+            </div>
+
+            <div
+                class="stat-number"
+                id="teacherTotal"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ✅
+            </div>
+
+            <div class="stat-title">
+                فعال اساتذہ
+            </div>
+
+            <div
+                class="stat-number"
+                id="activeTeacherTotal"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏳
+            </div>
+
+            <div class="stat-title">
+                زیرِ منظوری
+            </div>
+
+            <div
+                class="stat-number"
+                id="pendingTeacherTotal"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ADD TEACHER BUTTON
+    ================================================== -->
+
+    <div class="section-card">
+
+        <button
+            type="button"
+            id="showTeacherForm"
+        >
+            ➕ نیا Teacher شامل کریں
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         TEACHER FORM
+    ================================================== -->
+
+    <div
+        id="teacherFormContainer"
+        class="section-card hidden"
+    >
+
+        <h2>
+            👩‍🏫 نئے Teacher کی معلومات
+        </h2>
+
+
+        <form id="teacherForm">
+
+            <label for="teacherCode">
+                Teacher Code
+            </label>
+
+            <input
+                type="text"
+                id="teacherCode"
+                placeholder="مثلاً T-001"
+                required
+            >
+
+
+            <label for="teacherName">
+                Teacher کا نام
+            </label>
+
+            <input
+                type="text"
+                id="teacherName"
+                placeholder="Teacher کا نام"
+                required
+            >
+
+
+            <label for="teacherFatherName">
+                والد کا نام
+            </label>
+
+            <input
+                type="text"
+                id="teacherFatherName"
+                placeholder="والد کا نام"
+            >
+
+
+            <label for="teacherPhone">
+                موبائل نمبر
+            </label>
+
+            <input
+                type="tel"
+                id="teacherPhone"
+                inputmode="numeric"
+                maxlength="11"
+                placeholder="03XXXXXXXXX"
+            >
+
+
+            <label for="teacherCNIC">
+                شناختی کارڈ نمبر
+            </label>
+
+            <input
+                type="text"
+                id="teacherCNIC"
+                inputmode="numeric"
+                maxlength="13"
+                placeholder="13 ہندسوں کا CNIC"
+            >
+
+
+            <label for="teacherQualification">
+                تعلیمی قابلیت
+            </label>
+
+            <input
+                type="text"
+                id="teacherQualification"
+                placeholder="مثلاً عالمہ، MA، BA وغیرہ"
+            >
+
+
+            <label for="teacherJoiningDate">
+                Joining Date
+            </label>
+
+            <input
+                type="date"
+                id="teacherJoiningDate"
+            >
+
+
+            <label for="teacherAddress">
+                پتہ
+            </label>
+
+            <textarea
+                id="teacherAddress"
+                rows="3"
+                placeholder="Teacher کا پتہ"
+            ></textarea>
+
+
+            <div class="form-buttons">
+
+                <button
+                    type="submit"
+                    id="saveTeacherButton"
+                >
+                    💾 Teacher محفوظ کریں
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelTeacherButton"
+                    class="back-button"
+                >
+                    ❌ منسوخ کریں
+                </button>
+
+            </div>
+
+
+            <div
+                id="teacherFormMessage"
+                class="message"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =================================================
+         SEARCH
+    ================================================== -->
+
+    <div class="section-card">
+
+        <h2>
+            🔍 Teacher تلاش کریں
+        </h2>
+
+        <input
+            type="search"
+            id="teacherSearch"
+            placeholder="نام، Teacher Code یا موبائل نمبر..."
+        >
+
+    </div>
+
+
+    <!-- =================================================
+         TEACHER LIST
+    ================================================== -->
+
+    <div class="section-card">
+
+        <div class="list-header">
+
+            <h2>
+                👩‍🏫 Teacher List
+            </h2>
+
+            <span
+                id="teacherListCount"
+                class="count-badge"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div
+            id="teacherList"
+            class="student-list"
+        >
+
+            <div class="empty-state">
+
+                ابھی کوئی Teacher موجود نہیں۔
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js?v=3"></script>
+
+</body>
+
+</html>
