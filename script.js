@@ -281,8 +281,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         remember:
             "rememberLogin",
 
-       token: 
-          "sessionToken",
+        token:
+            "sessionToken",
 
         lastActivity:
             "lastActivity"
@@ -316,11 +316,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 
+    function getSessionToken() {
+
+        return safeString(
+            localStorage.getItem(
+                SESSION_KEYS.token
+            )
+        );
+    }
+
+
     function saveSession(
         role,
         userId,
         username,
-        remember = false
+        remember = false,
+        token = ""
     ) {
 
         localStorage.setItem(
@@ -351,6 +362,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         );
 
         localStorage.setItem(
+            SESSION_KEYS.token,
+            safeString(token)
+        );
+
+        localStorage.setItem(
             SESSION_KEYS.lastActivity,
             String(Date.now())
         );
@@ -371,9 +387,39 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 
-    function logout() {
+    async function logout() {
+
+        const token =
+            getSessionToken();
+
+
+        if (
+            supabaseClient &&
+            token
+        ) {
+
+            try {
+
+                await supabaseClient.rpc(
+                    "logout_session",
+                    {
+                        p_token:
+                            token
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Logout session error:",
+                    error
+                );
+            }
+        }
+
 
         clearSession();
+
 
         window.location.href =
             "index.html";
@@ -528,10 +574,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       ADMIN LOGIN
+       LOGIN SESSION
     ===================================================== */
 
-    async function loginAdmin(
+    async function loginWithSession(
+        role,
         username,
         password
     ) {
@@ -549,8 +596,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             error
         } =
             await supabaseClient.rpc(
-                "login_admin",
+                "login_session",
                 {
+                    p_role:
+                        role,
+
                     p_username:
                         username,
 
@@ -574,191 +624,84 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        return {
+        const token =
+            safeString(
+                getRecordValue(
+                    row,
+                    ["token"],
+                    ""
+                )
+            );
 
-            id:
+
+        if (!token) {
+
+            throw new Error(
+                "سیشن ٹوکن موصول نہیں ہوا۔"
+            );
+        }
+
+
+        let userId = "";
+
+
+        if (role === "admin") {
+
+            userId =
                 getRecordValue(
                     row,
                     [
                         "admin_id",
+                        "account_id",
                         "id"
                     ],
                     ""
-                ),
+                );
 
-            username:
-                getRecordValue(
-                    row,
-                    [
-                        "admin_username",
-                        "username"
-                    ],
-                    username
-                ),
+        } else if (
+            role === "teacher"
+        ) {
 
-            status:
-                getRecordValue(
-                    row,
-                    [
-                        "auth_status",
-                        "authorization_status",
-                        "status"
-                    ],
-                    ""
-                )
-
-        };
-    }
-
-
-    /* =====================================================
-       TEACHER LOGIN
-    ===================================================== */
-
-    async function loginTeacher(
-        username,
-        password
-    ) {
-
-        if (!supabaseClient) {
-
-            throw new Error(
-                "Supabase سے رابطہ نہیں ہو سکا۔"
-            );
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.rpc(
-                "login_teacher",
-                {
-                    p_username:
-                        username,
-
-                    p_password:
-                        password
-                }
-            );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const row =
-            getRpcRecord(data);
-
-
-        if (!row) {
-            return null;
-        }
-
-
-        return {
-
-            id:
+            userId =
                 getRecordValue(
                     row,
                     [
                         "teacher_id",
+                        "account_id",
                         "id"
                     ],
                     ""
-                ),
+                );
 
-            username:
+        } else if (
+            role === "student"
+        ) {
+
+            userId =
                 getRecordValue(
                     row,
                     [
-                        "username",
-                        "teacher_username"
-                    ],
-                    username
-                ),
-
-            status:
-                getRecordValue(
-                    row,
-                    [
-                        "authorization_status",
-                        "auth_status",
-                        "status"
+                        "student_id",
+                        "account_id",
+                        "id"
                     ],
                     ""
-                )
-
-        };
-    }
-
-
-    /* =====================================================
-       STUDENT LOGIN
-    ===================================================== */
-
-    async function loginStudent(
-        username,
-        password
-    ) {
-
-        if (!supabaseClient) {
-
-            throw new Error(
-                "Supabase سے رابطہ نہیں ہو سکا۔"
-            );
-        }
-
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.rpc(
-                "login_student",
-                {
-                    p_username:
-                        username,
-
-                    p_password:
-                        password
-                }
-            );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const row =
-            getRpcRecord(data);
-
-
-        if (!row) {
-            return null;
+                );
         }
 
 
         return {
 
             id:
-                getRecordValue(
-                    row,
-                    [
-                        "student_id",
-                        "id"
-                    ],
-                    ""
-                ),
+                userId,
 
             username:
                 getRecordValue(
                     row,
                     [
                         "username",
+                        "admin_username",
+                        "teacher_username",
                         "student_username"
                     ],
                     username
@@ -772,10 +715,64 @@ document.addEventListener("DOMContentLoaded", async function () {
                         "auth_status",
                         "status"
                     ],
-                    ""
-                )
+                    "approved"
+                ),
+
+            token:
+                token
 
         };
+    }
+
+
+    /* =====================================================
+       ADMIN LOGIN
+    ===================================================== */
+
+    async function loginAdmin(
+        username,
+        password
+    ) {
+
+        return await loginWithSession(
+            "admin",
+            username,
+            password
+        );
+    }
+
+
+    /* =====================================================
+       TEACHER LOGIN
+    ===================================================== */
+
+    async function loginTeacher(
+        username,
+        password
+    ) {
+
+        return await loginWithSession(
+            "teacher",
+            username,
+            password
+        );
+    }
+
+
+    /* =====================================================
+       STUDENT LOGIN
+    ===================================================== */
+
+    async function loginStudent(
+        username,
+        password
+    ) {
+
+        return await loginWithSession(
+            "student",
+            username,
+            password
+        );
     }
 
 
@@ -1004,7 +1001,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     requestedRole,
                     user.id,
                     user.username || username,
-                    remember
+                    remember,
+                    user.token
                 );
 
 
@@ -1097,7 +1095,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (!isAuthenticated()) {
+        if (
+            !isAuthenticated() ||
+            !getSessionToken()
+        ) {
+
+            clearSession();
 
             window.location.href =
                 "index.html";
@@ -1563,6 +1566,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
        PASTE PART 2 DIRECTLY BELOW THIS LINE
     ===================================================== */
+
 
                           /* =========================================================
    MASTER SCRIPT.JS
@@ -4444,7 +4448,6 @@ await initializeStudentsPage();
 ===================================================== */
 
 
-
                           /* =========================================================
    MASTER SCRIPT.JS
    PART 3 / 3
@@ -6446,6 +6449,50 @@ function updateLastActivity() {
 }
 
 
+async function performTimeoutLogout() {
+
+    const token =
+        getSessionToken();
+
+
+    if (
+        supabaseClient &&
+        token
+    ) {
+
+        try {
+
+            await supabaseClient.rpc(
+                "logout_session",
+                {
+                    p_token:
+                        token
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Timeout logout error:",
+                error
+            );
+        }
+    }
+
+
+    clearSession();
+
+
+    alert(
+        "پانچ منٹ تک کوئی سرگرمی نہ ہونے کی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
+    );
+
+
+    window.location.href =
+        "index.html";
+}
+
+
 function checkSessionTimeout() {
 
     if (!isAuthenticated()) {
@@ -6479,16 +6526,7 @@ function checkSessionTimeout() {
         INACTIVITY_LIMIT
     ) {
 
-        clearSession();
-
-
-        alert(
-            "پانچ منٹ تک کوئی سرگرمی نہ ہونے کی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
-        );
-
-
-        window.location.href =
-            "index.html";
+        performTimeoutLogout();
     }
 }
 
