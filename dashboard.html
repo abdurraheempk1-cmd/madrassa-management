@@ -5,37 +5,42 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>ڈیش بورڈ - مدرسہ شہناز اختر للبنات</title>
+    <title>
+        ڈیش بورڈ - مدرسہ شہناز اختر للبنات
+    </title>
 
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <!-- Google Font -->
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
-          rel="stylesheet">
-
-
-    <!-- Main CSS -->
-
-    <link rel="stylesheet"
-          href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
-
 
 <body>
 
 
-    <div class="dashboard">
+    <main class="dashboard">
 
 
         <!-- =========================
@@ -57,12 +62,14 @@
             </div>
 
 
-            <div class="dashboard-logo">
+            <div
+                class="dashboard-logo"
+                aria-hidden="true"
+            >
                 🕌
             </div>
 
         </div>
-
 
 
         <!-- =========================
@@ -82,7 +89,6 @@
         </div>
 
 
-
         <!-- =========================
              STATISTICS
         ========================== -->
@@ -90,7 +96,7 @@
         <div class="stats-grid">
 
 
-            <!-- طالبات -->
+            <!-- STUDENTS -->
 
             <div class="stat-card">
 
@@ -113,8 +119,7 @@
             </div>
 
 
-
-            <!-- اساتذہ -->
+            <!-- TEACHERS -->
 
             <div class="stat-card">
 
@@ -124,7 +129,7 @@
 
                 <div>
 
-                    <strong>
+                    <strong id="teacherTotal">
                         0
                     </strong>
 
@@ -137,8 +142,7 @@
             </div>
 
 
-
-            <!-- ہاسٹل -->
+            <!-- HOSTEL -->
 
             <div class="stat-card">
 
@@ -148,12 +152,12 @@
 
                 <div>
 
-                    <strong>
+                    <strong id="hostelTotal">
                         0
                     </strong>
 
                     <span>
-                        ہاسٹل
+                        ہاسٹل طالبات
                     </span>
 
                 </div>
@@ -161,8 +165,7 @@
             </div>
 
 
-
-            <!-- کلاسز -->
+            <!-- CLASSES -->
 
             <div class="stat-card">
 
@@ -172,12 +175,12 @@
 
                 <div>
 
-                    <strong>
+                    <strong id="classTotal">
                         0
                     </strong>
 
                     <span>
-                        کلاسز
+                        کل کلاسز
                     </span>
 
                 </div>
@@ -188,9 +191,8 @@
         </div>
 
 
-
         <!-- =========================
-             MAIN MENU TITLE
+             MAIN MENU
         ========================== -->
 
         <h2 class="section-title">
@@ -198,17 +200,10 @@
         </h2>
 
 
-
-        <!-- =========================
-             MAIN MENU
-        ========================== -->
-
         <div class="menu-grid">
 
 
-            <!-- =====================
-                 STUDENTS
-            ====================== -->
+            <!-- STUDENTS -->
 
             <button
                 type="button"
@@ -232,15 +227,13 @@
             </button>
 
 
-
-            <!-- =====================
-                 TEACHERS
-            ====================== -->
+            <!-- TEACHERS -->
 
             <button
                 type="button"
                 class="menu-card"
                 id="teachersMenu"
+                data-page="teachers"
             >
 
                 <span class="menu-icon">
@@ -258,15 +251,13 @@
             </button>
 
 
-
-            <!-- =====================
-                 ATTENDANCE
-            ====================== -->
+            <!-- ATTENDANCE -->
 
             <button
                 type="button"
                 class="menu-card"
                 id="attendanceMenu"
+                data-page="attendance"
             >
 
                 <span class="menu-icon">
@@ -284,15 +275,13 @@
             </button>
 
 
-
-            <!-- =====================
-                 HOSTEL
-            ====================== -->
+            <!-- HOSTEL -->
 
             <button
                 type="button"
                 class="menu-card"
                 id="hostelMenu"
+                data-page="hostel"
             >
 
                 <span class="menu-icon">
@@ -310,15 +299,13 @@
             </button>
 
 
-
-            <!-- =====================
-                 FEES
-            ====================== -->
+            <!-- FEES -->
 
             <button
                 type="button"
                 class="menu-card"
                 id="feesMenu"
+                data-page="fees"
             >
 
                 <span class="menu-icon">
@@ -336,15 +323,13 @@
             </button>
 
 
-
-            <!-- =====================
-                 REPORTS
-            ====================== -->
+            <!-- REPORTS -->
 
             <button
                 type="button"
                 class="menu-card"
                 id="reportsMenu"
+                data-page="reports"
             >
 
                 <span class="menu-icon">
@@ -365,7 +350,6 @@
         </div>
 
 
-
         <!-- =========================
              LOGOUT
         ========================== -->
@@ -375,28 +359,24 @@
             id="logoutButton"
             class="logout-button"
         >
-
             🚪 لاگ آؤٹ
-
         </button>
 
 
-    </div>
-
+    </main>
 
 
     <!-- =========================
          SUPABASE
-         MUST LOAD FIRST
     ========================== -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
 
     <!-- =========================
-         MAIN JAVASCRIPT
-         LOAD ONLY ONCE
+         MAIN SCRIPT
     ========================== -->
 
     <script src="script.js"></script>
