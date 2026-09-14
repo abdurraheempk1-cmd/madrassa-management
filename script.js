@@ -281,6 +281,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         remember:
             "rememberLogin",
 
+       token: 
+          "sessionToken",
+
         lastActivity:
             "lastActivity"
 
