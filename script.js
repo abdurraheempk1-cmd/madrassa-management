@@ -1,7 +1,7 @@
-/* =====/* =========================================================
+/* =========================================================
    MASTER SCRIPT.JS
-   PART 1
-   CORE + SUPABASE + HOME + LOGIN + SESSION + DASHBOARD
+   PART 1 / 3
+   CORE + SUPABASE + LOGIN + SESSION + DASHBOARD
    مدرسہ شہناز اختر للبنات
 ========================================================= */
 
@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const SUPABASE_KEY =
         "sb_publishable_AxbfXMmjCRPS3N7ILRUbQA_U20DE6-s";
+
+    const STUDENTS_TABLE =
+        "Students";
+
+    const TEACHERS_TABLE =
+        "Teachers";
 
 
     let supabaseClient = null;
@@ -44,17 +50,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       TABLE NAMES
-    ===================================================== */
-
-    const STUDENTS_TABLE =
-        "Students";
-
-    const TEACHERS_TABLE =
-        "Teachers";
-
-
-    /* =====================================================
        CURRENT PAGE
     ===================================================== */
 
@@ -65,6 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 .pop() ||
             "index.html"
         )
+            .split("?")[0]
             .toLowerCase();
 
 
@@ -82,18 +78,122 @@ document.addEventListener("DOMContentLoaded", async function () {
             return "";
         }
 
-
-        return String(
-            value
-        ).trim();
+        return String(value).trim();
     }
 
 
     function getElement(id) {
 
-        return document.getElementById(
-            id
+        return document.getElementById(id);
+    }
+
+
+    function escapeHtml(value) {
+
+        return safeString(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function onlyDigits(value) {
+
+        return safeString(value)
+            .replace(/\D/g, "");
+    }
+
+
+    function normalizePhone(value) {
+
+        return onlyDigits(value)
+            .slice(0, 11);
+    }
+
+
+    function canonicalCNIC(value) {
+
+        return onlyDigits(value)
+            .slice(0, 13);
+    }
+
+
+    function formatCNIC(value) {
+
+        const digits =
+            canonicalCNIC(value);
+
+
+        if (digits.length !== 13) {
+
+            return digits;
+        }
+
+
+        return (
+            digits.slice(0, 5) +
+            "-" +
+            digits.slice(5, 12) +
+            "-" +
+            digits.slice(12)
         );
+    }
+
+
+    function isUrduName(value) {
+
+        const text =
+            safeString(value);
+
+
+        if (!text) {
+            return false;
+        }
+
+
+        return /^[\u0600-\u06FF\s]+$/u.test(text);
+    }
+
+
+    function getRecordValue(
+        record,
+        keys,
+        fallback = ""
+    ) {
+
+        if (!record) {
+            return fallback;
+        }
+
+
+        const keyList =
+            Array.isArray(keys)
+                ? keys
+                : [keys];
+
+
+        for (
+            const key of keyList
+        ) {
+
+            const value =
+                record[key];
+
+
+            if (
+                value !== null &&
+                value !== undefined &&
+                value !== ""
+            ) {
+
+                return value;
+            }
+        }
+
+
+        return fallback;
     }
 
 
@@ -109,9 +209,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         element.textContent =
-            safeString(
-                message
-            );
+            safeString(message);
 
 
         element.style.display =
@@ -134,11 +232,38 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        element.textContent =
-            "";
+        element.textContent = "";
 
-        element.style.display =
-            "none";
+        element.style.display = "none";
+    }
+
+
+    function getRpcRecord(data) {
+
+        if (!data) {
+            return null;
+        }
+
+
+        if (
+            Array.isArray(data)
+        ) {
+
+            return data.length
+                ? data[0]
+                : null;
+        }
+
+
+        if (
+            typeof data === "object"
+        ) {
+
+            return data;
+        }
+
+
+        return null;
     }
 
 
@@ -207,30 +332,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             "true"
         );
 
-
         localStorage.setItem(
             SESSION_KEYS.role,
-            safeString(
-                role
-            )
+            safeString(role)
         );
-
 
         localStorage.setItem(
             SESSION_KEYS.userId,
-            safeString(
-                userId
-            )
+            safeString(userId)
         );
-
 
         localStorage.setItem(
             SESSION_KEYS.username,
-            safeString(
-                username
-            )
+            safeString(username)
         );
-
 
         localStorage.setItem(
             SESSION_KEYS.remember,
@@ -239,12 +354,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : "false"
         );
 
-
         localStorage.setItem(
             SESSION_KEYS.lastActivity,
-            String(
-                Date.now()
-            )
+            String(Date.now())
         );
     }
 
@@ -256,9 +368,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         ).forEach(
             function (key) {
 
-                localStorage.removeItem(
-                    key
-                );
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
 
             }
         );
@@ -269,16 +380,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         clearSession();
 
-        sessionStorage.clear();
-
-
         window.location.href =
             "index.html";
     }
 
 
     /* =====================================================
-       ROLE FROM URL
+       REQUESTED LOGIN ROLE
     ===================================================== */
 
     function getRequestedRole() {
@@ -291,9 +399,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const role =
             safeString(
-                params.get(
-                    "role"
-                )
+                params.get("role")
             ).toLowerCase();
 
 
@@ -318,8 +424,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     function initializeHomePage() {
 
         if (
-            currentPage !==
-            "index.html"
+            currentPage !== "index.html"
         ) {
 
             return;
@@ -327,19 +432,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         const adminButton =
-            getElement(
-                "adminLoginButton"
-            );
+            getElement("adminLoginButton");
 
         const teacherButton =
-            getElement(
-                "teacherLoginButton"
-            );
+            getElement("teacherLoginButton");
 
         const studentButton =
-            getElement(
-                "studentLoginButton"
-            );
+            getElement("studentLoginButton");
 
 
         if (adminButton) {
@@ -389,14 +488,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     function initializePasswordToggle() {
 
         const password =
-            getElement(
-                "password"
-            );
+            getElement("password");
 
         const toggle =
-            getElement(
-                "togglePassword"
-            );
+            getElement("togglePassword");
 
 
         if (
@@ -412,26 +507,25 @@ document.addEventListener("DOMContentLoaded", async function () {
             "click",
             function () {
 
-                const hidden =
-                    password.type ===
-                    "password";
+                const isHidden =
+                    password.type === "password";
 
 
                 password.type =
-                    hidden
+                    isHidden
                         ? "text"
                         : "password";
 
 
                 toggle.textContent =
-                    hidden
+                    isHidden
                         ? "🙈"
                         : "👁️";
 
 
                 toggle.setAttribute(
                     "aria-label",
-                    hidden
+                    isHidden
                         ? "پاس ورڈ چھپائیں"
                         : "پاس ورڈ دکھائیں"
                 );
@@ -464,13 +558,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             await supabaseClient.rpc(
                 "login_admin",
                 {
-
                     p_username:
                         username,
 
                     p_password:
                         password
-
                 }
             );
 
@@ -480,13 +572,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (
-            !Array.isArray(
-                data
-            ) ||
-            data.length === 0
-        ) {
+        const row =
+            getRpcRecord(data);
 
+
+        if (!row) {
             return null;
         }
 
@@ -494,13 +584,35 @@ document.addEventListener("DOMContentLoaded", async function () {
         return {
 
             id:
-                data[0].admin_id,
+                getRecordValue(
+                    row,
+                    [
+                        "admin_id",
+                        "id"
+                    ],
+                    ""
+                ),
 
             username:
-                data[0].admin_username,
+                getRecordValue(
+                    row,
+                    [
+                        "admin_username",
+                        "username"
+                    ],
+                    username
+                ),
 
             status:
-                data[0].auth_status
+                getRecordValue(
+                    row,
+                    [
+                        "auth_status",
+                        "authorization_status",
+                        "status"
+                    ],
+                    ""
+                )
 
         };
     }
@@ -530,13 +642,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             await supabaseClient.rpc(
                 "login_teacher",
                 {
-
                     p_username:
                         username,
 
                     p_password:
                         password
-
                 }
             );
 
@@ -546,8 +656,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (!data) {
+        const row =
+            getRpcRecord(data);
 
+
+        if (!row) {
             return null;
         }
 
@@ -555,16 +668,35 @@ document.addEventListener("DOMContentLoaded", async function () {
         return {
 
             id:
-                data.teacher_id,
-
-            accountId:
-                data.account_id,
+                getRecordValue(
+                    row,
+                    [
+                        "teacher_id",
+                        "id"
+                    ],
+                    ""
+                ),
 
             username:
-                data.username,
+                getRecordValue(
+                    row,
+                    [
+                        "username",
+                        "teacher_username"
+                    ],
+                    username
+                ),
 
             status:
-                data.authorization_status
+                getRecordValue(
+                    row,
+                    [
+                        "authorization_status",
+                        "auth_status",
+                        "status"
+                    ],
+                    ""
+                )
 
         };
     }
@@ -594,13 +726,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             await supabaseClient.rpc(
                 "login_student",
                 {
-
                     p_username:
                         username,
 
                     p_password:
                         password
-
                 }
             );
 
@@ -610,8 +740,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (!data) {
+        const row =
+            getRpcRecord(data);
 
+
+        if (!row) {
             return null;
         }
 
@@ -619,16 +752,35 @@ document.addEventListener("DOMContentLoaded", async function () {
         return {
 
             id:
-                data.student_id,
-
-            accountId:
-                data.account_id,
+                getRecordValue(
+                    row,
+                    [
+                        "student_id",
+                        "id"
+                    ],
+                    ""
+                ),
 
             username:
-                data.username,
+                getRecordValue(
+                    row,
+                    [
+                        "username",
+                        "student_username"
+                    ],
+                    username
+                ),
 
             status:
-                data.authorization_status
+                getRecordValue(
+                    row,
+                    [
+                        "authorization_status",
+                        "auth_status",
+                        "status"
+                    ],
+                    ""
+                )
 
         };
     }
@@ -641,48 +793,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     function initializeLoginPage() {
 
         if (
-            currentPage !==
-            "login.html"
+            currentPage !== "login.html"
         ) {
 
             return;
         }
 
 
-        const form =
-            getElement(
-                "loginForm"
-            );
+        const loginForm =
+            getElement("loginForm");
 
         const usernameInput =
-            getElement(
-                "username"
-            );
+            getElement("username");
 
         const passwordInput =
-            getElement(
-                "password"
-            );
+            getElement("password");
 
         const rememberMe =
-            getElement(
-                "rememberMe"
-            );
+            getElement("rememberMe");
 
         const loginButton =
-            getElement(
-                "loginButton"
-            );
+            getElement("loginButton");
 
         const backButton =
-            getElement(
-                "backButton"
-            );
+            getElement("backButton");
 
         const loginMessage =
-            getElement(
-                "loginMessage"
-            );
+            getElement("loginMessage");
 
 
         const requestedRole =
@@ -732,8 +869,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const password =
                 passwordInput
                     ? String(
-                        passwordInput.value ||
-                        ""
+                        passwordInput.value || ""
                     )
                     : "";
 
@@ -752,12 +888,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "صارف نام درج کریں۔"
                 );
 
-
-                if (usernameInput) {
-
-                    usernameInput.focus();
-                }
-
+                usernameInput?.focus();
 
                 return;
             }
@@ -770,12 +901,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "پاس ورڈ درج کریں۔"
                 );
 
-
-                if (passwordInput) {
-
-                    passwordInput.focus();
-                }
-
+                passwordInput?.focus();
 
                 return;
             }
@@ -809,8 +935,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
                 if (
-                    requestedRole ===
-                    "admin"
+                    requestedRole === "admin"
                 ) {
 
                     user =
@@ -819,10 +944,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                             password
                         );
 
-
                 } else if (
-                    requestedRole ===
-                    "teacher"
+                    requestedRole === "teacher"
                 ) {
 
                     user =
@@ -831,10 +954,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                             password
                         );
 
-
                 } else if (
-                    requestedRole ===
-                    "student"
+                    requestedRole === "student"
                 ) {
 
                     user =
@@ -849,18 +970,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     showMessage(
                         loginMessage,
-                        "صارف نام یا پاس ورڈ غلط ہے، یا اکاؤنٹ ابھی منظور نہیں ہوا۔"
+                        "صارف نام یا پاس ورڈ غلط ہے۔"
                     );
 
                     return;
                 }
 
 
-                if (
+                const status =
                     safeString(
                         user.status
-                    ).toLowerCase() !==
-                    "approved"
+                    ).toLowerCase();
+
+
+                const approvedStatuses = [
+
+                    "approved",
+                    "active",
+                    "فعال",
+                    "منظور",
+                    "منظور شدہ"
+
+                ];
+
+
+                if (
+                    !approvedStatuses.includes(
+                        status
+                    )
                 ) {
 
                     showMessage(
@@ -875,7 +1012,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 saveSession(
                     requestedRole,
                     user.id,
-                    user.username,
+                    user.username || username,
                     remember
                 );
 
@@ -928,9 +1065,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (form) {
+        if (loginForm) {
 
-            form.addEventListener(
+            loginForm.addEventListener(
                 "submit",
                 function (event) {
 
@@ -952,9 +1089,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const protectedPages = [
 
             "dashboard.html",
-
             "students.html",
-
             "teachers.html"
 
         ];
@@ -984,15 +1119,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       ADMIN ONLY
+       ADMIN CHECK
     ===================================================== */
 
     function requireAdmin() {
 
         if (
             !isAuthenticated() ||
-            getCurrentRole() !==
-            "admin"
+            getCurrentRole() !== "admin"
         ) {
 
             alert(
@@ -1018,7 +1152,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     ) {
 
         if (!supabaseClient) {
-
             return 0;
         }
 
@@ -1027,9 +1160,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             let query =
                 supabaseClient
-                    .from(
-                        tableName
-                    )
+                    .from(tableName)
                     .select(
                         "id",
                         {
@@ -1063,7 +1194,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
             if (error) {
-
                 throw error;
             }
 
@@ -1081,6 +1211,80 @@ document.addEventListener("DOMContentLoaded", async function () {
                 error
             );
 
+            return 0;
+        }
+    }
+
+
+    async function getClassCount() {
+
+        if (!supabaseClient) {
+            return 0;
+        }
+
+
+        try {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from(STUDENTS_TABLE)
+                    .select("student_class");
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            const classes =
+                new Set();
+
+
+            (
+                Array.isArray(data)
+                    ? data
+                    : []
+            ).forEach(
+                function (row) {
+
+                    const className =
+                        safeString(
+                            getRecordValue(
+                                row,
+                                [
+                                    "student_class",
+                                    "studentclass",
+                                    "class_name",
+                                    "className",
+                                    "class"
+                                ],
+                                ""
+                            )
+                        );
+
+
+                    if (className) {
+
+                        classes.add(
+                            className
+                        );
+                    }
+                }
+            );
+
+
+            return classes.size;
+
+
+        } catch (error) {
+
+            console.error(
+                "Class count error:",
+                error
+            );
 
             return 0;
         }
@@ -1088,14 +1292,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       DASHBOARD
+       DASHBOARD PAGE
     ===================================================== */
 
     async function initializeDashboardPage() {
 
         if (
-            currentPage !==
-            "dashboard.html"
+            currentPage !== "dashboard.html"
         ) {
 
             return;
@@ -1103,15 +1306,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (!protectPage()) {
-
             return;
         }
 
 
-        const welcomeMessage =
-            getElement(
-                "welcomeMessage"
-            );
+        const role =
+            getCurrentRole();
 
 
         const username =
@@ -1122,36 +1322,32 @@ document.addEventListener("DOMContentLoaded", async function () {
             );
 
 
-        if (
-            welcomeMessage &&
-            username
-        ) {
+        const welcomeMessage =
+            getElement(
+                "welcomeMessage"
+            );
+
+
+        if (welcomeMessage) {
 
             welcomeMessage.textContent =
-                "خوش آمدید، " +
-                username;
+                username
+                    ? "خوش آمدید، " + username
+                    : "خوش آمدید";
         }
 
 
         const studentTotal =
-            getElement(
-                "studentTotal"
-            );
+            getElement("studentTotal");
 
         const teacherTotal =
-            getElement(
-                "teacherTotal"
-            );
+            getElement("teacherTotal");
 
         const hostelTotal =
-            getElement(
-                "hostelTotal"
-            );
+            getElement("hostelTotal");
 
         const classTotal =
-            getElement(
-                "classTotal"
-            );
+            getElement("classTotal");
 
 
         const results =
@@ -1169,7 +1365,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                     STUDENTS_TABLE,
                     "residence_type",
                     "ہاسٹل"
-                )
+                ),
+
+                getClassCount()
 
             ]);
 
@@ -1177,87 +1375,145 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (studentTotal) {
 
             studentTotal.textContent =
-                results[0].status ===
-                "fulfilled"
-                    ? results[0].value
-                    : 0;
+                results[0].status === "fulfilled"
+                    ? String(results[0].value)
+                    : "0";
         }
 
 
         if (teacherTotal) {
 
             teacherTotal.textContent =
-                results[1].status ===
-                "fulfilled"
-                    ? results[1].value
-                    : 0;
+                results[1].status === "fulfilled"
+                    ? String(results[1].value)
+                    : "0";
         }
 
 
         if (hostelTotal) {
 
             hostelTotal.textContent =
-                results[2].status ===
-                "fulfilled"
-                    ? results[2].value
-                    : 0;
+                results[2].status === "fulfilled"
+                    ? String(results[2].value)
+                    : "0";
         }
 
 
         if (classTotal) {
 
             classTotal.textContent =
-                "0";
+                results[3].status === "fulfilled"
+                    ? String(results[3].value)
+                    : "0";
         }
 
 
-        const studentsMenu =
-            getElement(
-                "studentsMenu"
-            );
+        const menuRoutes = {
 
-        const teachersMenu =
-            getElement(
-                "teachersMenu"
-            );
+            studentsMenu:
+                "students.html",
 
+            teachersMenu:
+                "teachers.html"
 
-        if (studentsMenu) {
-
-            studentsMenu.onclick =
-                function () {
-
-                    window.location.href =
-                        "students.html";
-                };
-        }
+        };
 
 
-        if (teachersMenu) {
+        Object.entries(
+            menuRoutes
+        ).forEach(
+            function (
+                [id, page]
+            ) {
 
-            teachersMenu.onclick =
-                function () {
+                const button =
+                    getElement(id);
 
-                    window.location.href =
-                        "teachers.html";
-                };
-        }
+
+                if (!button) {
+                    return;
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            id === "teachersMenu" &&
+                            role !== "admin"
+                        ) {
+
+                            alert(
+                                "اساتذہ کا انتظام صرف ایڈمن کے لیے ہے۔"
+                            );
+
+                            return;
+                        }
+
+
+                        window.location.href =
+                            page;
+                    }
+                );
+            }
+        );
+
+
+        const futureMenus = [
+
+            "attendanceMenu",
+            "hostelMenu",
+            "feesMenu",
+            "reportsMenu"
+
+        ];
+
+
+        futureMenus.forEach(
+            function (id) {
+
+                const button =
+                    getElement(id);
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        alert(
+                            "یہ حصہ اگلے مرحلے میں شامل کیا جائے گا۔"
+                        );
+                    }
+                );
+            }
+        );
     }
 
 
     /* =====================================================
-       GLOBAL BACK TO DASHBOARD
+       GLOBAL BACK BUTTON
     ===================================================== */
 
-    const backToDashboard =
-        getElement(
-            "backToDashboard"
-        );
+    function initializeBackButton() {
+
+        const backButton =
+            getElement(
+                "backToDashboard"
+            );
 
 
-    if (backToDashboard) {
+        if (!backButton) {
+            return;
+        }
 
-        backToDashboard.addEventListener(
+
+        backButton.addEventListener(
             "click",
             function () {
 
@@ -1269,16 +1525,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       GLOBAL LOGOUT
+       GLOBAL LOGOUT BUTTON
     ===================================================== */
 
-    const logoutButton =
-        getElement(
-            "logoutButton"
-        );
+    function initializeLogoutButton() {
+
+        const logoutButton =
+            getElement(
+                "logoutButton"
+            );
 
 
-    if (logoutButton) {
+        if (!logoutButton) {
+            return;
+        }
+
 
         logoutButton.addEventListener(
             "click",
@@ -1288,12 +1549,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       START
+       INITIAL START
     ===================================================== */
 
     initializeHomePage();
 
     initializeLoginPage();
+
+    initializeBackButton();
+
+    initializeLogoutButton();
 
     await initializeDashboardPage();
 
@@ -1301,121 +1566,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     /* =====================================================
        PART 1 ENDS HERE
 
-       DO NOT ADD:
-       });
+       DO NOT ADD });
 
-       PART 2 MUST BE PASTED DIRECTLY BELOW THIS LINE.
+       PASTE PART 2 DIRECTLY BELOW THIS LINE
     ===================================================== */
-   /* =========================================================
+
+  /* =========================================================
    MASTER SCRIPT.JS
-   PART 2
+   PART 2 / 3
    COMPLETE STUDENT MODULE
-   CORRECTED VERSION
 ========================================================= */
-
-
-/* =====================================================
-   COMMON HELPERS
-===================================================== */
-
-function escapeHtml(value) {
-
-    return safeString(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-function onlyDigits(value) {
-
-    return safeString(value)
-        .replace(/\D/g, "");
-}
-
-
-function normalizePhone(value) {
-
-    return onlyDigits(value)
-        .slice(0, 11);
-}
-
-
-function canonicalCNIC(value) {
-
-    return onlyDigits(value)
-        .slice(0, 13);
-}
-
-
-function formatCNIC(value) {
-
-    const digits =
-        canonicalCNIC(value);
-
-
-    if (digits.length !== 13) {
-
-        return digits;
-    }
-
-
-    return (
-        digits.slice(0, 5) +
-        "-" +
-        digits.slice(5, 12) +
-        "-" +
-        digits.slice(12)
-    );
-}
-
-
-function isUrduName(value) {
-
-    const text =
-        safeString(value);
-
-
-    if (!text) {
-        return false;
-    }
-
-
-    return /^[\u0600-\u06FF\s]+$/u.test(
-        text
-    );
-}
-
-
-function getRecordValue(
-    record,
-    key,
-    fallback = ""
-) {
-
-    if (!record) {
-        return fallback;
-    }
-
-
-    const value =
-        record[key];
-
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-
-        return fallback;
-    }
-
-
-    return value;
-}
 
 
 /* =====================================================
@@ -1436,135 +1596,296 @@ let isDeletingStudent = false;
 ===================================================== */
 
 const studentFormContainer =
-    getElement(
-        "studentFormContainer"
-    );
+    getElement("studentFormContainer");
 
 const studentForm =
-    getElement(
-        "studentForm"
-    );
+    getElement("studentForm");
 
 const studentFormTitle =
-    getElement(
-        "formTitle"
-    );
+    getElement("formTitle");
 
 const studentFormMessage =
-    getElement(
-        "studentFormMessage"
-    );
+    getElement("studentFormMessage");
 
 const showStudentFormButton =
-    getElement(
-        "showStudentForm"
-    );
+    getElement("showStudentForm");
 
 const cancelStudentFormButton =
-    getElement(
-        "cancelStudentForm"
-    );
+    getElement("cancelStudentForm");
 
 const saveStudentButton =
-    getElement(
-        "saveStudentButton"
-    );
+    getElement("saveStudentButton");
 
 const studentSearch =
-    getElement(
-        "studentSearch"
-    );
+    getElement("studentSearch");
 
 const studentsList =
-    getElement(
-        "studentsList"
-    );
+    getElement("studentsList");
 
 const studentCount =
-    getElement(
-        "studentCount"
-    );
+    getElement("studentCount");
 
 const admissionType =
-    getElement(
-        "admissionType"
-    );
+    getElement("admissionType");
 
 const previousMadrassaGroup =
-    getElement(
-        "previousMadrassaGroup"
-    );
+    getElement("previousMadrassaGroup");
 
 const transferDateGroup =
-    getElement(
-        "transferDateGroup"
-    );
+    getElement("transferDateGroup");
 
 const residenceType =
-    getElement(
-        "residenceType"
-    );
+    getElement("residenceType");
 
 const mahramSection =
-    getElement(
-        "mahramSection"
-    );
+    getElement("mahramSection");
 
 const mahramList =
-    getElement(
-        "mahramList"
-    );
+    getElement("mahramList");
 
 const addMahramButton =
-    getElement(
-        "addMahram"
-    );
+    getElement("addMahram");
 
 const studentDetailsOverlay =
-    getElement(
-        "studentDetailsOverlay"
-    );
+    getElement("studentDetailsOverlay");
 
 const studentDetailsTitle =
-    getElement(
-        "studentDetailsTitle"
-    );
+    getElement("studentDetailsTitle");
 
 const studentDetailsContent =
-    getElement(
-        "studentDetailsContent"
-    );
+    getElement("studentDetailsContent");
 
 const closeStudentDetailsButton =
-    getElement(
-        "closeStudentDetails"
-    );
+    getElement("closeStudentDetails");
 
 
 /* =====================================================
-   GET STUDENT FIELD VALUE
+   STUDENT RECORD HELPERS
 ===================================================== */
 
-function getStudentValue(id) {
+function getStudentRecordValue(
+    student,
+    keys,
+    fallback = ""
+) {
 
-    const element =
-        getElement(id);
+    return getRecordValue(
+        student,
+        keys,
+        fallback
+    );
+}
 
 
-    if (!element) {
+function getStudentName(student) {
 
-        return "";
-    }
+    return getStudentRecordValue(
+        student,
+        [
+            "name",
+            "student_name",
+            "studentName"
+        ],
+        ""
+    );
+}
 
 
-    return safeString(
-        element.value
+function getStudentAdmissionNo(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "admission_no",
+            "admissionNo"
+        ],
+        ""
+    );
+}
+
+
+function getStudentAdmissionType(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "admission_type",
+            "admissionType"
+        ],
+        ""
+    );
+}
+
+
+function getStudentFatherName(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "father_name",
+            "fatherName"
+        ],
+        ""
+    );
+}
+
+
+function getStudentGuardianName(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "guardian_name",
+            "guardianName"
+        ],
+        ""
+    );
+}
+
+
+function getStudentCNIC(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "cnic",
+            "studentCNIC"
+        ],
+        ""
+    );
+}
+
+
+function getStudentPhone(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "phone",
+            "studentPhone"
+        ],
+        ""
+    );
+}
+
+
+function getStudentDOB(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "date_of_birth",
+            "dateOfBirth"
+        ],
+        ""
+    );
+}
+
+
+function getStudentClass(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "student_class",
+            "studentclass",
+            "class_name",
+            "className",
+            "class"
+        ],
+        ""
+    );
+}
+
+
+function getStudentAdmissionDate(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "admission_date",
+            "admissionDate"
+        ],
+        ""
+    );
+}
+
+
+function getStudentAddress(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "address"
+        ],
+        ""
+    );
+}
+
+
+function getStudentResidence(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "residence_type",
+            "residenceType",
+            "residence"
+        ],
+        ""
+    );
+}
+
+
+function getStudentPreviousMadrassa(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "previous_madrassa",
+            "previousMadrassa"
+        ],
+        ""
+    );
+}
+
+
+function getStudentTransferDate(student) {
+
+    return getStudentRecordValue(
+        student,
+        [
+            "transfer_date",
+            "transferDate"
+        ],
+        ""
     );
 }
 
 
 /* =====================================================
-   ADMISSION TYPE
+   STUDENT FORM VALUE
+===================================================== */
+
+function getStudentValue(id) {
+
+    const field =
+        getElement(id);
+
+
+    if (!field) {
+        return "";
+    }
+
+
+    return safeString(
+        field.value
+    );
+}
+
+
+/* =====================================================
+   TRANSFER FIELDS
 ===================================================== */
 
 function updateTransferFields() {
@@ -1600,24 +1921,24 @@ function updateTransferFields() {
 
     if (!isTransfer) {
 
-        const previous =
-            getElement(
-                "previousMadrassa"
-            );
+        const previousMadrassa =
+            getElement("previousMadrassa");
 
         const transferDate =
-            getElement(
-                "transferDate"
-            );
+            getElement("transferDate");
 
 
-        if (previous) {
-            previous.value = "";
+        if (previousMadrassa) {
+
+            previousMadrassa.value =
+                "";
         }
 
 
         if (transferDate) {
-            transferDate.value = "";
+
+            transferDate.value =
+                "";
         }
     }
 }
@@ -1630,44 +1951,25 @@ function updateTransferFields() {
 const MAHRAM_RELATIONS = [
 
     "والد",
-
     "بھائی",
-
     "بیٹا",
-
     "دادا",
-
     "نانا",
-
     "چچا",
-
     "ماموں",
-
     "بھتیجا",
-
     "بھانجا",
-
     "شوہر",
-
     "سسر",
-
     "دیگر"
 
 ];
 
 
-/* =====================================================
-   NORMALIZE OLD MAHRAM RELATION
-===================================================== */
+function normalizeMahramRelation(value) {
 
-function normalizeMahramRelation(
-    relation
-) {
-
-    const value =
-        safeString(
-            relation
-        );
+    const relation =
+        safeString(value);
 
 
     const relationMap = {
@@ -1710,10 +2012,52 @@ function normalizeMahramRelation(
 
     return (
         relationMap[
-            value.toLowerCase()
+            relation.toLowerCase()
         ] ||
-        value
+        relation
     );
+}
+
+
+/* =====================================================
+   PARSE MAHRAMS
+===================================================== */
+
+function parseMahrams(value) {
+
+    if (
+        Array.isArray(value)
+    ) {
+
+        return value;
+    }
+
+
+    if (!value) {
+        return [];
+    }
+
+
+    try {
+
+        const parsed =
+            JSON.parse(value);
+
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+
+    } catch (error) {
+
+        console.error(
+            "Mahram parse error:",
+            error
+        );
+
+        return [];
+    }
 }
 
 
@@ -1749,13 +2093,11 @@ function createMahramRow(
 
 
     const row =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     row.className =
-        "mahram-row";
+        "mahram-card mahram-row";
 
 
     const selectedRelation =
@@ -1764,20 +2106,18 @@ function createMahramRow(
         );
 
 
-    const options =
+    const relationOptions =
         MAHRAM_RELATIONS
             .map(
                 function (relation) {
 
                     const selected =
-                        relation ===
-                        selectedRelation
+                        relation === selectedRelation
                             ? "selected"
                             : "";
 
 
                     return `
-
                         <option
                             value="${escapeHtml(relation)}"
                             ${selected}
@@ -1792,102 +2132,111 @@ function createMahramRow(
 
     row.innerHTML = `
 
-        <div class="form-group">
+        <div class="mahram-header">
 
-            <label>
-                محرم کا نام
-            </label>
+            <strong>
+                محرم
+            </strong>
 
-            <input
-                type="text"
-                class="mahram-name"
-                value="${escapeHtml(
-                    mahram.name || ""
-                )}"
-                placeholder="محرم کا نام"
+            <button
+                type="button"
+                class="remove-mahram"
             >
+                🗑️ حذف کریں
+            </button>
 
         </div>
 
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label>
-                رشتہ
-            </label>
+            <div class="form-group">
 
-            <select
-                class="mahram-relation"
-            >
+                <label>
+                    محرم کا نام
+                </label>
 
-                <option value="">
-                    رشتہ منتخب کریں
-                </option>
+                <input
+                    type="text"
+                    class="mahram-name"
+                    value="${escapeHtml(
+                        mahram.name || ""
+                    )}"
+                    placeholder="محرم کا نام"
+                >
 
-                ${options}
+            </div>
 
-            </select>
+
+            <div class="form-group">
+
+                <label>
+                    رشتہ
+                </label>
+
+                <select
+                    class="mahram-relation"
+                >
+
+                    <option value="">
+                        رشتہ منتخب کریں
+                    </option>
+
+                    ${relationOptions}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    موبائل نمبر
+                </label>
+
+                <input
+                    type="tel"
+                    class="mahram-phone"
+                    inputmode="numeric"
+                    maxlength="11"
+                    value="${escapeHtml(
+                        normalizePhone(
+                            mahram.phone
+                        )
+                    )}"
+                    placeholder="03XXXXXXXXX"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    شناختی کارڈ نمبر
+                </label>
+
+                <input
+                    type="text"
+                    class="mahram-cnic"
+                    inputmode="numeric"
+                    maxlength="15"
+                    value="${escapeHtml(
+                        formatCNIC(
+                            mahram.cnic
+                        )
+                    )}"
+                    placeholder="00000-0000000-0"
+                >
+
+            </div>
 
         </div>
-
-
-        <div class="form-group">
-
-            <label>
-                موبائل نمبر
-            </label>
-
-            <input
-                type="tel"
-                inputmode="numeric"
-                maxlength="11"
-                class="mahram-phone"
-                value="${escapeHtml(
-                    normalizePhone(
-                        mahram.phone
-                    )
-                )}"
-                placeholder="03XXXXXXXXX"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                شناختی کارڈ نمبر
-            </label>
-
-            <input
-                type="text"
-                inputmode="numeric"
-                maxlength="15"
-                class="mahram-cnic"
-                value="${escapeHtml(
-                    formatCNIC(
-                        mahram.cnic
-                    )
-                )}"
-                placeholder="XXXXX-XXXXXXX-X"
-            >
-
-        </div>
-
-
-        <button
-            type="button"
-            class="remove-mahram"
-        >
-            🗑️ محرم حذف کریں
-        </button>
-
     `;
 
 
-    mahramList.appendChild(
-        row
-    );
+    mahramList.appendChild(row);
 
 
     const phoneInput =
@@ -1895,12 +2244,10 @@ function createMahramRow(
             ".mahram-phone"
         );
 
-
     const cnicInput =
         row.querySelector(
             ".mahram-cnic"
         );
-
 
     const removeButton =
         row.querySelector(
@@ -1952,86 +2299,83 @@ function createMahramRow(
 
 
 /* =====================================================
-   GET MAHRAMS FROM FORM
+   GET MAHRAMS
 ===================================================== */
 
 function getMahramsFromForm() {
 
     if (!mahramList) {
-
         return [];
     }
-
-
-    const rows =
-        mahramList.querySelectorAll(
-            ".mahram-row"
-        );
 
 
     const mahrams = [];
 
 
-    rows.forEach(
-        function (row) {
+    mahramList
+        .querySelectorAll(
+            ".mahram-row"
+        )
+        .forEach(
+            function (row) {
 
-            const name =
-                safeString(
-                    row.querySelector(
-                        ".mahram-name"
-                    )?.value
-                );
-
-
-            const relation =
-                safeString(
-                    row.querySelector(
-                        ".mahram-relation"
-                    )?.value
-                );
+                const name =
+                    safeString(
+                        row.querySelector(
+                            ".mahram-name"
+                        )?.value
+                    );
 
 
-            const phone =
-                normalizePhone(
-                    row.querySelector(
-                        ".mahram-phone"
-                    )?.value
-                );
+                const relation =
+                    safeString(
+                        row.querySelector(
+                            ".mahram-relation"
+                        )?.value
+                    );
 
 
-            const cnic =
-                canonicalCNIC(
-                    row.querySelector(
-                        ".mahram-cnic"
-                    )?.value
-                );
+                const phone =
+                    normalizePhone(
+                        row.querySelector(
+                            ".mahram-phone"
+                        )?.value
+                    );
 
 
-            if (
-                name ||
-                relation ||
-                phone ||
-                cnic
-            ) {
+                const cnic =
+                    canonicalCNIC(
+                        row.querySelector(
+                            ".mahram-cnic"
+                        )?.value
+                    );
 
-                mahrams.push({
 
-                    name:
-                        name,
+                if (
+                    name ||
+                    relation ||
+                    phone ||
+                    cnic
+                ) {
 
-                    relation:
-                        relation,
+                    mahrams.push({
 
-                    phone:
-                        phone,
+                        name:
+                            name,
 
-                    cnic:
-                        cnic
+                        relation:
+                            relation,
 
-                });
+                        phone:
+                            phone,
+
+                        cnic:
+                            cnic
+
+                    });
+                }
             }
-        }
-    );
+        );
 
 
     return mahrams;
@@ -2039,62 +2383,10 @@ function getMahramsFromForm() {
 
 
 /* =====================================================
-   PARSE SAVED MAHRAMS
+   LOAD MAHRAMS
 ===================================================== */
 
-function parseMahrams(value) {
-
-    if (
-        Array.isArray(
-            value
-        )
-    ) {
-
-        return value;
-    }
-
-
-    if (!value) {
-
-        return [];
-    }
-
-
-    try {
-
-        const parsed =
-            JSON.parse(
-                value
-            );
-
-
-        return Array.isArray(
-            parsed
-        )
-            ? parsed
-            : [];
-
-
-    } catch (error) {
-
-        console.error(
-            "Mahram parse error:",
-            error
-        );
-
-
-        return [];
-    }
-}
-
-
-/* =====================================================
-   LOAD MAHRAMS INTO FORM
-===================================================== */
-
-function loadMahramsIntoForm(
-    value
-) {
+function loadMahramsIntoForm(value) {
 
     if (!mahramList) {
         return;
@@ -2105,25 +2397,21 @@ function loadMahramsIntoForm(
         "";
 
 
-    const mahrams =
-        parseMahrams(
-            value
+    parseMahrams(value)
+        .slice(0, 5)
+        .forEach(
+            function (mahram) {
+
+                createMahramRow(
+                    mahram
+                );
+            }
         );
-
-
-    mahrams.forEach(
-        function (mahram) {
-
-            createMahramRow(
-                mahram
-            );
-        }
-    );
 }
 
 
 /* =====================================================
-   RESIDENCE TYPE
+   RESIDENCE / HOSTEL
 ===================================================== */
 
 function updateMahramSection() {
@@ -2178,14 +2466,10 @@ function updateMahramSection() {
 function initializeStudentFormatting() {
 
     const phone =
-        getElement(
-            "phone"
-        );
+        getElement("phone");
 
     const cnic =
-        getElement(
-            "studentCNIC"
-        );
+        getElement("studentCNIC");
 
 
     if (phone) {
@@ -2220,7 +2504,7 @@ function initializeStudentFormatting() {
 
 
 /* =====================================================
-   GET STUDENT FORM DATA
+   STUDENT FORM DATA
 ===================================================== */
 
 function getStudentFormData() {
@@ -2309,7 +2593,7 @@ function getStudentFormData() {
 
 
 /* =====================================================
-   VALIDATE STUDENT
+   STUDENT VALIDATION
 ===================================================== */
 
 function validateStudentForm() {
@@ -2411,13 +2695,10 @@ function validateStudentForm() {
 
 
     if (
-        data.admission_type ===
-        "منتقلی"
+        data.admission_type === "منتقلی"
     ) {
 
-        if (
-            !data.previous_madrassa
-        ) {
+        if (!data.previous_madrassa) {
 
             return "سابقہ مدرسہ درج کریں۔";
         }
@@ -2431,8 +2712,7 @@ function validateStudentForm() {
 
 
     if (
-        data.residence_type ===
-        "ہاسٹل"
+        data.residence_type === "ہاسٹل"
     ) {
 
         if (
@@ -2440,6 +2720,14 @@ function validateStudentForm() {
         ) {
 
             return "ہاسٹل کی طالبہ کے لیے کم از کم ایک محرم ضروری ہے۔";
+        }
+
+
+        if (
+            data.mahrams.length > 5
+        ) {
+
+            return "زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔";
         }
 
 
@@ -2491,9 +2779,7 @@ function validateStudentForm() {
                 mahram.phone &&
                 (
                     mahram.phone.length !== 11 ||
-                    !mahram.phone.startsWith(
-                        "03"
-                    )
+                    !mahram.phone.startsWith("03")
                 )
             ) {
 
@@ -2525,7 +2811,7 @@ function validateStudentForm() {
 
 
 /* =====================================================
-   DUPLICATE CHECK
+   STUDENT DUPLICATE CHECK
 ===================================================== */
 
 async function checkStudentDuplicates(
@@ -2546,9 +2832,7 @@ async function checkStudentDuplicates(
         error
     } =
         await supabaseClient
-            .from(
-                STUDENTS_TABLE
-            )
+            .from(STUDENTS_TABLE)
             .select(
                 "id, admission_no, cnic, phone"
             );
@@ -2560,8 +2844,7 @@ async function checkStudentDuplicates(
 
 
     for (
-        const row of
-        rows || []
+        const row of rows || []
     ) {
 
         if (
@@ -2588,10 +2871,10 @@ async function checkStudentDuplicates(
 
 
         if (
+            data.cnic &&
             canonicalCNIC(
                 row.cnic
-            ) ===
-            data.cnic
+            ) === data.cnic
         ) {
 
             return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
@@ -2599,10 +2882,10 @@ async function checkStudentDuplicates(
 
 
         if (
+            data.phone &&
             normalizePhone(
                 row.phone
-            ) ===
-            data.phone
+            ) === data.phone
         ) {
 
             return "یہ موبائل نمبر پہلے سے موجود ہے۔";
@@ -2630,15 +2913,15 @@ function resetStudentForm() {
         null;
 
 
-    const editId =
+    const editStudentId =
         getElement(
             "editStudentId"
         );
 
 
-    if (editId) {
+    if (editStudentId) {
 
-        editId.value =
+        editStudentId.value =
             "";
     }
 
@@ -2662,6 +2945,13 @@ function resetStudentForm() {
     }
 
 
+    if (saveStudentButton) {
+
+        saveStudentButton.textContent =
+            "💾 طالبہ محفوظ کریں";
+    }
+
+
     updateTransferFields();
 
     updateMahramSection();
@@ -2669,7 +2959,7 @@ function resetStudentForm() {
 
 
 /* =====================================================
-   OPEN STUDENT FORM
+   OPEN / CLOSE STUDENT FORM
 ===================================================== */
 
 function openStudentForm() {
@@ -2679,32 +2969,27 @@ function openStudentForm() {
     }
 
 
-    if (studentFormContainer) {
-
-        studentFormContainer.classList.remove(
-            "hidden"
-        );
+    if (!studentFormContainer) {
+        return;
     }
 
 
-    if (studentFormContainer) {
+    studentFormContainer.classList.remove(
+        "hidden"
+    );
 
-        window.scrollTo({
 
-            top:
-                studentFormContainer.offsetTop,
+    window.scrollTo({
 
-            behavior:
-                "smooth"
+        top:
+            studentFormContainer.offsetTop,
 
-        });
-    }
+        behavior:
+            "smooth"
+
+    });
 }
 
-
-/* =====================================================
-   CLOSE STUDENT FORM
-===================================================== */
 
 function closeStudentForm() {
 
@@ -2737,8 +3022,16 @@ async function loadStudents() {
 
         studentsList.innerHTML = `
 
-            <div class="empty-state">
-                ⏳ ریکارڈ لوڈ ہو رہا ہے...
+            <div class="empty-students">
+
+                <div class="empty-icon">
+                    ⏳
+                </div>
+
+                <p>
+                    ریکارڈ لوڈ ہو رہا ہے...
+                </p>
+
             </div>
         `;
     }
@@ -2751,9 +3044,7 @@ async function loadStudents() {
             error
         } =
             await supabaseClient
-                .from(
-                    STUDENTS_TABLE
-                )
+                .from(STUDENTS_TABLE)
                 .select("*")
                 .order(
                     "id",
@@ -2801,8 +3092,16 @@ async function loadStudents() {
 
             studentsList.innerHTML = `
 
-                <div class="empty-state">
-                    طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        ⚠️
+                    </div>
+
+                    <p>
+                        طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔
+                    </p>
+
                 </div>
             `;
         }
@@ -2824,21 +3123,35 @@ function displayStudents(
 
 
     if (
-        !Array.isArray(
-            students
-        ) ||
+        !Array.isArray(students) ||
         students.length === 0
     ) {
 
         studentsList.innerHTML = `
 
-            <div class="empty-state">
-                ابھی کوئی طالبہ موجود نہیں۔
+            <div class="empty-students">
+
+                <div class="empty-icon">
+                    👧
+                </div>
+
+                <h3>
+                    کوئی طالبہ موجود نہیں
+                </h3>
+
+                <p>
+                    ابھی کوئی ریکارڈ موجود نہیں۔
+                </p>
+
             </div>
         `;
 
         return;
     }
+
+
+    const role =
+        getCurrentRole();
 
 
     studentsList.innerHTML =
@@ -2851,43 +3164,56 @@ function displayStudents(
 
 
                     const name =
-                        getRecordValue(
-                            student,
-                            "name",
-                            "-"
-                        );
+                        getStudentName(
+                            student
+                        ) || "-";
 
 
                     const admissionNo =
-                        getRecordValue(
-                            student,
-                            "admission_no",
-                            "-"
-                        );
+                        getStudentAdmissionNo(
+                            student
+                        ) || "-";
 
 
                     const studentClass =
-                        getRecordValue(
-                            student,
-                            "student_class",
-                            "-"
-                        );
+                        getStudentClass(
+                            student
+                        ) || "-";
 
 
                     const residence =
-                        getRecordValue(
-                            student,
-                            "residence_type",
-                            "-"
-                        );
+                        getStudentResidence(
+                            student
+                        ) || "-";
 
 
                     const phone =
-                        getRecordValue(
-                            student,
-                            "phone",
-                            "-"
-                        );
+                        getStudentPhone(
+                            student
+                        ) || "-";
+
+
+                    const adminButtons =
+                        role === "admin"
+                            ? `
+
+                                <button
+                                    type="button"
+                                    class="edit-student"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    ✏️ تبدیل کریں
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="delete-student"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    🗑️ حذف کریں
+                                </button>
+                            `
+                            : "";
 
 
                     return `
@@ -2952,21 +3278,7 @@ function displayStudents(
                                     👁️ تفصیلات
                                 </button>
 
-                                <button
-                                    type="button"
-                                    class="edit-student"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    ✏️ تبدیل کریں
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="delete-student"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    🗑️ حذف کریں
-                                </button>
+                                ${adminButtons}
 
                             </div>
 
@@ -2975,9 +3287,6 @@ function displayStudents(
                 }
             )
             .join("");
-
-
-    attachStudentCardEvents();
 }
 
 
@@ -3015,23 +3324,41 @@ function searchStudents() {
                 const searchable =
                     [
 
-                        student.admission_no,
+                        getStudentAdmissionNo(
+                            student
+                        ),
 
-                        student.name,
+                        getStudentName(
+                            student
+                        ),
 
-                        student.father_name,
+                        getStudentFatherName(
+                            student
+                        ),
 
-                        student.guardian_name,
+                        getStudentGuardianName(
+                            student
+                        ),
 
-                        student.cnic,
+                        getStudentCNIC(
+                            student
+                        ),
 
-                        student.phone,
+                        getStudentPhone(
+                            student
+                        ),
 
-                        student.student_class,
+                        getStudentClass(
+                            student
+                        ),
 
-                        student.address,
+                        getStudentAddress(
+                            student
+                        ),
 
-                        student.residence_type
+                        getStudentResidence(
+                            student
+                        )
 
                     ]
                         .map(
@@ -3095,116 +3422,156 @@ function editStudent(id) {
         student.id;
 
 
-    const editId =
+    const editStudentId =
         getElement(
             "editStudentId"
         );
 
 
-    if (editId) {
+    if (editStudentId) {
 
-        editId.value =
-            String(
-                student.id
-            );
+        editStudentId.value =
+            String(student.id);
     }
 
 
     const fields = {
 
         admissionNo:
-            student.admission_no,
+            getStudentAdmissionNo(
+                student
+            ),
 
         admissionType:
-            student.admission_type,
+            getStudentAdmissionType(
+                student
+            ),
 
         studentName:
-            student.name,
+            getStudentName(
+                student
+            ),
 
         fatherName:
-            student.father_name,
+            getStudentFatherName(
+                student
+            ),
 
         guardianName:
-            student.guardian_name,
+            getStudentGuardianName(
+                student
+            ),
 
         studentCNIC:
             formatCNIC(
-                student.cnic
+                getStudentCNIC(
+                    student
+                )
             ),
 
         phone:
             normalizePhone(
-                student.phone
+                getStudentPhone(
+                    student
+                )
             ),
 
         dateOfBirth:
-            student.date_of_birth,
+            getStudentDOB(
+                student
+            ),
 
         studentClass:
-            student.student_class,
+            getStudentClass(
+                student
+            ),
 
         admissionDate:
-            student.admission_date,
+            getStudentAdmissionDate(
+                student
+            ),
 
         address:
-            student.address,
+            getStudentAddress(
+                student
+            ),
 
         residenceType:
-            student.residence_type,
+            getStudentResidence(
+                student
+            ),
 
         previousMadrassa:
-            student.previous_madrassa,
+            getStudentPreviousMadrassa(
+                student
+            ),
 
         transferDate:
-            student.transfer_date
+            getStudentTransferDate(
+                student
+            )
 
     };
 
 
-    Object.entries(
-        fields
-    ).forEach(
-        function (
-            [idName, value]
-        ) {
+    Object.entries(fields)
+        .forEach(
+            function (
+                [idName, value]
+            ) {
 
-            const field =
-                getElement(
-                    idName
-                );
+                const field =
+                    getElement(idName);
 
 
-            if (field) {
+                if (field) {
 
-                field.value =
-                    value === null ||
-                    value === undefined
-                        ? ""
-                        : String(value);
+                    field.value =
+                        value === null ||
+                        value === undefined
+                            ? ""
+                            : String(value);
+                }
             }
-        }
-    );
+        );
 
 
     updateTransferFields();
 
 
     loadMahramsIntoForm(
-        student.mahrams
+        getStudentRecordValue(
+            student,
+            [
+                "mahrams"
+            ],
+            []
+        )
     );
 
 
-    if (
-        mahramSection &&
-        residenceType
-    ) {
+    if (mahramSection) {
 
         mahramSection.classList.toggle(
             "hidden",
-            safeString(
-                residenceType.value
+            getStudentResidence(
+                student
             ) !== "ہاسٹل"
         );
+    }
+
+
+    if (
+        getStudentResidence(
+            student
+        ) === "ہاسٹل" &&
+        mahramList &&
+        mahramList.querySelectorAll(
+            ".mahram-row"
+        ).length === 0
+    ) {
+
+        createMahramRow();
     }
 
 
@@ -3212,6 +3579,13 @@ function editStudent(id) {
 
         studentFormTitle.textContent =
             "طالبہ کا ریکارڈ تبدیل کریں";
+    }
+
+
+    if (saveStudentButton) {
+
+        saveStudentButton.textContent =
+            "💾 تبدیلی محفوظ کریں";
     }
 
 
@@ -3253,7 +3627,7 @@ function showStudentDetails(id) {
     ) {
 
         console.error(
-            "Student details modal elements not found."
+            "Student details modal نہیں ملا۔"
         );
 
         return;
@@ -3262,24 +3636,17 @@ function showStudentDetails(id) {
 
     const mahrams =
         parseMahrams(
-            student.mahrams
+            getStudentRecordValue(
+                student,
+                "mahrams",
+                []
+            )
         );
 
 
-    let mahramHtml = `
-
-        <p>
-            کوئی محرم درج نہیں۔
-        </p>
-    `;
-
-
-    if (
-        mahrams.length > 0
-    ) {
-
-        mahramHtml =
-            mahrams
+    const mahramHtml =
+        mahrams.length
+            ? mahrams
                 .map(
                     function (
                         mahram,
@@ -3288,11 +3655,11 @@ function showStudentDetails(id) {
 
                         return `
 
-                            <div class="detail-item">
+                            <div class="mahram-card">
 
-                                <h4>
+                                <h3>
                                     محرم ${index + 1}
-                                </h4>
+                                </h3>
 
                                 <p>
                                     <strong>
@@ -3342,15 +3709,19 @@ function showStudentDetails(id) {
                         `;
                     }
                 )
-                .join("");
-    }
+                .join("")
+            : `
+                <p>
+                    کوئی محرم درج نہیں۔
+                </p>
+            `;
 
 
     if (studentDetailsTitle) {
 
         studentDetailsTitle.textContent =
-            safeString(
-                student.name
+            getStudentName(
+                student
             ) ||
             "طالبہ کی تفصیلات";
     }
@@ -3358,184 +3729,154 @@ function showStudentDetails(id) {
 
     studentDetailsContent.innerHTML = `
 
-        <div class="student-detail-section">
+        <h3>
+            بنیادی معلومات
+        </h3>
 
-            <h3>
-                بنیادی معلومات
-            </h3>
+        <p>
+            <strong>داخلہ نمبر:</strong>
+            ${escapeHtml(
+                getStudentAdmissionNo(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    داخلہ نمبر:
-                </strong>
+        <p>
+            <strong>داخلہ کی قسم:</strong>
+            ${escapeHtml(
+                getStudentAdmissionType(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-                ${escapeHtml(
-                    student.admission_no || "-"
-                )}
-            </p>
+        <p>
+            <strong>نام:</strong>
+            ${escapeHtml(
+                getStudentName(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    داخلہ کی قسم:
-                </strong>
+        <p>
+            <strong>والد کا نام:</strong>
+            ${escapeHtml(
+                getStudentFatherName(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-                ${escapeHtml(
-                    student.admission_type || "-"
-                )}
-            </p>
+        <p>
+            <strong>سرپرست:</strong>
+            ${escapeHtml(
+                getStudentGuardianName(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    نام:
-                </strong>
+        <p>
+            <strong>شناختی کارڈ:</strong>
+            ${escapeHtml(
+                formatCNIC(
+                    getStudentCNIC(
+                        student
+                    )
+                ) || "-"
+            )}
+        </p>
 
-                ${escapeHtml(
-                    student.name || "-"
-                )}
-            </p>
+        <p>
+            <strong>موبائل:</strong>
+            ${escapeHtml(
+                getStudentPhone(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    والد کا نام:
-                </strong>
-
-                ${escapeHtml(
-                    student.father_name || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    سرپرست:
-                </strong>
-
-                ${escapeHtml(
-                    student.guardian_name || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    شناختی کارڈ:
-                </strong>
-
-                ${escapeHtml(
-                    formatCNIC(
-                        student.cnic
-                    ) || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    موبائل:
-                </strong>
-
-                ${escapeHtml(
-                    student.phone || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    تاریخ پیدائش:
-                </strong>
-
-                ${escapeHtml(
-                    student.date_of_birth || "-"
-                )}
-            </p>
-
-        </div>
+        <p>
+            <strong>تاریخ پیدائش:</strong>
+            ${escapeHtml(
+                getStudentDOB(
+                    student
+                ) || "-"
+            )}
+        </p>
 
 
-        <div class="student-detail-section">
+        <h3>
+            تعلیمی معلومات
+        </h3>
 
-            <h3>
-                تعلیمی معلومات
-            </h3>
+        <p>
+            <strong>جماعت:</strong>
+            ${escapeHtml(
+                getStudentClass(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    جماعت:
-                </strong>
+        <p>
+            <strong>تاریخ داخلہ:</strong>
+            ${escapeHtml(
+                getStudentAdmissionDate(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-                ${escapeHtml(
-                    student.student_class || "-"
-                )}
-            </p>
+        <p>
+            <strong>سابقہ مدرسہ:</strong>
+            ${escapeHtml(
+                getStudentPreviousMadrassa(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    تاریخ داخلہ:
-                </strong>
-
-                ${escapeHtml(
-                    student.admission_date || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    سابقہ مدرسہ:
-                </strong>
-
-                ${escapeHtml(
-                    student.previous_madrassa || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    منتقلی کی تاریخ:
-                </strong>
-
-                ${escapeHtml(
-                    student.transfer_date || "-"
-                )}
-            </p>
-
-        </div>
+        <p>
+            <strong>منتقلی کی تاریخ:</strong>
+            ${escapeHtml(
+                getStudentTransferDate(
+                    student
+                ) || "-"
+            )}
+        </p>
 
 
-        <div class="student-detail-section">
+        <h3>
+            رہائش
+        </h3>
 
-            <h3>
-                رہائش
-            </h3>
+        <p>
+            <strong>رہائش کی قسم:</strong>
+            ${escapeHtml(
+                getStudentResidence(
+                    student
+                ) || "-"
+            )}
+        </p>
 
-            <p>
-                <strong>
-                    رہائش کی قسم:
-                </strong>
-
-                ${escapeHtml(
-                    student.residence_type || "-"
-                )}
-            </p>
-
-            <p>
-                <strong>
-                    پتہ:
-                </strong>
-
-                ${escapeHtml(
-                    student.address || "-"
-                )}
-            </p>
-
-        </div>
+        <p>
+            <strong>پتہ:</strong>
+            ${escapeHtml(
+                getStudentAddress(
+                    student
+                ) || "-"
+            )}
+        </p>
 
 
-        <div class="student-detail-section">
+        <h3>
+            محرم کی معلومات
+        </h3>
 
-            <h3>
-                محرم کی معلومات
-            </h3>
-
-            ${mahramHtml}
-
-        </div>
+        ${mahramHtml}
     `;
 
 
@@ -3546,6 +3887,11 @@ function showStudentDetails(id) {
 
     studentDetailsOverlay.style.display =
         "flex";
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
 }
 
 
@@ -3566,6 +3912,11 @@ function closeStudentDetails() {
 
     studentDetailsOverlay.classList.add(
         "hidden"
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
     );
 }
 
@@ -3611,7 +3962,9 @@ async function deleteStudent(id) {
     const confirmed =
         window.confirm(
             `"${safeString(
-                student.name
+                getStudentName(
+                    student
+                )
             )}" کا ریکارڈ حذف کرنا چاہتے ہیں؟`
         );
 
@@ -3631,9 +3984,7 @@ async function deleteStudent(id) {
             error
         } =
             await supabaseClient
-                .from(
-                    STUDENTS_TABLE
-                )
+                .from(STUDENTS_TABLE)
                 .delete()
                 .eq(
                     "id",
@@ -3674,9 +4025,7 @@ async function deleteStudent(id) {
    SAVE STUDENT
 ===================================================== */
 
-async function saveStudent(
-    event
-) {
+async function saveStudent(event) {
 
     if (event) {
 
@@ -3765,26 +4114,19 @@ async function saveStudent(
 
             result =
                 await supabaseClient
-                    .from(
-                        STUDENTS_TABLE
-                    )
-                    .update(
-                        data
-                    )
+                    .from(STUDENTS_TABLE)
+                    .update(data)
                     .eq(
                         "id",
                         editingStudentId
                     )
                     .select();
 
-
         } else {
 
             result =
                 await supabaseClient
-                    .from(
-                        STUDENTS_TABLE
-                    )
+                    .from(STUDENTS_TABLE)
                     .insert([
                         data
                     ])
@@ -3826,21 +4168,17 @@ async function saveStudent(
 
         const errorText =
             safeString(
-                error &&
-                error.message
+                error?.message
             ).toLowerCase();
 
 
         if (
-            error &&
-            (
-                error.code === "23505" ||
-                errorText.includes(
-                    "duplicate"
-                ) ||
-                errorText.includes(
-                    "unique"
-                )
+            error?.code === "23505" ||
+            errorText.includes(
+                "duplicate"
+            ) ||
+            errorText.includes(
+                "unique"
             )
         ) {
 
@@ -3867,93 +4205,86 @@ async function saveStudent(
                 false;
 
             saveStudentButton.textContent =
-                "💾 طالبہ محفوظ کریں";
+                editingStudentId
+                    ? "💾 تبدیلی محفوظ کریں"
+                    : "💾 طالبہ محفوظ کریں";
         }
     }
 }
 
 
 /* =====================================================
-   STUDENT CARD EVENTS
+   STUDENT LIST EVENT DELEGATION
 ===================================================== */
 
-function attachStudentCardEvents() {
+function initializeStudentListEvents() {
 
     if (!studentsList) {
         return;
     }
 
 
-    studentsList
-        .querySelectorAll(
-            ".view-student"
-        )
-        .forEach(
-            function (button) {
+    studentsList.addEventListener(
+        "click",
+        function (event) {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+            const viewButton =
+                event.target.closest(
+                    ".view-student"
+                );
 
-                        showStudentDetails(
-                            this.dataset.id
-                        );
-                    }
+
+            if (viewButton) {
+
+                showStudentDetails(
+                    viewButton.dataset.id
+                );
+
+                return;
+            }
+
+
+            const editButton =
+                event.target.closest(
+                    ".edit-student"
+                );
+
+
+            if (editButton) {
+
+                editStudent(
+                    editButton.dataset.id
+                );
+
+                return;
+            }
+
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-student"
+                );
+
+
+            if (deleteButton) {
+
+                deleteStudent(
+                    deleteButton.dataset.id
                 );
             }
-        );
-
-
-    studentsList
-        .querySelectorAll(
-            ".edit-student"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        editStudent(
-                            this.dataset.id
-                        );
-                    }
-                );
-            }
-        );
-
-
-    studentsList
-        .querySelectorAll(
-            ".delete-student"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        deleteStudent(
-                            this.dataset.id
-                        );
-                    }
-                );
-            }
-        );
+        }
+    );
 }
 
 
 /* =====================================================
-   INITIALIZE STUDENT PAGE
+   STUDENT PAGE INITIALIZATION
 ===================================================== */
 
 async function initializeStudentsPage() {
 
     if (
-        currentPage !==
-        "students.html"
+        currentPage !== "students.html"
     ) {
 
         return;
@@ -3961,12 +4292,13 @@ async function initializeStudentsPage() {
 
 
     if (!protectPage()) {
-
         return;
     }
 
 
     initializeStudentFormatting();
+
+    initializeStudentListEvents();
 
 
     if (admissionType) {
@@ -4009,11 +4341,6 @@ async function initializeStudentsPage() {
         showStudentFormButton.addEventListener(
             "click",
             function () {
-
-                if (!requireAdmin()) {
-                    return;
-                }
-
 
                 resetStudentForm();
 
@@ -4082,6 +4409,26 @@ async function initializeStudentsPage() {
     }
 
 
+    if (
+        getCurrentRole() !== "admin"
+    ) {
+
+        if (showStudentFormButton) {
+
+            showStudentFormButton.style.display =
+                "none";
+        }
+
+
+        if (studentFormContainer) {
+
+            studentFormContainer.classList.add(
+                "hidden"
+            );
+        }
+    }
+
+
     updateTransferFields();
 
     updateMahramSection();
@@ -4101,23 +4448,20 @@ await initializeStudentsPage();
 /* =====================================================
    PART 2 ENDS HERE
 
-   DO NOT ADD:
-   });
+   DO NOT ADD });
 
-   MAIN DOMContentLoaded WRAPPER IS STILL OPEN.
-   PART 3 MUST BE PASTED DIRECTLY BELOW THIS LINE.
-===================================================== */
+   PASTE PART 3 DIRECTLY BELOW THIS LINE
+===================================================== */  
 
-   
 /* =========================================================
    MASTER SCRIPT.JS
-   PART 3
-   COMPLETE TEACHER MODULE
+   PART 3 / 3
+   TEACHER MODULE + SESSION TIMEOUT + FINAL STARTUP
 ========================================================= */
 
 
 /* =====================================================
-   TEACHER VARIABLES
+   TEACHER STATE
 ===================================================== */
 
 let teachersCache = [];
@@ -4129,50 +4473,39 @@ let isSavingTeacher = false;
 let isDeletingTeacher = false;
 
 
+/* =====================================================
+   TEACHER ELEMENTS
+===================================================== */
+
 const teacherFormContainer =
-    getElement(
-        "teacherFormContainer"
-    );
+    getElement("teacherFormContainer");
 
 const teacherForm =
-    getElement(
-        "teacherForm"
-    );
+    getElement("teacherForm");
 
-const showTeacherFormButton =
-    getElement(
-        "showTeacherForm"
-    );
-
-const cancelTeacherButton =
-    getElement(
-        "cancelTeacherButton"
-    );
-
-const saveTeacherButton =
-    getElement(
-        "saveTeacherButton"
-    );
+const teacherFormTitle =
+    getElement("teacherFormTitle");
 
 const teacherFormMessage =
-    getElement(
-        "teacherFormMessage"
-    );
+    getElement("teacherFormMessage");
+
+const showTeacherFormButton =
+    getElement("showTeacherForm");
+
+const cancelTeacherButton =
+    getElement("cancelTeacherButton");
+
+const saveTeacherButton =
+    getElement("saveTeacherButton");
 
 const teacherSearch =
-    getElement(
-        "teacherSearch"
-    );
+    getElement("teacherSearch");
 
 const teacherList =
-    getElement(
-        "teacherList"
-    );
+    getElement("teacherList");
 
 const teacherListCount =
-    getElement(
-        "teacherListCount"
-    );
+    getElement("teacherListCount");
 
 const teacherTotalPage =
     currentPage === "teachers.html"
@@ -4180,18 +4513,26 @@ const teacherTotalPage =
         : null;
 
 const activeTeacherTotal =
-    getElement(
-        "activeTeacherTotal"
-    );
+    getElement("activeTeacherTotal");
 
 const pendingTeacherTotal =
-    getElement(
-        "pendingTeacherTotal"
-    );
+    getElement("pendingTeacherTotal");
+
+const teacherDetailsOverlay =
+    getElement("teacherDetailsOverlay");
+
+const teacherDetailsTitle =
+    getElement("teacherDetailsTitle");
+
+const teacherDetailsContent =
+    getElement("teacherDetailsContent");
+
+const closeTeacherDetailsButton =
+    getElement("closeTeacherDetails");
 
 
 /* =====================================================
-   TEACHER FIELD VALUE
+   TEACHER HELPERS
 ===================================================== */
 
 function getTeacherValue(id) {
@@ -4211,6 +4552,47 @@ function getTeacherValue(id) {
 }
 
 
+function getTeacherCode(teacher) {
+
+    const code =
+        getRecordValue(
+            teacher,
+            [
+                "teacher_code",
+                "teacherCode",
+                "code"
+            ],
+            ""
+        );
+
+
+    if (code) {
+        return code;
+    }
+
+
+    if (
+        teacher &&
+        teacher.id !== null &&
+        teacher.id !== undefined
+    ) {
+
+        return (
+            "T-" +
+            String(
+                teacher.id
+            ).padStart(
+                3,
+                "0"
+            )
+        );
+    }
+
+
+    return "-";
+}
+
+
 /* =====================================================
    TEACHER INPUT FORMATTING
 ===================================================== */
@@ -4218,14 +4600,10 @@ function getTeacherValue(id) {
 function initializeTeacherFormatting() {
 
     const phone =
-        getElement(
-            "teacherPhone"
-        );
+        getElement("teacherPhone");
 
     const cnic =
-        getElement(
-            "teacherCNIC"
-        );
+        getElement("teacherCNIC");
 
 
     if (phone) {
@@ -4250,7 +4628,7 @@ function initializeTeacherFormatting() {
             function () {
 
                 this.value =
-                    canonicalCNIC(
+                    formatCNIC(
                         this.value
                     );
             }
@@ -4360,21 +4738,13 @@ function validateTeacherForm() {
 
     if (
         data.phone &&
-        data.phone.length !== 11
-    ) {
-
-        return "موبائل نمبر 11 ہندسوں پر مشتمل ہونا چاہیے۔";
-    }
-
-
-    if (
-        data.phone &&
-        !data.phone.startsWith(
-            "03"
+        (
+            data.phone.length !== 11 ||
+            !data.phone.startsWith("03")
         )
     ) {
 
-        return "موبائل نمبر 03 سے شروع ہونا چاہیے۔";
+        return "درست 11 ہندسوں کا موبائل نمبر درج کریں جو 03 سے شروع ہو۔";
     }
 
 
@@ -4392,56 +4762,133 @@ function validateTeacherForm() {
 
 
 /* =====================================================
-   TEACHER DATABASE DATA
-
-   teacher_code is supported when that column exists.
-   If the older Teachers table has no teacher_code column,
-   saveTeacherRecord() automatically retries without it.
+   TEACHER DUPLICATE CHECK
 ===================================================== */
 
-function getTeacherDatabaseData() {
+async function checkTeacherDuplicates(
+    data,
+    currentId = null
+) {
 
-    const data =
-        getTeacherFormData();
+    if (!supabaseClient) {
+
+        throw new Error(
+            "Supabase دستیاب نہیں ہے۔"
+        );
+    }
 
 
-    return {
+    const {
+        data: rows,
+        error
+    } =
+        await supabaseClient
+            .from(TEACHERS_TABLE)
+            .select("*");
 
-        teacher_code:
-            data.teacher_code,
 
-        name:
-            data.name,
+    if (error) {
+        throw error;
+    }
 
-        father_name:
-            data.father_name,
 
-        phone:
-            data.phone,
+    for (
+        const row of rows || []
+    ) {
 
-        cnic:
-            data.cnic,
+        if (
+            currentId !== null &&
+            String(row.id) ===
+            String(currentId)
+        ) {
 
-        qualification:
-            data.qualification,
+            continue;
+        }
 
-        joining_date:
-            data.joining_date,
 
-        address:
-            data.address
+        const existingCode =
+            safeString(
+                getTeacherCode(row)
+            ).toLowerCase();
 
-    };
+
+        const newCode =
+            safeString(
+                data.teacher_code
+            ).toLowerCase();
+
+
+        if (
+            existingCode &&
+            newCode &&
+            existingCode === newCode
+        ) {
+
+            return "یہ استاد کوڈ پہلے سے موجود ہے۔";
+        }
+
+
+        const existingPhone =
+            normalizePhone(
+                row.phone
+            );
+
+
+        if (
+            existingPhone &&
+            data.phone &&
+            existingPhone === data.phone
+        ) {
+
+            return "یہ موبائل نمبر پہلے سے موجود ہے۔";
+        }
+
+
+        const existingCNIC =
+            canonicalCNIC(
+                row.cnic
+            );
+
+
+        if (
+            existingCNIC &&
+            data.cnic &&
+            existingCNIC === data.cnic
+        ) {
+
+            return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
+        }
+    }
+
+
+    return "";
 }
 
 
 /* =====================================================
-   REMOVE UNSUPPORTED TEACHER CODE
+   TEACHER CODE FALLBACK
 ===================================================== */
 
-function withoutTeacherCode(
-    data
-) {
+function isMissingTeacherCodeError(error) {
+
+    const text =
+        safeString(
+            error?.message
+        ).toLowerCase();
+
+
+    return (
+        text.includes("teacher_code") &&
+        (
+            text.includes("column") ||
+            text.includes("schema cache") ||
+            text.includes("could not find")
+        )
+    );
+}
+
+
+function withoutTeacherCode(data) {
 
     const copy = {
         ...data
@@ -4456,41 +4903,89 @@ function withoutTeacherCode(
 
 
 /* =====================================================
-   DETECT MISSING COLUMN ERROR
+   SAVE TEACHER RECORD
 ===================================================== */
 
-function isMissingTeacherCodeError(
-    error
-) {
+async function saveTeacherRecord(data) {
 
-    const text =
-        safeString(
-            error &&
-            error.message
-        ).toLowerCase();
+    let result;
 
 
-    return (
-        text.includes(
-            "teacher_code"
-        ) &&
-        (
-            text.includes(
-                "column"
-            ) ||
-            text.includes(
-                "schema cache"
-            ) ||
-            text.includes(
-                "could not find"
-            )
+    if (editingTeacherId) {
+
+        result =
+            await supabaseClient
+                .from(TEACHERS_TABLE)
+                .update(data)
+                .eq(
+                    "id",
+                    editingTeacherId
+                )
+                .select();
+
+    } else {
+
+        result =
+            await supabaseClient
+                .from(TEACHERS_TABLE)
+                .insert([
+                    data
+                ])
+                .select();
+    }
+
+
+    if (
+        result.error &&
+        isMissingTeacherCodeError(
+            result.error
         )
-    );
+    ) {
+
+        const fallbackData =
+            withoutTeacherCode(
+                data
+            );
+
+
+        if (editingTeacherId) {
+
+            result =
+                await supabaseClient
+                    .from(TEACHERS_TABLE)
+                    .update(
+                        fallbackData
+                    )
+                    .eq(
+                        "id",
+                        editingTeacherId
+                    )
+                    .select();
+
+        } else {
+
+            result =
+                await supabaseClient
+                    .from(TEACHERS_TABLE)
+                    .insert([
+                        fallbackData
+                    ])
+                    .select();
+        }
+    }
+
+
+    if (result.error) {
+        throw result.error;
+    }
+
+
+    return result.data;
 }
 
 
 /* =====================================================
-   UPDATE TEACHER STATISTICS
+   TEACHER STATISTICS
 ===================================================== */
 
 function updateTeacherStatistics() {
@@ -4509,8 +5004,15 @@ function updateTeacherStatistics() {
 
             const status =
                 safeString(
-                    teacher.status ||
-                    teacher.authorization_status
+                    getRecordValue(
+                        teacher,
+                        [
+                            "status",
+                            "authorization_status",
+                            "auth_status"
+                        ],
+                        ""
+                    )
                 ).toLowerCase();
 
 
@@ -4519,6 +5021,7 @@ function updateTeacherStatistics() {
                 status === "approved" ||
                 status === "active" ||
                 status === "فعال" ||
+                status === "منظور" ||
                 status === "منظور شدہ"
             ) {
 
@@ -4576,7 +5079,21 @@ function resetTeacherForm() {
     }
 
 
-    editingTeacherId = null;
+    editingTeacherId =
+        null;
+
+
+    const editTeacherId =
+        getElement(
+            "editTeacherId"
+        );
+
+
+    if (editTeacherId) {
+
+        editTeacherId.value =
+            "";
+    }
 
 
     clearMessage(
@@ -4584,24 +5101,23 @@ function resetTeacherForm() {
     );
 
 
-    const heading =
-        teacherFormContainer
-            ? teacherFormContainer.querySelector(
-                "h2"
-            )
-            : null;
+    if (teacherFormTitle) {
 
-
-    if (heading) {
-
-        heading.textContent =
+        teacherFormTitle.textContent =
             "👩‍🏫 نئے استاد کی معلومات";
+    }
+
+
+    if (saveTeacherButton) {
+
+        saveTeacherButton.textContent =
+            "💾 محفوظ کریں";
     }
 }
 
 
 /* =====================================================
-   OPEN TEACHER FORM
+   OPEN / CLOSE TEACHER FORM
 ===================================================== */
 
 function openTeacherForm() {
@@ -4611,20 +5127,20 @@ function openTeacherForm() {
     }
 
 
-    if (teacherFormContainer) {
-
-        teacherFormContainer.classList.remove(
-            "hidden"
-        );
+    if (!teacherFormContainer) {
+        return;
     }
+
+
+    teacherFormContainer.classList.remove(
+        "hidden"
+    );
 
 
     window.scrollTo({
 
         top:
-            teacherFormContainer
-                ? teacherFormContainer.offsetTop
-                : 0,
+            teacherFormContainer.offsetTop,
 
         behavior:
             "smooth"
@@ -4632,10 +5148,6 @@ function openTeacherForm() {
     });
 }
 
-
-/* =====================================================
-   CLOSE TEACHER FORM
-===================================================== */
 
 function closeTeacherForm() {
 
@@ -4666,8 +5178,12 @@ async function loadTeachers() {
 
     if (teacherList) {
 
-        teacherList.innerHTML =
-            '<div class="teacher-empty">⏳ ریکارڈ لوڈ ہو رہا ہے...</div>';
+        teacherList.innerHTML = `
+
+            <div class="teacher-empty">
+                ⏳ ریکارڈ لوڈ ہو رہا ہے...
+            </div>
+        `;
     }
 
 
@@ -4678,14 +5194,13 @@ async function loadTeachers() {
             error
         } =
             await supabaseClient
-                .from(
-                    TEACHERS_TABLE
-                )
+                .from(TEACHERS_TABLE)
                 .select("*")
                 .order(
                     "id",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -4703,7 +5218,6 @@ async function loadTeachers() {
 
         updateTeacherStatistics();
 
-
         displayTeachers(
             teachersCache
         );
@@ -4719,52 +5233,14 @@ async function loadTeachers() {
 
         if (teacherList) {
 
-            teacherList.innerHTML =
-                '<div class="teacher-empty">اساتذہ کا ریکارڈ لوڈ نہیں ہو سکا۔</div>';
+            teacherList.innerHTML = `
+
+                <div class="teacher-empty">
+                    اساتذہ کا ریکارڈ لوڈ نہیں ہو سکا۔
+                </div>
+            `;
         }
     }
-}
-
-
-/* =====================================================
-   GET TEACHER DISPLAY CODE
-===================================================== */
-
-function getTeacherCode(
-    teacher
-) {
-
-    const savedCode =
-        safeString(
-            teacher.teacher_code ||
-            teacher.teacherCode ||
-            teacher.code
-        );
-
-
-    if (savedCode) {
-        return savedCode;
-    }
-
-
-    if (
-        teacher.id !== null &&
-        teacher.id !== undefined
-    ) {
-
-        return (
-            "T-" +
-            String(
-                teacher.id
-            ).padStart(
-                3,
-                "0"
-            )
-        );
-    }
-
-
-    return "-";
 }
 
 
@@ -4789,14 +5265,16 @@ function displayTeachers(
         teacherList.innerHTML = `
 
             <div class="teacher-empty">
-
                 ابھی کوئی استاد موجود نہیں۔
-
             </div>
         `;
 
         return;
     }
+
+
+    const role =
+        getCurrentRole();
 
 
     teacherList.innerHTML =
@@ -4807,115 +5285,73 @@ function displayTeachers(
                     const id =
                         teacher.id;
 
+
                     const code =
                         getTeacherCode(
                             teacher
                         );
 
+
                     const name =
                         getRecordValue(
                             teacher,
-                            "name",
+                            [
+                                "name",
+                                "teacher_name",
+                                "teacherName"
+                            ],
                             "-"
                         );
+
 
                     const fatherName =
                         getRecordValue(
                             teacher,
-                            "father_name",
+                            [
+                                "father_name",
+                                "fatherName"
+                            ],
                             "-"
                         );
+
 
                     const phone =
                         normalizePhone(
                             getRecordValue(
                                 teacher,
-                                "phone",
+                                [
+                                    "phone",
+                                    "teacherPhone"
+                                ],
                                 ""
                             )
                         ) || "-";
 
+
                     const qualification =
                         getRecordValue(
                             teacher,
-                            "qualification",
+                            [
+                                "qualification"
+                            ],
                             "-"
                         );
+
 
                     const joiningDate =
                         getRecordValue(
                             teacher,
-                            "joining_date",
+                            [
+                                "joining_date",
+                                "joiningDate"
+                            ],
                             "-"
                         );
 
 
-                    return `
-
-                        <div
-                            class="student-card teacher-record-card"
-                            data-id="${escapeHtml(id)}"
-                        >
-
-                            <div class="student-card-header">
-
-                                <div class="student-avatar">
-                                    👩‍🏫
-                                </div>
-
-                                <div>
-
-                                    <h3>
-                                        ${escapeHtml(name)}
-                                    </h3>
-
-                                    <span>
-                                        استاد کوڈ:
-                                        ${escapeHtml(code)}
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="student-badges">
-
-                                <span>
-                                    🎓 ${escapeHtml(qualification)}
-                                </span>
-
-                                <span>
-                                    📅 ${escapeHtml(joiningDate)}
-                                </span>
-
-                            </div>
-
-
-                            <div class="student-info">
-
-                                <p>
-                                    والد:
-                                    ${escapeHtml(fatherName)}
-                                </p>
-
-                                <p>
-                                    موبائل:
-                                    ${escapeHtml(phone)}
-                                </p>
-
-                            </div>
-
-
-                            <div class="student-card-buttons">
-
-                                <button
-                                    type="button"
-                                    class="view-teacher"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    👁️ تفصیلات
-                                </button>
+                    const adminButtons =
+                        role === "admin"
+                            ? `
 
                                 <button
                                     type="button"
@@ -4932,6 +5368,63 @@ function displayTeachers(
                                 >
                                     🗑️ حذف کریں
                                 </button>
+                            `
+                            : "";
+
+
+                    return `
+
+                        <div
+                            class="teacher-card"
+                            data-id="${escapeHtml(id)}"
+                        >
+
+                            <h3>
+                                ${escapeHtml(name)}
+                            </h3>
+
+
+                            <div class="teacher-card-info">
+
+                                <p>
+                                    استاد کوڈ:
+                                    ${escapeHtml(code)}
+                                </p>
+
+                                <p>
+                                    والد:
+                                    ${escapeHtml(fatherName)}
+                                </p>
+
+                                <p>
+                                    موبائل:
+                                    ${escapeHtml(phone)}
+                                </p>
+
+                                <p>
+                                    قابلیت:
+                                    ${escapeHtml(qualification)}
+                                </p>
+
+                                <p>
+                                    تقرری:
+                                    ${escapeHtml(joiningDate)}
+                                </p>
+
+                            </div>
+
+
+                            <div class="teacher-card-buttons">
+
+                                <button
+                                    type="button"
+                                    class="view-teacher"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    👁️ تفصیلات
+                                </button>
+
+                                ${adminButtons}
 
                             </div>
 
@@ -4940,14 +5433,11 @@ function displayTeachers(
                 }
             )
             .join("");
-
-
-    attachTeacherCardEvents();
 }
 
 
 /* =====================================================
-   TEACHER SEARCH
+   SEARCH TEACHERS
 ===================================================== */
 
 function searchTeachers() {
@@ -4986,6 +5476,8 @@ function searchTeachers() {
 
                         teacher.name,
 
+                        teacher.teacher_name,
+
                         teacher.father_name,
 
                         teacher.phone,
@@ -5022,211 +5514,501 @@ function searchTeachers() {
 
 
 /* =====================================================
-   TEACHER DUPLICATE CHECK
+   EDIT TEACHER
 ===================================================== */
 
-async function checkTeacherDuplicates(
-    data,
-    currentId = null
-) {
+function editTeacher(id) {
 
-    if (!supabaseClient) {
+    if (!requireAdmin()) {
+        return;
+    }
 
-        throw new Error(
-            "Supabase دستیاب نہیں ہے۔"
+
+    const teacher =
+        teachersCache.find(
+            function (item) {
+
+                return (
+                    String(item.id) ===
+                    String(id)
+                );
+            }
         );
+
+
+    if (!teacher) {
+
+        alert(
+            "استاد کا ریکارڈ نہیں ملا۔"
+        );
+
+        return;
     }
 
 
-    const {
-        data: rows,
-        error
-    } =
-        await supabaseClient
-            .from(
-                TEACHERS_TABLE
-            )
-            .select("*");
+    editingTeacherId =
+        teacher.id;
 
 
-    if (error) {
-        throw error;
+    const editTeacherId =
+        getElement(
+            "editTeacherId"
+        );
+
+
+    if (editTeacherId) {
+
+        editTeacherId.value =
+            String(
+                teacher.id
+            );
     }
 
 
-    for (
-        const row of
-        rows || []
-    ) {
+    const fields = {
 
-        if (
-            currentId !== null &&
-            String(row.id) ===
-            String(currentId)
-        ) {
+        teacherCode:
+            getTeacherCode(
+                teacher
+            ),
 
-            continue;
-        }
+        teacherName:
+            getRecordValue(
+                teacher,
+                [
+                    "name",
+                    "teacher_name",
+                    "teacherName"
+                ],
+                ""
+            ),
 
+        teacherFatherName:
+            getRecordValue(
+                teacher,
+                [
+                    "father_name",
+                    "fatherName"
+                ],
+                ""
+            ),
 
-        const existingCode =
-            safeString(
-                row.teacher_code ||
-                row.teacherCode ||
-                row.code
-            ).toLowerCase();
-
-
-        const newCode =
-            safeString(
-                data.teacher_code
-            ).toLowerCase();
-
-
-        if (
-            existingCode &&
-            newCode &&
-            existingCode ===
-            newCode
-        ) {
-
-            return "یہ استاد کوڈ پہلے سے موجود ہے۔";
-        }
-
-
-        const existingPhone =
+        teacherPhone:
             normalizePhone(
-                row.phone
-            );
+                getRecordValue(
+                    teacher,
+                    [
+                        "phone",
+                        "teacherPhone"
+                    ],
+                    ""
+                )
+            ),
+
+        teacherCNIC:
+            formatCNIC(
+                getRecordValue(
+                    teacher,
+                    [
+                        "cnic",
+                        "teacherCNIC"
+                    ],
+                    ""
+                )
+            ),
+
+        teacherQualification:
+            getRecordValue(
+                teacher,
+                [
+                    "qualification"
+                ],
+                ""
+            ),
+
+        teacherJoiningDate:
+            getRecordValue(
+                teacher,
+                [
+                    "joining_date",
+                    "joiningDate"
+                ],
+                ""
+            ),
+
+        teacherAddress:
+            getRecordValue(
+                teacher,
+                [
+                    "address"
+                ],
+                ""
+            )
+
+    };
 
 
-        if (
-            existingPhone &&
-            data.phone &&
-            existingPhone ===
-            data.phone
-        ) {
+    Object.entries(fields)
+        .forEach(
+            function (
+                [idName, value]
+            ) {
 
-            return "یہ موبائل نمبر پہلے سے موجود ہے۔";
-        }
-
-
-        const existingCNIC =
-            canonicalCNIC(
-                row.cnic
-            );
+                const field =
+                    getElement(idName);
 
 
-        if (
-            existingCNIC &&
-            data.cnic &&
-            existingCNIC ===
-            data.cnic
-        ) {
+                if (field) {
 
-            return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
-        }
+                    field.value =
+                        value === null ||
+                        value === undefined
+                            ? ""
+                            : String(value);
+                }
+            }
+        );
+
+
+    if (teacherFormTitle) {
+
+        teacherFormTitle.textContent =
+            "👩‍🏫 استاد کا ریکارڈ تبدیل کریں";
     }
 
 
-    return "";
+    if (saveTeacherButton) {
+
+        saveTeacherButton.textContent =
+            "💾 تبدیلی محفوظ کریں";
+    }
+
+
+    openTeacherForm();
 }
 
 
 /* =====================================================
-   SAVE TEACHER RECORD
+   TEACHER DETAILS
 ===================================================== */
 
-async function saveTeacherRecord(
-    data
-) {
+function showTeacherDetails(id) {
 
-    let result;
+    const teacher =
+        teachersCache.find(
+            function (item) {
 
-
-    if (editingTeacherId) {
-
-        result =
-            await supabaseClient
-                .from(
-                    TEACHERS_TABLE
-                )
-                .update(
-                    data
-                )
-                .eq(
-                    "id",
-                    editingTeacherId
-                )
-                .select();
+                return (
+                    String(item.id) ===
+                    String(id)
+                );
+            }
+        );
 
 
-    } else {
+    if (!teacher) {
 
-        result =
-            await supabaseClient
-                .from(
-                    TEACHERS_TABLE
-                )
-                .insert([
-                    data
-                ])
-                .select();
+        alert(
+            "استاد کا ریکارڈ نہیں ملا۔"
+        );
+
+        return;
     }
 
 
     if (
-        result.error &&
-        isMissingTeacherCodeError(
-            result.error
-        )
+        !teacherDetailsOverlay ||
+        !teacherDetailsContent
     ) {
 
-        const fallbackData =
-            withoutTeacherCode(
-                data
-            );
+        console.error(
+            "Teacher details modal نہیں ملا۔"
+        );
+
+        return;
+    }
 
 
-        if (editingTeacherId) {
+    const name =
+        getRecordValue(
+            teacher,
+            [
+                "name",
+                "teacher_name",
+                "teacherName"
+            ],
+            ""
+        );
 
-            result =
-                await supabaseClient
-                    .from(
-                        TEACHERS_TABLE
+
+    if (teacherDetailsTitle) {
+
+        teacherDetailsTitle.textContent =
+            name ||
+            "استاد کی تفصیلات";
+    }
+
+
+    teacherDetailsContent.innerHTML = `
+
+        <h3>
+            بنیادی معلومات
+        </h3>
+
+        <p>
+            <strong>استاد کوڈ:</strong>
+            ${escapeHtml(
+                getTeacherCode(
+                    teacher
+                )
+            )}
+        </p>
+
+        <p>
+            <strong>نام:</strong>
+            ${escapeHtml(
+                name || "-"
+            )}
+        </p>
+
+        <p>
+            <strong>والد کا نام:</strong>
+            ${escapeHtml(
+                getRecordValue(
+                    teacher,
+                    [
+                        "father_name",
+                        "fatherName"
+                    ],
+                    "-"
+                )
+            )}
+        </p>
+
+        <p>
+            <strong>موبائل نمبر:</strong>
+            ${escapeHtml(
+                getRecordValue(
+                    teacher,
+                    [
+                        "phone",
+                        "teacherPhone"
+                    ],
+                    "-"
+                )
+            )}
+        </p>
+
+        <p>
+            <strong>شناختی کارڈ:</strong>
+            ${escapeHtml(
+                formatCNIC(
+                    getRecordValue(
+                        teacher,
+                        [
+                            "cnic",
+                            "teacherCNIC"
+                        ],
+                        ""
                     )
-                    .update(
-                        fallbackData
-                    )
-                    .eq(
-                        "id",
-                        editingTeacherId
-                    )
-                    .select();
+                ) || "-"
+            )}
+        </p>
 
 
-        } else {
+        <h3>
+            تعلیمی و ملازمت کی معلومات
+        </h3>
 
-            result =
-                await supabaseClient
-                    .from(
-                        TEACHERS_TABLE
-                    )
-                    .insert([
-                        fallbackData
-                    ])
-                    .select();
+        <p>
+            <strong>تعلیمی قابلیت:</strong>
+            ${escapeHtml(
+                getRecordValue(
+                    teacher,
+                    [
+                        "qualification"
+                    ],
+                    "-"
+                )
+            )}
+        </p>
+
+        <p>
+            <strong>تقرری کی تاریخ:</strong>
+            ${escapeHtml(
+                getRecordValue(
+                    teacher,
+                    [
+                        "joining_date",
+                        "joiningDate"
+                    ],
+                    "-"
+                )
+            )}
+        </p>
+
+        <p>
+            <strong>پتہ:</strong>
+            ${escapeHtml(
+                getRecordValue(
+                    teacher,
+                    [
+                        "address"
+                    ],
+                    "-"
+                )
+            )}
+        </p>
+    `;
+
+
+    teacherDetailsOverlay.classList.remove(
+        "hidden"
+    );
+
+
+    teacherDetailsOverlay.style.display =
+        "flex";
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+}
+
+
+/* =====================================================
+   CLOSE TEACHER DETAILS
+===================================================== */
+
+function closeTeacherDetails() {
+
+    if (!teacherDetailsOverlay) {
+        return;
+    }
+
+
+    teacherDetailsOverlay.style.display =
+        "none";
+
+
+    teacherDetailsOverlay.classList.add(
+        "hidden"
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+}
+
+
+/* =====================================================
+   DELETE TEACHER
+===================================================== */
+
+async function deleteTeacher(id) {
+
+    if (!requireAdmin()) {
+        return;
+    }
+
+
+    if (isDeletingTeacher) {
+        return;
+    }
+
+
+    const teacher =
+        teachersCache.find(
+            function (item) {
+
+                return (
+                    String(item.id) ===
+                    String(id)
+                );
+            }
+        );
+
+
+    if (!teacher) {
+
+        alert(
+            "استاد کا ریکارڈ نہیں ملا۔"
+        );
+
+        return;
+    }
+
+
+    const name =
+        getRecordValue(
+            teacher,
+            [
+                "name",
+                "teacher_name"
+            ],
+            "استاد"
+        );
+
+
+    const confirmed =
+        window.confirm(
+            `"${safeString(
+                name
+            )}" کا ریکارڈ حذف کرنا چاہتے ہیں؟`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    isDeletingTeacher =
+        true;
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from(TEACHERS_TABLE)
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+
+        if (error) {
+            throw error;
         }
+
+
+        await loadTeachers();
+
+
+    } catch (error) {
+
+        console.error(
+            "Teacher delete error:",
+            error
+        );
+
+
+        alert(
+            "استاد کا ریکارڈ حذف نہیں ہو سکا۔"
+        );
+
+
+    } finally {
+
+        isDeletingTeacher =
+            false;
     }
-
-
-    if (result.error) {
-
-        throw result.error;
-    }
-
-
-    return result.data;
 }
 
 
@@ -5234,9 +6016,7 @@ async function saveTeacherRecord(
    SAVE TEACHER
 ===================================================== */
 
-async function saveTeacher(
-    event
-) {
+async function saveTeacher(event) {
 
     if (event) {
 
@@ -5275,7 +6055,7 @@ async function saveTeacher(
 
 
     const data =
-        getTeacherDatabaseData();
+        getTeacherFormData();
 
 
     const wasEditing =
@@ -5351,21 +6131,17 @@ async function saveTeacher(
 
         const errorText =
             safeString(
-                error &&
-                error.message
+                error?.message
             ).toLowerCase();
 
 
         if (
-            error &&
-            (
-                error.code === "23505" ||
-                errorText.includes(
-                    "duplicate"
-                ) ||
-                errorText.includes(
-                    "unique"
-                )
+            error?.code === "23505" ||
+            errorText.includes(
+                "duplicate"
+            ) ||
+            errorText.includes(
+                "unique"
             )
         ) {
 
@@ -5392,380 +6168,75 @@ async function saveTeacher(
                 false;
 
             saveTeacherButton.textContent =
-                "💾 استاد محفوظ کریں";
+                editingTeacherId
+                    ? "💾 تبدیلی محفوظ کریں"
+                    : "💾 محفوظ کریں";
         }
     }
 }
 
 
 /* =====================================================
-   EDIT TEACHER
+   TEACHER LIST EVENT DELEGATION
 ===================================================== */
 
-function editTeacher(id) {
-
-    if (!requireAdmin()) {
-        return;
-    }
-
-
-    const teacher =
-        teachersCache.find(
-            function (item) {
-
-                return (
-                    String(item.id) ===
-                    String(id)
-                );
-            }
-        );
-
-
-    if (!teacher) {
-
-        alert(
-            "استاد کا ریکارڈ نہیں ملا۔"
-        );
-
-        return;
-    }
-
-
-    editingTeacherId =
-        teacher.id;
-
-
-    const fields = {
-
-        teacherCode:
-            getTeacherCode(
-                teacher
-            ),
-
-        teacherName:
-            teacher.name,
-
-        teacherFatherName:
-            teacher.father_name,
-
-        teacherPhone:
-            normalizePhone(
-                teacher.phone
-            ),
-
-        teacherCNIC:
-            canonicalCNIC(
-                teacher.cnic
-            ),
-
-        teacherQualification:
-            teacher.qualification,
-
-        teacherJoiningDate:
-            teacher.joining_date,
-
-        teacherAddress:
-            teacher.address
-
-    };
-
-
-    Object.entries(
-        fields
-    ).forEach(
-        function (
-            [idName, value]
-        ) {
-
-            const field =
-                getElement(
-                    idName
-                );
-
-
-            if (field) {
-
-                field.value =
-                    value === null ||
-                    value === undefined
-                        ? ""
-                        : String(value);
-            }
-        }
-    );
-
-
-    const heading =
-        teacherFormContainer
-            ? teacherFormContainer.querySelector(
-                "h2"
-            )
-            : null;
-
-
-    if (heading) {
-
-        heading.textContent =
-            "👩‍🏫 استاد کا ریکارڈ تبدیل کریں";
-    }
-
-
-    openTeacherForm();
-}
-
-
-/* =====================================================
-   TEACHER DETAILS
-===================================================== */
-
-function showTeacherDetails(id) {
-
-    const teacher =
-        teachersCache.find(
-            function (item) {
-
-                return (
-                    String(item.id) ===
-                    String(id)
-                );
-            }
-        );
-
-
-    if (!teacher) {
-
-        alert(
-            "استاد کا ریکارڈ نہیں ملا۔"
-        );
-
-        return;
-    }
-
-
-    const details = [
-
-        "استاد کوڈ: " +
-        getTeacherCode(
-            teacher
-        ),
-
-        "نام: " +
-        safeString(
-            teacher.name || "-"
-        ),
-
-        "والد کا نام: " +
-        safeString(
-            teacher.father_name || "-"
-        ),
-
-        "موبائل نمبر: " +
-        safeString(
-            teacher.phone || "-"
-        ),
-
-        "شناختی کارڈ: " +
-        (
-            canonicalCNIC(
-                teacher.cnic
-            ) || "-"
-        ),
-
-        "تعلیمی قابلیت: " +
-        safeString(
-            teacher.qualification || "-"
-        ),
-
-        "تقرری کی تاریخ: " +
-        safeString(
-            teacher.joining_date || "-"
-        ),
-
-        "پتہ: " +
-        safeString(
-            teacher.address || "-"
-        )
-
-    ];
-
-
-    alert(
-        details.join(
-            "\n"
-        )
-    );
-}
-
-
-/* =====================================================
-   DELETE TEACHER
-===================================================== */
-
-async function deleteTeacher(id) {
-
-    if (!requireAdmin()) {
-        return;
-    }
-
-
-    if (isDeletingTeacher) {
-        return;
-    }
-
-
-    const teacher =
-        teachersCache.find(
-            function (item) {
-
-                return (
-                    String(item.id) ===
-                    String(id)
-                );
-            }
-        );
-
-
-    if (!teacher) {
-
-        alert(
-            "استاد کا ریکارڈ نہیں ملا۔"
-        );
-
-        return;
-    }
-
-
-    const confirmed =
-        window.confirm(
-            `"${safeString(
-                teacher.name
-            )}" کا ریکارڈ حذف کرنا چاہتے ہیں؟`
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    isDeletingTeacher =
-        true;
-
-
-    try {
-
-        const {
-            error
-        } =
-            await supabaseClient
-                .from(
-                    TEACHERS_TABLE
-                )
-                .delete()
-                .eq(
-                    "id",
-                    id
-                );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        await loadTeachers();
-
-
-    } catch (error) {
-
-        console.error(
-            "Teacher delete error:",
-            error
-        );
-
-
-        alert(
-            "استاد کا ریکارڈ حذف نہیں ہو سکا۔"
-        );
-
-
-    } finally {
-
-        isDeletingTeacher =
-            false;
-    }
-}
-
-
-/* =====================================================
-   TEACHER CARD EVENTS
-===================================================== */
-
-function attachTeacherCardEvents() {
+function initializeTeacherListEvents() {
 
     if (!teacherList) {
         return;
     }
 
 
-    teacherList
-        .querySelectorAll(
-            ".view-teacher"
-        )
-        .forEach(
-            function (button) {
+    teacherList.addEventListener(
+        "click",
+        function (event) {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+            const viewButton =
+                event.target.closest(
+                    ".view-teacher"
+                );
 
-                        showTeacherDetails(
-                            this.dataset.id
-                        );
-                    }
+
+            if (viewButton) {
+
+                showTeacherDetails(
+                    viewButton.dataset.id
+                );
+
+                return;
+            }
+
+
+            const editButton =
+                event.target.closest(
+                    ".edit-teacher"
+                );
+
+
+            if (editButton) {
+
+                editTeacher(
+                    editButton.dataset.id
+                );
+
+                return;
+            }
+
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-teacher"
+                );
+
+
+            if (deleteButton) {
+
+                deleteTeacher(
+                    deleteButton.dataset.id
                 );
             }
-        );
-
-
-    teacherList
-        .querySelectorAll(
-            ".edit-teacher"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        editTeacher(
-                            this.dataset.id
-                        );
-                    }
-                );
-            }
-        );
-
-
-    teacherList
-        .querySelectorAll(
-            ".delete-teacher"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        deleteTeacher(
-                            this.dataset.id
-                        );
-                    }
-                );
-            }
-        );
+        }
+    );
 }
 
 
@@ -5776,9 +6247,9 @@ function attachTeacherCardEvents() {
 async function initializeTeachersPage() {
 
     if (
-        currentPage !==
-        "teachers.html"
+        currentPage !== "teachers.html"
     ) {
+
         return;
     }
 
@@ -5788,7 +6259,25 @@ async function initializeTeachersPage() {
     }
 
 
+    if (
+        getCurrentRole() !== "admin"
+    ) {
+
+        alert(
+            "اساتذہ کا انتظام صرف ایڈمن کے لیے ہے۔"
+        );
+
+
+        window.location.href =
+            "dashboard.html";
+
+        return;
+    }
+
+
     initializeTeacherFormatting();
+
+    initializeTeacherListEvents();
 
 
     if (showTeacherFormButton) {
@@ -5796,11 +6285,6 @@ async function initializeTeachersPage() {
         showTeacherFormButton.addEventListener(
             "click",
             function () {
-
-                if (!requireAdmin()) {
-                    return;
-                }
-
 
                 resetTeacherForm();
 
@@ -5842,6 +6326,33 @@ async function initializeTeachersPage() {
     }
 
 
+    if (closeTeacherDetailsButton) {
+
+        closeTeacherDetailsButton.addEventListener(
+            "click",
+            closeTeacherDetails
+        );
+    }
+
+
+    if (teacherDetailsOverlay) {
+
+        teacherDetailsOverlay.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    teacherDetailsOverlay
+                ) {
+
+                    closeTeacherDetails();
+                }
+            }
+        );
+    }
+
+
     await loadTeachers();
 }
 
@@ -5854,36 +6365,15 @@ await initializeTeachersPage();
 
 
 /* =====================================================
-   PART 3 ENDS HERE
-
-   DO NOT ADD:
-   });
-
-   MAIN DOMContentLoaded WRAPPER IS STILL OPEN.
-   PASTE PART 4 DIRECTLY BELOW THIS LINE.
-===================================================== */
-
-/* =========================================================
-   MASTER SCRIPT.JS
-   PART 4
-   SESSION TIMEOUT + GLOBAL NAVIGATION + FINAL INITIALIZATION
-========================================================= */
-
-
-/* =====================================================
-   SESSION TIMEOUT
-   5 MINUTES OF INACTIVITY
+   5 MINUTE INACTIVITY LOGOUT
 ===================================================== */
 
 const INACTIVITY_LIMIT =
     5 * 60 * 1000;
 
-let inactivityTimer = null;
+let inactivityTimer =
+    null;
 
-
-/* =====================================================
-   UPDATE LAST ACTIVITY
-===================================================== */
 
 function updateLastActivity() {
 
@@ -5894,14 +6384,12 @@ function updateLastActivity() {
 
     localStorage.setItem(
         SESSION_KEYS.lastActivity,
-        String(Date.now())
+        String(
+            Date.now()
+        )
     );
 }
 
-
-/* =====================================================
-   CHECK SESSION TIMEOUT
-===================================================== */
 
 function checkSessionTimeout() {
 
@@ -5950,10 +6438,6 @@ function checkSessionTimeout() {
 }
 
 
-/* =====================================================
-   RESET INACTIVITY TIMER
-===================================================== */
-
 function resetInactivityTimer() {
 
     if (!isAuthenticated()) {
@@ -5974,19 +6458,11 @@ function resetInactivityTimer() {
 
     inactivityTimer =
         setTimeout(
-            function () {
-
-                checkSessionTimeout();
-
-            },
+            checkSessionTimeout,
             INACTIVITY_LIMIT
         );
 }
 
-
-/* =====================================================
-   INITIALIZE INACTIVITY SYSTEM
-===================================================== */
 
 function initializeInactivitySystem() {
 
@@ -5998,27 +6474,25 @@ function initializeInactivitySystem() {
     checkSessionTimeout();
 
 
-    const activityEvents = [
+    const events = [
 
         "click",
-
         "keydown",
-
         "touchstart",
-
         "scroll"
 
     ];
 
 
-    activityEvents.forEach(
+    events.forEach(
         function (eventName) {
 
             document.addEventListener(
                 eventName,
                 resetInactivityTimer,
                 {
-                    passive: true
+                    passive:
+                        true
                 }
             );
         }
@@ -6030,297 +6504,7 @@ function initializeInactivitySystem() {
 
 
 /* =====================================================
-   SESSION STORAGE COMPATIBILITY
-===================================================== */
-
-function restoreCompatibleSession() {
-
-    const localLoggedIn =
-        localStorage.getItem(
-            SESSION_KEYS.loggedIn
-        );
-
-
-    if (
-        localLoggedIn ===
-        "true"
-    ) {
-
-        return;
-    }
-
-
-    const sessionLoggedIn =
-        sessionStorage.getItem(
-            SESSION_KEYS.loggedIn
-        );
-
-
-    if (
-        sessionLoggedIn !==
-        "true"
-    ) {
-
-        return;
-    }
-
-
-    Object.values(
-        SESSION_KEYS
-    ).forEach(
-        function (key) {
-
-            const value =
-                sessionStorage.getItem(
-                    key
-                );
-
-
-            if (
-                value !== null
-            ) {
-
-                localStorage.setItem(
-                    key,
-                    value
-                );
-            }
-        }
-    );
-}
-
-
-/* =====================================================
-   DASHBOARD MENU NAVIGATION
-===================================================== */
-
-function initializeDashboardNavigation() {
-
-    if (
-        currentPage !==
-        "dashboard.html"
-    ) {
-        return;
-    }
-
-
-    const menuRoutes = {
-
-        studentsMenu:
-            "students.html",
-
-        teachersMenu:
-            "teachers.html",
-
-        attendanceMenu:
-            "attendance.html",
-
-        hostelMenu:
-            "hostel.html",
-
-        feesMenu:
-            "fees.html",
-
-        reportsMenu:
-            "reports.html"
-
-    };
-
-
-    Object.entries(
-        menuRoutes
-    ).forEach(
-        function (
-            [elementId, page]
-        ) {
-
-            const button =
-                getElement(
-                    elementId
-                );
-
-
-            if (!button) {
-                return;
-            }
-
-
-            button.onclick =
-                function () {
-
-                    /*
-                      Students and Teachers pages
-                      currently exist.
-
-                      Remaining modules will be
-                      activated when their HTML
-                      pages are added.
-                    */
-
-                    if (
-                        page ===
-                        "students.html" ||
-                        page ===
-                        "teachers.html"
-                    ) {
-
-                        window.location.href =
-                            page;
-
-                        return;
-                    }
-
-
-                    alert(
-                        "یہ حصہ اگلے مرحلے میں شامل کیا جائے گا۔"
-                    );
-                };
-        }
-    );
-}
-
-
-/* =====================================================
-   PREVENT NON-ADMIN RECORD CHANGES
-===================================================== */
-
-function applyRolePermissions() {
-
-    const role =
-        getCurrentRole();
-
-
-    if (!role) {
-        return;
-    }
-
-
-    const adminOnlyElements = [
-
-        "showStudentForm",
-
-        "saveStudentButton",
-
-        "addMahram",
-
-        "showTeacherForm",
-
-        "saveTeacherButton"
-
-    ];
-
-
-    if (role === "admin") {
-
-        adminOnlyElements.forEach(
-            function (id) {
-
-                const element =
-                    getElement(id);
-
-
-                if (element) {
-
-                    element.style.display =
-                        "";
-                }
-            }
-        );
-
-
-        return;
-    }
-
-
-    adminOnlyElements.forEach(
-        function (id) {
-
-            const element =
-                getElement(id);
-
-
-            if (element) {
-
-                element.style.display =
-                    "none";
-            }
-        }
-    );
-
-
-    document
-        .querySelectorAll(
-            ".edit-student, .delete-student, .edit-teacher, .delete-teacher"
-        )
-        .forEach(
-            function (element) {
-
-                element.style.display =
-                    "none";
-            }
-        );
-}
-
-
-/* =====================================================
-   SAFE LOGOUT
-===================================================== */
-
-function performGlobalLogout() {
-
-    clearSession();
-
-
-    sessionStorage.clear();
-
-
-    if (inactivityTimer) {
-
-        clearTimeout(
-            inactivityTimer
-        );
-
-        inactivityTimer = null;
-    }
-
-
-    window.location.href =
-        "index.html";
-}
-
-
-/* =====================================================
-   REPLACE LOGOUT BUTTON HANDLER
-===================================================== */
-
-function initializeFinalLogout() {
-
-    const button =
-        getElement(
-            "logoutButton"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    /*
-      Part 1 already attached a logout
-      event listener.
-
-      This assignment also provides a
-      final safe logout path.
-    */
-
-    button.onclick =
-        performGlobalLogout;
-}
-
-
-/* =====================================================
-   KEYBOARD ESCAPE SUPPORT
+   ESCAPE KEY
 ===================================================== */
 
 function initializeKeyboardControls() {
@@ -6330,17 +6514,18 @@ function initializeKeyboardControls() {
         function (event) {
 
             if (
-                event.key !==
-                "Escape"
+                event.key !== "Escape"
             ) {
+
                 return;
             }
 
 
             if (
                 studentDetailsOverlay &&
-                studentDetailsOverlay.style.display ===
-                "flex"
+                !studentDetailsOverlay.classList.contains(
+                    "hidden"
+                )
             ) {
 
                 closeStudentDetails();
@@ -6350,8 +6535,20 @@ function initializeKeyboardControls() {
 
 
             if (
-                currentPage ===
-                "students.html" &&
+                teacherDetailsOverlay &&
+                !teacherDetailsOverlay.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                closeTeacherDetails();
+
+                return;
+            }
+
+
+            if (
+                currentPage === "students.html" &&
                 studentFormContainer &&
                 !studentFormContainer.classList.contains(
                     "hidden"
@@ -6365,8 +6562,7 @@ function initializeKeyboardControls() {
 
 
             if (
-                currentPage ===
-                "teachers.html" &&
+                currentPage === "teachers.html" &&
                 teacherFormContainer &&
                 !teacherFormContainer.classList.contains(
                     "hidden"
@@ -6381,7 +6577,7 @@ function initializeKeyboardControls() {
 
 
 /* =====================================================
-   GLOBAL ERROR HANDLER
+   GLOBAL ERROR LOGGING
 ===================================================== */
 
 window.addEventListener(
@@ -6396,10 +6592,6 @@ window.addEventListener(
     }
 );
 
-
-/* =====================================================
-   UNHANDLED PROMISE ERROR
-===================================================== */
 
 window.addEventListener(
     "unhandledrejection",
@@ -6417,59 +6609,14 @@ window.addEventListener(
    FINAL STARTUP
 ===================================================== */
 
-restoreCompatibleSession();
-
-initializeDashboardNavigation();
-
-applyRolePermissions();
-
-initializeFinalLogout();
-
 initializeKeyboardControls();
 
 initializeInactivitySystem();
 
 
 /* =====================================================
-   REFRESH ROLE PERMISSIONS AFTER RECORD LISTS LOAD
-===================================================== */
-
-if (
-    currentPage ===
-    "students.html"
-) {
-
-    setTimeout(
-        applyRolePermissions,
-        100
-    );
-}
-
-
-if (
-    currentPage ===
-    "teachers.html"
-) {
-
-    setTimeout(
-        applyRolePermissions,
-        100
-    );
-}
-
-
-/* =====================================================
    FINAL CLOSE
-
-   THIS CLOSES THE SINGLE DOMContentLoaded
-   WRAPPER STARTED IN PART 1.
-
-   DO NOT ADD ANOTHER:
-   });
-
-   AFTER THIS.
+   THIS CLOSES THE SINGLE DOMContentLoaded WRAPPER
 ===================================================== */
 
-});
-
-                          
+});                          
