@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        حاضری - مدرسہ شہناز اختر للبنات
+    </title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+    <main class="attendance-page">
+
+
+        <!-- =========================================
+             HEADER
+        ========================================== -->
+
+        <div class="page-header">
+
+            <div>
+
+                <div class="small-title">
+                    مدرسہ مینجمنٹ سسٹم
+                </div>
+
+                <h1>
+                    📋 حاضری
+                </h1>
+
+                <p>
+                    روزانہ کلاس حاضری
+                </p>
+
+            </div>
+
+
+            <button type="button"
+                    id="backToDashboard"
+                    class="back-button">
+
+                ↩️ ڈیش بورڈ
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================================
+             ATTENDANCE SUMMARY
+        ========================================== -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👧
+                </div>
+
+                <div>
+
+                    <strong id="attendanceStudentTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        کل طالبات
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <strong id="attendancePresentTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        حاضر
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ❌
+                </div>
+
+                <div>
+
+                    <strong id="attendanceAbsentTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        غیر حاضر
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📊
+                </div>
+
+                <div>
+
+                    <strong id="attendancePercentage">
+                        0%
+                    </strong>
+
+                    <span>
+                        حاضری فیصد
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================================
+             ATTENDANCE CONTROL
+        ========================================== -->
+
+        <section class="student-form-card">
+
+            <h2>
+                حاضری منتخب کریں
+            </h2>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="attendanceDate">
+                        تاریخ
+                    </label>
+
+                    <input type="date"
+                           id="attendanceDate">
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="attendanceTeacher">
+                        استاد
+                    </label>
+
+                    <select id="attendanceTeacher">
+
+                        <option value="">
+                            استاد منتخب کریں
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="attendancePeriod">
+                        کلاس نمبر
+                    </label>
+
+                    <select id="attendancePeriod">
+
+                        <option value="">
+                            کلاس نمبر منتخب کریں
+                        </option>
+
+                        <option value="1">
+                            پہلی کلاس
+                        </option>
+
+                        <option value="2">
+                            دوسری کلاس
+                        </option>
+
+                        <option value="3">
+                            تیسری کلاس
+                        </option>
+
+                        <option value="4">
+                            چوتھی کلاس
+                        </option>
+
+                        <option value="5">
+                            پانچویں کلاس
+                        </option>
+
+                        <option value="6">
+                            چھٹی کلاس
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="attendanceClass">
+                        جماعت
+                    </label>
+
+                    <select id="attendanceClass">
+
+                        <option value="">
+                            جماعت منتخب کریں
+                        </option>
+
+                        <option value="ناظرہ">
+                            ناظرہ
+                        </option>
+
+                        <option value="حفظ">
+                            حفظ
+                        </option>
+
+                        <option value="ترجمہ">
+                            ترجمہ
+                        </option>
+
+                        <option value="درس نظامی">
+                            درس نظامی
+                        </option>
+
+                        <option value="دیگر">
+                            دیگر
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <button type="button"
+                    id="loadAttendanceButton">
+
+                📋 طالبات لوڈ کریں
+
+            </button>
+
+
+            <div id="attendanceMessage"
+                 class="message"
+                 aria-live="polite">
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             ATTENDANCE LIST HEADER
+        ========================================== -->
+
+        <section class="student-form-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        طالبات کی حاضری
+                    </h2>
+
+                    <p>
+                        ہر طالبہ کی حالت منتخب کریں
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    کل:
+                    <strong id="attendanceListCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 QUICK ACTIONS
+            ====================================== -->
+
+            <div class="attendance-quick-actions">
+
+                <button type="button"
+                        id="markAllPresent">
+
+                    ✅ سب حاضر
+
+                </button>
+
+
+                <button type="button"
+                        id="markAllAbsent">
+
+                    ❌ سب غیر حاضر
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 STUDENT ATTENDANCE LIST
+            ====================================== -->
+
+            <div id="attendanceList">
+
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    <h3>
+                        ابھی حاضری لوڈ نہیں ہوئی
+                    </h3>
+
+                    <p>
+                        تاریخ، استاد، کلاس نمبر اور جماعت منتخب کریں۔
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 SAVE
+            ====================================== -->
+
+            <button type="button"
+                    id="saveAttendanceButton">
+
+                💾 حاضری محفوظ کریں
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =========================================
+             TODAY ATTENDANCE RECORDS
+        ========================================== -->
+
+        <section class="student-form-card">
+
+            <h2>
+                آج کی حاضری
+            </h2>
+
+
+            <div id="todayAttendanceList">
+
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        📚
+                    </div>
+
+                    <p>
+                        ابھی کوئی حاضری ریکارڈ موجود نہیں۔
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             LOGOUT
+        ========================================== -->
+
+        <button type="button"
+                id="logoutButton"
+                class="logout-button">
+
+            🚪 لاگ آؤٹ
+
+        </button>
+
+
+    </main>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js?v=11"></script>
+
+</body>
+
+</html>
