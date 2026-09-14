@@ -1467,7 +1467,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const futureMenus = [
 
-            "attendanceMenu",
             "hostelMenu",
             "feesMenu",
             "reportsMenu"
