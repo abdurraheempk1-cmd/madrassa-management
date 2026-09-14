@@ -5243,198 +5243,213 @@ async function loadTeachers() {
     }
 }
 
-
-/* =====================================================
-   DISPLAY TEACHERS
+   /* =====================================================
+   TEACHER DETAILS
 ===================================================== */
 
-function displayTeachers(
-    teachers = teachersCache
-) {
+function showTeacherDetails(id) {
 
-    if (!teacherList) {
+    const teacher =
+        teachersCache.find(
+            function (item) {
+                return String(item.id) === String(id);
+            }
+        );
+
+
+    if (!teacher) {
+
+        alert("استاد کا ریکارڈ نہیں ملا۔");
+
         return;
     }
 
 
     if (
-        !Array.isArray(teachers) ||
-        teachers.length === 0
+        !teacherDetailsOverlay ||
+        !teacherDetailsContent
     ) {
 
-        teacherList.innerHTML = `
-
-            <div class="teacher-empty">
-                ابھی کوئی استاد موجود نہیں۔
-            </div>
-        `;
+        console.error(
+            "Teacher details modal نہیں ملا۔"
+        );
 
         return;
     }
 
 
-    const role =
-        getCurrentRole();
+    const name =
+        getRecordValue(
+            teacher,
+            [
+                "name",
+                "teacher_name",
+                "teacherName"
+            ],
+            "-"
+        );
 
 
-    teacherList.innerHTML =
-        teachers
-            .map(
-                function (teacher) {
-
-                    const id =
-                        teacher.id;
-
-
-                    const code =
-                        getTeacherCode(
-                            teacher
-                        );
+    const fatherName =
+        getRecordValue(
+            teacher,
+            [
+                "father_name",
+                "fatherName"
+            ],
+            "-"
+        );
 
 
-                    const name =
-                        getRecordValue(
-                            teacher,
-                            [
-                                "name",
-                                "teacher_name",
-                                "teacherName"
-                            ],
-                            "-"
-                        );
+    const phone =
+        getRecordValue(
+            teacher,
+            [
+                "phone",
+                "teacherPhone"
+            ],
+            "-"
+        );
 
 
-                    const fatherName =
-                        getRecordValue(
-                            teacher,
-                            [
-                                "father_name",
-                                "fatherName"
-                            ],
-                            "-"
-                        );
-
-
-                    const phone =
-                        normalizePhone(
-                            getRecordValue(
-                                teacher,
-                                [
-                                    "phone",
-                                    "teacherPhone"
-                                ],
-                                ""
-                            )
-                        ) || "-";
-
-
-                    const qualification =
-                        getRecordValue(
-                            teacher,
-                            [
-                                "qualification"
-                            ],
-                            "-"
-                        );
-
-
-                    const joiningDate =
-                        getRecordValue(
-                            teacher,
-                            [
-                                "joining_date",
-                                "joiningDate"
-                            ],
-                            "-"
-                        );
-
-
-                    const adminButtons =
-                        role === "admin"
-                            ? `
-
-                                <button
-                                    type="button"
-                                    class="edit-teacher"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    ✏️ تبدیل کریں
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="delete-teacher"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    🗑️ حذف کریں
-                                </button>
-                            `
-                            : "";
-
-
-                    return `
-
-                        <div
-                            class="teacher-card"
-                            data-id="${escapeHtml(id)}"
-                        >
-
-                            <h3>
-                                ${escapeHtml(name)}
-                            </h3>
-
-
-                            <div class="teacher-card-info">
-
-                                <p>
-                                    استاد کوڈ:
-                                    ${escapeHtml(code)}
-                                </p>
-
-                                <p>
-                                    والد:
-                                    ${escapeHtml(fatherName)}
-                                </p>
-
-                                <p>
-                                    موبائل:
-                                    ${escapeHtml(phone)}
-                                </p>
-
-                                <p>
-                                    قابلیت:
-                                    ${escapeHtml(qualification)}
-                                </p>
-
-                                <p>
-                                    تقرری:
-                                    ${escapeHtml(joiningDate)}
-                                </p>
-
-                            </div>
-
-
-                            <div class="teacher-card-buttons">
-
-                                <button
-                                    type="button"
-                                    class="view-teacher"
-                                    data-id="${escapeHtml(id)}"
-                                >
-                                    👁️ تفصیلات
-                                </button>
-
-                                ${adminButtons}
-
-                            </div>
-
-                        </div>
-                    `;
-                }
+    const cnic =
+        formatCNIC(
+            getRecordValue(
+                teacher,
+                [
+                    "cnic",
+                    "teacherCNIC"
+                ],
+                ""
             )
-            .join("");
-}
+        ) || "-";
 
+
+    const qualification =
+        getRecordValue(
+            teacher,
+            [
+                "qualification"
+            ],
+            "-"
+        );
+
+
+    const joiningDate =
+        getRecordValue(
+            teacher,
+            [
+                "joining_date",
+                "joiningDate"
+            ],
+            "-"
+        );
+
+
+    const address =
+        getRecordValue(
+            teacher,
+            [
+                "address"
+            ],
+            "-"
+        );
+
+
+    const teacherCode =
+        getTeacherCode(teacher) || "-";
+
+
+    if (teacherDetailsTitle) {
+
+        teacherDetailsTitle.textContent =
+            name;
+    }
+
+
+    teacherDetailsContent.innerHTML = `
+
+        <div class="student-detail-section">
+
+            <h3>
+                بنیادی معلومات
+            </h3>
+
+            <p>
+                <strong>استاد کوڈ:</strong>
+                ${escapeHtml(teacherCode)}
+            </p>
+
+            <p>
+                <strong>نام:</strong>
+                ${escapeHtml(name)}
+            </p>
+
+            <p>
+                <strong>والد کا نام:</strong>
+                ${escapeHtml(fatherName)}
+            </p>
+
+            <p>
+                <strong>موبائل نمبر:</strong>
+                ${escapeHtml(phone)}
+            </p>
+
+            <p>
+                <strong>شناختی کارڈ:</strong>
+                ${escapeHtml(cnic)}
+            </p>
+
+        </div>
+
+
+        <div class="student-detail-section">
+
+            <h3>
+                تعلیمی معلومات
+            </h3>
+
+            <p>
+                <strong>تعلیمی قابلیت:</strong>
+                ${escapeHtml(qualification)}
+            </p>
+
+            <p>
+                <strong>تقرری کی تاریخ:</strong>
+                ${escapeHtml(joiningDate)}
+            </p>
+
+        </div>
+
+
+        <div class="student-detail-section">
+
+            <h3>
+                رابطہ
+            </h3>
+
+            <p>
+                <strong>پتہ:</strong>
+                ${escapeHtml(address)}
+            </p>
+
+        </div>
+    `;
+
+
+    teacherDetailsOverlay.classList.remove(
+        "hidden"
+    );
+
+
+    teacherDetailsOverlay.style.display =
+        "flex";
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+}
 
 /* =====================================================
    SEARCH TEACHERS
