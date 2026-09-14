@@ -5,32 +5,48 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>طالبات - مدرسہ شہناز اختر للبنات</title>
+    <title>
+        طالبات - مدرسہ شہناز اختر للبنات
+    </title>
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
-          rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-    <link rel="stylesheet"
-          href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
+
 <body>
+
 
     <div class="students-page">
 
 
-        <!-- Header -->
+        <!-- =========================
+             HEADER
+        ========================== -->
 
         <div class="students-header">
 
@@ -41,6 +57,7 @@
             >
                 ↩️ ڈیش بورڈ
             </button>
+
 
             <div>
 
@@ -57,7 +74,9 @@
         </div>
 
 
-        <!-- Actions -->
+        <!-- =========================
+             ACTIONS
+        ========================== -->
 
         <div class="student-actions">
 
@@ -72,7 +91,9 @@
         </div>
 
 
-        <!-- Summary -->
+        <!-- =========================
+             SUMMARY
+        ========================== -->
 
         <div class="students-summary">
 
@@ -85,7 +106,9 @@
         </div>
 
 
-        <!-- Student Form -->
+        <!-- =========================
+             STUDENT FORM
+        ========================== -->
 
         <div
             id="studentFormContainer"
@@ -97,9 +120,16 @@
             </h2>
 
 
+            <div
+                id="studentFormMessage"
+                class="form-message"
+            ></div>
+
+
             <form id="studentForm">
 
-                <!-- Hidden ID -->
+
+                <!-- Hidden Student ID -->
 
                 <input
                     type="hidden"
@@ -107,7 +137,9 @@
                 >
 
 
-                <!-- Admission Information -->
+                <!-- =========================
+                     ADMISSION INFORMATION
+                ========================== -->
 
                 <div class="form-section">
 
@@ -115,7 +147,9 @@
                         📋 داخلہ کی معلومات
                     </h3>
 
+
                     <div class="form-grid">
+
 
                         <div class="form-group">
 
@@ -123,7 +157,10 @@
                                 داخلہ کی قسم
                             </label>
 
-                            <select id="admissionType" required>
+                            <select
+                                id="admissionType"
+                                required
+                            >
 
                                 <option value="">
                                     منتخب کریں
@@ -197,13 +234,16 @@
                 </div>
 
 
-                <!-- Personal Information -->
+                <!-- =========================
+                     PERSONAL INFORMATION
+                ========================== -->
 
                 <div class="form-section">
 
                     <h3>
                         👧 طالبہ کی ذاتی معلومات
                     </h3>
+
 
                     <div class="form-grid">
 
@@ -381,13 +421,16 @@
                 </div>
 
 
-                <!-- Residence -->
+                <!-- =========================
+                     RESIDENCE
+                ========================== -->
 
                 <div class="form-section">
 
                     <h3>
                         🏠 رہائش کی معلومات
                     </h3>
+
 
                     <div class="form-grid">
 
@@ -421,7 +464,9 @@
                     </div>
 
 
-                    <!-- Mahram -->
+                    <!-- =========================
+                         MAHRAM
+                    ========================== -->
 
                     <div
                         id="mahramSection"
@@ -452,16 +497,20 @@
                 </div>
 
 
-                <!-- Form Buttons -->
+                <!-- =========================
+                     FORM BUTTONS
+                ========================== -->
 
                 <div class="form-buttons">
 
                     <button
                         type="submit"
+                        id="saveStudentButton"
                         class="save-button"
                     >
                         💾 محفوظ کریں
                     </button>
+
 
                     <button
                         type="button"
@@ -473,12 +522,15 @@
 
                 </div>
 
+
             </form>
 
         </div>
 
 
-        <!-- Student List -->
+        <!-- =========================
+             STUDENT LIST
+        ========================== -->
 
         <div class="student-list-section">
 
@@ -487,6 +539,7 @@
                 <h2>
                     📚 طالبات کا ریکارڈ
                 </h2>
+
 
                 <input
                     type="search"
@@ -501,16 +554,108 @@
 
         </div>
 
+
     </div>
 
 
-    <!-- Supabase MUST load before script.js -->
+    <!-- =================================================
+         STUDENT DETAILS MODAL
+    ================================================== -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div
+        id="studentDetailsOverlay"
+        class="student-details-overlay hidden"
+        style="
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        "
+    >
 
-    <!-- script.js loaded ONLY ONCE -->
+        <div
+            id="studentDetailsBox"
+            class="student-details-box"
+            style="
+                width: 100%;
+                max-width: 650px;
+                max-height: 90vh;
+                overflow-y: auto;
+                background: white;
+                border-radius: 20px;
+                padding: 20px;
+                position: relative;
+            "
+        >
 
-    <script src="script.js"></script>
+
+            <!-- Details Header -->
+
+            <div
+                class="student-details-header"
+                style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 15px;
+                    margin-bottom: 20px;
+                "
+            >
+
+                <h2
+                    id="studentDetailsTitle"
+                    style="margin: 0;"
+                >
+                    طالبہ کی تفصیلات
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="closeStudentDetails"
+                    class="close-details-button"
+                    style="
+                        width: auto;
+                        min-width: 55px;
+                        margin: 0;
+                    "
+                >
+                    ✖
+                </button>
+
+            </div>
+
+
+            <!-- Details Content -->
+
+            <div id="studentDetailsContent"></div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         SUPABASE
+    ================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =================================================
+         MAIN SCRIPT
+    ================================================== -->
+
+    <script src="script.js?v=10"></script>
+
 
 </body>
 
