@@ -1306,11 +1306,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
        PART 2 MUST BE PASTED DIRECTLY BELOW THIS LINE.
     ===================================================== */
-
-                          /* =========================================================
+   /* =========================================================
    MASTER SCRIPT.JS
    PART 2
    COMPLETE STUDENT MODULE
+   CORRECTED VERSION
 ========================================================= */
 
 
@@ -1356,18 +1356,9 @@ function formatCNIC(value) {
         canonicalCNIC(value);
 
 
-    if (digits.length <= 5) {
+    if (digits.length !== 13) {
+
         return digits;
-    }
-
-
-    if (digits.length <= 12) {
-
-        return (
-            digits.slice(0, 5) +
-            "-" +
-            digits.slice(5)
-        );
     }
 
 
@@ -1376,7 +1367,7 @@ function formatCNIC(value) {
         "-" +
         digits.slice(5, 12) +
         "-" +
-        digits.slice(12, 13)
+        digits.slice(12)
     );
 }
 
@@ -1400,7 +1391,7 @@ function isUrduName(value) {
 
 function getRecordValue(
     record,
-    keys,
+    key,
     fallback = ""
 ) {
 
@@ -1409,34 +1400,26 @@ function getRecordValue(
     }
 
 
-    const list =
-        Array.isArray(keys)
-            ? keys
-            : [keys];
+    const value =
+        record[key];
 
 
-    for (const key of list) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
 
-        if (
-            Object.prototype.hasOwnProperty.call(
-                record,
-                key
-            ) &&
-            record[key] !== null &&
-            record[key] !== undefined
-        ) {
-
-            return record[key];
-        }
+        return fallback;
     }
 
 
-    return fallback;
+    return value;
 }
 
 
 /* =====================================================
-   STUDENT VARIABLES
+   STUDENT STATE
 ===================================================== */
 
 let studentsCache = [];
@@ -1447,6 +1430,10 @@ let isSavingStudent = false;
 
 let isDeletingStudent = false;
 
+
+/* =====================================================
+   STUDENT ELEMENTS
+===================================================== */
 
 const studentFormContainer =
     getElement(
@@ -1483,9 +1470,9 @@ const saveStudentButton =
         "saveStudentButton"
     );
 
-const studentCount =
+const studentSearch =
     getElement(
-        "studentCount"
+        "studentSearch"
     );
 
 const studentsList =
@@ -1493,9 +1480,9 @@ const studentsList =
         "studentsList"
     );
 
-const studentSearch =
+const studentCount =
     getElement(
-        "studentSearch"
+        "studentCount"
     );
 
 const admissionType =
@@ -1538,6 +1525,11 @@ const studentDetailsOverlay =
         "studentDetailsOverlay"
     );
 
+const studentDetailsTitle =
+    getElement(
+        "studentDetailsTitle"
+    );
+
 const studentDetailsContent =
     getElement(
         "studentDetailsContent"
@@ -1550,28 +1542,29 @@ const closeStudentDetailsButton =
 
 
 /* =====================================================
-   STUDENT FIELD VALUE
+   GET STUDENT FIELD VALUE
 ===================================================== */
 
 function getStudentValue(id) {
 
-    const field =
+    const element =
         getElement(id);
 
 
-    if (!field) {
+    if (!element) {
+
         return "";
     }
 
 
     return safeString(
-        field.value
+        element.value
     );
 }
 
 
 /* =====================================================
-   TRANSFER FIELDS
+   ADMISSION TYPE
 ===================================================== */
 
 function updateTransferFields() {
@@ -1582,8 +1575,9 @@ function updateTransferFields() {
 
 
     const isTransfer =
-        admissionType.value ===
-        "منتقلی";
+        safeString(
+            admissionType.value
+        ) === "منتقلی";
 
 
     if (previousMadrassaGroup) {
@@ -1606,7 +1600,7 @@ function updateTransferFields() {
 
     if (!isTransfer) {
 
-        const previousMadrassa =
+        const previous =
             getElement(
                 "previousMadrassa"
             );
@@ -1617,8 +1611,8 @@ function updateTransferFields() {
             );
 
 
-        if (previousMadrassa) {
-            previousMadrassa.value = "";
+        if (previous) {
+            previous.value = "";
         }
 
 
@@ -1633,54 +1627,94 @@ function updateTransferFields() {
    MAHRAM RELATIONS
 ===================================================== */
 
-const mahramRelations = [
+const MAHRAM_RELATIONS = [
 
-    {
-        value: "والد",
-        label: "والد"
-    },
+    "والد",
 
-    {
-        value: "بھائی",
-        label: "بھائی"
-    },
+    "بھائی",
 
-    {
-        value: "بیٹا",
-        label: "بیٹا"
-    },
+    "بیٹا",
 
-    {
-        value: "شوہر",
-        label: "شوہر"
-    },
+    "دادا",
 
-    {
-        value: "دادا",
-        label: "دادا"
-    },
+    "نانا",
 
-    {
-        value: "نانا",
-        label: "نانا"
-    },
+    "چچا",
 
-    {
-        value: "چچا",
-        label: "چچا"
-    },
+    "ماموں",
 
-    {
-        value: "ماموں",
-        label: "ماموں"
-    },
+    "بھتیجا",
 
-    {
-        value: "دیگر",
-        label: "دیگر"
-    }
+    "بھانجا",
+
+    "شوہر",
+
+    "سسر",
+
+    "دیگر"
 
 ];
+
+
+/* =====================================================
+   NORMALIZE OLD MAHRAM RELATION
+===================================================== */
+
+function normalizeMahramRelation(
+    relation
+) {
+
+    const value =
+        safeString(
+            relation
+        );
+
+
+    const relationMap = {
+
+        father:
+            "والد",
+
+        brother:
+            "بھائی",
+
+        son:
+            "بیٹا",
+
+        grandfather:
+            "دادا",
+
+        maternal_grandfather:
+            "نانا",
+
+        uncle:
+            "چچا",
+
+        maternal_uncle:
+            "ماموں",
+
+        nephew:
+            "بھتیجا",
+
+        husband:
+            "شوہر",
+
+        father_in_law:
+            "سسر",
+
+        other:
+            "دیگر"
+
+    };
+
+
+    return (
+        relationMap[
+            value.toLowerCase()
+        ] ||
+        value
+    );
+}
 
 
 /* =====================================================
@@ -1688,7 +1722,7 @@ const mahramRelations = [
 ===================================================== */
 
 function createMahramRow(
-    data = {}
+    mahram = {}
 ) {
 
     if (!mahramList) {
@@ -1702,7 +1736,9 @@ function createMahramRow(
         );
 
 
-    if (existingRows.length >= 5) {
+    if (
+        existingRows.length >= 5
+    ) {
 
         alert(
             "زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔"
@@ -1719,137 +1755,132 @@ function createMahramRow(
 
 
     row.className =
-        "mahram-row mahram-card";
+        "mahram-row";
 
 
-    const relationOptions =
-        mahramRelations
-            .map(function (item) {
-
-                const selected =
-                    safeString(
-                        data.relation
-                    ) === item.value
-                        ? "selected"
-                        : "";
+    const selectedRelation =
+        normalizeMahramRelation(
+            mahram.relation
+        );
 
 
-                return `
-                    <option
-                        value="${escapeHtml(item.value)}"
-                        ${selected}
-                    >
-                        ${escapeHtml(item.label)}
-                    </option>
-                `;
-            })
+    const options =
+        MAHRAM_RELATIONS
+            .map(
+                function (relation) {
+
+                    const selected =
+                        relation ===
+                        selectedRelation
+                            ? "selected"
+                            : "";
+
+
+                    return `
+
+                        <option
+                            value="${escapeHtml(relation)}"
+                            ${selected}
+                        >
+                            ${escapeHtml(relation)}
+                        </option>
+                    `;
+                }
+            )
             .join("");
 
 
     row.innerHTML = `
 
-        <div class="mahram-header">
+        <div class="form-group">
 
-            <strong>
-                محرم کی معلومات
-            </strong>
+            <label>
+                محرم کا نام
+            </label>
 
-            <button
-                type="button"
-                class="remove-mahram"
-                data-remove-mahram
+            <input
+                type="text"
+                class="mahram-name"
+                value="${escapeHtml(
+                    mahram.name || ""
+                )}"
+                placeholder="محرم کا نام"
             >
-                ✖ حذف کریں
-            </button>
 
         </div>
 
 
-        <div class="form-grid">
+        <div class="form-group">
 
+            <label>
+                رشتہ
+            </label>
 
-            <div class="form-group">
+            <select
+                class="mahram-relation"
+            >
 
-                <label>
-                    محرم کا نام
-                </label>
+                <option value="">
+                    رشتہ منتخب کریں
+                </option>
 
-                <input
-                    type="text"
-                    data-mahram-name
-                    placeholder="محرم کا نام"
-                    value="${escapeHtml(data.name || "")}"
-                >
+                ${options}
 
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    رشتہ
-                </label>
-
-                <select
-                    data-mahram-relation
-                >
-
-                    <option value="">
-                        منتخب کریں
-                    </option>
-
-                    ${relationOptions}
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    موبائل نمبر
-                </label>
-
-                <input
-                    type="tel"
-                    inputmode="numeric"
-                    maxlength="11"
-                    data-mahram-phone
-                    placeholder="03XXXXXXXXX"
-                    value="${escapeHtml(
-                        normalizePhone(
-                            data.phone || ""
-                        )
-                    )}"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    شناختی کارڈ نمبر
-                </label>
-
-                <input
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="15"
-                    data-mahram-cnic
-                    placeholder="00000-0000000-0"
-                    value="${escapeHtml(
-                        formatCNIC(
-                            data.cnic || ""
-                        )
-                    )}"
-                >
-
-            </div>
-
+            </select>
 
         </div>
+
+
+        <div class="form-group">
+
+            <label>
+                موبائل نمبر
+            </label>
+
+            <input
+                type="tel"
+                inputmode="numeric"
+                maxlength="11"
+                class="mahram-phone"
+                value="${escapeHtml(
+                    normalizePhone(
+                        mahram.phone
+                    )
+                )}"
+                placeholder="03XXXXXXXXX"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                شناختی کارڈ نمبر
+            </label>
+
+            <input
+                type="text"
+                inputmode="numeric"
+                maxlength="15"
+                class="mahram-cnic"
+                value="${escapeHtml(
+                    formatCNIC(
+                        mahram.cnic
+                    )
+                )}"
+                placeholder="XXXXX-XXXXXXX-X"
+            >
+
+        </div>
+
+
+        <button
+            type="button"
+            class="remove-mahram"
+        >
+            🗑️ محرم حذف کریں
+        </button>
 
     `;
 
@@ -1859,27 +1890,27 @@ function createMahramRow(
     );
 
 
-    const phoneField =
+    const phoneInput =
         row.querySelector(
-            "[data-mahram-phone]"
+            ".mahram-phone"
         );
 
 
-    const cnicField =
+    const cnicInput =
         row.querySelector(
-            "[data-mahram-cnic]"
+            ".mahram-cnic"
         );
 
 
     const removeButton =
         row.querySelector(
-            "[data-remove-mahram]"
+            ".remove-mahram"
         );
 
 
-    if (phoneField) {
+    if (phoneInput) {
 
-        phoneField.addEventListener(
+        phoneInput.addEventListener(
             "input",
             function () {
 
@@ -1892,9 +1923,9 @@ function createMahramRow(
     }
 
 
-    if (cnicField) {
+    if (cnicInput) {
 
-        cnicField.addEventListener(
+        cnicInput.addEventListener(
             "input",
             function () {
 
@@ -1914,25 +1945,21 @@ function createMahramRow(
             function () {
 
                 row.remove();
-
-                updateMahramRemoveButtons();
             }
         );
     }
-
-
-    updateMahramRemoveButtons();
 }
 
 
 /* =====================================================
-   MAHRAM REMOVE BUTTONS
+   GET MAHRAMS FROM FORM
 ===================================================== */
 
-function updateMahramRemoveButtons() {
+function getMahramsFromForm() {
 
     if (!mahramList) {
-        return;
+
+        return [];
     }
 
 
@@ -1942,122 +1969,131 @@ function updateMahramRemoveButtons() {
         );
 
 
+    const mahrams = [];
+
+
     rows.forEach(
         function (row) {
 
-            const button =
-                row.querySelector(
-                    "[data-remove-mahram]"
+            const name =
+                safeString(
+                    row.querySelector(
+                        ".mahram-name"
+                    )?.value
                 );
 
 
-            if (!button) {
-                return;
+            const relation =
+                safeString(
+                    row.querySelector(
+                        ".mahram-relation"
+                    )?.value
+                );
+
+
+            const phone =
+                normalizePhone(
+                    row.querySelector(
+                        ".mahram-phone"
+                    )?.value
+                );
+
+
+            const cnic =
+                canonicalCNIC(
+                    row.querySelector(
+                        ".mahram-cnic"
+                    )?.value
+                );
+
+
+            if (
+                name ||
+                relation ||
+                phone ||
+                cnic
+            ) {
+
+                mahrams.push({
+
+                    name:
+                        name,
+
+                    relation:
+                        relation,
+
+                    phone:
+                        phone,
+
+                    cnic:
+                        cnic
+
+                });
             }
-
-
-            button.style.display =
-                rows.length > 1
-                    ? "inline-block"
-                    : "none";
         }
     );
+
+
+    return mahrams;
 }
 
 
 /* =====================================================
-   GET MAHRAMS
+   PARSE SAVED MAHRAMS
 ===================================================== */
 
-function getMahrams() {
+function parseMahrams(value) {
 
-    if (!mahramList) {
+    if (
+        Array.isArray(
+            value
+        )
+    ) {
+
+        return value;
+    }
+
+
+    if (!value) {
+
         return [];
     }
 
 
-    return Array.from(
-        mahramList.querySelectorAll(
-            ".mahram-row"
+    try {
+
+        const parsed =
+            JSON.parse(
+                value
+            );
+
+
+        return Array.isArray(
+            parsed
         )
-    )
-        .map(
-            function (row) {
-
-                const name =
-                    row.querySelector(
-                        "[data-mahram-name]"
-                    );
-
-                const relation =
-                    row.querySelector(
-                        "[data-mahram-relation]"
-                    );
-
-                const phone =
-                    row.querySelector(
-                        "[data-mahram-phone]"
-                    );
-
-                const cnic =
-                    row.querySelector(
-                        "[data-mahram-cnic]"
-                    );
+            ? parsed
+            : [];
 
 
-                return {
+    } catch (error) {
 
-                    name:
-                        name
-                            ? safeString(
-                                name.value
-                            )
-                            : "",
-
-                    relation:
-                        relation
-                            ? safeString(
-                                relation.value
-                            )
-                            : "",
-
-                    phone:
-                        phone
-                            ? normalizePhone(
-                                phone.value
-                            )
-                            : "",
-
-                    cnic:
-                        cnic
-                            ? canonicalCNIC(
-                                cnic.value
-                            )
-                            : ""
-
-                };
-            }
-        )
-        .filter(
-            function (item) {
-
-                return (
-                    item.name ||
-                    item.relation ||
-                    item.phone ||
-                    item.cnic
-                );
-            }
+        console.error(
+            "Mahram parse error:",
+            error
         );
+
+
+        return [];
+    }
 }
 
 
 /* =====================================================
-   LOAD MAHRAMS
+   LOAD MAHRAMS INTO FORM
 ===================================================== */
 
-function loadMahrams(
-    mahrams = []
+function loadMahramsIntoForm(
+    value
 ) {
 
     if (!mahramList) {
@@ -2065,75 +2101,72 @@ function loadMahrams(
     }
 
 
-    mahramList.innerHTML = "";
+    mahramList.innerHTML =
+        "";
+
+
+    const mahrams =
+        parseMahrams(
+            value
+        );
+
+
+    mahrams.forEach(
+        function (mahram) {
+
+            createMahramRow(
+                mahram
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   RESIDENCE TYPE
+===================================================== */
+
+function updateMahramSection() {
+
+    if (!residenceType) {
+        return;
+    }
+
+
+    const isHostel =
+        safeString(
+            residenceType.value
+        ) === "ہاسٹل";
+
+
+    if (mahramSection) {
+
+        mahramSection.classList.toggle(
+            "hidden",
+            !isHostel
+        );
+    }
 
 
     if (
-        Array.isArray(mahrams) &&
-        mahrams.length
+        isHostel &&
+        mahramList &&
+        mahramList.querySelectorAll(
+            ".mahram-row"
+        ).length === 0
     ) {
-
-        mahrams
-            .slice(0, 5)
-            .forEach(
-                function (mahram) {
-
-                    createMahramRow(
-                        mahram
-                    );
-                }
-            );
-
-    } else {
 
         createMahramRow();
     }
 
 
-    updateMahramRemoveButtons();
-}
-
-
-/* =====================================================
-   MAHRAM SECTION
-===================================================== */
-
-function updateMahramSection() {
-
     if (
-        !residenceType ||
-        !mahramSection
+        !isHostel &&
+        mahramList
     ) {
-        return;
-    }
 
-
-    const hostel =
-        residenceType.value ===
-        "ہاسٹل";
-
-
-    mahramSection.classList.toggle(
-        "hidden",
-        !hostel
-    );
-
-
-    if (hostel) {
-
-        if (
-            mahramList &&
-            !mahramList.querySelector(
-                ".mahram-row"
-            )
-        ) {
-
-            createMahramRow();
-        }
-
-    } else if (mahramList) {
-
-        mahramList.innerHTML = "";
+        mahramList.innerHTML =
+            "";
     }
 }
 
@@ -2187,20 +2220,10 @@ function initializeStudentFormatting() {
 
 
 /* =====================================================
-   STUDENT FORM DATA
+   GET STUDENT FORM DATA
 ===================================================== */
 
 function getStudentFormData() {
-
-    const residence =
-        getStudentValue(
-            "residenceType"
-        );
-
-
-    const hostel =
-        residence === "ہاسٹل";
-
 
     return {
 
@@ -2264,41 +2287,29 @@ function getStudentFormData() {
             ) || null,
 
         residence_type:
-            residence || null,
+            getStudentValue(
+                "residenceType"
+            ) || null,
 
         previous_madrassa:
             getStudentValue(
-                "admissionType"
-            ) === "منتقلی"
-                ? (
-                    getStudentValue(
-                        "previousMadrassa"
-                    ) || null
-                )
-                : null,
+                "previousMadrassa"
+            ) || null,
 
         transfer_date:
             getStudentValue(
-                "admissionType"
-            ) === "منتقلی"
-                ? (
-                    getStudentValue(
-                        "transferDate"
-                    ) || null
-                )
-                : null,
+                "transferDate"
+            ) || null,
 
         mahrams:
-            hostel
-                ? getMahrams()
-                : []
+            getMahramsFromForm()
 
     };
 }
 
 
 /* =====================================================
-   STUDENT VALIDATION
+   VALIDATE STUDENT
 ===================================================== */
 
 function validateStudentForm() {
@@ -2307,15 +2318,15 @@ function validateStudentForm() {
         getStudentFormData();
 
 
-    if (!data.admission_type) {
-
-        return "داخلہ کی قسم منتخب کریں۔";
-    }
-
-
     if (!data.admission_no) {
 
         return "داخلہ نمبر درج کریں۔";
+    }
+
+
+    if (!data.admission_type) {
+
+        return "داخلہ کی قسم منتخب کریں۔";
     }
 
 
@@ -2325,7 +2336,11 @@ function validateStudentForm() {
     }
 
 
-    if (!isUrduName(data.name)) {
+    if (
+        !isUrduName(
+            data.name
+        )
+    ) {
 
         return "طالبہ کا نام صرف اردو میں درج کریں۔";
     }
@@ -2347,13 +2362,8 @@ function validateStudentForm() {
     }
 
 
-    if (!data.guardian_name) {
-
-        return "سرپرست کا نام درج کریں۔";
-    }
-
-
     if (
+        data.guardian_name &&
         !isUrduName(
             data.guardian_name
         )
@@ -2374,42 +2384,23 @@ function validateStudentForm() {
 
     if (
         !data.phone ||
-        data.phone.length !== 11
-    ) {
-
-        return "موبائل نمبر 11 ہندسوں پر مشتمل ہونا چاہیے۔";
-    }
-
-
-    if (
+        data.phone.length !== 11 ||
         !data.phone.startsWith("03")
     ) {
 
-        return "موبائل نمبر 03 سے شروع ہونا چاہیے۔";
-    }
-
-
-    if (!data.date_of_birth) {
-
-        return "تاریخ پیدائش منتخب کریں۔";
+        return "درست 11 ہندسوں کا موبائل نمبر درج کریں جو 03 سے شروع ہو۔";
     }
 
 
     if (!data.student_class) {
 
-        return "کلاس منتخب کریں۔";
+        return "جماعت منتخب کریں۔";
     }
 
 
     if (!data.admission_date) {
 
-        return "داخلہ کی تاریخ منتخب کریں۔";
-    }
-
-
-    if (!data.address) {
-
-        return "مکمل پتہ درج کریں۔";
+        return "تاریخ داخلہ درج کریں۔";
     }
 
 
@@ -2424,15 +2415,17 @@ function validateStudentForm() {
         "منتقلی"
     ) {
 
-        if (!data.previous_madrassa) {
+        if (
+            !data.previous_madrassa
+        ) {
 
-            return "سابقہ مدرسے کا نام درج کریں۔";
+            return "سابقہ مدرسہ درج کریں۔";
         }
 
 
         if (!data.transfer_date) {
 
-            return "منتقلی کی تاریخ منتخب کریں۔";
+            return "منتقلی کی تاریخ درج کریں۔";
         }
     }
 
@@ -2442,36 +2435,28 @@ function validateStudentForm() {
         "ہاسٹل"
     ) {
 
-        const mahrams =
-            data.mahrams;
+        if (
+            data.mahrams.length === 0
+        ) {
 
-
-        if (!mahrams.length) {
-
-            return "ہاسٹل طالبہ کے لیے کم از کم ایک محرم ضروری ہے۔";
-        }
-
-
-        if (mahrams.length > 5) {
-
-            return "زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔";
+            return "ہاسٹل کی طالبہ کے لیے کم از کم ایک محرم ضروری ہے۔";
         }
 
 
         for (
             let index = 0;
-            index < mahrams.length;
+            index < data.mahrams.length;
             index++
         ) {
 
             const mahram =
-                mahrams[index];
+                data.mahrams[index];
 
 
             if (!mahram.name) {
 
                 return (
-                    "محرم نمبر " +
+                    "محرم " +
                     (index + 1) +
                     " کا نام درج کریں۔"
                 );
@@ -2485,9 +2470,9 @@ function validateStudentForm() {
             ) {
 
                 return (
-                    "محرم نمبر " +
+                    "محرم " +
                     (index + 1) +
-                    " کا نام اردو میں درج کریں۔"
+                    " کا نام صرف اردو میں درج کریں۔"
                 );
             }
 
@@ -2495,7 +2480,7 @@ function validateStudentForm() {
             if (!mahram.relation) {
 
                 return (
-                    "محرم نمبر " +
+                    "محرم " +
                     (index + 1) +
                     " کا رشتہ منتخب کریں۔"
                 );
@@ -2503,41 +2488,32 @@ function validateStudentForm() {
 
 
             if (
-                !mahram.phone ||
-                mahram.phone.length !== 11
-            ) {
-
-                return (
-                    "محرم نمبر " +
-                    (index + 1) +
-                    " کا موبائل نمبر 11 ہندسوں کا ہونا چاہیے۔"
-                );
-            }
-
-
-            if (
-                !mahram.phone.startsWith(
-                    "03"
+                mahram.phone &&
+                (
+                    mahram.phone.length !== 11 ||
+                    !mahram.phone.startsWith(
+                        "03"
+                    )
                 )
             ) {
 
                 return (
-                    "محرم نمبر " +
+                    "محرم " +
                     (index + 1) +
-                    " کا موبائل نمبر 03 سے شروع ہونا چاہیے۔"
+                    " کا موبائل نمبر درست درج کریں۔"
                 );
             }
 
 
             if (
-                !mahram.cnic ||
+                mahram.cnic &&
                 mahram.cnic.length !== 13
             ) {
 
                 return (
-                    "محرم نمبر " +
+                    "محرم " +
                     (index + 1) +
-                    " کا شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔"
+                    " کا شناختی کارڈ نمبر 13 ہندسوں پر مشتمل ہونا چاہیے۔"
                 );
             }
         }
@@ -2583,89 +2559,58 @@ async function checkStudentDuplicates(
     }
 
 
-    const duplicate =
-        (rows || []).find(
-            function (row) {
-
-                if (
-                    currentId !== null &&
-                    String(row.id) ===
-                    String(currentId)
-                ) {
-
-                    return false;
-                }
-
-
-                const sameAdmission =
-                    safeString(
-                        row.admission_no
-                    ) ===
-                    safeString(
-                        data.admission_no
-                    );
-
-
-                const sameCNIC =
-                    canonicalCNIC(
-                        row.cnic
-                    ) ===
-                    canonicalCNIC(
-                        data.cnic
-                    );
-
-
-                const samePhone =
-                    normalizePhone(
-                        row.phone
-                    ) ===
-                    normalizePhone(
-                        data.phone
-                    );
-
-
-                return (
-                    sameAdmission ||
-                    sameCNIC ||
-                    samePhone
-                );
-            }
-        );
-
-
-    if (!duplicate) {
-
-        return "";
-    }
-
-
-    if (
-        safeString(
-            duplicate.admission_no
-        ) ===
-        safeString(
-            data.admission_no
-        )
+    for (
+        const row of
+        rows || []
     ) {
 
-        return "یہ داخلہ نمبر پہلے سے موجود ہے۔";
-    }
+        if (
+            currentId !== null &&
+            String(row.id) ===
+            String(currentId)
+        ) {
+
+            continue;
+        }
 
 
-    if (
-        canonicalCNIC(
-            duplicate.cnic
-        ) ===
-        canonicalCNIC(
+        if (
+            safeString(
+                row.admission_no
+            ) ===
+            safeString(
+                data.admission_no
+            )
+        ) {
+
+            return "یہ داخلہ نمبر پہلے سے موجود ہے۔";
+        }
+
+
+        if (
+            canonicalCNIC(
+                row.cnic
+            ) ===
             data.cnic
-        )
-    ) {
+        ) {
 
-        return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
+            return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
+        }
+
+
+        if (
+            normalizePhone(
+                row.phone
+            ) ===
+            data.phone
+        ) {
+
+            return "یہ موبائل نمبر پہلے سے موجود ہے۔";
+        }
     }
 
 
-    return "یہ موبائل نمبر پہلے سے موجود ہے۔";
+    return "";
 }
 
 
@@ -2681,25 +2626,27 @@ function resetStudentForm() {
     }
 
 
-    editingStudentId = null;
+    editingStudentId =
+        null;
 
 
-    const editStudentId =
+    const editId =
         getElement(
             "editStudentId"
         );
 
 
-    if (editStudentId) {
+    if (editId) {
 
-        editStudentId.value = "";
+        editId.value =
+            "";
     }
 
 
-    if (studentFormTitle) {
+    if (mahramList) {
 
-        studentFormTitle.textContent =
-            "نئی طالبہ کا اندراج";
+        mahramList.innerHTML =
+            "";
     }
 
 
@@ -2708,9 +2655,10 @@ function resetStudentForm() {
     );
 
 
-    if (mahramList) {
+    if (studentFormTitle) {
 
-        mahramList.innerHTML = "";
+        studentFormTitle.textContent =
+            "نئی طالبہ کا داخلہ";
     }
 
 
@@ -2739,17 +2687,18 @@ function openStudentForm() {
     }
 
 
-    window.scrollTo({
+    if (studentFormContainer) {
 
-        top:
-            studentFormContainer
-                ? studentFormContainer.offsetTop
-                : 0,
+        window.scrollTo({
 
-        behavior:
-            "smooth"
+            top:
+                studentFormContainer.offsetTop,
 
-    });
+            behavior:
+                "smooth"
+
+        });
+    }
 }
 
 
@@ -2774,47 +2723,6 @@ function closeStudentForm() {
 
 
 /* =====================================================
-   GET STUDENT MAHRAMS
-===================================================== */
-
-function getStudentMahrams(
-    student
-) {
-
-    let value =
-        getRecordValue(
-            student,
-            "mahrams",
-            []
-        );
-
-
-    if (
-        typeof value ===
-        "string"
-    ) {
-
-        try {
-
-            value =
-                JSON.parse(
-                    value
-                );
-
-        } catch (error) {
-
-            value = [];
-        }
-    }
-
-
-    return Array.isArray(value)
-        ? value
-        : [];
-}
-
-
-/* =====================================================
    LOAD STUDENTS
 ===================================================== */
 
@@ -2827,54 +2735,78 @@ async function loadStudents() {
 
     if (studentsList) {
 
-        studentsList.innerHTML =
-            "<p>⏳ ریکارڈ لوڈ ہو رہا ہے...</p>";
+        studentsList.innerHTML = `
+
+            <div class="empty-state">
+                ⏳ ریکارڈ لوڈ ہو رہا ہے...
+            </div>
+        `;
     }
 
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from(
-                STUDENTS_TABLE
-            )
-            .select("*")
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            );
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    STUDENTS_TABLE
+                )
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending:
+                            false
+                    }
+                );
 
 
-    if (error) {
+        if (error) {
+            throw error;
+        }
+
+
+        studentsCache =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        if (studentCount) {
+
+            studentCount.textContent =
+                String(
+                    studentsCache.length
+                );
+        }
+
+
+        displayStudents(
+            studentsCache
+        );
+
+
+    } catch (error) {
 
         console.error(
-            "Student load error:",
+            "Students load error:",
             error
         );
 
+
         if (studentsList) {
 
-            studentsList.innerHTML =
-                '<div class="empty-students"><p>طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔</p></div>';
+            studentsList.innerHTML = `
+
+                <div class="empty-state">
+                    طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔
+                </div>
+            `;
         }
-
-        return;
     }
-
-
-    studentsCache =
-        Array.isArray(data)
-            ? data
-            : [];
-
-
-    displayStudents(
-        studentsCache
-    );
 }
 
 
@@ -2891,36 +2823,17 @@ function displayStudents(
     }
 
 
-    if (studentCount) {
-
-        studentCount.textContent =
-            String(
-                studentsCache.length
-            );
-    }
-
-
     if (
-        !Array.isArray(students) ||
+        !Array.isArray(
+            students
+        ) ||
         students.length === 0
     ) {
 
         studentsList.innerHTML = `
 
-            <div class="empty-students">
-
-                <div class="empty-icon">
-                    👧
-                </div>
-
-                <h3>
-                    کوئی طالبہ موجود نہیں
-                </h3>
-
-                <p>
-                    نئی طالبہ شامل کرنے کے لیے اوپر والا بٹن استعمال کریں۔
-                </p>
-
+            <div class="empty-state">
+                ابھی کوئی طالبہ موجود نہیں۔
             </div>
         `;
 
@@ -2936,6 +2849,7 @@ function displayStudents(
                     const id =
                         student.id;
 
+
                     const name =
                         getRecordValue(
                             student,
@@ -2943,12 +2857,6 @@ function displayStudents(
                             "-"
                         );
 
-                    const father =
-                        getRecordValue(
-                            student,
-                            "father_name",
-                            "-"
-                        );
 
                     const admissionNo =
                         getRecordValue(
@@ -2957,6 +2865,7 @@ function displayStudents(
                             "-"
                         );
 
+
                     const studentClass =
                         getRecordValue(
                             student,
@@ -2964,12 +2873,14 @@ function displayStudents(
                             "-"
                         );
 
+
                     const residence =
                         getRecordValue(
                             student,
                             "residence_type",
                             "-"
                         );
+
 
                     const phone =
                         getRecordValue(
@@ -3024,11 +2935,6 @@ function displayStudents(
                             <div class="student-info">
 
                                 <p>
-                                    والد:
-                                    ${escapeHtml(father)}
-                                </p>
-
-                                <p>
                                     موبائل:
                                     ${escapeHtml(phone)}
                                 </p>
@@ -3076,7 +2982,7 @@ function displayStudents(
 
 
 /* =====================================================
-   STUDENT SEARCH
+   SEARCH STUDENTS
 ===================================================== */
 
 function searchStudents() {
@@ -3109,21 +3015,23 @@ function searchStudents() {
                 const searchable =
                     [
 
+                        student.admission_no,
+
                         student.name,
 
                         student.father_name,
 
                         student.guardian_name,
 
-                        student.admission_no,
+                        student.cnic,
 
                         student.phone,
 
-                        student.cnic,
-
                         student.student_class,
 
-                        student.address
+                        student.address,
+
+                        student.residence_type
 
                     ]
                         .map(
@@ -3196,23 +3104,19 @@ function editStudent(id) {
     if (editId) {
 
         editId.value =
-            student.id;
+            String(
+                student.id
+            );
     }
 
 
     const fields = {
 
-        admissionType:
-            student.admission_type,
-
         admissionNo:
             student.admission_no,
 
-        previousMadrassa:
-            student.previous_madrassa,
-
-        transferDate:
-            student.transfer_date,
+        admissionType:
+            student.admission_type,
 
         studentName:
             student.name,
@@ -3223,16 +3127,21 @@ function editStudent(id) {
         guardianName:
             student.guardian_name,
 
-        dateOfBirth:
-            student.date_of_birth,
-
-        studentClass:
-            student.student_class,
+        studentCNIC:
+            formatCNIC(
+                student.cnic
+            ),
 
         phone:
             normalizePhone(
                 student.phone
             ),
+
+        dateOfBirth:
+            student.date_of_birth,
+
+        studentClass:
+            student.student_class,
 
         admissionDate:
             student.admission_date,
@@ -3241,7 +3150,13 @@ function editStudent(id) {
             student.address,
 
         residenceType:
-            student.residence_type
+            student.residence_type,
+
+        previousMadrassa:
+            student.previous_madrassa,
+
+        transferDate:
+            student.transfer_date
 
     };
 
@@ -3271,18 +3186,25 @@ function editStudent(id) {
     );
 
 
-    const cnic =
-        getElement(
-            "studentCNIC"
+    updateTransferFields();
+
+
+    loadMahramsIntoForm(
+        student.mahrams
+    );
+
+
+    if (
+        mahramSection &&
+        residenceType
+    ) {
+
+        mahramSection.classList.toggle(
+            "hidden",
+            safeString(
+                residenceType.value
+            ) !== "ہاسٹل"
         );
-
-
-    if (cnic) {
-
-        cnic.value =
-            formatCNIC(
-                student.cnic
-            );
     }
 
 
@@ -3293,30 +3215,12 @@ function editStudent(id) {
     }
 
 
-    updateTransferFields();
-
-    updateMahramSection();
-
-
-    if (
-        student.residence_type ===
-        "ہاسٹل"
-    ) {
-
-        loadMahrams(
-            getStudentMahrams(
-                student
-            )
-        );
-    }
-
-
     openStudentForm();
 }
 
 
 /* =====================================================
-   SHOW STUDENT DETAILS
+   STUDENT DETAILS
 ===================================================== */
 
 function showStudentDetails(id) {
@@ -3333,287 +3237,315 @@ function showStudentDetails(id) {
         );
 
 
+    if (!student) {
+
+        alert(
+            "طالبہ کا ریکارڈ نہیں ملا۔"
+        );
+
+        return;
+    }
+
+
     if (
-        !student ||
         !studentDetailsOverlay ||
         !studentDetailsContent
     ) {
+
+        console.error(
+            "Student details modal elements not found."
+        );
+
         return;
     }
 
 
     const mahrams =
-        getStudentMahrams(
-            student
+        parseMahrams(
+            student.mahrams
         );
 
 
-    let mahramHtml = "";
+    let mahramHtml = `
+
+        <p>
+            کوئی محرم درج نہیں۔
+        </p>
+    `;
 
 
-    if (mahrams.length) {
+    if (
+        mahrams.length > 0
+    ) {
 
-        mahramHtml = `
+        mahramHtml =
+            mahrams
+                .map(
+                    function (
+                        mahram,
+                        index
+                    ) {
 
-            <div class="student-detail-full mahram-details-box">
+                        return `
 
-                <h3>
-                    محرم کی معلومات
-                </h3>
+                            <div class="detail-item">
 
-                ${mahrams
-                    .map(
-                        function (
-                            mahram,
-                            index
-                        ) {
+                                <h4>
+                                    محرم ${index + 1}
+                                </h4>
 
-                            return `
-
-                                <div class="mahram-detail-card">
-
+                                <p>
                                     <strong>
-                                        محرم ${index + 1}
+                                        نام:
                                     </strong>
 
-                                    <p>
-                                        نام:
-                                        ${escapeHtml(
-                                            mahram.name || "-"
-                                        )}
-                                    </p>
+                                    ${escapeHtml(
+                                        mahram.name || "-"
+                                    )}
+                                </p>
 
-                                    <p>
+                                <p>
+                                    <strong>
                                         رشتہ:
-                                        ${escapeHtml(
-                                            mahram.relation || "-"
-                                        )}
-                                    </p>
+                                    </strong>
 
-                                    <p>
+                                    ${escapeHtml(
+                                        normalizeMahramRelation(
+                                            mahram.relation
+                                        ) || "-"
+                                    )}
+                                </p>
+
+                                <p>
+                                    <strong>
                                         موبائل:
-                                        ${escapeHtml(
-                                            mahram.phone || "-"
-                                        )}
-                                    </p>
+                                    </strong>
 
-                                    <p>
+                                    ${escapeHtml(
+                                        mahram.phone || "-"
+                                    )}
+                                </p>
+
+                                <p>
+                                    <strong>
                                         شناختی کارڈ:
-                                        ${escapeHtml(
-                                            formatCNIC(
-                                                mahram.cnic || ""
-                                            ) || "-"
-                                        )}
-                                    </p>
+                                    </strong>
 
-                                </div>
-                            `;
-                        }
-                    )
-                    .join("")}
+                                    ${escapeHtml(
+                                        formatCNIC(
+                                            mahram.cnic
+                                        ) || "-"
+                                    )}
+                                </p>
 
-            </div>
-        `;
+                            </div>
+                        `;
+                    }
+                )
+                .join("");
+    }
+
+
+    if (studentDetailsTitle) {
+
+        studentDetailsTitle.textContent =
+            safeString(
+                student.name
+            ) ||
+            "طالبہ کی تفصیلات";
     }
 
 
     studentDetailsContent.innerHTML = `
 
-        <div class="student-detail-item">
+        <div class="student-detail-section">
 
-            <strong>
-                داخلہ نمبر
-            </strong>
+            <h3>
+                بنیادی معلومات
+            </h3>
 
-            ${escapeHtml(
-                student.admission_no || "-"
-            )}
+            <p>
+                <strong>
+                    داخلہ نمبر:
+                </strong>
 
-        </div>
+                ${escapeHtml(
+                    student.admission_no || "-"
+                )}
+            </p>
 
+            <p>
+                <strong>
+                    داخلہ کی قسم:
+                </strong>
 
-        <div class="student-detail-item">
+                ${escapeHtml(
+                    student.admission_type || "-"
+                )}
+            </p>
 
-            <strong>
-                داخلہ کی قسم
-            </strong>
+            <p>
+                <strong>
+                    نام:
+                </strong>
 
-            ${escapeHtml(
-                student.admission_type || "-"
-            )}
+                ${escapeHtml(
+                    student.name || "-"
+                )}
+            </p>
 
-        </div>
+            <p>
+                <strong>
+                    والد کا نام:
+                </strong>
 
+                ${escapeHtml(
+                    student.father_name || "-"
+                )}
+            </p>
 
-        <div class="student-detail-item">
+            <p>
+                <strong>
+                    سرپرست:
+                </strong>
 
-            <strong>
-                طالبہ کا نام
-            </strong>
+                ${escapeHtml(
+                    student.guardian_name || "-"
+                )}
+            </p>
 
-            ${escapeHtml(
-                student.name || "-"
-            )}
+            <p>
+                <strong>
+                    شناختی کارڈ:
+                </strong>
 
-        </div>
+                ${escapeHtml(
+                    formatCNIC(
+                        student.cnic
+                    ) || "-"
+                )}
+            </p>
 
+            <p>
+                <strong>
+                    موبائل:
+                </strong>
 
-        <div class="student-detail-item">
+                ${escapeHtml(
+                    student.phone || "-"
+                )}
+            </p>
 
-            <strong>
-                والد کا نام
-            </strong>
+            <p>
+                <strong>
+                    تاریخ پیدائش:
+                </strong>
 
-            ${escapeHtml(
-                student.father_name || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
-                سرپرست کا نام
-            </strong>
-
-            ${escapeHtml(
-                student.guardian_name || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
-                شناختی کارڈ
-            </strong>
-
-            ${escapeHtml(
-                formatCNIC(
-                    student.cnic || ""
-                ) || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
-                موبائل نمبر
-            </strong>
-
-            ${escapeHtml(
-                student.phone || "-"
-            )}
+                ${escapeHtml(
+                    student.date_of_birth || "-"
+                )}
+            </p>
 
         </div>
 
 
-        <div class="student-detail-item">
+        <div class="student-detail-section">
 
-            <strong>
-                تاریخ پیدائش
-            </strong>
+            <h3>
+                تعلیمی معلومات
+            </h3>
 
-            ${escapeHtml(
-                student.date_of_birth || "-"
-            )}
+            <p>
+                <strong>
+                    جماعت:
+                </strong>
+
+                ${escapeHtml(
+                    student.student_class || "-"
+                )}
+            </p>
+
+            <p>
+                <strong>
+                    تاریخ داخلہ:
+                </strong>
+
+                ${escapeHtml(
+                    student.admission_date || "-"
+                )}
+            </p>
+
+            <p>
+                <strong>
+                    سابقہ مدرسہ:
+                </strong>
+
+                ${escapeHtml(
+                    student.previous_madrassa || "-"
+                )}
+            </p>
+
+            <p>
+                <strong>
+                    منتقلی کی تاریخ:
+                </strong>
+
+                ${escapeHtml(
+                    student.transfer_date || "-"
+                )}
+            </p>
 
         </div>
 
 
-        <div class="student-detail-item">
+        <div class="student-detail-section">
 
-            <strong>
-                کلاس
-            </strong>
-
-            ${escapeHtml(
-                student.student_class || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
-                داخلہ کی تاریخ
-            </strong>
-
-            ${escapeHtml(
-                student.admission_date || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
+            <h3>
                 رہائش
-            </strong>
+            </h3>
 
-            ${escapeHtml(
-                student.residence_type || "-"
-            )}
+            <p>
+                <strong>
+                    رہائش کی قسم:
+                </strong>
 
-        </div>
+                ${escapeHtml(
+                    student.residence_type || "-"
+                )}
+            </p>
 
+            <p>
+                <strong>
+                    پتہ:
+                </strong>
 
-        <div class="student-detail-item">
-
-            <strong>
-                سابقہ مدرسہ
-            </strong>
-
-            ${escapeHtml(
-                student.previous_madrassa || "-"
-            )}
-
-        </div>
-
-
-        <div class="student-detail-item">
-
-            <strong>
-                منتقلی کی تاریخ
-            </strong>
-
-            ${escapeHtml(
-                student.transfer_date || "-"
-            )}
+                ${escapeHtml(
+                    student.address || "-"
+                )}
+            </p>
 
         </div>
 
 
-        <div class="student-detail-item student-detail-full">
+        <div class="student-detail-section">
 
-            <strong>
-                مکمل پتہ
-            </strong>
+            <h3>
+                محرم کی معلومات
+            </h3>
 
-            ${escapeHtml(
-                student.address || "-"
-            )}
+            ${mahramHtml}
 
         </div>
-
-
-        ${mahramHtml}
-
     `;
+
+
+    studentDetailsOverlay.classList.remove(
+        "hidden"
+    );
 
 
     studentDetailsOverlay.style.display =
         "flex";
-
-
-    document.body.style.overflow =
-        "hidden";
 }
 
 
@@ -3623,15 +3555,18 @@ function showStudentDetails(id) {
 
 function closeStudentDetails() {
 
-    if (studentDetailsOverlay) {
-
-        studentDetailsOverlay.style.display =
-            "none";
+    if (!studentDetailsOverlay) {
+        return;
     }
 
 
-    document.body.style.overflow =
-        "";
+    studentDetailsOverlay.style.display =
+        "none";
+
+
+    studentDetailsOverlay.classList.add(
+        "hidden"
+    );
 }
 
 
@@ -3686,7 +3621,8 @@ async function deleteStudent(id) {
     }
 
 
-    isDeletingStudent = true;
+    isDeletingStudent =
+        true;
 
 
     try {
@@ -3730,6 +3666,209 @@ async function deleteStudent(id) {
 
         isDeletingStudent =
             false;
+    }
+}
+
+
+/* =====================================================
+   SAVE STUDENT
+===================================================== */
+
+async function saveStudent(
+    event
+) {
+
+    if (event) {
+
+        event.preventDefault();
+    }
+
+
+    if (!requireAdmin()) {
+        return;
+    }
+
+
+    if (isSavingStudent) {
+        return;
+    }
+
+
+    clearMessage(
+        studentFormMessage
+    );
+
+
+    const validationError =
+        validateStudentForm();
+
+
+    if (validationError) {
+
+        showMessage(
+            studentFormMessage,
+            validationError
+        );
+
+        return;
+    }
+
+
+    const data =
+        getStudentFormData();
+
+
+    const wasEditing =
+        Boolean(
+            editingStudentId
+        );
+
+
+    isSavingStudent =
+        true;
+
+
+    if (saveStudentButton) {
+
+        saveStudentButton.disabled =
+            true;
+
+        saveStudentButton.textContent =
+            "⏳ محفوظ ہو رہا ہے...";
+    }
+
+
+    try {
+
+        const duplicateMessage =
+            await checkStudentDuplicates(
+                data,
+                editingStudentId
+            );
+
+
+        if (duplicateMessage) {
+
+            showMessage(
+                studentFormMessage,
+                duplicateMessage
+            );
+
+            return;
+        }
+
+
+        let result;
+
+
+        if (editingStudentId) {
+
+            result =
+                await supabaseClient
+                    .from(
+                        STUDENTS_TABLE
+                    )
+                    .update(
+                        data
+                    )
+                    .eq(
+                        "id",
+                        editingStudentId
+                    )
+                    .select();
+
+
+        } else {
+
+            result =
+                await supabaseClient
+                    .from(
+                        STUDENTS_TABLE
+                    )
+                    .insert([
+                        data
+                    ])
+                    .select();
+        }
+
+
+        if (result.error) {
+
+            throw result.error;
+        }
+
+
+        resetStudentForm();
+
+        closeStudentForm();
+
+        await loadStudents();
+
+
+        alert(
+            wasEditing
+                ? "طالبہ کا ریکارڈ کامیابی سے تبدیل ہو گیا۔"
+                : "نئی طالبہ کا اندراج کامیاب ہو گیا۔"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Student save error:",
+            error
+        );
+
+
+        let message =
+            "طالبہ کا ریکارڈ محفوظ نہیں ہو سکا۔";
+
+
+        const errorText =
+            safeString(
+                error &&
+                error.message
+            ).toLowerCase();
+
+
+        if (
+            error &&
+            (
+                error.code === "23505" ||
+                errorText.includes(
+                    "duplicate"
+                ) ||
+                errorText.includes(
+                    "unique"
+                )
+            )
+        ) {
+
+            message =
+                "یہ ریکارڈ پہلے سے موجود ہے۔";
+        }
+
+
+        showMessage(
+            studentFormMessage,
+            message
+        );
+
+
+    } finally {
+
+        isSavingStudent =
+            false;
+
+
+        if (saveStudentButton) {
+
+            saveStudentButton.disabled =
+                false;
+
+            saveStudentButton.textContent =
+                "💾 طالبہ محفوظ کریں";
+        }
     }
 }
 
@@ -3807,200 +3946,7 @@ function attachStudentCardEvents() {
 
 
 /* =====================================================
-   SAVE STUDENT
-===================================================== */
-
-async function saveStudent(
-    event
-) {
-
-    if (event) {
-
-        event.preventDefault();
-    }
-
-
-    if (!requireAdmin()) {
-        return;
-    }
-
-
-    if (isSavingStudent) {
-        return;
-    }
-
-
-    clearMessage(
-        studentFormMessage
-    );
-
-
-    const validationError =
-        validateStudentForm();
-
-
-    if (validationError) {
-
-        showMessage(
-            studentFormMessage,
-            validationError
-        );
-
-        return;
-    }
-
-
-    const formData =
-        getStudentFormData();
-
-
-    isSavingStudent = true;
-
-
-    if (saveStudentButton) {
-
-        saveStudentButton.disabled =
-            true;
-
-        saveStudentButton.textContent =
-            "⏳ محفوظ ہو رہا ہے...";
-    }
-
-
-    try {
-
-        const duplicateMessage =
-            await checkStudentDuplicates(
-                formData,
-                editingStudentId
-            );
-
-
-        if (duplicateMessage) {
-
-            showMessage(
-                studentFormMessage,
-                duplicateMessage
-            );
-
-            return;
-        }
-
-
-        if (editingStudentId) {
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from(
-                        STUDENTS_TABLE
-                    )
-                    .update(
-                        formData
-                    )
-                    .eq(
-                        "id",
-                        editingStudentId
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-        } else {
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from(
-                        STUDENTS_TABLE
-                    )
-                    .insert([
-                        formData
-                    ]);
-
-
-            if (error) {
-                throw error;
-            }
-        }
-
-
-        resetStudentForm();
-
-        closeStudentForm();
-
-        await loadStudents();
-
-
-        alert(
-            editingStudentId
-                ? "طالبہ کا ریکارڈ کامیابی سے تبدیل ہو گیا۔"
-                : "نئی طالبہ کا اندراج کامیاب ہو گیا۔"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Student save error:",
-            error
-        );
-
-
-        let message =
-            "طالبہ کا ریکارڈ محفوظ نہیں ہو سکا۔";
-
-
-        if (
-            error &&
-            (
-                error.code === "23505" ||
-                safeString(
-                    error.message
-                )
-                    .toLowerCase()
-                    .includes(
-                        "duplicate"
-                    )
-            )
-        ) {
-
-            message =
-                "یہ ریکارڈ پہلے سے موجود ہے۔";
-        }
-
-
-        showMessage(
-            studentFormMessage,
-            message
-        );
-
-
-    } finally {
-
-        isSavingStudent =
-            false;
-
-
-        if (saveStudentButton) {
-
-            saveStudentButton.disabled =
-                false;
-
-            saveStudentButton.textContent =
-                "💾 محفوظ کریں";
-        }
-    }
-}
-
-
-/* =====================================================
-   STUDENT PAGE INITIALIZATION
+   INITIALIZE STUDENT PAGE
 ===================================================== */
 
 async function initializeStudentsPage() {
@@ -4009,11 +3955,13 @@ async function initializeStudentsPage() {
         currentPage !==
         "students.html"
     ) {
+
         return;
     }
 
 
     if (!protectPage()) {
+
         return;
     }
 
@@ -4107,9 +4055,7 @@ async function initializeStudentsPage() {
     }
 
 
-    if (
-        closeStudentDetailsButton
-    ) {
+    if (closeStudentDetailsButton) {
 
         closeStudentDetailsButton.addEventListener(
             "click",
@@ -4159,9 +4105,10 @@ await initializeStudentsPage();
    });
 
    MAIN DOMContentLoaded WRAPPER IS STILL OPEN.
-   PASTE PART 3 DIRECTLY BELOW THIS LINE.
+   PART 3 MUST BE PASTED DIRECTLY BELOW THIS LINE.
 ===================================================== */
 
+   
 /* =========================================================
    MASTER SCRIPT.JS
    PART 3
