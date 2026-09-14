@@ -1086,13 +1086,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function protectPage() {
 
-        const protectedPages = [
+    const protectedPages = [
 
-            "dashboard.html",
-            "students.html",
-            "teachers.html"
+        "dashboard.html",
+        "students.html",
+        "teachers.html",
+        "attendance.html"
 
-        ];
+    ];
+      
 
 
         if (
