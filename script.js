@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             value === null ||
             value === undefined
         ) {
-
             return "";
         }
 
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (digits.length !== 13) {
-
             return digits;
         }
 
@@ -174,9 +172,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : [keys];
 
 
-        for (
-            const key of keyList
-        ) {
+        for (const key of keyList) {
 
             const value =
                 record[key];
@@ -233,7 +229,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         element.textContent = "";
-
         element.style.display = "none";
     }
 
@@ -245,9 +240,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        if (
-            Array.isArray(data)
-        ) {
+        if (Array.isArray(data)) {
 
             return data.length
                 ? data[0]
@@ -370,7 +363,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 localStorage.removeItem(key);
                 sessionStorage.removeItem(key);
-
             }
         );
     }
@@ -426,7 +418,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (
             currentPage !== "index.html"
         ) {
-
             return;
         }
 
@@ -498,7 +489,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             !password ||
             !toggle
         ) {
-
             return;
         }
 
@@ -795,7 +785,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (
             currentPage !== "login.html"
         ) {
-
             return;
         }
 
@@ -930,8 +919,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             try {
 
-                let user =
-                    null;
+                let user = null;
 
 
                 if (
@@ -1086,15 +1074,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function protectPage() {
 
-    const protectedPages = [
+        const protectedPages = [
 
-        "dashboard.html",
-        "students.html",
-        "teachers.html",
-        "attendance.html"
+            "dashboard.html",
+            "students.html",
+            "teachers.html",
+            "attendance.html"
 
-    ];
-      
+        ];
 
 
         if (
@@ -1302,7 +1289,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (
             currentPage !== "dashboard.html"
         ) {
-
             return;
         }
 
@@ -1419,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 "teachers.html",
 
             attendanceMenu:
-        "attendance.html"
+                "attendance.html"
 
         };
 
@@ -1575,7 +1561,7 @@ document.addEventListener("DOMContentLoaded", async function () {
        PASTE PART 2 DIRECTLY BELOW THIS LINE
     ===================================================== */
 
-  /* =========================================================
+                          /* =========================================================
    MASTER SCRIPT.JS
    PART 2 / 3
    COMPLETE STUDENT MODULE
@@ -2029,9 +2015,7 @@ function normalizeMahramRelation(value) {
 
 function parseMahrams(value) {
 
-    if (
-        Array.isArray(value)
-    ) {
+    if (Array.isArray(value)) {
 
         return value;
     }
@@ -4139,7 +4123,6 @@ async function saveStudent(event) {
 
 
         if (result.error) {
-
             throw result.error;
         }
 
@@ -4455,9 +4438,11 @@ await initializeStudentsPage();
    DO NOT ADD });
 
    PASTE PART 3 DIRECTLY BELOW THIS LINE
-===================================================== */  
+===================================================== */
 
-/* =========================================================
+
+
+                          /* =========================================================
    MASTER SCRIPT.JS
    PART 3 / 3
    TEACHER MODULE + SESSION TIMEOUT + FINAL STARTUP
@@ -4544,11 +4529,9 @@ function getTeacherValue(id) {
     const field =
         getElement(id);
 
-
     if (!field) {
         return "";
     }
-
 
     return safeString(
         field.value
@@ -4594,6 +4577,36 @@ function getTeacherCode(teacher) {
 
 
     return "-";
+}
+
+
+function getTeacherName(teacher) {
+
+    return getRecordValue(
+        teacher,
+        [
+            "name",
+            "teacher_name",
+            "teacherName"
+        ],
+        ""
+    );
+}
+
+
+function getTeacherStatus(teacher) {
+
+    return safeString(
+        getRecordValue(
+            teacher,
+            [
+                "status",
+                "authorization_status",
+                "auth_status"
+            ],
+            ""
+        )
+    );
 }
 
 
@@ -4708,13 +4721,11 @@ function validateTeacherForm() {
 
 
     if (!data.teacher_code) {
-
         return "استاد کا کوڈ درج کریں۔";
     }
 
 
     if (!data.name) {
-
         return "استاد کا نام درج کریں۔";
     }
 
@@ -4724,7 +4735,6 @@ function validateTeacherForm() {
             data.name
         )
     ) {
-
         return "استاد کا نام صرف اردو میں درج کریں۔";
     }
 
@@ -4735,7 +4745,6 @@ function validateTeacherForm() {
             data.father_name
         )
     ) {
-
         return "والد کا نام صرف اردو میں درج کریں۔";
     }
 
@@ -4747,7 +4756,6 @@ function validateTeacherForm() {
             !data.phone.startsWith("03")
         )
     ) {
-
         return "درست 11 ہندسوں کا موبائل نمبر درج کریں جو 03 سے شروع ہو۔";
     }
 
@@ -4756,7 +4764,6 @@ function validateTeacherForm() {
         data.cnic &&
         data.cnic.length !== 13
     ) {
-
         return "شناختی کارڈ نمبر 13 ہندسوں پر مشتمل ہونا چاہیے۔";
     }
 
@@ -4805,7 +4812,6 @@ async function checkTeacherDuplicates(
             String(row.id) ===
             String(currentId)
         ) {
-
             continue;
         }
 
@@ -4827,7 +4833,6 @@ async function checkTeacherDuplicates(
             newCode &&
             existingCode === newCode
         ) {
-
             return "یہ استاد کوڈ پہلے سے موجود ہے۔";
         }
 
@@ -4843,7 +4848,6 @@ async function checkTeacherDuplicates(
             data.phone &&
             existingPhone === data.phone
         ) {
-
             return "یہ موبائل نمبر پہلے سے موجود ہے۔";
         }
 
@@ -4859,7 +4863,6 @@ async function checkTeacherDuplicates(
             data.cnic &&
             existingCNIC === data.cnic
         ) {
-
             return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
         }
     }
@@ -5007,16 +5010,8 @@ function updateTeacherStatistics() {
         function (teacher) {
 
             const status =
-                safeString(
-                    getRecordValue(
-                        teacher,
-                        [
-                            "status",
-                            "authorization_status",
-                            "auth_status"
-                        ],
-                        ""
-                    )
+                getTeacherStatus(
+                    teacher
                 ).toLowerCase();
 
 
@@ -5078,7 +5073,6 @@ function updateTeacherStatistics() {
 function resetTeacherForm() {
 
     if (teacherForm) {
-
         teacherForm.reset();
     }
 
@@ -5222,6 +5216,7 @@ async function loadTeachers() {
 
         updateTeacherStatistics();
 
+
         displayTeachers(
             teachersCache
         );
@@ -5247,213 +5242,198 @@ async function loadTeachers() {
     }
 }
 
-   /* =====================================================
-   TEACHER DETAILS
+
+/* =====================================================
+   DISPLAY TEACHERS
 ===================================================== */
 
-function showTeacherDetails(id) {
+function displayTeachers(
+    teachers = teachersCache
+) {
 
-    const teacher =
-        teachersCache.find(
-            function (item) {
-                return String(item.id) === String(id);
-            }
-        );
-
-
-    if (!teacher) {
-
-        alert("استاد کا ریکارڈ نہیں ملا۔");
-
+    if (!teacherList) {
         return;
     }
 
 
     if (
-        !teacherDetailsOverlay ||
-        !teacherDetailsContent
+        !Array.isArray(teachers) ||
+        teachers.length === 0
     ) {
 
-        console.error(
-            "Teacher details modal نہیں ملا۔"
-        );
+        teacherList.innerHTML = `
+
+            <div class="teacher-empty">
+
+                <div class="empty-icon">
+                    👩‍🏫
+                </div>
+
+                <p>
+                    استاد کا ریکارڈ موجود نہیں۔
+                </p>
+
+            </div>
+        `;
 
         return;
     }
 
 
-    const name =
-        getRecordValue(
-            teacher,
-            [
-                "name",
-                "teacher_name",
-                "teacherName"
-            ],
-            "-"
-        );
+    teacherList.innerHTML =
+        teachers
+            .map(
+                function (teacher) {
+
+                    const id =
+                        teacher.id;
 
 
-    const fatherName =
-        getRecordValue(
-            teacher,
-            [
-                "father_name",
-                "fatherName"
-            ],
-            "-"
-        );
+                    const name =
+                        getTeacherName(
+                            teacher
+                        ) || "-";
 
 
-    const phone =
-        getRecordValue(
-            teacher,
-            [
-                "phone",
-                "teacherPhone"
-            ],
-            "-"
-        );
+                    const fatherName =
+                        getRecordValue(
+                            teacher,
+                            [
+                                "father_name",
+                                "fatherName"
+                            ],
+                            "-"
+                        );
 
 
-    const cnic =
-        formatCNIC(
-            getRecordValue(
-                teacher,
-                [
-                    "cnic",
-                    "teacherCNIC"
-                ],
-                ""
+                    const phone =
+                        getRecordValue(
+                            teacher,
+                            [
+                                "phone",
+                                "teacherPhone"
+                            ],
+                            "-"
+                        );
+
+
+                    const qualification =
+                        getRecordValue(
+                            teacher,
+                            [
+                                "qualification"
+                            ],
+                            "-"
+                        );
+
+
+                    const code =
+                        getTeacherCode(
+                            teacher
+                        );
+
+
+                    const status =
+                        getTeacherStatus(
+                            teacher
+                        );
+
+
+                    return `
+
+                        <div
+                            class="teacher-card"
+                            data-id="${escapeHtml(id)}"
+                        >
+
+                            <div class="teacher-card-header">
+
+                                <div class="teacher-avatar">
+                                    👩‍🏫
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        ${escapeHtml(name)}
+                                    </h3>
+
+                                    <span>
+                                        استاد کوڈ:
+                                        ${escapeHtml(code)}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="teacher-info">
+
+                                <p>
+                                    <strong>والد:</strong>
+                                    ${escapeHtml(fatherName)}
+                                </p>
+
+                                <p>
+                                    <strong>موبائل:</strong>
+                                    ${escapeHtml(phone)}
+                                </p>
+
+                                <p>
+                                    <strong>تعلیمی قابلیت:</strong>
+                                    ${escapeHtml(qualification)}
+                                </p>
+
+                                ${
+                                    status
+                                        ? `
+                                            <p>
+                                                <strong>حالت:</strong>
+                                                ${escapeHtml(status)}
+                                            </p>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+
+                            <div class="teacher-card-buttons">
+
+                                <button
+                                    type="button"
+                                    class="view-teacher"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    👁️ تفصیلات
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="edit-teacher"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    ✏️ تبدیل کریں
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="delete-teacher"
+                                    data-id="${escapeHtml(id)}"
+                                >
+                                    🗑️ حذف کریں
+                                </button>
+
+                            </div>
+
+                        </div>
+                    `;
+                }
             )
-        ) || "-";
-
-
-    const qualification =
-        getRecordValue(
-            teacher,
-            [
-                "qualification"
-            ],
-            "-"
-        );
-
-
-    const joiningDate =
-        getRecordValue(
-            teacher,
-            [
-                "joining_date",
-                "joiningDate"
-            ],
-            "-"
-        );
-
-
-    const address =
-        getRecordValue(
-            teacher,
-            [
-                "address"
-            ],
-            "-"
-        );
-
-
-    const teacherCode =
-        getTeacherCode(teacher) || "-";
-
-
-    if (teacherDetailsTitle) {
-
-        teacherDetailsTitle.textContent =
-            name;
-    }
-
-
-    teacherDetailsContent.innerHTML = `
-
-        <div class="student-detail-section">
-
-            <h3>
-                بنیادی معلومات
-            </h3>
-
-            <p>
-                <strong>استاد کوڈ:</strong>
-                ${escapeHtml(teacherCode)}
-            </p>
-
-            <p>
-                <strong>نام:</strong>
-                ${escapeHtml(name)}
-            </p>
-
-            <p>
-                <strong>والد کا نام:</strong>
-                ${escapeHtml(fatherName)}
-            </p>
-
-            <p>
-                <strong>موبائل نمبر:</strong>
-                ${escapeHtml(phone)}
-            </p>
-
-            <p>
-                <strong>شناختی کارڈ:</strong>
-                ${escapeHtml(cnic)}
-            </p>
-
-        </div>
-
-
-        <div class="student-detail-section">
-
-            <h3>
-                تعلیمی معلومات
-            </h3>
-
-            <p>
-                <strong>تعلیمی قابلیت:</strong>
-                ${escapeHtml(qualification)}
-            </p>
-
-            <p>
-                <strong>تقرری کی تاریخ:</strong>
-                ${escapeHtml(joiningDate)}
-            </p>
-
-        </div>
-
-
-        <div class="student-detail-section">
-
-            <h3>
-                رابطہ
-            </h3>
-
-            <p>
-                <strong>پتہ:</strong>
-                ${escapeHtml(address)}
-            </p>
-
-        </div>
-    `;
-
-
-    teacherDetailsOverlay.classList.remove(
-        "hidden"
-    );
-
-
-    teacherDetailsOverlay.style.display =
-        "flex";
-
-
-    document.body.classList.add(
-        "modal-open"
-    );
+            .join("");
 }
+
 
 /* =====================================================
    SEARCH TEACHERS
@@ -5493,19 +5473,52 @@ function searchTeachers() {
                             teacher
                         ),
 
-                        teacher.name,
+                        getTeacherName(
+                            teacher
+                        ),
 
-                        teacher.teacher_name,
+                        getRecordValue(
+                            teacher,
+                            [
+                                "father_name",
+                                "fatherName"
+                            ],
+                            ""
+                        ),
 
-                        teacher.father_name,
+                        getRecordValue(
+                            teacher,
+                            [
+                                "phone",
+                                "teacherPhone"
+                            ],
+                            ""
+                        ),
 
-                        teacher.phone,
+                        getRecordValue(
+                            teacher,
+                            [
+                                "cnic",
+                                "teacherCNIC"
+                            ],
+                            ""
+                        ),
 
-                        teacher.cnic,
+                        getRecordValue(
+                            teacher,
+                            [
+                                "qualification"
+                            ],
+                            ""
+                        ),
 
-                        teacher.qualification,
-
-                        teacher.address
+                        getRecordValue(
+                            teacher,
+                            [
+                                "address"
+                            ],
+                            ""
+                        )
 
                     ]
                         .map(
@@ -5592,14 +5605,8 @@ function editTeacher(id) {
             ),
 
         teacherName:
-            getRecordValue(
-                teacher,
-                [
-                    "name",
-                    "teacher_name",
-                    "teacherName"
-                ],
-                ""
+            getTeacherName(
+                teacher
             ),
 
         teacherFatherName:
@@ -5749,135 +5756,168 @@ function showTeacherDetails(id) {
 
 
     const name =
+        getTeacherName(
+            teacher
+        ) || "-";
+
+
+    const fatherName =
         getRecordValue(
             teacher,
             [
-                "name",
-                "teacher_name",
-                "teacherName"
+                "father_name",
+                "fatherName"
             ],
-            ""
+            "-"
         );
+
+
+    const phone =
+        getRecordValue(
+            teacher,
+            [
+                "phone",
+                "teacherPhone"
+            ],
+            "-"
+        );
+
+
+    const cnic =
+        formatCNIC(
+            getRecordValue(
+                teacher,
+                [
+                    "cnic",
+                    "teacherCNIC"
+                ],
+                ""
+            )
+        ) || "-";
+
+
+    const qualification =
+        getRecordValue(
+            teacher,
+            [
+                "qualification"
+            ],
+            "-"
+        );
+
+
+    const joiningDate =
+        getRecordValue(
+            teacher,
+            [
+                "joining_date",
+                "joiningDate"
+            ],
+            "-"
+        );
+
+
+    const address =
+        getRecordValue(
+            teacher,
+            [
+                "address"
+            ],
+            "-"
+        );
+
+
+    const teacherCode =
+        getTeacherCode(
+            teacher
+        ) || "-";
+
+
+    const status =
+        getTeacherStatus(
+            teacher
+        ) || "-";
 
 
     if (teacherDetailsTitle) {
 
         teacherDetailsTitle.textContent =
-            name ||
-            "استاد کی تفصیلات";
+            name;
     }
 
 
     teacherDetailsContent.innerHTML = `
 
-        <h3>
-            بنیادی معلومات
-        </h3>
+        <div class="student-detail-section">
 
-        <p>
-            <strong>استاد کوڈ:</strong>
-            ${escapeHtml(
-                getTeacherCode(
-                    teacher
-                )
-            )}
-        </p>
+            <h3>
+                بنیادی معلومات
+            </h3>
 
-        <p>
-            <strong>نام:</strong>
-            ${escapeHtml(
-                name || "-"
-            )}
-        </p>
+            <p>
+                <strong>استاد کوڈ:</strong>
+                ${escapeHtml(teacherCode)}
+            </p>
 
-        <p>
-            <strong>والد کا نام:</strong>
-            ${escapeHtml(
-                getRecordValue(
-                    teacher,
-                    [
-                        "father_name",
-                        "fatherName"
-                    ],
-                    "-"
-                )
-            )}
-        </p>
+            <p>
+                <strong>نام:</strong>
+                ${escapeHtml(name)}
+            </p>
 
-        <p>
-            <strong>موبائل نمبر:</strong>
-            ${escapeHtml(
-                getRecordValue(
-                    teacher,
-                    [
-                        "phone",
-                        "teacherPhone"
-                    ],
-                    "-"
-                )
-            )}
-        </p>
+            <p>
+                <strong>والد کا نام:</strong>
+                ${escapeHtml(fatherName)}
+            </p>
 
-        <p>
-            <strong>شناختی کارڈ:</strong>
-            ${escapeHtml(
-                formatCNIC(
-                    getRecordValue(
-                        teacher,
-                        [
-                            "cnic",
-                            "teacherCNIC"
-                        ],
-                        ""
-                    )
-                ) || "-"
-            )}
-        </p>
+            <p>
+                <strong>موبائل نمبر:</strong>
+                ${escapeHtml(phone)}
+            </p>
+
+            <p>
+                <strong>شناختی کارڈ:</strong>
+                ${escapeHtml(cnic)}
+            </p>
+
+            <p>
+                <strong>حالت:</strong>
+                ${escapeHtml(status)}
+            </p>
+
+        </div>
 
 
-        <h3>
-            تعلیمی و ملازمت کی معلومات
-        </h3>
+        <div class="student-detail-section">
 
-        <p>
-            <strong>تعلیمی قابلیت:</strong>
-            ${escapeHtml(
-                getRecordValue(
-                    teacher,
-                    [
-                        "qualification"
-                    ],
-                    "-"
-                )
-            )}
-        </p>
+            <h3>
+                تعلیمی معلومات
+            </h3>
 
-        <p>
-            <strong>تقرری کی تاریخ:</strong>
-            ${escapeHtml(
-                getRecordValue(
-                    teacher,
-                    [
-                        "joining_date",
-                        "joiningDate"
-                    ],
-                    "-"
-                )
-            )}
-        </p>
+            <p>
+                <strong>تعلیمی قابلیت:</strong>
+                ${escapeHtml(qualification)}
+            </p>
 
-        <p>
-            <strong>پتہ:</strong>
-            ${escapeHtml(
-                getRecordValue(
-                    teacher,
-                    [
-                        "address"
-                    ],
-                    "-"
-                )
-            )}
-        </p>
+            <p>
+                <strong>تقرری کی تاریخ:</strong>
+                ${escapeHtml(joiningDate)}
+            </p>
+
+        </div>
+
+
+        <div class="student-detail-section">
+
+            <h3>
+                رابطہ
+            </h3>
+
+            <p>
+                <strong>پتہ:</strong>
+                ${escapeHtml(address)}
+            </p>
+
+        </div>
     `;
 
 
@@ -5961,14 +6001,9 @@ async function deleteTeacher(id) {
 
 
     const name =
-        getRecordValue(
-            teacher,
-            [
-                "name",
-                "teacher_name"
-            ],
-            "استاد"
-        );
+        getTeacherName(
+            teacher
+        ) || "استاد";
 
 
     const confirmed =
@@ -6038,7 +6073,6 @@ async function deleteTeacher(id) {
 async function saveTeacher(event) {
 
     if (event) {
-
         event.preventDefault();
     }
 
@@ -6268,7 +6302,6 @@ async function initializeTeachersPage() {
     if (
         currentPage !== "teachers.html"
     ) {
-
         return;
     }
 
@@ -6535,7 +6568,6 @@ function initializeKeyboardControls() {
             if (
                 event.key !== "Escape"
             ) {
-
                 return;
             }
 
@@ -6638,4 +6670,4 @@ initializeInactivitySystem();
    THIS CLOSES THE SINGLE DOMContentLoaded WRAPPER
 ===================================================== */
 
-});                          
+});
