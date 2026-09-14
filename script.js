@@ -1416,7 +1416,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 "students.html",
 
             teachersMenu:
-                "teachers.html"
+                "teachers.html",
+
+            attendanceMenu:
+        "attendance.html"
 
         };
 
