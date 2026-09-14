@@ -1567,7 +1567,6 @@ document.addEventListener("DOMContentLoaded", async function () {
        PASTE PART 2 DIRECTLY BELOW THIS LINE
     ===================================================== */
 
-
                           /* =========================================================
    MASTER SCRIPT.JS
    PART 2 / 3
@@ -4447,11 +4446,10 @@ await initializeStudentsPage();
    PASTE PART 3 DIRECTLY BELOW THIS LINE
 ===================================================== */
 
-
-                          /* =========================================================
+       /* =========================================================
    MASTER SCRIPT.JS
    PART 3 / 3
-   TEACHER MODULE + SESSION TIMEOUT + FINAL STARTUP
+   TEACHER + ATTENDANCE + SESSION TIMEOUT + FINAL STARTUP
 ========================================================= */
 
 
@@ -4460,11 +4458,8 @@ await initializeStudentsPage();
 ===================================================== */
 
 let teachersCache = [];
-
 let editingTeacherId = null;
-
 let isSavingTeacher = false;
-
 let isDeletingTeacher = false;
 
 
@@ -4558,11 +4553,9 @@ function getTeacherCode(teacher) {
             ""
         );
 
-
     if (code) {
         return code;
     }
-
 
     if (
         teacher &&
@@ -4580,7 +4573,6 @@ function getTeacherCode(teacher) {
             )
         );
     }
-
 
     return "-";
 }
@@ -4628,7 +4620,6 @@ function initializeTeacherFormatting() {
     const cnic =
         getElement("teacherCNIC");
 
-
     if (phone) {
 
         phone.addEventListener(
@@ -4642,7 +4633,6 @@ function initializeTeacherFormatting() {
             }
         );
     }
-
 
     if (cnic) {
 
@@ -4711,7 +4701,6 @@ function getTeacherFormData() {
             getTeacherValue(
                 "teacherAddress"
             ) || null
-
     };
 }
 
@@ -4725,16 +4714,13 @@ function validateTeacherForm() {
     const data =
         getTeacherFormData();
 
-
     if (!data.teacher_code) {
         return "استاد کا کوڈ درج کریں۔";
     }
 
-
     if (!data.name) {
         return "استاد کا نام درج کریں۔";
     }
-
 
     if (
         !isUrduName(
@@ -4744,7 +4730,6 @@ function validateTeacherForm() {
         return "استاد کا نام صرف اردو میں درج کریں۔";
     }
 
-
     if (
         data.father_name &&
         !isUrduName(
@@ -4753,7 +4738,6 @@ function validateTeacherForm() {
     ) {
         return "والد کا نام صرف اردو میں درج کریں۔";
     }
-
 
     if (
         data.phone &&
@@ -4765,14 +4749,12 @@ function validateTeacherForm() {
         return "درست 11 ہندسوں کا موبائل نمبر درج کریں جو 03 سے شروع ہو۔";
     }
 
-
     if (
         data.cnic &&
         data.cnic.length !== 13
     ) {
         return "شناختی کارڈ نمبر 13 ہندسوں پر مشتمل ہونا چاہیے۔";
     }
-
 
     return "";
 }
@@ -4794,7 +4776,6 @@ async function checkTeacherDuplicates(
         );
     }
 
-
     const {
         data: rows,
         error
@@ -4803,11 +4784,9 @@ async function checkTeacherDuplicates(
             .from(TEACHERS_TABLE)
             .select("*");
 
-
     if (error) {
         throw error;
     }
-
 
     for (
         const row of rows || []
@@ -4821,18 +4800,15 @@ async function checkTeacherDuplicates(
             continue;
         }
 
-
         const existingCode =
             safeString(
                 getTeacherCode(row)
             ).toLowerCase();
 
-
         const newCode =
             safeString(
                 data.teacher_code
             ).toLowerCase();
-
 
         if (
             existingCode &&
@@ -4842,12 +4818,10 @@ async function checkTeacherDuplicates(
             return "یہ استاد کوڈ پہلے سے موجود ہے۔";
         }
 
-
         const existingPhone =
             normalizePhone(
                 row.phone
             );
-
 
         if (
             existingPhone &&
@@ -4857,12 +4831,10 @@ async function checkTeacherDuplicates(
             return "یہ موبائل نمبر پہلے سے موجود ہے۔";
         }
 
-
         const existingCNIC =
             canonicalCNIC(
                 row.cnic
             );
-
 
         if (
             existingCNIC &&
@@ -4872,7 +4844,6 @@ async function checkTeacherDuplicates(
             return "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔";
         }
     }
-
 
     return "";
 }
@@ -4888,7 +4859,6 @@ function isMissingTeacherCodeError(error) {
         safeString(
             error?.message
         ).toLowerCase();
-
 
     return (
         text.includes("teacher_code") &&
@@ -4907,9 +4877,7 @@ function withoutTeacherCode(data) {
         ...data
     };
 
-
     delete copy.teacher_code;
-
 
     return copy;
 }
@@ -4922,7 +4890,6 @@ function withoutTeacherCode(data) {
 async function saveTeacherRecord(data) {
 
     let result;
-
 
     if (editingTeacherId) {
 
@@ -4947,7 +4914,6 @@ async function saveTeacherRecord(data) {
                 .select();
     }
 
-
     if (
         result.error &&
         isMissingTeacherCodeError(
@@ -4959,7 +4925,6 @@ async function saveTeacherRecord(data) {
             withoutTeacherCode(
                 data
             );
-
 
         if (editingTeacherId) {
 
@@ -4987,11 +4952,9 @@ async function saveTeacherRecord(data) {
         }
     }
 
-
     if (result.error) {
         throw result.error;
     }
-
 
     return result.data;
 }
@@ -5006,11 +4969,8 @@ function updateTeacherStatistics() {
     const total =
         teachersCache.length;
 
-
     let active = 0;
-
     let pending = 0;
-
 
     teachersCache.forEach(
         function (teacher) {
@@ -5019,7 +4979,6 @@ function updateTeacherStatistics() {
                 getTeacherStatus(
                     teacher
                 ).toLowerCase();
-
 
             if (
                 !status ||
@@ -5042,30 +5001,22 @@ function updateTeacherStatistics() {
         }
     );
 
-
     if (teacherTotalPage) {
-
         teacherTotalPage.textContent =
             String(total);
     }
 
-
     if (teacherListCount) {
-
         teacherListCount.textContent =
             String(total);
     }
 
-
     if (activeTeacherTotal) {
-
         activeTeacherTotal.textContent =
             String(active);
     }
 
-
     if (pendingTeacherTotal) {
-
         pendingTeacherTotal.textContent =
             String(pending);
     }
@@ -5082,38 +5033,29 @@ function resetTeacherForm() {
         teacherForm.reset();
     }
 
-
     editingTeacherId =
         null;
-
 
     const editTeacherId =
         getElement(
             "editTeacherId"
         );
 
-
     if (editTeacherId) {
-
         editTeacherId.value =
             "";
     }
-
 
     clearMessage(
         teacherFormMessage
     );
 
-
     if (teacherFormTitle) {
-
         teacherFormTitle.textContent =
             "👩‍🏫 نئے استاد کی معلومات";
     }
 
-
     if (saveTeacherButton) {
-
         saveTeacherButton.textContent =
             "💾 محفوظ کریں";
     }
@@ -5130,16 +5072,13 @@ function openTeacherForm() {
         return;
     }
 
-
     if (!teacherFormContainer) {
         return;
     }
 
-
     teacherFormContainer.classList.remove(
         "hidden"
     );
-
 
     window.scrollTo({
 
@@ -5148,7 +5087,6 @@ function openTeacherForm() {
 
         behavior:
             "smooth"
-
     });
 }
 
@@ -5161,7 +5099,6 @@ function closeTeacherForm() {
             "hidden"
         );
     }
-
 
     clearMessage(
         teacherFormMessage
@@ -5179,7 +5116,6 @@ async function loadTeachers() {
         return;
     }
 
-
     if (teacherList) {
 
         teacherList.innerHTML = `
@@ -5189,7 +5125,6 @@ async function loadTeachers() {
             </div>
         `;
     }
-
 
     try {
 
@@ -5208,25 +5143,20 @@ async function loadTeachers() {
                     }
                 );
 
-
         if (error) {
             throw error;
         }
-
 
         teachersCache =
             Array.isArray(data)
                 ? data
                 : [];
 
-
         updateTeacherStatistics();
-
 
         displayTeachers(
             teachersCache
         );
-
 
     } catch (error) {
 
@@ -5234,7 +5164,6 @@ async function loadTeachers() {
             "Teacher load error:",
             error
         );
-
 
         if (teacherList) {
 
@@ -5261,7 +5190,6 @@ function displayTeachers(
         return;
     }
 
-
     if (
         !Array.isArray(teachers) ||
         teachers.length === 0
@@ -5285,7 +5213,6 @@ function displayTeachers(
         return;
     }
 
-
     teacherList.innerHTML =
         teachers
             .map(
@@ -5294,12 +5221,10 @@ function displayTeachers(
                     const id =
                         teacher.id;
 
-
                     const name =
                         getTeacherName(
                             teacher
                         ) || "-";
-
 
                     const fatherName =
                         getRecordValue(
@@ -5311,7 +5236,6 @@ function displayTeachers(
                             "-"
                         );
 
-
                     const phone =
                         getRecordValue(
                             teacher,
@@ -5322,7 +5246,6 @@ function displayTeachers(
                             "-"
                         );
 
-
                     const qualification =
                         getRecordValue(
                             teacher,
@@ -5332,18 +5255,15 @@ function displayTeachers(
                             "-"
                         );
 
-
                     const code =
                         getTeacherCode(
                             teacher
                         );
 
-
                     const status =
                         getTeacherStatus(
                             teacher
                         );
-
 
                     return `
 
@@ -5372,7 +5292,6 @@ function displayTeachers(
                                 </div>
 
                             </div>
-
 
                             <div class="teacher-info">
 
@@ -5403,7 +5322,6 @@ function displayTeachers(
                                 }
 
                             </div>
-
 
                             <div class="teacher-card-buttons">
 
@@ -5451,12 +5369,10 @@ function searchTeachers() {
         return;
     }
 
-
     const search =
         safeString(
             teacherSearch.value
         ).toLowerCase();
-
 
     if (!search) {
 
@@ -5466,7 +5382,6 @@ function searchTeachers() {
 
         return;
     }
-
 
     const filtered =
         teachersCache.filter(
@@ -5537,13 +5452,11 @@ function searchTeachers() {
                         )
                         .join(" ");
 
-
                 return searchable.includes(
                     search
                 );
             }
         );
-
 
     displayTeachers(
         filtered
@@ -5561,7 +5474,6 @@ function editTeacher(id) {
         return;
     }
 
-
     const teacher =
         teachersCache.find(
             function (item) {
@@ -5573,7 +5485,6 @@ function editTeacher(id) {
             }
         );
 
-
     if (!teacher) {
 
         alert(
@@ -5583,16 +5494,13 @@ function editTeacher(id) {
         return;
     }
 
-
     editingTeacherId =
         teacher.id;
-
 
     const editTeacherId =
         getElement(
             "editTeacherId"
         );
-
 
     if (editTeacherId) {
 
@@ -5601,7 +5509,6 @@ function editTeacher(id) {
                 teacher.id
             );
     }
-
 
     const fields = {
 
@@ -5676,9 +5583,7 @@ function editTeacher(id) {
                 ],
                 ""
             )
-
     };
-
 
     Object.entries(fields)
         .forEach(
@@ -5688,7 +5593,6 @@ function editTeacher(id) {
 
                 const field =
                     getElement(idName);
-
 
                 if (field) {
 
@@ -5701,20 +5605,17 @@ function editTeacher(id) {
             }
         );
 
-
     if (teacherFormTitle) {
 
         teacherFormTitle.textContent =
             "👩‍🏫 استاد کا ریکارڈ تبدیل کریں";
     }
 
-
     if (saveTeacherButton) {
 
         saveTeacherButton.textContent =
             "💾 تبدیلی محفوظ کریں";
     }
-
 
     openTeacherForm();
 }
@@ -5737,7 +5638,6 @@ function showTeacherDetails(id) {
             }
         );
 
-
     if (!teacher) {
 
         alert(
@@ -5746,7 +5646,6 @@ function showTeacherDetails(id) {
 
         return;
     }
-
 
     if (
         !teacherDetailsOverlay ||
@@ -5760,12 +5659,10 @@ function showTeacherDetails(id) {
         return;
     }
 
-
     const name =
         getTeacherName(
             teacher
         ) || "-";
-
 
     const fatherName =
         getRecordValue(
@@ -5777,7 +5674,6 @@ function showTeacherDetails(id) {
             "-"
         );
 
-
     const phone =
         getRecordValue(
             teacher,
@@ -5787,7 +5683,6 @@ function showTeacherDetails(id) {
             ],
             "-"
         );
-
 
     const cnic =
         formatCNIC(
@@ -5801,7 +5696,6 @@ function showTeacherDetails(id) {
             )
         ) || "-";
 
-
     const qualification =
         getRecordValue(
             teacher,
@@ -5810,7 +5704,6 @@ function showTeacherDetails(id) {
             ],
             "-"
         );
-
 
     const joiningDate =
         getRecordValue(
@@ -5822,7 +5715,6 @@ function showTeacherDetails(id) {
             "-"
         );
 
-
     const address =
         getRecordValue(
             teacher,
@@ -5832,25 +5724,21 @@ function showTeacherDetails(id) {
             "-"
         );
 
-
     const teacherCode =
         getTeacherCode(
             teacher
         ) || "-";
-
 
     const status =
         getTeacherStatus(
             teacher
         ) || "-";
 
-
     if (teacherDetailsTitle) {
 
         teacherDetailsTitle.textContent =
             name;
     }
-
 
     teacherDetailsContent.innerHTML = `
 
@@ -5892,7 +5780,6 @@ function showTeacherDetails(id) {
 
         </div>
 
-
         <div class="student-detail-section">
 
             <h3>
@@ -5911,7 +5798,6 @@ function showTeacherDetails(id) {
 
         </div>
 
-
         <div class="student-detail-section">
 
             <h3>
@@ -5926,15 +5812,12 @@ function showTeacherDetails(id) {
         </div>
     `;
 
-
     teacherDetailsOverlay.classList.remove(
         "hidden"
     );
 
-
     teacherDetailsOverlay.style.display =
         "flex";
-
 
     document.body.classList.add(
         "modal-open"
@@ -5952,15 +5835,12 @@ function closeTeacherDetails() {
         return;
     }
 
-
     teacherDetailsOverlay.style.display =
         "none";
-
 
     teacherDetailsOverlay.classList.add(
         "hidden"
     );
-
 
     document.body.classList.remove(
         "modal-open"
@@ -5978,11 +5858,9 @@ async function deleteTeacher(id) {
         return;
     }
 
-
     if (isDeletingTeacher) {
         return;
     }
-
 
     const teacher =
         teachersCache.find(
@@ -5995,7 +5873,6 @@ async function deleteTeacher(id) {
             }
         );
 
-
     if (!teacher) {
 
         alert(
@@ -6005,12 +5882,10 @@ async function deleteTeacher(id) {
         return;
     }
 
-
     const name =
         getTeacherName(
             teacher
         ) || "استاد";
-
 
     const confirmed =
         window.confirm(
@@ -6019,15 +5894,12 @@ async function deleteTeacher(id) {
             )}" کا ریکارڈ حذف کرنا چاہتے ہیں؟`
         );
 
-
     if (!confirmed) {
         return;
     }
 
-
     isDeletingTeacher =
         true;
-
 
     try {
 
@@ -6042,14 +5914,11 @@ async function deleteTeacher(id) {
                     id
                 );
 
-
         if (error) {
             throw error;
         }
 
-
         await loadTeachers();
-
 
     } catch (error) {
 
@@ -6058,11 +5927,9 @@ async function deleteTeacher(id) {
             error
         );
 
-
         alert(
             "استاد کا ریکارڈ حذف نہیں ہو سکا۔"
         );
-
 
     } finally {
 
@@ -6082,25 +5949,20 @@ async function saveTeacher(event) {
         event.preventDefault();
     }
 
-
     if (!requireAdmin()) {
         return;
     }
-
 
     if (isSavingTeacher) {
         return;
     }
 
-
     clearMessage(
         teacherFormMessage
     );
 
-
     const validationError =
         validateTeacherForm();
-
 
     if (validationError) {
 
@@ -6112,20 +5974,16 @@ async function saveTeacher(event) {
         return;
     }
 
-
     const data =
         getTeacherFormData();
-
 
     const wasEditing =
         Boolean(
             editingTeacherId
         );
 
-
     isSavingTeacher =
         true;
-
 
     if (saveTeacherButton) {
 
@@ -6136,7 +5994,6 @@ async function saveTeacher(event) {
             "⏳ محفوظ ہو رہا ہے...";
     }
 
-
     try {
 
         const duplicateMessage =
@@ -6144,7 +6001,6 @@ async function saveTeacher(event) {
                 data,
                 editingTeacherId
             );
-
 
         if (duplicateMessage) {
 
@@ -6156,11 +6012,9 @@ async function saveTeacher(event) {
             return;
         }
 
-
         await saveTeacherRecord(
             data
         );
-
 
         resetTeacherForm();
 
@@ -6168,13 +6022,11 @@ async function saveTeacher(event) {
 
         await loadTeachers();
 
-
         alert(
             wasEditing
                 ? "استاد کا ریکارڈ کامیابی سے تبدیل ہو گیا۔"
                 : "نیا استاد کامیابی سے شامل ہو گیا۔"
         );
-
 
     } catch (error) {
 
@@ -6183,16 +6035,13 @@ async function saveTeacher(event) {
             error
         );
 
-
         let message =
             "استاد کا ریکارڈ محفوظ نہیں ہو سکا۔";
-
 
         const errorText =
             safeString(
                 error?.message
             ).toLowerCase();
-
 
         if (
             error?.code === "23505" ||
@@ -6208,18 +6057,15 @@ async function saveTeacher(event) {
                 "یہ استاد کا ریکارڈ پہلے سے موجود ہے۔";
         }
 
-
         showMessage(
             teacherFormMessage,
             message
         );
 
-
     } finally {
 
         isSavingTeacher =
             false;
-
 
         if (saveTeacherButton) {
 
@@ -6236,7 +6082,7 @@ async function saveTeacher(event) {
 
 
 /* =====================================================
-   TEACHER LIST EVENT DELEGATION
+   TEACHER LIST EVENTS
 ===================================================== */
 
 function initializeTeacherListEvents() {
@@ -6244,7 +6090,6 @@ function initializeTeacherListEvents() {
     if (!teacherList) {
         return;
     }
-
 
     teacherList.addEventListener(
         "click",
@@ -6255,7 +6100,6 @@ function initializeTeacherListEvents() {
                     ".view-teacher"
                 );
 
-
             if (viewButton) {
 
                 showTeacherDetails(
@@ -6265,12 +6109,10 @@ function initializeTeacherListEvents() {
                 return;
             }
 
-
             const editButton =
                 event.target.closest(
                     ".edit-teacher"
                 );
-
 
             if (editButton) {
 
@@ -6281,12 +6123,10 @@ function initializeTeacherListEvents() {
                 return;
             }
 
-
             const deleteButton =
                 event.target.closest(
                     ".delete-teacher"
                 );
-
 
             if (deleteButton) {
 
@@ -6311,11 +6151,9 @@ async function initializeTeachersPage() {
         return;
     }
 
-
     if (!protectPage()) {
         return;
     }
-
 
     if (
         getCurrentRole() !== "admin"
@@ -6325,18 +6163,14 @@ async function initializeTeachersPage() {
             "اساتذہ کا انتظام صرف ایڈمن کے لیے ہے۔"
         );
 
-
         window.location.href =
             "dashboard.html";
 
         return;
     }
 
-
     initializeTeacherFormatting();
-
     initializeTeacherListEvents();
-
 
     if (showTeacherFormButton) {
 
@@ -6345,12 +6179,10 @@ async function initializeTeachersPage() {
             function () {
 
                 resetTeacherForm();
-
                 openTeacherForm();
             }
         );
     }
-
 
     if (cancelTeacherButton) {
 
@@ -6359,12 +6191,10 @@ async function initializeTeachersPage() {
             function () {
 
                 resetTeacherForm();
-
                 closeTeacherForm();
             }
         );
     }
-
 
     if (teacherForm) {
 
@@ -6374,7 +6204,6 @@ async function initializeTeachersPage() {
         );
     }
 
-
     if (teacherSearch) {
 
         teacherSearch.addEventListener(
@@ -6383,7 +6212,6 @@ async function initializeTeachersPage() {
         );
     }
 
-
     if (closeTeacherDetailsButton) {
 
         closeTeacherDetailsButton.addEventListener(
@@ -6391,7 +6219,6 @@ async function initializeTeachersPage() {
             closeTeacherDetails
         );
     }
-
 
     if (teacherDetailsOverlay) {
 
@@ -6410,7 +6237,6 @@ async function initializeTeachersPage() {
         );
     }
 
-
     await loadTeachers();
 }
 
@@ -6423,6 +6249,1445 @@ await initializeTeachersPage();
 
 
 /* =====================================================
+   ATTENDANCE STATE
+===================================================== */
+
+let attendanceStudentsCache = [];
+let attendanceRecordsCache = [];
+let isLoadingAttendance = false;
+let isSavingAttendance = false;
+
+
+/* =====================================================
+   ATTENDANCE ELEMENTS
+===================================================== */
+
+const attendanceDate =
+    getElement("attendanceDate");
+
+const attendanceTeacher =
+    getElement("attendanceTeacher");
+
+const attendancePeriod =
+    getElement("attendancePeriod");
+
+const attendanceClass =
+    getElement("attendanceClass");
+
+const loadAttendanceButton =
+    getElement("loadAttendanceButton");
+
+const attendanceMessage =
+    getElement("attendanceMessage");
+
+const attendanceList =
+    getElement("attendanceList");
+
+const attendanceListCount =
+    getElement("attendanceListCount");
+
+const markAllPresent =
+    getElement("markAllPresent");
+
+const markAllAbsent =
+    getElement("markAllAbsent");
+
+const saveAttendanceButton =
+    getElement("saveAttendanceButton");
+
+const attendanceStudentTotal =
+    getElement("attendanceStudentTotal");
+
+const attendancePresentTotal =
+    getElement("attendancePresentTotal");
+
+const attendanceAbsentTotal =
+    getElement("attendanceAbsentTotal");
+
+const attendancePercentage =
+    getElement("attendancePercentage");
+
+const todayAttendanceList =
+    getElement("todayAttendanceList");
+
+
+/* =====================================================
+   ATTENDANCE HELPERS
+===================================================== */
+
+function getTodayDateValue() {
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+}
+
+
+function getAttendanceToken() {
+
+    return getSessionToken();
+}
+
+
+function getSelectedTeacherId() {
+
+    if (!attendanceTeacher) {
+        return "";
+    }
+
+    return safeString(
+        attendanceTeacher.value
+    );
+}
+
+
+function getSelectedAttendanceClass() {
+
+    if (!attendanceClass) {
+        return "";
+    }
+
+    return safeString(
+        attendanceClass.value
+    );
+}
+
+
+function getSelectedAttendancePeriod() {
+
+    if (!attendancePeriod) {
+        return 0;
+    }
+
+    return Number(
+        attendancePeriod.value
+    );
+}
+
+
+function getSelectedAttendanceDate() {
+
+    if (!attendanceDate) {
+        return "";
+    }
+
+    return safeString(
+        attendanceDate.value
+    );
+}
+
+
+/* =====================================================
+   ATTENDANCE STATS
+===================================================== */
+
+function updateAttendanceStatistics() {
+
+    if (!attendanceList) {
+        return;
+    }
+
+    const rows =
+        attendanceList.querySelectorAll(
+            ".attendance-student-row"
+        );
+
+    let total = 0;
+    let present = 0;
+    let absent = 0;
+
+    rows.forEach(
+        function (row) {
+
+            total++;
+
+            const status =
+                safeString(
+                    row.dataset.status
+                );
+
+            if (status === "present") {
+                present++;
+            }
+
+            if (status === "absent") {
+                absent++;
+            }
+        }
+    );
+
+    if (attendanceStudentTotal) {
+        attendanceStudentTotal.textContent =
+            String(total);
+    }
+
+    if (attendancePresentTotal) {
+        attendancePresentTotal.textContent =
+            String(present);
+    }
+
+    if (attendanceAbsentTotal) {
+        attendanceAbsentTotal.textContent =
+            String(absent);
+    }
+
+    if (attendancePercentage) {
+
+        const percentage =
+            total > 0
+                ? Math.round(
+                    (
+                        present /
+                        total
+                    ) * 100
+                )
+                : 0;
+
+        attendancePercentage.textContent =
+            percentage + "%";
+    }
+
+    if (attendanceListCount) {
+
+        attendanceListCount.textContent =
+            String(total);
+    }
+}
+
+
+/* =====================================================
+   ATTENDANCE STATUS BUTTONS
+===================================================== */
+
+function setAttendanceStatus(
+    row,
+    status
+) {
+
+    if (!row) {
+        return;
+    }
+
+    row.dataset.status =
+        status;
+
+    row
+        .querySelectorAll(
+            ".attendance-status-button"
+        )
+        .forEach(
+            function (button) {
+
+                button.classList.remove(
+                    "active"
+                );
+
+                if (
+                    button.dataset.status ===
+                    status
+                ) {
+
+                    button.classList.add(
+                        "active"
+                    );
+                }
+            }
+        );
+
+    updateAttendanceStatistics();
+}
+
+
+/* =====================================================
+   DISPLAY ATTENDANCE STUDENTS
+===================================================== */
+
+function displayAttendanceStudents() {
+
+    if (!attendanceList) {
+        return;
+    }
+
+    if (
+        !Array.isArray(
+            attendanceStudentsCache
+        ) ||
+        attendanceStudentsCache.length === 0
+    ) {
+
+        attendanceList.innerHTML = `
+
+            <div class="attendance-record-card">
+                اس جماعت میں کوئی طالبہ موجود نہیں۔
+            </div>
+        `;
+
+        updateAttendanceStatistics();
+
+        return;
+    }
+
+    const recordMap =
+        new Map();
+
+    attendanceRecordsCache.forEach(
+        function (record) {
+
+            recordMap.set(
+                String(
+                    record.student_id
+                ),
+                record
+            );
+        }
+    );
+
+    attendanceList.innerHTML =
+        attendanceStudentsCache
+            .map(
+                function (student) {
+
+                    const studentId =
+                        getRecordValue(
+                            student,
+                            [
+                                "student_id",
+                                "id"
+                            ],
+                            ""
+                        );
+
+                    const name =
+                        getRecordValue(
+                            student,
+                            [
+                                "student_name",
+                                "name"
+                            ],
+                            "-"
+                        );
+
+                    const admissionNo =
+                        getRecordValue(
+                            student,
+                            [
+                                "admission_no"
+                            ],
+                            "-"
+                        );
+
+                    const studentClass =
+                        getRecordValue(
+                            student,
+                            [
+                                "student_class"
+                            ],
+                            "-"
+                        );
+
+                    const existingRecord =
+                        recordMap.get(
+                            String(
+                                studentId
+                            )
+                        );
+
+                    const status =
+                        safeString(
+                            existingRecord?.status
+                        );
+
+                    const note =
+                        safeString(
+                            existingRecord?.note
+                        );
+
+                    return `
+
+                        <div
+                            class="attendance-student-row"
+                            data-student-id="${escapeHtml(studentId)}"
+                            data-status="${escapeHtml(status)}"
+                        >
+
+                            <div class="attendance-student-info">
+
+                                <strong>
+                                    ${escapeHtml(name)}
+                                </strong>
+
+                                <span>
+                                    داخلہ نمبر:
+                                    ${escapeHtml(admissionNo)}
+                                </span>
+
+                                <span>
+                                    جماعت:
+                                    ${escapeHtml(studentClass)}
+                                </span>
+
+                            </div>
+
+                            <div class="attendance-options">
+
+                                <button
+                                    type="button"
+                                    class="attendance-status-button present ${
+                                        status === "present"
+                                            ? "active"
+                                            : ""
+                                    }"
+                                    data-status="present"
+                                >
+                                    حاضر
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="attendance-status-button absent ${
+                                        status === "absent"
+                                            ? "active"
+                                            : ""
+                                    }"
+                                    data-status="absent"
+                                >
+                                    غیر حاضر
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="attendance-status-button leave ${
+                                        status === "leave"
+                                            ? "active"
+                                            : ""
+                                    }"
+                                    data-status="leave"
+                                >
+                                    رخصت
+                                </button>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>
+                                    نوٹ
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="attendance-note"
+                                    value="${escapeHtml(note)}"
+                                    placeholder="اختیاری نوٹ"
+                                >
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+
+    updateAttendanceStatistics();
+}
+
+
+/* =====================================================
+   LOAD ATTENDANCE TEACHERS
+===================================================== */
+
+async function loadAttendanceTeachers() {
+
+    if (
+        !attendanceTeacher ||
+        !supabaseClient
+    ) {
+        return;
+    }
+
+    const token =
+        getAttendanceToken();
+
+    if (!token) {
+        return;
+    }
+
+    attendanceTeacher.innerHTML =
+        `<option value="">استاد منتخب کریں</option>`;
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "attendance_get_teachers",
+                {
+                    p_token:
+                        token
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        const rows =
+            Array.isArray(data)
+                ? data
+                : [];
+
+        rows.forEach(
+            function (teacher) {
+
+                const id =
+                    getRecordValue(
+                        teacher,
+                        [
+                            "teacher_id",
+                            "id"
+                        ],
+                        ""
+                    );
+
+                const name =
+                    getRecordValue(
+                        teacher,
+                        [
+                            "teacher_name",
+                            "name"
+                        ],
+                        "استاد"
+                    );
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    String(id);
+
+                option.textContent =
+                    safeString(name);
+
+                attendanceTeacher.appendChild(
+                    option
+                );
+            }
+        );
+
+        if (
+            getCurrentRole() === "teacher" &&
+            rows.length === 1
+        ) {
+
+            attendanceTeacher.value =
+                String(
+                    getRecordValue(
+                        rows[0],
+                        [
+                            "teacher_id",
+                            "id"
+                        ],
+                        ""
+                    )
+                );
+
+            attendanceTeacher.disabled =
+                true;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Attendance teachers error:",
+            error
+        );
+
+        showMessage(
+            attendanceMessage,
+            "اساتذہ کی فہرست لوڈ نہیں ہو سکی۔"
+        );
+    }
+}
+
+
+/* =====================================================
+   LOAD ATTENDANCE STUDENTS + RECORDS
+===================================================== */
+
+async function loadAttendance() {
+
+    if (
+        isLoadingAttendance ||
+        !supabaseClient
+    ) {
+        return;
+    }
+
+    clearMessage(
+        attendanceMessage
+    );
+
+    const token =
+        getAttendanceToken();
+
+    const teacherId =
+        getSelectedTeacherId();
+
+    const studentClass =
+        getSelectedAttendanceClass();
+
+    const period =
+        getSelectedAttendancePeriod();
+
+    const date =
+        getSelectedAttendanceDate();
+
+    if (!token) {
+
+        showMessage(
+            attendanceMessage,
+            "سیشن ختم ہو چکا ہے۔ دوبارہ لاگ اِن کریں۔"
+        );
+
+        return;
+    }
+
+    if (!teacherId) {
+
+        showMessage(
+            attendanceMessage,
+            "استاد منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (!studentClass) {
+
+        showMessage(
+            attendanceMessage,
+            "جماعت منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (
+        period < 1 ||
+        period > 6
+    ) {
+
+        showMessage(
+            attendanceMessage,
+            "پیریڈ منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (!date) {
+
+        showMessage(
+            attendanceMessage,
+            "تاریخ منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    isLoadingAttendance =
+        true;
+
+    if (loadAttendanceButton) {
+
+        loadAttendanceButton.disabled =
+            true;
+
+        loadAttendanceButton.textContent =
+            "⏳ لوڈ ہو رہا ہے...";
+    }
+
+    if (attendanceList) {
+
+        attendanceList.innerHTML = `
+
+            <div class="attendance-record-card">
+                ⏳ طالبات کا ریکارڈ لوڈ ہو رہا ہے...
+            </div>
+        `;
+    }
+
+    try {
+
+        const [
+            studentsResult,
+            recordsResult
+        ] =
+            await Promise.all([
+
+                supabaseClient.rpc(
+                    "attendance_get_students",
+                    {
+                        p_token:
+                            token,
+
+                        p_class:
+                            studentClass
+                    }
+                ),
+
+                supabaseClient.rpc(
+                    "attendance_get_records",
+                    {
+                        p_token:
+                            token,
+
+                        p_date:
+                            date,
+
+                        p_period:
+                            period,
+
+                        p_class:
+                            studentClass,
+
+                        p_teacher_id:
+                            Number(
+                                teacherId
+                            )
+                    }
+                )
+            ]);
+
+        if (studentsResult.error) {
+            throw studentsResult.error;
+        }
+
+        if (recordsResult.error) {
+            throw recordsResult.error;
+        }
+
+        attendanceStudentsCache =
+            Array.isArray(
+                studentsResult.data
+            )
+                ? studentsResult.data
+                : [];
+
+        attendanceRecordsCache =
+            Array.isArray(
+                recordsResult.data
+            )
+                ? recordsResult.data
+                : [];
+
+        displayAttendanceStudents();
+
+        displayCurrentAttendanceRecords();
+
+        showMessage(
+            attendanceMessage,
+            "حاضری کا ریکارڈ لوڈ ہو گیا۔",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Attendance load error:",
+            error
+        );
+
+        attendanceStudentsCache =
+            [];
+
+        attendanceRecordsCache =
+            [];
+
+        if (attendanceList) {
+
+            attendanceList.innerHTML = `
+
+                <div class="attendance-record-card">
+                    ⚠️ حاضری کا ریکارڈ لوڈ نہیں ہو سکا۔
+                </div>
+            `;
+        }
+
+        showMessage(
+            attendanceMessage,
+            "حاضری کا ریکارڈ لوڈ نہیں ہو سکا۔"
+        );
+
+        updateAttendanceStatistics();
+
+    } finally {
+
+        isLoadingAttendance =
+            false;
+
+        if (loadAttendanceButton) {
+
+            loadAttendanceButton.disabled =
+                false;
+
+            loadAttendanceButton.textContent =
+                "📋 حاضری لوڈ کریں";
+        }
+    }
+}
+
+
+/* =====================================================
+   DISPLAY CURRENT ATTENDANCE RECORDS
+===================================================== */
+
+function displayCurrentAttendanceRecords() {
+
+    if (!todayAttendanceList) {
+        return;
+    }
+
+    if (
+        !Array.isArray(
+            attendanceRecordsCache
+        ) ||
+        attendanceRecordsCache.length === 0
+    ) {
+
+        todayAttendanceList.innerHTML = `
+
+            <div class="attendance-record-card">
+                اس انتخاب کے لیے ابھی حاضری محفوظ نہیں ہوئی۔
+            </div>
+        `;
+
+        return;
+    }
+
+    todayAttendanceList.innerHTML =
+        attendanceRecordsCache
+            .map(
+                function (record) {
+
+                    const name =
+                        getRecordValue(
+                            record,
+                            [
+                                "student_name",
+                                "name"
+                            ],
+                            "-"
+                        );
+
+                    const status =
+                        safeString(
+                            record.status
+                        );
+
+                    let statusText =
+                        "-";
+
+                    if (
+                        status === "present"
+                    ) {
+                        statusText =
+                            "حاضر";
+                    }
+
+                    if (
+                        status === "absent"
+                    ) {
+                        statusText =
+                            "غیر حاضر";
+                    }
+
+                    if (
+                        status === "leave"
+                    ) {
+                        statusText =
+                            "رخصت";
+                    }
+
+                    const note =
+                        safeString(
+                            record.note
+                        );
+
+                    return `
+
+                        <div class="attendance-record-card">
+
+                            <strong>
+                                ${escapeHtml(name)}
+                            </strong>
+
+                            <div class="attendance-summary-line">
+
+                                <span>
+                                    ${escapeHtml(statusText)}
+                                </span>
+
+                                ${
+                                    note
+                                        ? `
+                                            <span>
+                                                ${escapeHtml(note)}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+}
+
+
+/* =====================================================
+   ATTENDANCE LIST EVENTS
+===================================================== */
+
+function initializeAttendanceListEvents() {
+
+    if (!attendanceList) {
+        return;
+    }
+
+    attendanceList.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    ".attendance-status-button"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const row =
+                button.closest(
+                    ".attendance-student-row"
+                );
+
+            if (!row) {
+                return;
+            }
+
+            setAttendanceStatus(
+                row,
+                button.dataset.status
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   MARK ALL
+===================================================== */
+
+function markAllAttendance(status) {
+
+    if (!attendanceList) {
+        return;
+    }
+
+    attendanceList
+        .querySelectorAll(
+            ".attendance-student-row"
+        )
+        .forEach(
+            function (row) {
+
+                setAttendanceStatus(
+                    row,
+                    status
+                );
+            }
+        );
+}
+
+
+/* =====================================================
+   COLLECT ATTENDANCE
+===================================================== */
+
+function collectAttendanceRows() {
+
+    if (!attendanceList) {
+        return [];
+    }
+
+    const rows = [];
+
+    attendanceList
+        .querySelectorAll(
+            ".attendance-student-row"
+        )
+        .forEach(
+            function (row) {
+
+                const studentId =
+                    Number(
+                        row.dataset.studentId
+                    );
+
+                const status =
+                    safeString(
+                        row.dataset.status
+                    );
+
+                const note =
+                    safeString(
+                        row.querySelector(
+                            ".attendance-note"
+                        )?.value
+                    );
+
+                rows.push({
+
+                    student_id:
+                        studentId,
+
+                    status:
+                        status,
+
+                    note:
+                        note
+                });
+            }
+        );
+
+    return rows;
+}
+
+
+/* =====================================================
+   SAVE ATTENDANCE
+===================================================== */
+
+async function saveAttendance() {
+
+    if (
+        isSavingAttendance ||
+        !supabaseClient
+    ) {
+        return;
+    }
+
+    clearMessage(
+        attendanceMessage
+    );
+
+    const token =
+        getAttendanceToken();
+
+    const teacherId =
+        getSelectedTeacherId();
+
+    const studentClass =
+        getSelectedAttendanceClass();
+
+    const period =
+        getSelectedAttendancePeriod();
+
+    const date =
+        getSelectedAttendanceDate();
+
+    const rows =
+        collectAttendanceRows();
+
+    if (!token) {
+
+        showMessage(
+            attendanceMessage,
+            "سیشن ختم ہو چکا ہے۔ دوبارہ لاگ اِن کریں۔"
+        );
+
+        return;
+    }
+
+    if (!teacherId) {
+
+        showMessage(
+            attendanceMessage,
+            "استاد منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (!studentClass) {
+
+        showMessage(
+            attendanceMessage,
+            "جماعت منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (
+        period < 1 ||
+        period > 6
+    ) {
+
+        showMessage(
+            attendanceMessage,
+            "پیریڈ منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (!date) {
+
+        showMessage(
+            attendanceMessage,
+            "تاریخ منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    if (rows.length === 0) {
+
+        showMessage(
+            attendanceMessage,
+            "حاضری کے لیے کوئی طالبہ موجود نہیں۔"
+        );
+
+        return;
+    }
+
+    const missingStatus =
+        rows.some(
+            function (row) {
+
+                return ![
+                    "present",
+                    "absent",
+                    "leave"
+                ].includes(
+                    row.status
+                );
+            }
+        );
+
+    if (missingStatus) {
+
+        showMessage(
+            attendanceMessage,
+            "تمام طالبات کی حاضری منتخب کریں۔"
+        );
+
+        return;
+    }
+
+    isSavingAttendance =
+        true;
+
+    if (saveAttendanceButton) {
+
+        saveAttendanceButton.disabled =
+            true;
+
+        saveAttendanceButton.textContent =
+            "⏳ محفوظ ہو رہا ہے...";
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "attendance_save",
+                {
+                    p_token:
+                        token,
+
+                    p_teacher_id:
+                        Number(
+                            teacherId
+                        ),
+
+                    p_date:
+                        date,
+
+                    p_period:
+                        period,
+
+                    p_class:
+                        studentClass,
+
+                    p_rows:
+                        rows
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        const result =
+            getRpcRecord(data) ||
+            data;
+
+        const savedCount =
+            Number(
+                getRecordValue(
+                    result,
+                    [
+                        "saved"
+                    ],
+                    rows.length
+                )
+            );
+
+        showMessage(
+            attendanceMessage,
+            savedCount +
+            " طالبات کی حاضری محفوظ ہو گئی۔",
+            "success"
+        );
+
+        await loadAttendance();
+
+    } catch (error) {
+
+        console.error(
+            "Attendance save error:",
+            error
+        );
+
+        showMessage(
+            attendanceMessage,
+            "حاضری محفوظ نہیں ہو سکی۔"
+        );
+
+    } finally {
+
+        isSavingAttendance =
+            false;
+
+        if (saveAttendanceButton) {
+
+            saveAttendanceButton.disabled =
+                false;
+
+            saveAttendanceButton.textContent =
+                "💾 حاضری محفوظ کریں";
+        }
+    }
+}
+
+
+/* =====================================================
+   RESET ATTENDANCE DISPLAY
+===================================================== */
+
+function resetAttendanceDisplay() {
+
+    attendanceStudentsCache =
+        [];
+
+    attendanceRecordsCache =
+        [];
+
+    if (attendanceList) {
+
+        attendanceList.innerHTML = `
+
+            <div class="attendance-record-card">
+                استاد، جماعت، تاریخ اور پیریڈ منتخب کرکے حاضری لوڈ کریں۔
+            </div>
+        `;
+    }
+
+    if (todayAttendanceList) {
+
+        todayAttendanceList.innerHTML = `
+
+            <div class="attendance-record-card">
+                ابھی کوئی ریکارڈ منتخب نہیں۔
+            </div>
+        `;
+    }
+
+    updateAttendanceStatistics();
+}
+
+
+/* =====================================================
+   ATTENDANCE PAGE INITIALIZATION
+===================================================== */
+
+async function initializeAttendancePage() {
+
+    if (
+        currentPage !== "attendance.html"
+    ) {
+        return;
+    }
+
+    if (!protectPage()) {
+        return;
+    }
+
+    const role =
+        getCurrentRole();
+
+    if (
+        role !== "admin" &&
+        role !== "teacher"
+    ) {
+
+        alert(
+            "حاضری کا یہ حصہ صرف ایڈمن اور استاد کے لیے ہے۔"
+        );
+
+        window.location.href =
+            "dashboard.html";
+
+        return;
+    }
+
+    if (attendanceDate) {
+
+        if (!attendanceDate.value) {
+
+            attendanceDate.value =
+                getTodayDateValue();
+        }
+
+        attendanceDate.addEventListener(
+            "change",
+            resetAttendanceDisplay
+        );
+    }
+
+    if (attendanceTeacher) {
+
+        attendanceTeacher.addEventListener(
+            "change",
+            resetAttendanceDisplay
+        );
+    }
+
+    if (attendanceClass) {
+
+        attendanceClass.addEventListener(
+            "change",
+            resetAttendanceDisplay
+        );
+    }
+
+    if (attendancePeriod) {
+
+        attendancePeriod.addEventListener(
+            "change",
+            resetAttendanceDisplay
+        );
+    }
+
+    if (loadAttendanceButton) {
+
+        loadAttendanceButton.addEventListener(
+            "click",
+            loadAttendance
+        );
+    }
+
+    if (markAllPresent) {
+
+        markAllPresent.addEventListener(
+            "click",
+            function () {
+
+                markAllAttendance(
+                    "present"
+                );
+            }
+        );
+    }
+
+    if (markAllAbsent) {
+
+        markAllAbsent.addEventListener(
+            "click",
+            function () {
+
+                markAllAttendance(
+                    "absent"
+                );
+            }
+        );
+    }
+
+    if (saveAttendanceButton) {
+
+        saveAttendanceButton.addEventListener(
+            "click",
+            saveAttendance
+        );
+    }
+
+    initializeAttendanceListEvents();
+
+    resetAttendanceDisplay();
+
+    await loadAttendanceTeachers();
+}
+
+
+/* =====================================================
+   START ATTENDANCE MODULE
+===================================================== */
+
+await initializeAttendancePage();
+
+
+/* =====================================================
    5 MINUTE INACTIVITY LOGOUT
 ===================================================== */
 
@@ -6432,13 +7697,15 @@ const INACTIVITY_LIMIT =
 let inactivityTimer =
     null;
 
+let timeoutLogoutStarted =
+    false;
+
 
 function updateLastActivity() {
 
     if (!isAuthenticated()) {
         return;
     }
-
 
     localStorage.setItem(
         SESSION_KEYS.lastActivity,
@@ -6451,9 +7718,15 @@ function updateLastActivity() {
 
 async function performTimeoutLogout() {
 
+    if (timeoutLogoutStarted) {
+        return;
+    }
+
+    timeoutLogoutStarted =
+        true;
+
     const token =
         getSessionToken();
-
 
     if (
         supabaseClient &&
@@ -6479,14 +7752,11 @@ async function performTimeoutLogout() {
         }
     }
 
-
     clearSession();
-
 
     alert(
         "پانچ منٹ تک کوئی سرگرمی نہ ہونے کی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
     );
-
 
     window.location.href =
         "index.html";
@@ -6499,14 +7769,12 @@ function checkSessionTimeout() {
         return;
     }
 
-
     const lastActivity =
         Number(
             localStorage.getItem(
                 SESSION_KEYS.lastActivity
             )
         );
-
 
     if (!lastActivity) {
 
@@ -6515,11 +7783,9 @@ function checkSessionTimeout() {
         return;
     }
 
-
     const inactiveFor =
         Date.now() -
         lastActivity;
-
 
     if (
         inactiveFor >=
@@ -6537,9 +7803,7 @@ function resetInactivityTimer() {
         return;
     }
 
-
     updateLastActivity();
-
 
     if (inactivityTimer) {
 
@@ -6547,7 +7811,6 @@ function resetInactivityTimer() {
             inactivityTimer
         );
     }
-
 
     inactivityTimer =
         setTimeout(
@@ -6563,9 +7826,7 @@ function initializeInactivitySystem() {
         return;
     }
 
-
     checkSessionTimeout();
-
 
     const events = [
 
@@ -6575,7 +7836,6 @@ function initializeInactivitySystem() {
         "scroll"
 
     ];
-
 
     events.forEach(
         function (eventName) {
@@ -6590,7 +7850,6 @@ function initializeInactivitySystem() {
             );
         }
     );
-
 
     resetInactivityTimer();
 }
@@ -6612,7 +7871,6 @@ function initializeKeyboardControls() {
                 return;
             }
 
-
             if (
                 studentDetailsOverlay &&
                 !studentDetailsOverlay.classList.contains(
@@ -6624,7 +7882,6 @@ function initializeKeyboardControls() {
 
                 return;
             }
-
 
             if (
                 teacherDetailsOverlay &&
@@ -6638,7 +7895,6 @@ function initializeKeyboardControls() {
                 return;
             }
 
-
             if (
                 currentPage === "students.html" &&
                 studentFormContainer &&
@@ -6651,7 +7907,6 @@ function initializeKeyboardControls() {
 
                 return;
             }
-
 
             if (
                 currentPage === "teachers.html" &&
@@ -6711,4 +7966,4 @@ initializeInactivitySystem();
    THIS CLOSES THE SINGLE DOMContentLoaded WRAPPER
 ===================================================== */
 
-});
+});                   
