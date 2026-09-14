@@ -1,4 +1,4 @@
-/* =========================================================
+/* =====/* =========================================================
    MASTER SCRIPT.JS
    PART 1
    CORE + SUPABASE + HOME + LOGIN + SESSION + DASHBOARD
@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error(
             "Supabase load نہیں ہوا۔"
         );
-
     }
 
 
@@ -48,8 +47,11 @@ document.addEventListener("DOMContentLoaded", async function () {
        TABLE NAMES
     ===================================================== */
 
-    const STUDENTS_TABLE = "Students";
-    const TEACHERS_TABLE = "Teachers";
+    const STUDENTS_TABLE =
+        "Students";
+
+    const TEACHERS_TABLE =
+        "Teachers";
 
 
     /* =====================================================
@@ -76,16 +78,22 @@ document.addEventListener("DOMContentLoaded", async function () {
             value === null ||
             value === undefined
         ) {
+
             return "";
         }
 
-        return String(value).trim();
+
+        return String(
+            value
+        ).trim();
     }
 
 
     function getElement(id) {
 
-        return document.getElementById(id);
+        return document.getElementById(
+            id
+        );
     }
 
 
@@ -99,13 +107,18 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
+
         element.textContent =
-            safeString(message);
+            safeString(
+                message
+            );
+
 
         element.style.display =
             message
                 ? "block"
                 : "none";
+
 
         element.style.color =
             type === "success"
@@ -120,8 +133,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        element.textContent = "";
-        element.style.display = "none";
+
+        element.textContent =
+            "";
+
+        element.style.display =
+            "none";
     }
 
 
@@ -131,17 +148,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const SESSION_KEYS = {
 
-        loggedIn: "loggedIn",
+        loggedIn:
+            "loggedIn",
 
-        role: "userRole",
+        role:
+            "userRole",
 
-        userId: "userId",
+        userId:
+            "userId",
 
-        username: "username",
+        username:
+            "username",
 
-        remember: "rememberLogin",
+        remember:
+            "rememberLogin",
 
-        lastActivity: "lastActivity"
+        lastActivity:
+            "lastActivity"
 
     };
 
@@ -184,20 +207,30 @@ document.addEventListener("DOMContentLoaded", async function () {
             "true"
         );
 
+
         localStorage.setItem(
             SESSION_KEYS.role,
-            safeString(role)
+            safeString(
+                role
+            )
         );
+
 
         localStorage.setItem(
             SESSION_KEYS.userId,
-            safeString(userId)
+            safeString(
+                userId
+            )
         );
+
 
         localStorage.setItem(
             SESSION_KEYS.username,
-            safeString(username)
+            safeString(
+                username
+            )
         );
+
 
         localStorage.setItem(
             SESSION_KEYS.remember,
@@ -206,9 +239,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : "false"
         );
 
+
         localStorage.setItem(
             SESSION_KEYS.lastActivity,
-            String(Date.now())
+            String(
+                Date.now()
+            )
         );
     }
 
@@ -217,17 +253,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         Object.values(
             SESSION_KEYS
-        ).forEach(function (key) {
+        ).forEach(
+            function (key) {
 
-            localStorage.removeItem(key);
+                localStorage.removeItem(
+                    key
+                );
 
-        });
+            }
+        );
     }
 
 
     function logout() {
 
         clearSession();
+
+        sessionStorage.clear();
+
 
         window.location.href =
             "index.html";
@@ -245,9 +288,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 window.location.search
             );
 
+
         const role =
             safeString(
-                params.get("role")
+                params.get(
+                    "role"
+                )
             ).toLowerCase();
 
 
@@ -256,6 +302,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             role === "teacher" ||
             role === "student"
         ) {
+
             return role;
         }
 
@@ -270,7 +317,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function initializeHomePage() {
 
-        if (currentPage !== "index.html") {
+        if (
+            currentPage !==
+            "index.html"
+        ) {
+
             return;
         }
 
@@ -338,13 +389,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     function initializePasswordToggle() {
 
         const password =
-            getElement("password");
+            getElement(
+                "password"
+            );
 
         const toggle =
-            getElement("togglePassword");
+            getElement(
+                "togglePassword"
+            );
 
 
-        if (!password || !toggle) {
+        if (
+            !password ||
+            !toggle
+        ) {
+
             return;
         }
 
@@ -398,15 +457,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        const { data, error } =
+        const {
+            data,
+            error
+        } =
             await supabaseClient.rpc(
                 "login_admin",
                 {
+
                     p_username:
                         username,
 
                     p_password:
                         password
+
                 }
             );
 
@@ -417,7 +481,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (
-            !Array.isArray(data) ||
+            !Array.isArray(
+                data
+            ) ||
             data.length === 0
         ) {
 
@@ -425,12 +491,151 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        return data[0];
+        return {
+
+            id:
+                data[0].admin_id,
+
+            username:
+                data[0].admin_username,
+
+            status:
+                data[0].auth_status
+
+        };
     }
 
 
     /* =====================================================
-       LOGIN FORM
+       TEACHER LOGIN
+    ===================================================== */
+
+    async function loginTeacher(
+        username,
+        password
+    ) {
+
+        if (!supabaseClient) {
+
+            throw new Error(
+                "Supabase سے رابطہ نہیں ہو سکا۔"
+            );
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "login_teacher",
+                {
+
+                    p_username:
+                        username,
+
+                    p_password:
+                        password
+
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data) {
+
+            return null;
+        }
+
+
+        return {
+
+            id:
+                data.teacher_id,
+
+            accountId:
+                data.account_id,
+
+            username:
+                data.username,
+
+            status:
+                data.authorization_status
+
+        };
+    }
+
+
+    /* =====================================================
+       STUDENT LOGIN
+    ===================================================== */
+
+    async function loginStudent(
+        username,
+        password
+    ) {
+
+        if (!supabaseClient) {
+
+            throw new Error(
+                "Supabase سے رابطہ نہیں ہو سکا۔"
+            );
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "login_student",
+                {
+
+                    p_username:
+                        username,
+
+                    p_password:
+                        password
+
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data) {
+
+            return null;
+        }
+
+
+        return {
+
+            id:
+                data.student_id,
+
+            accountId:
+                data.account_id,
+
+            username:
+                data.username,
+
+            status:
+                data.authorization_status
+
+        };
+    }
+
+
+    /* =====================================================
+       LOGIN PAGE
     ===================================================== */
 
     function initializeLoginPage() {
@@ -439,30 +644,45 @@ document.addEventListener("DOMContentLoaded", async function () {
             currentPage !==
             "login.html"
         ) {
+
             return;
         }
 
 
         const form =
-            getElement("loginForm");
+            getElement(
+                "loginForm"
+            );
 
         const usernameInput =
-            getElement("username");
+            getElement(
+                "username"
+            );
 
         const passwordInput =
-            getElement("password");
+            getElement(
+                "password"
+            );
 
         const rememberMe =
-            getElement("rememberMe");
+            getElement(
+                "rememberMe"
+            );
 
         const loginButton =
-            getElement("loginButton");
+            getElement(
+                "loginButton"
+            );
 
         const backButton =
-            getElement("backButton");
+            getElement(
+                "backButton"
+            );
 
         const loginMessage =
-            getElement("loginMessage");
+            getElement(
+                "loginMessage"
+            );
 
 
         const requestedRole =
@@ -510,10 +730,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
             const password =
-                safeString(
-                    passwordInput
-                        ? passwordInput.value
-                        : ""
+                passwordInput
+                    ? String(
+                        passwordInput.value ||
+                        ""
+                    )
+                    : "";
+
+
+            const remember =
+                Boolean(
+                    rememberMe &&
+                    rememberMe.checked
                 );
 
 
@@ -524,9 +752,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "صارف نام درج کریں۔"
                 );
 
+
                 if (usernameInput) {
+
                     usernameInput.focus();
                 }
+
 
                 return;
             }
@@ -539,25 +770,22 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "پاس ورڈ درج کریں۔"
                 );
 
+
                 if (passwordInput) {
+
                     passwordInput.focus();
                 }
+
 
                 return;
             }
 
 
-            if (
-                requestedRole !==
-                "admin"
-            ) {
+            if (!supabaseClient) {
 
                 showMessage(
                     loginMessage,
-                    requestedRole ===
-                    "teacher"
-                        ? "ٹیچر لاگ اِن اگلے مرحلے میں فعال کیا جائے گا۔"
-                        : "طالبہ لاگ اِن اگلے مرحلے میں فعال کیا جائے گا۔"
+                    "ڈیٹا بیس سے رابطہ نہیں ہو سکا۔"
                 );
 
                 return;
@@ -576,18 +804,52 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             try {
 
-                const admin =
-                    await loginAdmin(
-                        username,
-                        password
-                    );
+                let user =
+                    null;
 
 
-                if (!admin) {
+                if (
+                    requestedRole ===
+                    "admin"
+                ) {
+
+                    user =
+                        await loginAdmin(
+                            username,
+                            password
+                        );
+
+
+                } else if (
+                    requestedRole ===
+                    "teacher"
+                ) {
+
+                    user =
+                        await loginTeacher(
+                            username,
+                            password
+                        );
+
+
+                } else if (
+                    requestedRole ===
+                    "student"
+                ) {
+
+                    user =
+                        await loginStudent(
+                            username,
+                            password
+                        );
+                }
+
+
+                if (!user) {
 
                     showMessage(
                         loginMessage,
-                        "صارف نام یا پاس ورڈ غلط ہے۔"
+                        "صارف نام یا پاس ورڈ غلط ہے، یا اکاؤنٹ ابھی منظور نہیں ہوا۔"
                     );
 
                     return;
@@ -596,14 +858,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 if (
                     safeString(
-                        admin.auth_status
+                        user.status
                     ).toLowerCase() !==
                     "approved"
                 ) {
 
                     showMessage(
                         loginMessage,
-                        "یہ اکاؤنٹ منظور شدہ نہیں ہے۔"
+                        "یہ اکاؤنٹ ابھی منظور نہیں ہوا۔"
                     );
 
                     return;
@@ -611,13 +873,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
                 saveSession(
-                    "admin",
-                    admin.admin_id,
-                    admin.admin_username,
-                    Boolean(
-                        rememberMe &&
-                        rememberMe.checked
-                    )
+                    requestedRole,
+                    user.id,
+                    user.username,
+                    remember
                 );
 
 
@@ -635,14 +894,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             } catch (error) {
 
                 console.error(
-                    "Admin login error:",
+                    "Login error:",
                     error
                 );
 
 
                 showMessage(
                     loginMessage,
-                    "لاگ اِن میں خرابی ہوئی۔ دوبارہ کوشش کریں۔"
+                    "لاگ اِن نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
                 );
 
 
@@ -706,6 +965,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 currentPage
             )
         ) {
+
             return true;
         }
 
@@ -758,6 +1018,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     ) {
 
         if (!supabaseClient) {
+
             return 0;
         }
 
@@ -766,12 +1027,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             let query =
                 supabaseClient
-                    .from(tableName)
+                    .from(
+                        tableName
+                    )
                     .select(
                         "id",
                         {
-                            count: "exact",
-                            head: true
+                            count:
+                                "exact",
+
+                            head:
+                                true
                         }
                     );
 
@@ -792,10 +1058,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             const {
                 count,
                 error
-            } = await query;
+            } =
+                await query;
 
 
             if (error) {
+
                 throw error;
             }
 
@@ -813,6 +1081,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 error
             );
 
+
             return 0;
         }
     }
@@ -828,11 +1097,13 @@ document.addEventListener("DOMContentLoaded", async function () {
             currentPage !==
             "dashboard.html"
         ) {
+
             return;
         }
 
 
         if (!protectPage()) {
+
             return;
         }
 
@@ -933,12 +1204,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        /*
-          موجودہ database میں الگ Classes
-          table موجود نہ ہونے کی صورت میں
-          اسے ابھی صفر رکھا جائے گا۔
-        */
-
         if (classTotal) {
 
             classTotal.textContent =
@@ -1034,14 +1299,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =====================================================
-       IMPORTANT
        PART 1 ENDS HERE
 
        DO NOT ADD:
        });
 
-       The main DOMContentLoaded wrapper remains open.
-       Part 2 must be pasted immediately below this line.
+       PART 2 MUST BE PASTED DIRECTLY BELOW THIS LINE.
     ===================================================== */
 
                           /* =========================================================
