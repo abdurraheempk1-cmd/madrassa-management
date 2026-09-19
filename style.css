@@ -1,6 +1,12 @@
 /* =====================================================
    مدرسہ شہناز اختر للبنات
-   مکمل مرکزی اسٹائل
+   STYLE.CSS
+   PART 1
+===================================================== */
+
+
+/* =====================================================
+   RESET
 ===================================================== */
 
 * {
@@ -22,9 +28,6 @@ body {
     color: #172033;
 }
 
-body.modal-open {
-    overflow: hidden;
-}
 
 /* =====================================================
    GENERAL
@@ -42,13 +45,18 @@ button {
     min-height: 58px;
     margin: 7px 0;
     padding: 8px 18px;
+
     border: none;
     border-radius: 14px;
+
     font-size: 17px;
     font-weight: 600;
+
     cursor: pointer;
+
     background: #2563eb;
     color: white;
+
     transition:
         transform .15s ease,
         box-shadow .15s ease,
@@ -56,7 +64,9 @@ button {
 }
 
 button:hover {
-    box-shadow: 0 7px 18px rgba(37, 99, 235, .20);
+    box-shadow:
+        0 7px 18px
+        rgba(37, 99, 235, .20);
 }
 
 button:active {
@@ -79,15 +89,47 @@ textarea {
     display: none !important;
 }
 
+body.modal-open {
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
 .message,
 .form-message {
     min-height: 30px;
     margin-top: 8px;
+
     text-align: center;
+
     font-size: 14px;
     line-height: 2;
+
     color: #dc2626;
 }
+
+.message.success,
+.form-message.success {
+    color: #15803d;
+}
+
+.message.error,
+.form-message.error {
+    color: #dc2626;
+}
+
+.message.info,
+.form-message.info {
+    color: #2563eb;
+}
+
+
+/* =====================================================
+   BUTTON TYPES
+===================================================== */
 
 .primary-button {
     background: #2563eb;
@@ -98,14 +140,22 @@ textarea {
 }
 
 .cancel-button,
-.back-button,
-.logout-button {
+.back-button {
     background: #eef2f7;
     color: #475569;
 }
 
 .cancel-button:hover,
-.back-button:hover,
+.back-button:hover {
+    background: #e2e8f0;
+    box-shadow: none;
+}
+
+.logout-button {
+    background: #eef2f7;
+    color: #475569;
+}
+
 .logout-button:hover {
     background: #e2e8f0;
     box-shadow: none;
@@ -132,31 +182,45 @@ textarea {
     background: #16a34a;
 }
 
+
 /* =====================================================
-   HOME
+   HOME PAGE
 ===================================================== */
 
 .container {
     width: 100%;
     max-width: 450px;
+
     margin: 50px auto 0;
+
     background: white;
+
     padding: 35px 25px 30px;
+
     border-radius: 24px;
+
     text-align: center;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, .08);
 }
 
 .logo,
 .login-logo {
     width: 80px;
     height: 80px;
+
     margin: 0 auto 18px;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     border-radius: 50%;
+
     background: #eef2ff;
+
     font-size: 45px;
 }
 
@@ -169,34 +233,55 @@ textarea {
 .address {
     font-size: 14px;
     line-height: 2;
+
     color: #64748b;
+
     margin-bottom: 18px;
 }
 
 .system-title {
     font-size: 21px;
     font-weight: 700;
+
     color: #2563eb;
+
     line-height: 2;
 }
 
 .subtitle {
     font-size: 14px;
+
     color: #64748b;
+
     line-height: 2;
+
     margin-bottom: 25px;
 }
 
+
+/* =====================================================
+   HOME SECTIONS
+===================================================== */
+
 .home-section {
     margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+
+    border-top:
+        1px solid #e2e8f0;
+}
+
+.home-section:first-of-type {
+    margin-top: 10px;
 }
 
 .home-section-title {
-    margin-bottom: 12px;
-    font-size: 19px;
+    font-size: 18px;
     line-height: 2;
+
+    margin-bottom: 10px;
+
+    color: #334155;
 }
 
 .application-section {
@@ -205,52 +290,155 @@ textarea {
 
 .application-note {
     margin-bottom: 12px;
-    color: #64748b;
+
     font-size: 13px;
     line-height: 2;
+
+    color: #64748b;
 }
 
 .application-button {
     background: #475569;
 }
 
+
+/* =====================================================
+   APPROVAL / SECURITY NOTICES
+===================================================== */
+
 .approval-notice {
     margin-top: 20px;
-    padding: 13px;
-    border: 1px solid #fed7aa;
-    border-radius: 12px;
+
+    padding: 14px;
+
     background: #fff7ed;
+
+    border:
+        1px solid #fed7aa;
+
+    border-radius: 14px;
+
     color: #9a3412;
+
     font-size: 13px;
     line-height: 2;
 }
 
+.rejected-notice {
+    margin-top: 15px;
+
+    padding: 14px;
+
+    background: #fef2f2;
+
+    border:
+        1px solid #fecaca;
+
+    border-radius: 14px;
+
+    color: #b91c1c;
+
+    font-size: 13px;
+    line-height: 2;
+}
+
+.security-card {
+    margin-top: 12px;
+    margin-bottom: 15px;
+
+    padding: 14px;
+
+    background: #eff6ff;
+
+    border:
+        1px solid #bfdbfe;
+
+    border-radius: 14px;
+
+    line-height: 2;
+
+    font-size: 13px;
+}
+
+
 /* =====================================================
-   LOGIN
+   STATUS BADGES
+===================================================== */
+
+.pending-badge,
+.approved-badge,
+.rejected-badge {
+    display: inline-block;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    margin: 5px 0 10px;
+}
+
+.pending-badge {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.approved-badge {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.rejected-badge {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* =====================================================
+   مدرسہ شہناز اختر للبنات
+   STYLE.CSS
+   PART 2
+===================================================== */
+
+
+/* =====================================================
+   LOGIN PAGE
 ===================================================== */
 
 .login-container {
     width: 100%;
     max-width: 450px;
+
     margin: 50px auto 0;
+
     background: white;
+
     padding: 30px 25px;
+
     border-radius: 24px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, .08);
 }
 
 .login-container h1 {
     font-size: 25px;
     line-height: 1.9;
+
     text-align: center;
+
     margin-bottom: 5px;
 }
 
 .madrassa-name {
     text-align: center;
+
     font-size: 17px;
     font-weight: 600;
+
     color: #2563eb;
+
     line-height: 2;
 }
 
@@ -259,27 +447,53 @@ textarea {
     margin-bottom: 25px;
 }
 
+
+/* =====================================================
+   SELECTED LOGIN ROLE
+===================================================== */
+
 .selected-role-box {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 8px;
+
     margin-bottom: 18px;
-    padding: 12px 14px;
-    border-radius: 12px;
+
+    padding: 11px 14px;
+
     background: #f1f5ff;
-    color: #475569;
+
+    border:
+        1px solid #dbeafe;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+    line-height: 2;
+}
+
+.selected-role-box span {
+    color: #64748b;
 }
 
 .selected-role-box strong {
     color: #2563eb;
 }
 
+
+/* =====================================================
+   LOGIN FORM
+===================================================== */
+
 .login-container label {
     display: block;
+
     font-size: 15px;
     font-weight: 600;
+
     color: #334155;
+
     margin-top: 12px;
     margin-bottom: 5px;
 }
@@ -288,20 +502,37 @@ textarea {
 .login-container input[type="password"] {
     width: 100%;
     height: 54px;
+
     padding: 8px 15px;
-    border: 1px solid #d7dee7;
+
+    border:
+        1px solid #d7dee7;
+
     border-radius: 12px;
+
     background: #f8fafc;
+
     font-size: 15px;
+
     direction: rtl;
+
     outline: none;
 }
 
 .login-container input:focus {
     border-color: #2563eb;
+
     background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .10);
 }
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
 
 .password-box {
     position: relative;
@@ -314,18 +545,28 @@ textarea {
 
 .eye-button {
     position: absolute;
+
     left: 8px;
     top: 50%;
-    transform: translateY(-50%);
+
+    transform:
+        translateY(-50%);
+
     width: 42px;
     min-height: 42px;
+
     margin: 0;
     padding: 0;
+
     background: transparent;
+
     color: #64748b;
+
     box-shadow: none;
+
     font-family: sans-serif;
     font-size: 20px;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -337,13 +578,22 @@ textarea {
 }
 
 .eye-button:active {
-    transform: translateY(-50%) scale(.90);
+    transform:
+        translateY(-50%)
+        scale(.90);
 }
+
+
+/* =====================================================
+   REMEMBER ME
+===================================================== */
 
 .remember-row {
     display: flex;
     align-items: center;
+
     gap: 8px;
+
     margin: 15px 0;
 }
 
@@ -354,33 +604,38 @@ textarea {
 
 .remember-row label {
     margin: 0;
+
     font-size: 14px;
     font-weight: 400;
+
     color: #64748b;
 }
 
+
+/* =====================================================
+   LOGIN SECURITY
+===================================================== */
+
 .login-security-note {
     margin-top: 18px;
+
     padding: 12px;
-    border-radius: 12px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1e40af;
-    font-size: 13px;
-    line-height: 2;
+
     text-align: center;
+
+    background: #eff6ff;
+
+    border:
+        1px solid #bfdbfe;
+
+    border-radius: 12px;
+
+    color: #1e40af;
+
+    font-size: 12px;
+    line-height: 2;
 }
 
-.rejected-notice {
-    margin-top: 15px;
-    padding: 13px;
-    border-radius: 12px;
-    border: 1px solid #fecaca;
-    background: #fef2f2;
-    color: #b91c1c;
-    font-size: 13px;
-    line-height: 2;
-}
 
 /* =====================================================
    DASHBOARD
@@ -389,25 +644,38 @@ textarea {
 .dashboard {
     width: 100%;
     max-width: 1000px;
+
     min-height: 90vh;
+
     margin: auto;
+
     padding: 25px;
+
     background: white;
+
     border-radius: 24px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, .08);
 }
 
 .dashboard-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 15px;
+
     margin-bottom: 22px;
 }
 
 .small-title {
     font-size: 14px;
+
     color: #2563eb;
+
     line-height: 2;
 }
 
@@ -419,18 +687,31 @@ textarea {
 .dashboard-logo {
     width: 65px;
     height: 65px;
+
     display: flex;
+
     justify-content: center;
     align-items: center;
+
     background: #eef2ff;
+
     border-radius: 18px;
+
     font-size: 34px;
 }
 
+
+/* =====================================================
+   WELCOME CARD
+===================================================== */
+
 .welcome-card {
     padding: 20px;
+
     margin-bottom: 22px;
+
     border-radius: 18px;
+
     background: #f1f5ff;
 }
 
@@ -441,24 +722,42 @@ textarea {
 
 .welcome-card p {
     font-size: 14px;
+
     color: #64748b;
+
     line-height: 2;
 }
 
+
+/* =====================================================
+   DASHBOARD STATISTICS
+===================================================== */
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
     gap: 12px;
+
     margin-bottom: 28px;
 }
 
 .stat-card {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
+
     padding: 15px;
+
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
+
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 16px;
 }
 
@@ -466,11 +765,16 @@ textarea {
     width: 45px;
     min-width: 45px;
     height: 45px;
+
     display: flex;
+
     justify-content: center;
     align-items: center;
+
     background: #eef2ff;
+
     border-radius: 12px;
+
     font-size: 23px;
 }
 
@@ -481,34 +785,57 @@ textarea {
 
 .stat-card span {
     display: block;
+
     font-size: 12px;
+
     color: #64748b;
+
     line-height: 1.8;
 }
 
+
+/* =====================================================
+   DASHBOARD MENU
+===================================================== */
+
 .section-title {
     font-size: 21px;
+
     margin-bottom: 15px;
+
     line-height: 2;
 }
 
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 14px;
 }
 
 .menu-card {
     min-height: 135px;
+
     padding: 15px;
-    border: 1px solid #e2e8f0;
+
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 18px;
+
     background: white;
+
     color: #172033;
+
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
     align-items: center;
+
     gap: 3px;
 }
 
@@ -518,19 +845,25 @@ textarea {
 
 .menu-icon {
     font-family: sans-serif;
+
     font-size: 32px;
+
     line-height: 1.4;
 }
 
 .menu-card > span:not(.menu-icon) {
     font-size: 16px;
+
     font-weight: 600;
+
     line-height: 1.8;
 }
 
 .menu-card small {
     font-size: 11px;
+
     color: #64748b;
+
     line-height: 1.8;
 }
 
@@ -539,7 +872,14 @@ textarea {
 }
 
 /* =====================================================
-   STUDENTS / COMMON PAGE
+   مدرسہ شہناز اختر للبنات
+   STYLE.CSS
+   PART 3
+===================================================== */
+
+
+/* =====================================================
+   STUDENTS PAGE
 ===================================================== */
 
 .students-page {
@@ -550,13 +890,21 @@ textarea {
 
 .students-header {
     background: white;
+
     padding: 20px;
+
     border-radius: 20px;
+
     display: flex;
     align-items: center;
+
     gap: 15px;
+
     margin-bottom: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, .06);
 }
 
 .students-header .back-button {
@@ -572,6 +920,7 @@ textarea {
 
 .students-header p {
     color: #64748b;
+
     font-size: 13px;
     line-height: 2;
 }
@@ -580,56 +929,90 @@ textarea {
     margin-bottom: 15px;
 }
 
+
+/* =====================================================
+   STUDENT SUMMARY
+===================================================== */
+
 .students-summary {
     background: #f1f5ff;
+
     border-radius: 15px;
+
     padding: 15px 18px;
+
     margin-bottom: 15px;
+
     font-size: 16px;
 }
 
 .students-summary span {
     color: #2563eb;
+
     font-size: 22px;
     font-weight: 700;
+
     margin-right: 8px;
 }
+
+
+/* =====================================================
+   STUDENT FORM / LIST CARD
+===================================================== */
 
 .student-form-card,
 .student-list-section {
     background: white;
+
     padding: 22px;
+
     border-radius: 20px;
+
     margin-bottom: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, .06);
 }
 
 .student-form-card h2 {
     font-size: 22px;
+
     line-height: 2;
+
     margin-bottom: 15px;
 }
 
+
 /* =====================================================
-   FORMS
+   GENERAL FORM SECTIONS
 ===================================================== */
 
 .form-section {
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 16px;
+
     padding: 18px;
+
     margin-bottom: 18px;
 }
 
 .form-section h3 {
     font-size: 18px;
+
     margin-bottom: 14px;
+
     line-height: 2;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 14px;
 }
 
@@ -644,21 +1027,36 @@ textarea {
 
 .form-group label {
     font-size: 14px;
+
     font-weight: 600;
+
     margin-bottom: 5px;
+
     color: #334155;
 }
+
+
+/* =====================================================
+   FORM INPUTS
+===================================================== */
 
 .form-group input,
 .form-group select,
 .form-group textarea,
 .student-list-header input {
     width: 100%;
-    border: 1px solid #d7dee7;
+
+    border:
+        1px solid #d7dee7;
+
     border-radius: 11px;
+
     background: #f8fafc;
+
     padding: 10px 13px;
+
     font-size: 14px;
+
     outline: none;
 }
 
@@ -669,6 +1067,7 @@ textarea {
 
 .form-group textarea {
     resize: vertical;
+
     min-height: 85px;
 }
 
@@ -677,13 +1076,25 @@ textarea {
 .form-group textarea:focus,
 .student-list-header input:focus {
     border-color: #2563eb;
+
     background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .08);
 }
+
+
+/* =====================================================
+   FORM BUTTONS
+===================================================== */
 
 .form-buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr;
+
     gap: 12px;
 }
 
@@ -691,33 +1102,49 @@ textarea {
     margin: 0;
 }
 
+
 /* =====================================================
-   MAHRAM
+   MAHRAM SECTION
 ===================================================== */
 
 .mahram-warning {
     background: #fff7ed;
-    border: 1px solid #fed7aa;
+
+    border:
+        1px solid #fed7aa;
+
     padding: 13px;
+
     border-radius: 12px;
+
     font-size: 13px;
+
     line-height: 2;
+
     margin-bottom: 15px;
 }
 
 .mahram-card {
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 15px;
+
     padding: 15px;
+
     margin-bottom: 12px;
+
     background: #f8fafc;
 }
 
 .mahram-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 10px;
+
     margin-bottom: 10px;
 }
 
@@ -727,26 +1154,53 @@ textarea {
 
 .remove-mahram {
     width: auto;
+
     min-height: 40px;
+
     margin: 0;
+
     padding: 5px 12px;
+
     background: #fee2e2;
+
     color: #b91c1c;
+
     font-size: 14px;
+}
+
+.remove-mahram:hover {
+    background: #fecaca;
+    box-shadow: none;
 }
 
 .add-mahram-button {
     background: #475569;
+
     margin-top: 8px;
 }
 
 .mahram-confirm {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
+
     margin-top: 12px;
+
     font-size: 13px;
+
     line-height: 2;
+}
+
+.mahram-confirm label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
 }
 
 .mahram-confirm input {
@@ -755,39 +1209,57 @@ textarea {
     height: 18px;
 }
 
+
 /* =====================================================
-   STUDENT LIST
+   STUDENT LIST HEADER
 ===================================================== */
 
 .student-list-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 15px;
+
     margin-bottom: 18px;
 }
 
 .student-list-header h2 {
     font-size: 21px;
+
     line-height: 2;
 }
 
 .student-list-header input {
     max-width: 300px;
+
     height: 48px;
 }
 
+
+/* =====================================================
+   STUDENT CARD
+===================================================== */
+
 .student-card {
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 18px;
+
     padding: 17px;
+
     margin-bottom: 13px;
+
     background: white;
 }
 
 .student-card-header {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 }
 
@@ -795,128 +1267,235 @@ textarea {
     width: 55px;
     min-width: 55px;
     height: 55px;
+
     border-radius: 15px;
+
     display: flex;
+
     justify-content: center;
     align-items: center;
+
     background: #eef2ff;
+
     font-size: 28px;
 }
 
 .student-card h3 {
     font-size: 19px;
+
     line-height: 1.8;
 }
 
 .student-card-header span {
     font-size: 12px;
+
     color: #64748b;
 }
 
+
+/* =====================================================
+   STUDENT BADGES
+===================================================== */
+
 .student-badges {
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 7px;
+
     margin: 12px 0;
 }
 
 .student-badges span {
     background: #f1f5ff;
+
     padding: 5px 10px;
+
     border-radius: 20px;
+
     font-size: 12px;
 }
 
+
+/* =====================================================
+   STUDENT INFO
+===================================================== */
+
 .student-info {
     background: #f8fafc;
+
     border-radius: 12px;
+
     padding: 10px 13px;
 }
 
 .student-info p {
     font-size: 13px;
+
     line-height: 2;
+
     color: #475569;
 }
 
+
+/* =====================================================
+   STUDENT CARD BUTTONS
+===================================================== */
+
 .student-card-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 8px;
+
     margin-top: 12px;
 }
 
 .student-card-buttons button {
     min-height: 45px;
+
     margin: 0;
+
     padding: 5px;
+
     font-size: 13px;
 }
 
+
+/* =====================================================
+   EMPTY STUDENT LIST
+===================================================== */
+
 .empty-students {
     text-align: center;
+
     padding: 45px 20px;
+
     color: #64748b;
 }
 
 .empty-icon {
     font-size: 50px;
+
     margin-bottom: 8px;
 }
 
 /* =====================================================
-   MODALS
+   مدرسہ شہناز اختر للبنات
+   STYLE.CSS
+   PART 4
+===================================================== */
+
+
+/* =====================================================
+   DETAILS MODALS
 ===================================================== */
 
 .student-details-overlay,
-.teacher-details-overlay {
+.teacher-details-overlay,
+.application-details-overlay,
+.approval-confirmation-overlay {
     position: fixed;
+
     inset: 0;
-    background: rgba(15, 23, 42, .62);
+
+    background:
+        rgba(15, 23, 42, .62);
+
     z-index: 9999;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     padding: 20px;
+
     overflow-y: auto;
 }
+
 
 .student-details-box,
-.teacher-details-box {
+.teacher-details-box,
+.application-details-box,
+.approval-confirmation-box {
     width: 100%;
+
     max-width: 650px;
     max-height: 90vh;
+
     overflow-y: auto;
+
     background: white;
+
     border-radius: 20px;
+
     padding: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, .25);
 }
 
+
+/* =====================================================
+   MODAL HEADERS
+===================================================== */
+
 .student-details-header,
-.teacher-details-header {
+.teacher-details-header,
+.application-details-header,
+.approval-confirmation-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 15px;
+
     margin-bottom: 20px;
 }
 
+
 .student-details-header h2,
-.teacher-details-header h2 {
+.teacher-details-header h2,
+.application-details-header h2,
+.approval-confirmation-header h2 {
     margin: 0;
+
     font-size: 22px;
 }
+
 
 .close-details-button {
     width: 50px;
     min-width: 50px;
+
     min-height: 45px;
+
     margin: 0;
+
     padding: 5px;
+
     background: #fee2e2;
+
     color: #b91c1c;
 }
+
+
+.close-details-button:hover {
+    background: #fecaca;
+
+    box-shadow: none;
+}
+
+
+/* =====================================================
+   MODAL CONTENT
+===================================================== */
 
 #studentDetailsContent,
 #teacherDetailsContent,
@@ -925,248 +1504,436 @@ textarea {
     line-height: 2.1;
 }
 
+
 #studentDetailsContent h3,
 #teacherDetailsContent h3,
-#applicationDetailsContent h3 {
+#applicationDetailsContent h3,
+#approvalConfirmationContent h3 {
     margin: 15px 0 8px;
+
     color: #2563eb;
 }
 
+
 #studentDetailsContent p,
 #teacherDetailsContent p,
-#applicationDetailsContent p {
+#applicationDetailsContent p,
+#approvalConfirmationContent p {
     padding: 5px 0;
-    border-bottom: 1px solid #f1f5f9;
+
+    border-bottom:
+        1px solid #f1f5f9;
 }
 
+
 /* =====================================================
-   TEACHERS
+   TEACHERS PAGE
 ===================================================== */
 
 .teacher-page {
     width: 100%;
+
     max-width: 1200px;
+
     margin: 0 auto;
 }
 
+
+/* =====================================================
+   TEACHER HEADER
+===================================================== */
+
 .teacher-header {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
+
     margin-bottom: 25px;
+
     padding: 20px;
+
     border-radius: 18px;
+
     background: white;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, .08);
 }
+
 
 .teacher-header h1 {
     margin: 0;
+
     font-size: 30px;
 }
+
 
 .teacher-header .address {
     margin: 5px 0 0;
 }
 
+
 .teacher-header-buttons {
     display: flex;
+
     gap: 10px;
+
     align-items: center;
 }
 
+
 .teacher-header-buttons button {
     width: auto;
+
     min-width: 130px;
+
     margin: 0;
 }
 
+
+.teacher-header-buttons .logout-button {
+    margin: 0;
+}
+
+
+/* =====================================================
+   TEACHER STATISTICS
+===================================================== */
+
 .teacher-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 18px;
+
     margin-bottom: 25px;
 }
 
+
 .teacher-stat-card {
     background: white;
+
     border-radius: 18px;
+
     padding: 22px;
+
     text-align: center;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, .08);
 }
+
 
 .teacher-stat-icon {
     font-size: 35px;
+
     margin-bottom: 8px;
 }
 
+
 .teacher-stat-title {
     font-size: 18px;
+
     font-weight: 600;
+
     margin-bottom: 5px;
 }
 
+
 .teacher-stat-number {
     font-size: 30px;
+
     font-weight: 700;
 }
 
+
+/* =====================================================
+   TEACHER SECTIONS
+===================================================== */
+
 .teacher-section {
     background: white;
+
     border-radius: 18px;
+
     padding: 22px;
+
     margin-bottom: 22px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+
+    box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, .08);
 }
+
 
 .teacher-section h2 {
     margin-top: 0;
+
     margin-bottom: 18px;
+
     font-size: 23px;
 }
 
+
 .teacher-add-button {
     width: 100%;
+
     font-size: 18px;
+
     padding: 14px;
 }
 
+
+/* =====================================================
+   TEACHER FORM
+===================================================== */
+
 .teacher-form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 15px;
 }
 
+
 .teacher-field {
     display: flex;
+
     flex-direction: column;
 }
+
 
 .teacher-field.full-width {
     grid-column: 1 / -1;
 }
 
+
 .teacher-field label {
     font-weight: 600;
+
     margin-bottom: 7px;
+
+    color: #334155;
 }
+
 
 .teacher-field input,
 .teacher-field textarea,
 .teacher-field select,
 .teacher-search-input {
     width: 100%;
+
     padding: 12px;
-    border: 1px solid #d7dee7;
+
+    border:
+        1px solid #d7dee7;
+
     border-radius: 10px;
+
     background: #f8fafc;
+
     font-family: inherit;
+
     font-size: 16px;
+
     outline: none;
+
     color: #172033;
 }
+
 
 .teacher-field input,
 .teacher-field select {
     min-height: 50px;
 }
 
+
 .teacher-field textarea {
     resize: vertical;
+
+    min-height: 90px;
 }
+
 
 .teacher-field input:focus,
 .teacher-field textarea:focus,
 .teacher-field select:focus,
 .teacher-search-input:focus {
     border-color: #2563eb;
+
     background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .08);
 }
+
+
+/* =====================================================
+   TEACHER FORM BUTTONS
+===================================================== */
 
 .teacher-form-buttons {
     display: flex;
+
     gap: 10px;
+
     margin-top: 20px;
 }
 
+
 .teacher-form-buttons button {
     flex: 1;
+
     margin: 0;
 }
 
+
+/* =====================================================
+   TEACHER LIST HEADER
+===================================================== */
+
 .teacher-list-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     margin-bottom: 15px;
+
     gap: 10px;
 }
 
+
+.teacher-list-header h2 {
+    margin: 0;
+}
+
+
 .teacher-list-count {
     min-width: 35px;
+
     padding: 5px 12px;
+
     border-radius: 20px;
+
     background: #eef2f7;
+
     text-align: center;
+
     font-weight: 700;
 }
+
 
 .teacher-list {
     width: 100%;
 }
 
+
+/* =====================================================
+   EMPTY TEACHER LIST
+===================================================== */
+
 .teacher-empty {
     text-align: center;
+
     padding: 30px 10px;
+
     font-size: 17px;
+
     color: #64748b;
 }
 
+
+/* =====================================================
+   TEACHER CARD
+===================================================== */
+
 .teacher-card {
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 18px;
+
     padding: 17px;
+
     margin-bottom: 13px;
+
     background: white;
 }
 
+
 .teacher-card h3 {
     font-size: 19px;
+
     line-height: 1.8;
 }
 
+
 .teacher-card-info {
     margin-top: 10px;
+
     padding: 10px 13px;
+
     border-radius: 12px;
+
     background: #f8fafc;
 }
 
+
 .teacher-card-info p {
     font-size: 13px;
+
     line-height: 2;
+
     color: #475569;
 }
 
+
+/* =====================================================
+   TEACHER CARD BUTTONS
+===================================================== */
+
 .teacher-card-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 8px;
+
     margin-top: 12px;
 }
 
+
 .teacher-card-buttons button {
     min-height: 45px;
+
     margin: 0;
+
     padding: 5px;
+
     font-size: 13px;
 }
 
 /* =====================================================
-   ATTENDANCE
+   مدرسہ شہناز اختر للبنات
+   STYLE.CSS
+   PART 5
+===================================================== */
+
+
+/* =====================================================
+   ATTENDANCE PAGE
 ===================================================== */
 
 .attendance-page {
@@ -1174,268 +1941,464 @@ textarea {
     margin: 0 auto;
 }
 
+
 .attendance-page .page-header {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
+
     margin-bottom: 20px;
+
     background: white;
+
     padding: 20px;
+
     border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, .06);
 }
+
 
 .attendance-page .page-header h1 {
     margin-top: 6px;
 }
 
+
 .attendance-page .student-form-card {
     margin-top: 18px;
 }
 
+
+/* =====================================================
+   ATTENDANCE QUICK ACTIONS
+===================================================== */
+
 .attendance-quick-actions {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 12px;
+
     margin: 15px 0;
 }
+
 
 .attendance-quick-actions button {
     margin: 0;
 }
 
+
+/* =====================================================
+   ATTENDANCE STUDENT ROW
+===================================================== */
+
 .attendance-student-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+
+    grid-template-columns:
+        minmax(0, 1fr) auto;
+
     gap: 14px;
+
     align-items: center;
+
     background: white;
-    border: 1px solid #e5e7eb;
+
+    border:
+        1px solid #e5e7eb;
+
     border-radius: 16px;
+
     padding: 14px;
+
     margin-bottom: 12px;
 }
 
+
 .attendance-student-info h3 {
     margin-bottom: 6px;
+
     font-size: 18px;
 }
 
+
 .attendance-student-info p {
     margin: 2px 0;
+
     color: #64748b;
+
     font-size: 14px;
 }
 
+
+/* =====================================================
+   ATTENDANCE OPTIONS
+===================================================== */
+
 .attendance-options {
     display: flex;
+
     gap: 8px;
+
     flex-wrap: wrap;
 }
 
+
 .attendance-status-button {
     width: auto;
+
     min-height: 44px;
+
     margin: 0;
+
     padding: 7px 14px;
+
     border-radius: 12px;
+
     background: #64748b;
 }
+
 
 .attendance-status-button.present.active {
     background: #16a34a;
 }
 
+
 .attendance-status-button.absent.active {
     background: #dc2626;
 }
+
 
 .attendance-status-button.leave.active {
     background: #d97706;
 }
 
+
+/* =====================================================
+   ATTENDANCE RECORD
+===================================================== */
+
 .attendance-record-card {
     background: white;
-    border: 1px solid #e5e7eb;
+
+    border:
+        1px solid #e5e7eb;
+
     border-radius: 16px;
+
     padding: 14px;
+
     margin-bottom: 12px;
 }
+
 
 .attendance-record-card h3 {
     margin-bottom: 8px;
 }
 
+
 .attendance-record-card p {
     margin: 4px 0;
+
     color: #475569;
 }
 
+
 .attendance-summary-line {
     display: flex;
+
     gap: 12px;
+
     flex-wrap: wrap;
+
     margin-top: 8px;
 }
 
+
 .attendance-summary-line span {
     background: #f1f5f9;
+
     border-radius: 10px;
+
     padding: 5px 10px;
 }
 
+
 /* =====================================================
-   APPLICATION / APPROVAL SYSTEM
+   APPROVALS PAGE
 ===================================================== */
 
 .approvals-page {
+    width: 100%;
+
     max-width: 1100px;
+
+    margin: 0 auto;
 }
+
 
 .approvals-page .stats-grid {
     margin-top: 20px;
 }
+
 
 #studentApplicationsSection,
 #teacherApplicationsSection {
     margin-top: 20px;
 }
 
+
+/* =====================================================
+   APPLICATION COUNTERS
+===================================================== */
+
 #studentApplicationCount,
 #teacherApplicationCount {
     min-width: 38px;
+
     padding: 5px 12px;
+
     background: #eef2ff;
+
     color: #2563eb;
+
     border-radius: 20px;
+
     font-weight: 700;
+
     text-align: center;
 }
 
+
+/* =====================================================
+   APPLICATION CARD
+===================================================== */
+
 .application-card {
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid #e2e8f0;
+
     border-radius: 18px;
+
     padding: 17px;
+
     margin-bottom: 13px;
+
     background: white;
 }
 
+
 .application-card-header {
     display: flex;
+
     justify-content: space-between;
+
     align-items: flex-start;
+
     gap: 12px;
 }
 
+
 .application-card h3 {
     font-size: 18px;
+
     line-height: 2;
 }
+
 
 .application-card p {
     color: #475569;
+
     font-size: 13px;
+
     line-height: 2;
 }
 
+
+/* =====================================================
+   APPLICATION STATUS
+===================================================== */
+
 .application-status {
     display: inline-block;
+
     padding: 5px 11px;
+
     border-radius: 20px;
+
     font-size: 12px;
+
     white-space: nowrap;
 }
 
+
 .application-status.pending {
     background: #fff7ed;
+
     color: #c2410c;
 }
 
+
 .application-status.approved {
     background: #dcfce7;
+
     color: #15803d;
 }
 
+
 .application-status.rejected {
     background: #fee2e2;
+
     color: #b91c1c;
 }
 
+
+/* =====================================================
+   APPLICATION ACTIONS
+===================================================== */
+
 .application-actions {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 8px;
+
     margin-top: 12px;
 }
 
+
 .application-actions button {
     min-height: 45px;
+
     margin: 0;
+
     font-size: 13px;
 }
+
+
+.approve-application {
+    background: #16a34a;
+}
+
+
+.reject-application {
+    background: #dc2626;
+}
+
+
+.view-application {
+    background: #2563eb;
+}
+
+
+/* =====================================================
+   APPLICATION DECISION
+===================================================== */
 
 #applicationDecisionSection {
     margin-top: 20px;
 }
 
+
 #applicationAdminNote {
     width: 100%;
+
     min-height: 90px;
+
     resize: vertical;
+
     padding: 10px 13px;
-    border: 1px solid #d7dee7;
+
+    border:
+        1px solid #d7dee7;
+
     border-radius: 11px;
+
     background: #f8fafc;
+
     outline: none;
+
+    font-family:
+        "Noto Nastaliq Urdu",
+        serif;
 }
+
 
 #applicationAdminNote:focus {
     border-color: #2563eb;
+
     background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .08);
 }
+
 
 /* =====================================================
-   SECURITY / STATUS
+   APPROVAL CONFIRMATION
 ===================================================== */
 
-.security-card {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 15px;
+.approval-confirmation-box {
+    max-width: 550px;
+}
+
+
+.approval-confirmation-actions {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+
+.approval-confirmation-actions button {
+    margin: 0;
+}
+
+
+/* =====================================================
+   APPLICATION EMPTY STATE
+===================================================== */
+
+.application-empty {
+    text-align: center;
+
+    padding: 35px 15px;
+
+    color: #64748b;
+
     line-height: 2;
-    font-size: 13px;
 }
 
-.pending-badge {
-    display: inline-block;
-    background: #fff7ed;
-    color: #c2410c;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
+
+.application-empty-icon {
+    font-size: 42px;
+
+    margin-bottom: 8px;
 }
 
-.approved-badge {
-    display: inline-block;
-    background: #dcfce7;
-    color: #15803d;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-}
 
-.rejected-badge {
-    display: inline-block;
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-}
+/* =====================================================
+   مدرسہ شہناز اختر للبنات
+   STYLE.CSS
+   PART 6
+   MOBILE + FINAL
+===================================================== */
+
 
 /* =====================================================
    MOBILE
@@ -1447,10 +2410,17 @@ textarea {
         padding: 10px;
     }
 
+
+    /* =================================================
+       HOME / LOGIN
+    ================================================= */
+
     .container,
     .login-container {
         margin-top: 20px;
+
         padding: 25px 18px;
+
         border-radius: 20px;
     }
 
@@ -1458,6 +2428,7 @@ textarea {
     .login-logo {
         width: 72px;
         height: 72px;
+
         font-size: 40px;
     }
 
@@ -1471,13 +2442,30 @@ textarea {
 
     button {
         min-height: 56px;
+
         font-size: 16px;
     }
 
+    .selected-role-box {
+        flex-wrap: wrap;
+    }
+
+
+    /* =================================================
+       DASHBOARD
+    ================================================= */
+
     .dashboard {
-        min-height: calc(100vh - 20px);
+        min-height:
+            calc(100vh - 20px);
+
         padding: 20px 14px;
+
         border-radius: 20px;
+    }
+
+    .dashboard-header {
+        align-items: center;
     }
 
     .dashboard-header h1 {
@@ -1487,26 +2475,40 @@ textarea {
     .dashboard-logo {
         width: 55px;
         height: 55px;
+
+        min-width: 55px;
+
         font-size: 29px;
     }
 
     .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, 1fr);
+
         gap: 10px;
     }
 
     .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, 1fr);
+
         gap: 10px;
     }
 
     .menu-card {
         min-height: 125px;
+
         padding: 10px;
     }
 
+
+    /* =================================================
+       STUDENTS
+    ================================================= */
+
     .students-header {
         align-items: stretch;
+
         flex-direction: column;
     }
 
@@ -1524,6 +2526,7 @@ textarea {
 
     .student-list-header {
         flex-direction: column;
+
         align-items: stretch;
     }
 
@@ -1531,24 +2534,72 @@ textarea {
         max-width: none;
     }
 
-    .student-card-buttons,
-    .application-actions,
+    .student-card-header {
+        align-items: flex-start;
+    }
+
+    .student-card-buttons {
+        grid-template-columns: 1fr;
+    }
+
     .form-buttons {
         grid-template-columns: 1fr;
     }
 
+
+    /* =================================================
+       MAHRAM
+    ================================================= */
+
+    .mahram-header {
+        align-items: flex-start;
+    }
+
+    .mahram-confirm {
+        align-items: flex-start;
+    }
+
+    .mahram-confirm label {
+        align-items: flex-start;
+    }
+
+
+    /* =================================================
+       MODALS
+    ================================================= */
+
     .student-details-overlay,
-    .teacher-details-overlay {
+    .teacher-details-overlay,
+    .application-details-overlay,
+    .approval-confirmation-overlay {
         padding: 10px;
+
         align-items: flex-start;
     }
 
     .student-details-box,
-    .teacher-details-box {
-        max-height: calc(100vh - 20px);
+    .teacher-details-box,
+    .application-details-box,
+    .approval-confirmation-box {
+        max-height:
+            calc(100vh - 20px);
+
         border-radius: 16px;
+
         padding: 16px;
     }
+
+    .student-details-header,
+    .teacher-details-header,
+    .application-details-header,
+    .approval-confirmation-header {
+        align-items: flex-start;
+    }
+
+
+    /* =================================================
+       TEACHERS
+    ================================================= */
 
     .teacher-page {
         padding: 0;
@@ -1556,11 +2607,13 @@ textarea {
 
     .teacher-header {
         flex-direction: column;
+
         text-align: center;
     }
 
     .teacher-header-buttons {
         width: 100%;
+
         flex-direction: column;
     }
 
@@ -1592,12 +2645,20 @@ textarea {
         font-size: 25px;
     }
 
+
+    /* =================================================
+       ATTENDANCE
+    ================================================= */
+
     .attendance-page .page-header {
         align-items: stretch;
+
         flex-direction: column;
     }
 
-    .attendance-page .page-header .back-button {
+    .attendance-page
+    .page-header
+    .back-button {
         width: 100%;
     }
 
@@ -1607,17 +2668,34 @@ textarea {
 
     .attendance-options {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+
+        grid-template-columns:
+            repeat(3, 1fr);
     }
 
     .attendance-status-button {
         width: 100%;
     }
 
+
+    /* =================================================
+       APPLICATIONS / APPROVALS
+    ================================================= */
+
     .application-card-header {
         flex-direction: column;
     }
+
+    .application-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .approval-confirmation-actions {
+        grid-template-columns: 1fr;
+    }
+
 }
+
 
 /* =====================================================
    SMALL MOBILE
@@ -1625,10 +2703,128 @@ textarea {
 
 @media (max-width: 430px) {
 
-    .attendance-quick-actions,
-    .attendance-options,
-    .stats-grid,
+    .attendance-quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .attendance-options {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
     .menu-grid {
         grid-template-columns: 1fr;
     }
-   }
+
+    .dashboard-header {
+        align-items: flex-start;
+    }
+
+    .dashboard-header h1 {
+        font-size: 21px;
+    }
+
+    .student-form-card,
+    .student-list-section,
+    .teacher-section {
+        padding: 16px;
+    }
+
+    .form-section {
+        padding: 14px;
+    }
+
+    .student-avatar {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+
+        font-size: 24px;
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 350px) {
+
+    body {
+        padding: 6px;
+    }
+
+    .container,
+    .login-container {
+        padding:
+            20px 12px;
+    }
+
+    .dashboard {
+        padding:
+            15px 10px;
+    }
+
+    .student-form-card,
+    .student-list-section,
+    .teacher-section {
+        padding: 12px;
+    }
+
+    .form-section {
+        padding: 11px;
+    }
+
+    button {
+        padding:
+            7px 10px;
+
+        font-size: 15px;
+    }
+
+}
+
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print {
+
+    body {
+        background: white;
+
+        padding: 0;
+    }
+
+    button,
+    .student-actions,
+    .teacher-header-buttons,
+    .teacher-add-button,
+    .logout-button,
+    .back-button,
+    .application-actions {
+        display: none !important;
+    }
+
+    .dashboard,
+    .student-form-card,
+    .student-list-section,
+    .teacher-section,
+    .teacher-header {
+        box-shadow: none;
+
+        border:
+            1px solid #e2e8f0;
+    }
+
+}
+
+
+/* =====================================================
+   END OF STYLE.CSS
+===================================================== */
