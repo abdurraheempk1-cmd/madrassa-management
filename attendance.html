@@ -61,7 +61,7 @@
             <div>
 
                 <h1>
-                    📅 حاضری
+                    📋 حاضری
                 </h1>
 
                 <p class="address">
@@ -69,6 +69,18 @@
                 </p>
 
             </div>
+
+        </div>
+
+
+        <!-- =========================
+             ATTENDANCE INFORMATION
+        ========================== -->
+
+        <div class="security-card">
+
+            📌 ہر استاد اپنی مقررہ کلاس کی حاضری درج کرے گا۔
+            ایک دن میں ہر کلاس کی حاضری الگ محفوظ ہوگی۔
 
         </div>
 
@@ -94,6 +106,8 @@
             <div class="form-grid">
 
 
+                <!-- DATE -->
+
                 <div class="form-group">
 
                     <label for="attendanceDate">
@@ -108,6 +122,8 @@
 
                 </div>
 
+
+                <!-- CLASS -->
 
                 <div class="form-group">
 
@@ -149,10 +165,12 @@
                 </div>
 
 
+                <!-- PERIOD -->
+
                 <div class="form-group">
 
                     <label for="attendancePeriod">
-                        پیریڈ / سبق
+                        پیریڈ
                     </label>
 
                     <select
@@ -193,6 +211,8 @@
                 </div>
 
 
+                <!-- TEACHER -->
+
                 <div class="form-group">
 
                     <label for="attendanceTeacher">
@@ -224,11 +244,12 @@
                 👧 طالبات لوڈ کریں
             </button>
 
+
         </div>
 
 
         <!-- =========================
-             STUDENTS ATTENDANCE
+             STUDENT ATTENDANCE
         ========================== -->
 
         <div
@@ -236,12 +257,16 @@
             class="student-form-card hidden"
         >
 
+
             <h2>
                 👧 طالبات کی حاضری
             </h2>
 
 
+            <!-- QUICK ACTIONS -->
+
             <div class="attendance-quick-actions">
+
 
                 <button
                     type="button"
@@ -260,81 +285,137 @@
                     🔄 انتخاب ختم کریں
                 </button>
 
+
             </div>
 
+
+            <!-- STUDENT LIST -->
 
             <div id="attendanceStudentsList"></div>
 
 
+            <!-- SAVE -->
+
             <button
                 type="button"
-                id="saveAttendanceButton"
+                id="saveAttendance"
                 class="save-button"
             >
                 💾 حاضری محفوظ کریں
             </button>
 
-        </div>
-
-
-        <!-- =========================
-             TODAY SUMMARY
-        ========================== -->
-
-        <div class="student-form-card">
-
-            <h2>
-                📊 حاضری کا خلاصہ
-            </h2>
-
-
-            <div
-                id="attendanceSummary"
-                class="attendance-summary-line"
-            >
-
-                <span>
-                    کل:
-                    <strong id="attendanceTotalCount">
-                        0
-                    </strong>
-                </span>
-
-                <span>
-                    حاضر:
-                    <strong id="attendancePresentCount">
-                        0
-                    </strong>
-                </span>
-
-                <span>
-                    غیر حاضر:
-                    <strong id="attendanceAbsentCount">
-                        0
-                    </strong>
-                </span>
-
-                <span>
-                    رخصت:
-                    <strong id="attendanceLeaveCount">
-                        0
-                    </strong>
-                </span>
-
-            </div>
 
         </div>
 
 
         <!-- =========================
-             ATTENDANCE RECORDS
+             ATTENDANCE RECORD
         ========================== -->
 
         <div class="student-form-card">
+
 
             <h2>
                 📚 محفوظ شدہ حاضری
             </h2>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="attendanceRecordDate">
+                        تاریخ
+                    </label>
+
+                    <input
+                        type="date"
+                        id="attendanceRecordDate"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="attendanceRecordClass">
+                        کلاس
+                    </label>
+
+                    <select id="attendanceRecordClass">
+
+                        <option value="">
+                            تمام کلاسیں
+                        </option>
+
+                        <option value="ناظرہ">
+                            ناظرہ
+                        </option>
+
+                        <option value="حفظ">
+                            حفظ
+                        </option>
+
+                        <option value="ترجمہ">
+                            ترجمہ
+                        </option>
+
+                        <option value="درس نظامی">
+                            درس نظامی
+                        </option>
+
+                        <option value="دیگر">
+                            دیگر
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="attendanceRecordPeriod">
+                        پیریڈ
+                    </label>
+
+                    <select id="attendanceRecordPeriod">
+
+                        <option value="">
+                            تمام پیریڈ
+                        </option>
+
+                        <option value="1">
+                            پہلا پیریڈ
+                        </option>
+
+                        <option value="2">
+                            دوسرا پیریڈ
+                        </option>
+
+                        <option value="3">
+                            تیسرا پیریڈ
+                        </option>
+
+                        <option value="4">
+                            چوتھا پیریڈ
+                        </option>
+
+                        <option value="5">
+                            پانچواں پیریڈ
+                        </option>
+
+                        <option value="6">
+                            چھٹا پیریڈ
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
 
 
             <button
@@ -342,7 +423,7 @@
                 id="loadAttendanceRecords"
                 class="primary-button"
             >
-                🔄 ریکارڈ دیکھیں
+                🔍 ریکارڈ دیکھیں
             </button>
 
 
@@ -356,10 +437,18 @@
             <div id="attendanceRecordsList">
 
                 <div class="empty-students">
-                    حاضری کا ریکارڈ یہاں دکھایا جائے گا۔
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    حاضری کا ریکارڈ دیکھنے کے لیے
+                    تاریخ یا کلاس منتخب کریں۔
+
                 </div>
 
             </div>
+
 
         </div>
 
