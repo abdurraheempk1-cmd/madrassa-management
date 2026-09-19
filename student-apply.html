@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        نئی طالبہ کی درخواست - مدرسہ شہناز اختر للبنات
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+    <main class="students-page">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="students-header">
+
+            <button
+                type="button"
+                id="backToHome"
+                class="back-button"
+            >
+                ↩️ واپس جائیں
+            </button>
+
+
+            <div>
+
+                <h1>
+                    📝 داخلہ کی درخواست
+                </h1>
+
+                <p>
+                    مدرسہ شہناز اختر للبنات
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             INFORMATION
+        ========================== -->
+
+        <div class="mahram-warning">
+
+            درخواست جمع ہونے کے بعد ایڈمن اس کی جانچ کرے گا۔
+            منظوری کے بغیر طالبہ کا اکاؤنٹ فعال نہیں ہوگا۔
+
+        </div>
+
+
+        <!-- =========================
+             APPLICATION FORM
+        ========================== -->
+
+        <div class="student-form-card">
+
+            <h2>
+                نئی طالبہ کی درخواست
+            </h2>
+
+
+            <div
+                id="studentApplyMessage"
+                class="form-message"
+                aria-live="polite"
+            ></div>
+
+
+            <form id="studentApplyForm">
+
+
+                <!-- =========================
+                     ADMISSION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        📋 داخلہ کی معلومات
+                    </h3>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="applyAdmissionType">
+                                داخلہ کی قسم
+                            </label>
+
+                            <select
+                                id="applyAdmissionType"
+                                required
+                            >
+
+                                <option value="">
+                                    منتخب کریں
+                                </option>
+
+                                <option value="نیا داخلہ">
+                                    نیا داخلہ
+                                </option>
+
+                                <option value="منتقلی">
+                                    منتقلی
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyClass">
+                                مطلوبہ کلاس
+                            </label>
+
+                            <select
+                                id="applyClass"
+                                required
+                            >
+
+                                <option value="">
+                                    کلاس منتخب کریں
+                                </option>
+
+                                <option value="ناظرہ">
+                                    ناظرہ
+                                </option>
+
+                                <option value="حفظ">
+                                    حفظ
+                                </option>
+
+                                <option value="ترجمہ">
+                                    ترجمہ
+                                </option>
+
+                                <option value="درس نظامی">
+                                    درس نظامی
+                                </option>
+
+                                <option value="دیگر">
+                                    دیگر
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div
+                            id="applyPreviousMadrassaGroup"
+                            class="form-group hidden"
+                        >
+
+                            <label for="applyPreviousMadrassa">
+                                سابقہ مدرسہ
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyPreviousMadrassa"
+                                placeholder="سابقہ مدرسے کا نام"
+                            >
+
+                        </div>
+
+
+                        <div
+                            id="applyTransferDateGroup"
+                            class="form-group hidden"
+                        >
+
+                            <label for="applyTransferDate">
+                                منتقلی کی تاریخ
+                            </label>
+
+                            <input
+                                type="date"
+                                id="applyTransferDate"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     STUDENT INFORMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        👧 طالبہ کی معلومات
+                    </h3>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="applyStudentName">
+                                طالبہ کا نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyStudentName"
+                                required
+                                placeholder="طالبہ کا نام"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyFatherName">
+                                والد کا نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyFatherName"
+                                required
+                                placeholder="والد کا نام"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyGuardianName">
+                                سرپرست کا نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyGuardianName"
+                                required
+                                placeholder="سرپرست کا نام"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyCNIC">
+                                شناختی کارڈ / ب فارم نمبر
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyCNIC"
+                                inputmode="numeric"
+                                maxlength="15"
+                                required
+                                placeholder="00000-0000000-0"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyDateOfBirth">
+                                تاریخ پیدائش
+                            </label>
+
+                            <input
+                                type="date"
+                                id="applyDateOfBirth"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyPhone">
+                                موبائل نمبر
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="applyPhone"
+                                inputmode="numeric"
+                                maxlength="11"
+                                required
+                                placeholder="03XXXXXXXXX"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group full-width">
+
+                            <label for="applyAddress">
+                                مکمل پتہ
+                            </label>
+
+                            <textarea
+                                id="applyAddress"
+                                required
+                                placeholder="مکمل پتہ درج کریں"
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     RESIDENCE
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        🏠 رہائش
+                    </h3>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="applyResidenceType">
+                                رہائش کی قسم
+                            </label>
+
+                            <select
+                                id="applyResidenceType"
+                                required
+                            >
+
+                                <option value="">
+                                    منتخب کریں
+                                </option>
+
+                                <option value="گھر">
+                                    گھر
+                                </option>
+
+                                <option value="ہاسٹل">
+                                    ہاسٹل
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =========================
+                         MAHRAM SECTION
+                    ========================== -->
+
+                    <div
+                        id="applyMahramSection"
+                        class="hidden"
+                    >
+
+                        <div class="mahram-warning">
+
+                            ⚠️ ہاسٹل کی درخواست کے لیے کم از کم ایک
+                            شرعی محرم کی معلومات ضروری ہیں۔
+
+                        </div>
+
+
+                        <div id="applyMahramList"></div>
+
+
+                        <button
+                            type="button"
+                            id="addApplyMahram"
+                            class="add-mahram-button"
+                        >
+                            ➕ محرم شامل کریں
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     ACCOUNT INFORMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        🔐 اکاؤنٹ کی معلومات
+                    </h3>
+
+
+                    <div class="mahram-warning">
+
+                        یہ معلومات صرف درخواست کے لیے ہیں۔
+                        اکاؤنٹ ایڈمن کی منظوری کے بعد ہی فعال ہوگا۔
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="applyUsername">
+                                صارف نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyUsername"
+                                autocomplete="username"
+                                required
+                                placeholder="صارف نام منتخب کریں"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyPassword">
+                                پاس ورڈ
+                            </label>
+
+                            <input
+                                type="password"
+                                id="applyPassword"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                                placeholder="کم از کم 8 حروف"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="applyConfirmPassword">
+                                پاس ورڈ دوبارہ درج کریں
+                            </label>
+
+                            <input
+                                type="password"
+                                id="applyConfirmPassword"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                                placeholder="پاس ورڈ دوبارہ درج کریں"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     CONFIRMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <label class="mahram-confirm">
+
+                        <input
+                            type="checkbox"
+                            id="studentApplyConfirmation"
+                            required
+                        >
+
+                        میں تصدیق کرتی ہوں کہ فراہم کردہ معلومات درست ہیں۔
+
+                    </label>
+
+                </div>
+
+
+                <!-- =========================
+                     SUBMIT
+                ========================== -->
+
+                <div class="form-buttons">
+
+
+                    <button
+                        type="submit"
+                        id="submitStudentApplication"
+                        class="save-button"
+                    >
+                        📤 درخواست جمع کریں
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelStudentApplication"
+                        class="cancel-button"
+                    >
+                        ❌ منسوخ کریں
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             APPLICATION STATUS
+        ========================== -->
+
+        <div class="student-form-card">
+
+            <h2>
+                🔎 درخواست کی حالت
+            </h2>
+
+
+            <p class="address">
+                درخواست نمبر درج کرکے اپنی درخواست کی حالت دیکھیں۔
+            </p>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full-width">
+
+                    <label for="studentApplicationNumber">
+                        درخواست نمبر
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentApplicationNumber"
+                        placeholder="درخواست نمبر"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="button"
+                id="checkStudentApplicationStatus"
+                class="primary-button"
+            >
+                🔍 حالت دیکھیں
+            </button>
+
+
+            <div
+                id="studentApplicationStatusResult"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+
+        <!-- =========================
+             SECURITY
+        ========================== -->
+
+        <div class="mahram-warning">
+
+            🔒 درخواست جمع کرنے سے براہِ راست طالبہ کا اکاؤنٹ نہیں بنے گا۔
+            درخواست پہلے ایڈمن کے پاس جائے گی۔
+            منظوری کے بعد ہی طالبہ کا باقاعدہ ریکارڈ اور فعال اکاؤنٹ بنایا جائے گا۔
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =========================
+         MAIN SCRIPT
+    ========================== -->
+
+    <script src="script.js?v=20"></script>
+
+
+</body>
+
+</html>
