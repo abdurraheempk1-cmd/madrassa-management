@@ -39,12 +39,11 @@
 
 <body>
 
-
     <main class="dashboard">
 
 
         <!-- =========================
-             DASHBOARD HEADER
+             HEADER
         ========================== -->
 
         <div class="dashboard-header">
@@ -56,8 +55,12 @@
                 </div>
 
                 <h1>
-                    ڈیش بورڈ
+                    مدرسہ شہناز اختر للبنات
                 </h1>
+
+                <p class="address">
+                    گاؤں غرشٹو، ضلع بونیر
+                </p>
 
             </div>
 
@@ -78,12 +81,12 @@
 
         <div class="welcome-card">
 
-            <h2 id="welcomeMessage">
+            <h2 id="dashboardWelcome">
                 خوش آمدید
             </h2>
 
-            <p>
-                مدرسہ شہناز اختر للبنات کے انتظامی نظام میں خوش آمدید۔
+            <p id="dashboardRoleText">
+                مدرسہ مینجمنٹ سسٹم
             </p>
 
         </div>
@@ -95,8 +98,6 @@
 
         <div class="stats-grid">
 
-
-            <!-- STUDENTS -->
 
             <div class="stat-card">
 
@@ -119,8 +120,6 @@
             </div>
 
 
-            <!-- TEACHERS -->
-
             <div class="stat-card">
 
                 <div class="stat-icon">
@@ -142,22 +141,20 @@
             </div>
 
 
-            <!-- HOSTEL -->
-
             <div class="stat-card">
 
                 <div class="stat-icon">
-                    🏠
+                    📝
                 </div>
 
                 <div>
 
-                    <strong id="hostelTotal">
+                    <strong id="pendingApplicationTotal">
                         0
                     </strong>
 
                     <span>
-                        ہاسٹل طالبات
+                        زیرِ منظوری درخواستیں
                     </span>
 
                 </div>
@@ -165,94 +162,10 @@
             </div>
 
 
-            <!-- CLASSES -->
-
             <div class="stat-card">
 
                 <div class="stat-icon">
-                    📚
-                </div>
-
-                <div>
-
-                    <strong id="classTotal">
-                        0
-                    </strong>
-
-                    <span>
-                        کل کلاسز
-                    </span>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =========================
-             ADMIN APPROVAL STATISTICS
-        ========================== -->
-
-        <div
-            id="adminApprovalStats"
-            class="stats-grid admin-only"
-        >
-
-
-            <!-- PENDING STUDENTS -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ⏳
-                </div>
-
-                <div>
-
-                    <strong id="pendingStudentTotal">
-                        0
-                    </strong>
-
-                    <span>
-                        طالبات کی زیرِ منظوری درخواستیں
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- PENDING TEACHERS -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ⏳
-                </div>
-
-                <div>
-
-                    <strong id="pendingTeacherTotal">
-                        0
-                    </strong>
-
-                    <span>
-                        اساتذہ کی زیرِ منظوری درخواستیں
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- TODAY ATTENDANCE -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ✅
+                    📅
                 </div>
 
                 <div>
@@ -270,51 +183,25 @@
             </div>
 
 
-            <!-- TOTAL PENDING -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    🔔
-                </div>
-
-                <div>
-
-                    <strong id="totalPendingApplications">
-                        0
-                    </strong>
-
-                    <span>
-                        کل زیرِ منظوری درخواستیں
-                    </span>
-
-                </div>
-
-            </div>
-
-
         </div>
 
 
         <!-- =========================
-             MAIN MENU
+             MENU
         ========================== -->
 
         <h2 class="section-title">
-            مین مینو
+            انتظامی مینو
         </h2>
 
 
         <div class="menu-grid">
 
 
-            <!-- STUDENTS -->
-
             <button
                 type="button"
+                id="studentsButton"
                 class="menu-card"
-                id="studentsMenu"
-                data-page="students"
             >
 
                 <span class="menu-icon">
@@ -332,13 +219,10 @@
             </button>
 
 
-            <!-- TEACHERS -->
-
             <button
                 type="button"
+                id="teachersButton"
                 class="menu-card"
-                id="teachersMenu"
-                data-page="teachers"
             >
 
                 <span class="menu-icon">
@@ -356,17 +240,14 @@
             </button>
 
 
-            <!-- ATTENDANCE -->
-
             <button
                 type="button"
+                id="attendanceButton"
                 class="menu-card"
-                id="attendanceMenu"
-                data-page="attendance"
             >
 
                 <span class="menu-icon">
-                    📋
+                    📅
                 </span>
 
                 <span>
@@ -374,19 +255,16 @@
                 </span>
 
                 <small>
-                    روزانہ چھ کلاسوں کی حاضری
+                    روزانہ حاضری
                 </small>
 
             </button>
 
 
-            <!-- APPROVALS -->
-
             <button
                 type="button"
+                id="approvalsButton"
                 class="menu-card admin-only"
-                id="approvalsMenu"
-                data-page="approvals"
             >
 
                 <span class="menu-icon">
@@ -394,78 +272,41 @@
                 </span>
 
                 <span>
-                    درخواستوں کی منظوری
+                    درخواستیں
                 </span>
 
                 <small>
-                    طالبات اور اساتذہ کی درخواستیں
+                    منظوری اور جانچ
                 </small>
-
-                <span
-                    id="approvalBadge"
-                    class="approval-badge hidden"
-                >
-                    0
-                </span>
 
             </button>
 
 
-            <!-- HOSTEL -->
-
             <button
                 type="button"
+                id="announcementsButton"
                 class="menu-card"
-                id="hostelMenu"
-                data-page="hostel"
             >
 
                 <span class="menu-icon">
-                    🏠
+                    📢
                 </span>
 
                 <span>
-                    ہاسٹل
+                    اعلانات
                 </span>
 
                 <small>
-                    ہاسٹل کا ریکارڈ
+                    ہوم ورک اور اعلانات
                 </small>
 
             </button>
 
 
-            <!-- FEES -->
-
             <button
                 type="button"
-                class="menu-card"
-                id="feesMenu"
-                data-page="fees"
-            >
-
-                <span class="menu-icon">
-                    💰
-                </span>
-
-                <span>
-                    فیس
-                </span>
-
-                <small>
-                    فیس کا ریکارڈ
-                </small>
-
-            </button>
-
-
-            <!-- REPORTS -->
-
-            <button
-                type="button"
-                class="menu-card"
-                id="reportsMenu"
-                data-page="reports"
+                id="reportsButton"
+                class="menu-card admin-only"
             >
 
                 <span class="menu-icon">
@@ -477,46 +318,11 @@
                 </span>
 
                 <small>
-                    حاضری اور دیگر رپورٹس
+                    مدرسہ کی رپورٹس
                 </small>
 
             </button>
 
-
-        </div>
-
-
-        <!-- =========================
-             ADMIN APPROVAL NOTICE
-        ========================== -->
-
-        <div
-            id="adminApprovalNotice"
-            class="approval-notice admin-only hidden"
-        >
-
-            <strong>
-                🔔 نئی درخواستیں موجود ہیں
-            </strong>
-
-            <p>
-                طالبات یا اساتذہ کی نئی درخواستوں کو
-                فعال کرنے سے پہلے ان کی معلومات کی جانچ
-                اور ایڈمن منظوری ضروری ہے۔
-            </p>
-
-        </div>
-
-
-        <!-- =========================
-             SECURITY INFORMATION
-        ========================== -->
-
-        <div class="dashboard-security-note">
-
-            🔒 اکاؤنٹ، درخواست کی منظوری، طالبات و اساتذہ
-            میں تبدیلی اور حساس انتظامی کارروائیاں
-            صرف مجاز ایڈمن کے ذریعے کی جائیں گی۔
 
         </div>
 
@@ -550,8 +356,7 @@
          MAIN SCRIPT
     ========================== -->
 
-    <script src="script.js?v=20"></script>
-
+    <script src="script.js?v=21"></script>
 
 </body>
 
