@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        درخواستوں کی منظوری - مدرسہ شہناز اختر للبنات
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+    <main class="students-page approvals-page">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="students-header">
+
+            <button
+                type="button"
+                id="backToDashboard"
+                class="back-button"
+            >
+                ↩️ ڈیش بورڈ
+            </button>
+
+
+            <div>
+
+                <h1>
+                    ✅ درخواستوں کی منظوری
+                </h1>
+
+                <p>
+                    طالبات اور اساتذہ کی نئی درخواستیں
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             SECURITY MESSAGE
+        ========================== -->
+
+        <div class="mahram-warning">
+
+            🔒 یہ صفحہ صرف ایڈمن کے لیے ہے۔
+            درخواست منظور یا مسترد کرنے کا اختیار صرف ایڈمن کو حاصل ہے۔
+
+        </div>
+
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <strong id="pendingApplicationsTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        کل زیرِ منظوری
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👧
+                </div>
+
+                <div>
+
+                    <strong id="pendingStudentsTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        طالبات کی درخواستیں
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👩‍🏫
+                </div>
+
+                <div>
+
+                    <strong id="pendingTeachersTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        اساتذہ کی درخواستیں
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <strong id="approvedApplicationsTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        منظور شدہ
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =========================
+             FILTERS
+        ========================== -->
+
+        <div class="student-form-card">
+
+            <h2>
+                🔍 درخواستیں تلاش کریں
+            </h2>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="approvalTypeFilter">
+                        درخواست کی قسم
+                    </label>
+
+                    <select id="approvalTypeFilter">
+
+                        <option value="all">
+                            تمام درخواستیں
+                        </option>
+
+                        <option value="student">
+                            طالبات
+                        </option>
+
+                        <option value="teacher">
+                            اساتذہ
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="approvalStatusFilter">
+                        درخواست کی حالت
+                    </label>
+
+                    <select id="approvalStatusFilter">
+
+                        <option value="pending">
+                            زیرِ منظوری
+                        </option>
+
+                        <option value="approved">
+                            منظور شدہ
+                        </option>
+
+                        <option value="rejected">
+                            مسترد شدہ
+                        </option>
+
+                        <option value="all">
+                            تمام
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label for="approvalSearch">
+                        تلاش کریں
+                    </label>
+
+                    <input
+                        type="search"
+                        id="approvalSearch"
+                        placeholder="نام، موبائل نمبر یا درخواست نمبر"
+                    >
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             STUDENT APPLICATIONS
+        ========================== -->
+
+        <section
+            id="studentApplicationsSection"
+            class="student-list-section"
+        >
+
+            <div class="student-list-header">
+
+                <h2>
+                    👧 طالبات کی درخواستیں
+                </h2>
+
+                <span id="studentApplicationCount">
+                    0
+                </span>
+
+            </div>
+
+
+            <div id="studentApplicationsList">
+
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    ابھی کوئی درخواست موجود نہیں۔
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <br>
+
+
+        <!-- =========================
+             TEACHER APPLICATIONS
+        ========================== -->
+
+        <section
+            id="teacherApplicationsSection"
+            class="student-list-section"
+        >
+
+            <div class="student-list-header">
+
+                <h2>
+                    👩‍🏫 اساتذہ کی درخواستیں
+                </h2>
+
+                <span id="teacherApplicationCount">
+                    0
+                </span>
+
+            </div>
+
+
+            <div id="teacherApplicationsList">
+
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    ابھی کوئی درخواست موجود نہیں۔
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =================================================
+         APPLICATION DETAILS MODAL
+    ================================================== -->
+
+    <div
+        id="applicationDetailsOverlay"
+        class="student-details-overlay hidden"
+    >
+
+        <div
+            id="applicationDetailsBox"
+            class="student-details-box"
+        >
+
+
+            <!-- =========================
+                 MODAL HEADER
+            ========================== -->
+
+            <div class="student-details-header">
+
+                <h2 id="applicationDetailsTitle">
+                    درخواست کی تفصیلات
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="closeApplicationDetails"
+                    class="close-details-button"
+                >
+                    ✖
+                </button>
+
+            </div>
+
+
+            <!-- =========================
+                 DETAILS
+            ========================== -->
+
+            <div id="applicationDetailsContent"></div>
+
+
+            <!-- =========================
+                 ADMIN DECISION
+            ========================== -->
+
+            <div
+                id="applicationDecisionSection"
+                class="form-section"
+            >
+
+                <h3>
+                    🔐 ایڈمن فیصلہ
+                </h3>
+
+
+                <div class="form-group">
+
+                    <label for="applicationAdminNote">
+                        ایڈمن نوٹ
+                    </label>
+
+                    <textarea
+                        id="applicationAdminNote"
+                        rows="3"
+                        placeholder="ضرورت ہو تو نوٹ درج کریں"
+                    ></textarea>
+
+                </div>
+
+
+                <div
+                    id="approvalSecurityMessage"
+                    class="form-message"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="form-buttons">
+
+
+                    <button
+                        type="button"
+                        id="approveApplicationButton"
+                        class="save-button"
+                    >
+                        ✅ درخواست منظور کریں
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="rejectApplicationButton"
+                        class="delete-student"
+                    >
+                        ❌ درخواست مسترد کریں
+                    </button>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FINAL CONFIRMATION MODAL
+    ================================================== -->
+
+    <div
+        id="approvalConfirmationOverlay"
+        class="student-details-overlay hidden"
+    >
+
+        <div class="student-details-box">
+
+
+            <div class="student-details-header">
+
+                <h2 id="approvalConfirmationTitle">
+                    تصدیق
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="closeApprovalConfirmation"
+                    class="close-details-button"
+                >
+                    ✖
+                </button>
+
+            </div>
+
+
+            <div class="mahram-warning">
+
+                ⚠️ اس کارروائی کی تصدیق کریں۔
+                منظوری کے بعد باقاعدہ طالبہ یا استاد کا ریکارڈ بنایا جائے گا۔
+
+            </div>
+
+
+            <div id="approvalConfirmationContent"></div>
+
+
+            <div
+                id="approvalConfirmationMessage"
+                class="form-message"
+                aria-live="polite"
+            ></div>
+
+
+            <div class="form-buttons">
+
+
+                <button
+                    type="button"
+                    id="confirmApprovalAction"
+                    class="save-button"
+                >
+                    ✅ تصدیق کریں
+                </button>
+
+
+                <button
+                    type="button"
+                    id="cancelApprovalAction"
+                    class="cancel-button"
+                >
+                    ❌ منسوخ کریں
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =========================
+         MAIN SCRIPT
+    ========================== -->
+
+    <script src="script.js?v=20"></script>
+
+
+</body>
+
+</html>
