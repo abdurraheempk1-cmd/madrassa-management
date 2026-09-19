@@ -48,24 +48,63 @@
             🔐
         </div>
 
+
         <h1>
             لاگ اِن
         </h1>
 
+
         <div class="madrassa-name">
             مدرسہ شہناز اختر للبنات
         </div>
+
 
         <p class="address">
             گاؤں غرشٹو، ضلع بونیر
         </p>
 
 
-        <form id="loginForm">
+        <!-- =========================
+             SELECTED ACCOUNT TYPE
+        ========================== -->
+
+        <div
+            id="selectedRoleBox"
+            class="selected-role-box"
+        >
+
+            <span>
+                اکاؤنٹ:
+            </span>
+
+            <strong id="selectedRoleText">
+                منتخب نہیں
+            </strong>
+
+        </div>
+
+
+        <!-- =========================
+             LOGIN FORM
+        ========================== -->
+
+        <form
+            id="loginForm"
+            autocomplete="on"
+        >
+
+
+            <input
+                type="hidden"
+                id="loginRole"
+                name="loginRole"
+            >
+
 
             <label for="username">
                 صارف نام
             </label>
+
 
             <input
                 type="text"
@@ -81,7 +120,9 @@
                 پاس ورڈ
             </label>
 
+
             <div class="password-box">
+
 
                 <input
                     type="password"
@@ -92,6 +133,7 @@
                     required
                 >
 
+
                 <button
                     type="button"
                     id="togglePassword"
@@ -101,10 +143,12 @@
                     👁️
                 </button>
 
+
             </div>
 
 
             <div class="remember-row">
+
 
                 <input
                     type="checkbox"
@@ -112,15 +156,32 @@
                     name="rememberMe"
                 >
 
+
                 <label for="rememberMe">
                     مجھے یاد رکھیں
                 </label>
 
+
             </div>
 
 
+            <!-- =========================
+                 LOGIN MESSAGE
+            ========================== -->
+
+            <div
+                id="loginMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+
+            <!-- =========================
+                 LOGIN BUTTON
+            ========================== -->
+
             <button
-                type="button"
+                type="submit"
                 id="loginButton"
             >
                 🔐 لاگ اِن
@@ -136,22 +197,60 @@
             </button>
 
 
-            <div
-                id="loginMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
-
         </form>
+
+
+        <!-- =========================
+             ACCOUNT SECURITY
+        ========================== -->
+
+        <div class="login-security-note">
+
+            🔒 صرف منظور شدہ اور فعال اکاؤنٹ
+            لاگ اِن کر سکتا ہے۔
+
+        </div>
+
+
+        <div
+            id="pendingAccountMessage"
+            class="approval-notice hidden"
+        >
+
+            ⏳ آپ کی درخواست ابھی ایڈمن کی منظوری کے انتظار میں ہے۔
+
+        </div>
+
+
+        <div
+            id="rejectedAccountMessage"
+            class="rejected-notice hidden"
+        >
+
+            ❌ آپ کی درخواست منظور نہیں ہوئی۔
+            مزید معلومات کے لیے مدرسہ انتظامیہ سے رابطہ کریں۔
+
+        </div>
+
 
     </main>
 
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
-    <script src="script.js"></script>
+
+    <!-- =========================
+         MAIN SCRIPT
+    ========================== -->
+
+    <script src="script.js?v=20"></script>
+
 
 </body>
 
