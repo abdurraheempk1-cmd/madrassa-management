@@ -37,11 +37,10 @@
 
 </head>
 
-
 <body>
 
 
-    <div class="students-page">
+    <main class="students-page">
 
 
         <!-- =========================
@@ -62,7 +61,7 @@
             <div>
 
                 <h1>
-                    طالبات
+                    👧 طالبات
                 </h1>
 
                 <p>
@@ -75,10 +74,13 @@
 
 
         <!-- =========================
-             ACTIONS
+             ADMIN ACTION
         ========================== -->
 
-        <div class="student-actions">
+        <div
+            id="studentAdminActions"
+            class="student-actions admin-only"
+        >
 
             <button
                 type="button"
@@ -97,7 +99,7 @@
 
         <div class="students-summary">
 
-            کل طالبات:
+            کل فعال طالبات:
 
             <span id="studentCount">
                 0
@@ -108,11 +110,12 @@
 
         <!-- =========================
              STUDENT FORM
+             ADMIN ONLY
         ========================== -->
 
         <div
             id="studentFormContainer"
-            class="student-form-card hidden"
+            class="student-form-card hidden admin-only"
         >
 
             <h2 id="formTitle">
@@ -123,13 +126,12 @@
             <div
                 id="studentFormMessage"
                 class="form-message"
+                aria-live="polite"
             ></div>
 
 
             <form id="studentForm">
 
-
-                <!-- Hidden Student ID -->
 
                 <input
                     type="hidden"
@@ -229,6 +231,7 @@
 
                         </div>
 
+
                     </div>
 
                 </div>
@@ -299,7 +302,7 @@
                         <div class="form-group">
 
                             <label for="studentCNIC">
-                                شناختی کارڈ نمبر
+                                شناختی کارڈ / ب فارم نمبر
                             </label>
 
                             <input
@@ -416,6 +419,7 @@
 
                         </div>
 
+
                     </div>
 
                 </div>
@@ -465,7 +469,7 @@
 
 
                     <!-- =========================
-                         MAHRAM
+                         MAHRAM SECTION
                     ========================== -->
 
                     <div
@@ -475,8 +479,9 @@
 
                         <div class="mahram-warning">
 
-                            ⚠️ ہاسٹل میں داخلے کے لیے کم از کم ایک
-                            محرم کی مکمل معلومات اور منظوری ضروری ہے۔
+                            ⚠️ ہاسٹل طالبہ کے لیے کم از کم ایک
+                            شرعی محرم کی مکمل معلومات ضروری ہیں۔
+                            زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔
 
                         </div>
 
@@ -491,6 +496,61 @@
                         >
                             ➕ محرم شامل کریں
                         </button>
+
+
+                        <div class="mahram-confirm">
+
+                            <label>
+
+                                <input
+                                    type="checkbox"
+                                    id="mahramConfirmation"
+                                >
+
+                                میں تصدیق کرتا/کرتی ہوں کہ درج کیے گئے
+                                افراد طالبہ کے شرعی محرم ہیں۔
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     STATUS
+                ========================== -->
+
+                <div class="form-section admin-only">
+
+                    <h3>
+                        🔐 انتظامی حیثیت
+                    </h3>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="studentStatus">
+                                طالبہ کی حیثیت
+                            </label>
+
+                            <select id="studentStatus">
+
+                                <option value="active">
+                                    فعال
+                                </option>
+
+                                <option value="inactive">
+                                    غیر فعال
+                                </option>
+
+                            </select>
+
+                        </div>
 
                     </div>
 
@@ -532,7 +592,7 @@
              STUDENT LIST
         ========================== -->
 
-        <div class="student-list-section">
+        <section class="student-list-section">
 
             <div class="student-list-header">
 
@@ -544,18 +604,37 @@
                 <input
                     type="search"
                     id="studentSearch"
-                    placeholder="🔍 طالبہ تلاش کریں"
+                    placeholder="🔍 نام، داخلہ نمبر یا موبائل نمبر سے تلاش کریں"
                 >
 
             </div>
 
 
-            <div id="studentsList"></div>
+            <div
+                id="studentListMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
 
-        </div>
+
+            <div id="studentsList">
+
+                <div class="empty-students">
+
+                    <div class="empty-icon">
+                        👧
+                    </div>
+
+                    طالبات کا ریکارڈ لوڈ ہو رہا ہے۔
+
+                </div>
+
+            </div>
+
+        </section>
 
 
-    </div>
+    </main>
 
 
     <!-- =================================================
@@ -565,52 +644,20 @@
     <div
         id="studentDetailsOverlay"
         class="student-details-overlay hidden"
-        style="
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        "
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="studentDetailsTitle"
     >
 
         <div
             id="studentDetailsBox"
             class="student-details-box"
-            style="
-                width: 100%;
-                max-width: 650px;
-                max-height: 90vh;
-                overflow-y: auto;
-                background: white;
-                border-radius: 20px;
-                padding: 20px;
-                position: relative;
-            "
         >
 
 
-            <!-- Details Header -->
+            <div class="student-details-header">
 
-            <div
-                class="student-details-header"
-                style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 15px;
-                    margin-bottom: 20px;
-                "
-            >
-
-                <h2
-                    id="studentDetailsTitle"
-                    style="margin: 0;"
-                >
+                <h2 id="studentDetailsTitle">
                     طالبہ کی تفصیلات
                 </h2>
 
@@ -619,19 +666,13 @@
                     type="button"
                     id="closeStudentDetails"
                     class="close-details-button"
-                    style="
-                        width: auto;
-                        min-width: 55px;
-                        margin: 0;
-                    "
+                    aria-label="تفصیلات بند کریں"
                 >
                     ✖
                 </button>
 
             </div>
 
-
-            <!-- Details Content -->
 
             <div id="studentDetailsContent"></div>
 
@@ -641,20 +682,20 @@
     </div>
 
 
-    <!-- =================================================
+    <!-- =========================
          SUPABASE
-    ================================================== -->
+    ========================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
 
-    <!-- =================================================
+    <!-- =========================
          MAIN SCRIPT
-    ================================================== -->
+    ========================== -->
 
-    <script src="script.js?v=10"></script>
+    <script src="script.js?v=20"></script>
 
 
 </body>
