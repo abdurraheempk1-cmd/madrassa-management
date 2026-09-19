@@ -37,7 +37,6 @@
 
 </head>
 
-
 <body>
 
 
@@ -143,7 +142,7 @@
                 </div>
 
                 <div class="teacher-stat-title">
-                    زیرِ منظوری
+                    زیرِ منظوری درخواستیں
                 </div>
 
                 <div
@@ -160,10 +159,13 @@
 
 
         <!-- =========================
-             ADD TEACHER
+             ADMIN ADD TEACHER
         ========================== -->
 
-        <div class="teacher-section">
+        <div
+            id="teacherAdminActions"
+            class="teacher-section admin-only"
+        >
 
             <button
                 type="button"
@@ -178,11 +180,12 @@
 
         <!-- =========================
              TEACHER FORM
+             ADMIN ONLY
         ========================== -->
 
         <div
             id="teacherFormContainer"
-            class="teacher-section hidden"
+            class="teacher-section hidden admin-only"
         >
 
 
@@ -210,6 +213,8 @@
                 <div class="teacher-form-grid">
 
 
+                    <!-- TEACHER CODE -->
+
                     <div class="teacher-field">
 
                         <label for="teacherCode">
@@ -225,6 +230,8 @@
 
                     </div>
 
+
+                    <!-- NAME -->
 
                     <div class="teacher-field">
 
@@ -242,6 +249,8 @@
                     </div>
 
 
+                    <!-- FATHER NAME -->
+
                     <div class="teacher-field">
 
                         <label for="teacherFatherName">
@@ -252,10 +261,13 @@
                             type="text"
                             id="teacherFatherName"
                             placeholder="والد کا نام"
+                            required
                         >
 
                     </div>
 
+
+                    <!-- PHONE -->
 
                     <div class="teacher-field">
 
@@ -269,10 +281,13 @@
                             inputmode="numeric"
                             maxlength="11"
                             placeholder="03XXXXXXXXX"
+                            required
                         >
 
                     </div>
 
+
+                    <!-- CNIC -->
 
                     <div class="teacher-field">
 
@@ -286,10 +301,29 @@
                             inputmode="numeric"
                             maxlength="15"
                             placeholder="00000-0000000-0"
+                            required
                         >
 
                     </div>
 
+
+                    <!-- DATE OF BIRTH -->
+
+                    <div class="teacher-field">
+
+                        <label for="teacherDateOfBirth">
+                            تاریخ پیدائش
+                        </label>
+
+                        <input
+                            type="date"
+                            id="teacherDateOfBirth"
+                        >
+
+                    </div>
+
+
+                    <!-- QUALIFICATION -->
 
                     <div class="teacher-field">
 
@@ -301,10 +335,13 @@
                             type="text"
                             id="teacherQualification"
                             placeholder="مثلاً عالمہ، ایم اے، بی اے"
+                            required
                         >
 
                     </div>
 
+
+                    <!-- JOINING DATE -->
 
                     <div class="teacher-field">
 
@@ -315,10 +352,39 @@
                         <input
                             type="date"
                             id="teacherJoiningDate"
+                            required
                         >
 
                     </div>
 
+
+                    <!-- STATUS -->
+
+                    <div class="teacher-field">
+
+                        <label for="teacherStatus">
+                            استاد کی حیثیت
+                        </label>
+
+                        <select
+                            id="teacherStatus"
+                            required
+                        >
+
+                            <option value="active">
+                                فعال
+                            </option>
+
+                            <option value="inactive">
+                                غیر فعال
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ADDRESS -->
 
                     <div class="teacher-field full-width">
 
@@ -330,6 +396,7 @@
                             id="teacherAddress"
                             rows="3"
                             placeholder="استاد کا مکمل پتہ"
+                            required
                         ></textarea>
 
                     </div>
@@ -337,6 +404,10 @@
 
                 </div>
 
+
+                <!-- =========================
+                     FORM BUTTONS
+                ========================== -->
 
                 <div class="teacher-form-buttons">
 
@@ -383,7 +454,7 @@
                 type="search"
                 id="teacherSearch"
                 class="teacher-search-input"
-                placeholder="نام، کوڈ یا موبائل نمبر سے تلاش کریں"
+                placeholder="نام، کوڈ، شناختی کارڈ یا موبائل نمبر سے تلاش کریں"
             >
 
         </div>
@@ -402,6 +473,7 @@
                     👩‍🏫 اساتذہ کی فہرست
                 </h2>
 
+
                 <span
                     id="teacherListCount"
                     class="teacher-list-count"
@@ -413,12 +485,19 @@
 
 
             <div
+                id="teacherListMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+
+            <div
                 id="teacherList"
                 class="teacher-list"
             >
 
                 <div class="teacher-empty">
-                    ابھی کوئی استاد موجود نہیں۔
+                    اساتذہ کا ریکارڈ لوڈ ہو رہا ہے۔
                 </div>
 
             </div>
@@ -437,6 +516,9 @@
     <div
         id="teacherDetailsOverlay"
         class="teacher-details-overlay hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="teacherDetailsTitle"
     >
 
         <div
@@ -447,6 +529,7 @@
 
             <div class="teacher-details-header">
 
+
                 <h2 id="teacherDetailsTitle">
                     استاد کی تفصیلات
                 </h2>
@@ -456,9 +539,11 @@
                     type="button"
                     id="closeTeacherDetails"
                     class="close-details-button"
+                    aria-label="تفصیلات بند کریں"
                 >
                     ✖
                 </button>
+
 
             </div>
 
@@ -484,7 +569,7 @@
          MAIN SCRIPT
     ========================== -->
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20"></script>
 
 
 </body>
