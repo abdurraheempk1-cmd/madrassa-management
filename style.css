@@ -1,3 +1,8 @@
+/* =====================================================
+   مدرسہ شہناز اختر للبنات
+   مکمل مرکزی اسٹائل
+===================================================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -17,9 +22,9 @@ body {
     color: #172033;
 }
 
-/* =========================
+/* =====================================================
    GENERAL
-========================= */
+===================================================== */
 
 button,
 input,
@@ -46,17 +51,18 @@ button {
         background .15s ease;
 }
 
-button:active {
-    transform: scale(.97);
-}
-
 button:hover {
     box-shadow: 0 7px 18px rgba(37, 99, 235, .20);
 }
 
+button:active {
+    transform: scale(.97);
+}
+
 button:disabled {
-    opacity: .6;
+    opacity: .55;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 input,
@@ -79,13 +85,58 @@ body.modal-open {
     margin-top: 8px;
     text-align: center;
     font-size: 14px;
-    color: #dc2626;
     line-height: 2;
+    color: #dc2626;
 }
 
-/* =========================
+.primary-button {
+    background: #2563eb;
+}
+
+.save-button {
+    background: #16a34a;
+}
+
+.cancel-button,
+.back-button {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.cancel-button:hover,
+.back-button:hover {
+    background: #e2e8f0;
+    box-shadow: none;
+}
+
+.logout-button {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.logout-button:hover {
+    background: #e2e8f0;
+    box-shadow: none;
+}
+
+.delete-student,
+.delete-teacher {
+    background: #dc2626;
+}
+
+.edit-student,
+.edit-teacher {
+    background: #475569;
+}
+
+.view-student,
+.view-teacher {
+    background: #2563eb;
+}
+
+/* =====================================================
    HOME
-========================= */
+===================================================== */
 
 .container {
     width: 100%;
@@ -138,9 +189,9 @@ body.modal-open {
     margin-bottom: 25px;
 }
 
-/* =========================
+/* =====================================================
    LOGIN
-========================= */
+===================================================== */
 
 .login-container {
     width: 100%;
@@ -189,7 +240,6 @@ body.modal-open {
     border: 1px solid #d7dee7;
     border-radius: 12px;
     background: #f8fafc;
-    color: #172033;
     font-size: 15px;
     direction: rtl;
     outline: none;
@@ -257,32 +307,13 @@ body.modal-open {
     color: #64748b;
 }
 
-.back-button {
-    background: #eef2f7;
-    color: #475569;
-}
-
-.back-button:hover {
-    background: #e2e8f0;
-    box-shadow: none;
-}
-
-.cancel-button {
-    background: #eef2f7;
-    color: #475569;
-}
-
-.save-button {
-    background: #16a34a;
-}
-
-/* =========================
+/* =====================================================
    DASHBOARD
-========================= */
+===================================================== */
 
 .dashboard {
     width: 100%;
-    max-width: 900px;
+    max-width: 1000px;
     min-height: 90vh;
     margin: auto;
     padding: 25px;
@@ -358,6 +389,7 @@ body.modal-open {
 
 .stat-icon {
     width: 45px;
+    min-width: 45px;
     height: 45px;
     display: flex;
     justify-content: center;
@@ -427,20 +459,13 @@ body.modal-open {
     line-height: 1.8;
 }
 
-.logout-button {
+.dashboard .logout-button {
     margin-top: 25px;
-    background: #eef2f7;
-    color: #475569;
 }
 
-.logout-button:hover {
-    background: #e2e8f0;
-    box-shadow: none;
-}
-
-/* =========================
+/* =====================================================
    STUDENTS
-========================= */
+===================================================== */
 
 .students-page {
     width: 100%;
@@ -480,10 +505,6 @@ body.modal-open {
     margin-bottom: 15px;
 }
 
-.primary-button {
-    background: #2563eb;
-}
-
 .students-summary {
     background: #f1f5ff;
     border-radius: 15px;
@@ -499,7 +520,8 @@ body.modal-open {
     margin-right: 8px;
 }
 
-.student-form-card {
+.student-form-card,
+.student-list-section {
     background: white;
     padding: 22px;
     border-radius: 20px;
@@ -512,6 +534,10 @@ body.modal-open {
     line-height: 2;
     margin-bottom: 15px;
 }
+
+/* =====================================================
+   FORMS
+===================================================== */
 
 .form-section {
     border: 1px solid #e2e8f0;
@@ -559,7 +585,6 @@ body.modal-open {
     padding: 10px 13px;
     font-size: 14px;
     outline: none;
-    color: #172033;
 }
 
 .form-group input,
@@ -580,6 +605,20 @@ body.modal-open {
     background: white;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
 }
+
+.form-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-buttons button {
+    margin: 0;
+}
+
+/* =====================================================
+   MAHRAM
+===================================================== */
 
 .mahram-warning {
     background: #fff7ed;
@@ -603,6 +642,7 @@ body.modal-open {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     margin-bottom: 10px;
 }
 
@@ -626,6 +666,9 @@ body.modal-open {
 }
 
 .mahram-confirm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 12px;
     font-size: 13px;
     line-height: 2;
@@ -633,26 +676,13 @@ body.modal-open {
 
 .mahram-confirm input {
     width: 18px;
+    min-width: 18px;
     height: 18px;
-    vertical-align: middle;
 }
 
-.form-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.form-buttons button {
-    margin: 0;
-}
-
-.student-list-section {
-    background: white;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
-}
+/* =====================================================
+   STUDENT LIST
+===================================================== */
 
 .student-list-header {
     display: flex;
@@ -688,6 +718,7 @@ body.modal-open {
 
 .student-avatar {
     width: 55px;
+    min-width: 55px;
     height: 55px;
     border-radius: 15px;
     display: flex;
@@ -747,18 +778,6 @@ body.modal-open {
     font-size: 13px;
 }
 
-.view-student {
-    background: #2563eb;
-}
-
-.edit-student {
-    background: #475569;
-}
-
-.delete-student {
-    background: #dc2626;
-}
-
 .empty-students {
     text-align: center;
     padding: 45px 20px;
@@ -770,11 +789,12 @@ body.modal-open {
     margin-bottom: 8px;
 }
 
-/* =========================
-   STUDENT DETAILS MODAL
-========================= */
+/* =====================================================
+   DETAILS MODALS
+===================================================== */
 
-.student-details-overlay {
+.student-details-overlay,
+.teacher-details-overlay {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, .62);
@@ -786,7 +806,8 @@ body.modal-open {
     overflow-y: auto;
 }
 
-.student-details-box {
+.student-details-box,
+.teacher-details-box {
     width: 100%;
     max-width: 650px;
     max-height: 90vh;
@@ -797,7 +818,8 @@ body.modal-open {
     box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
 }
 
-.student-details-header {
+.student-details-header,
+.teacher-details-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -805,7 +827,8 @@ body.modal-open {
     margin-bottom: 20px;
 }
 
-.student-details-header h2 {
+.student-details-header h2,
+.teacher-details-header h2 {
     margin: 0;
     font-size: 22px;
 }
@@ -820,23 +843,30 @@ body.modal-open {
     color: #b91c1c;
 }
 
-#studentDetailsContent {
+#studentDetailsContent,
+#teacherDetailsContent,
+#applicationDetailsContent,
+#approvalConfirmationContent {
     line-height: 2.1;
 }
 
-#studentDetailsContent h3 {
+#studentDetailsContent h3,
+#teacherDetailsContent h3,
+#applicationDetailsContent h3 {
     margin: 15px 0 8px;
     color: #2563eb;
 }
 
-#studentDetailsContent p {
+#studentDetailsContent p,
+#teacherDetailsContent p,
+#applicationDetailsContent p {
     padding: 5px 0;
     border-bottom: 1px solid #f1f5f9;
 }
 
-/* =========================
+/* =====================================================
    TEACHERS
-========================= */
+===================================================== */
 
 .teacher-page {
     width: 100%;
@@ -954,6 +984,7 @@ body.modal-open {
 
 .teacher-field input,
 .teacher-field textarea,
+.teacher-field select,
 .teacher-search-input {
     width: 100%;
     padding: 12px;
@@ -963,10 +994,21 @@ body.modal-open {
     font-family: inherit;
     font-size: 16px;
     outline: none;
+    color: #172033;
+}
+
+.teacher-field input,
+.teacher-field select {
+    min-height: 50px;
+}
+
+.teacher-field textarea {
+    resize: vertical;
 }
 
 .teacher-field input:focus,
 .teacher-field textarea:focus,
+.teacher-field select:focus,
 .teacher-search-input:focus {
     border-color: #2563eb;
     background: white;
@@ -1000,7 +1042,7 @@ body.modal-open {
     min-width: 35px;
     padding: 5px 12px;
     border-radius: 20px;
-    background: #eee;
+    background: #eef2f7;
     text-align: center;
     font-weight: 700;
 }
@@ -1056,75 +1098,293 @@ body.modal-open {
     font-size: 13px;
 }
 
-.view-teacher {
-    background: #2563eb;
+/* =====================================================
+   ATTENDANCE
+===================================================== */
+
+.attendance-page {
+    width: min(1100px, 100%);
+    margin: 0 auto;
 }
 
-.edit-teacher {
-    background: #475569;
+.attendance-page .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
 }
 
-.delete-teacher {
+.attendance-page .page-header h1 {
+    margin-top: 6px;
+}
+
+.attendance-page .student-form-card {
+    margin-top: 18px;
+}
+
+.attendance-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.attendance-quick-actions button {
+    margin: 0;
+}
+
+.attendance-student-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.attendance-student-info h3 {
+    margin-bottom: 6px;
+    font-size: 18px;
+}
+
+.attendance-student-info p {
+    margin: 2px 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.attendance-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.attendance-status-button {
+    width: auto;
+    min-height: 44px;
+    margin: 0;
+    padding: 7px 14px;
+    border-radius: 12px;
+    background: #64748b;
+}
+
+.attendance-status-button.present.active {
+    background: #16a34a;
+}
+
+.attendance-status-button.absent.active {
     background: #dc2626;
 }
 
-/* =========================
-   TEACHER DETAILS MODAL
-========================= */
-
-.teacher-details-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, .62);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
+.attendance-status-button.leave.active {
+    background: #d97706;
 }
 
-.teacher-details-box {
-    width: 100%;
-    max-width: 650px;
-    max-height: 90vh;
-    overflow-y: auto;
+.attendance-record-card {
     background: white;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
 }
 
-.teacher-details-header {
+.attendance-record-card h3 {
+    margin-bottom: 8px;
+}
+
+.attendance-record-card p {
+    margin: 4px 0;
+    color: #475569;
+}
+
+.attendance-summary-line {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.attendance-summary-line span {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+/* =====================================================
+   APPLICATION / APPROVAL SYSTEM
+===================================================== */
+
+.approvals-page {
+    max-width: 1100px;
+}
+
+.approvals-page .stats-grid {
+    margin-top: 20px;
+}
+
+#studentApplicationsSection,
+#teacherApplicationsSection {
+    margin-top: 20px;
+}
+
+#studentApplicationCount,
+#teacherApplicationCount {
+    min-width: 38px;
+    padding: 5px 12px;
+    background: #eef2ff;
+    color: #2563eb;
+    border-radius: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.application-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 17px;
+    margin-bottom: 13px;
+    background: white;
+}
+
+.application-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
+    align-items: flex-start;
+    gap: 12px;
 }
 
-.teacher-details-header h2 {
+.application-card h3 {
+    font-size: 18px;
+    line-height: 2;
+}
+
+.application-card p {
+    color: #475569;
+    font-size: 13px;
+    line-height: 2;
+}
+
+.application-status {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.application-status.pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.application-status.approved {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.application-status.rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.application-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.application-actions button {
+    min-height: 45px;
     margin: 0;
-    font-size: 22px;
+    font-size: 13px;
 }
 
-#teacherDetailsContent {
-    line-height: 2.1;
+.approve-application {
+    background: #16a34a;
 }
 
-#teacherDetailsContent h3 {
-    margin: 15px 0 8px;
-    color: #2563eb;
+.reject-application {
+    background: #dc2626;
 }
 
-#teacherDetailsContent p {
-    padding: 5px 0;
-    border-bottom: 1px solid #f1f5f9;
+.view-application {
+    background: #2563eb;
 }
 
-/* =========================
+#applicationDecisionSection {
+    margin-top: 20px;
+}
+
+#applicationAdminNote {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    padding: 10px 13px;
+    border: 1px solid #d7dee7;
+    border-radius: 11px;
+    background: #f8fafc;
+    outline: none;
+}
+
+#applicationAdminNote:focus {
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+/* =====================================================
+   SECURITY / APPROVAL INDICATORS
+===================================================== */
+
+.security-card {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 15px;
+    line-height: 2;
+    font-size: 13px;
+}
+
+.pending-badge {
+    display: inline-block;
+    background: #fff7ed;
+    color: #c2410c;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.approved-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.rejected-badge {
+    display: inline-block;
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* =====================================================
    MOBILE
-========================= */
+===================================================== */
 
 @media (max-width: 700px) {
 
@@ -1159,6 +1419,8 @@ body.modal-open {
         font-size: 16px;
     }
 
+    /* DASHBOARD */
+
     .dashboard {
         min-height: calc(100vh - 20px);
         padding: 20px 14px;
@@ -1190,6 +1452,8 @@ body.modal-open {
         padding: 10px;
     }
 
+    /* STUDENTS */
+
     .students-header {
         align-items: stretch;
         flex-direction: column;
@@ -1216,13 +1480,16 @@ body.modal-open {
         max-width: none;
     }
 
-    .student-card-buttons {
+    .student-card-buttons,
+    .application-actions {
         grid-template-columns: 1fr;
     }
 
     .form-buttons {
         grid-template-columns: 1fr;
     }
+
+    /* MODALS */
 
     .student-details-overlay,
     .teacher-details-overlay {
@@ -1236,6 +1503,8 @@ body.modal-open {
         border-radius: 16px;
         padding: 16px;
     }
+
+    /* TEACHERS */
 
     .teacher-page {
         padding: 0;
@@ -1279,127 +1548,7 @@ body.modal-open {
         font-size: 25px;
     }
 
-}
-
-/* =====================================================
-   ATTENDANCE PAGE
-===================================================== */
-
-.attendance-page {
-    width: min(1100px, 100%);
-    margin: 0 auto;
-}
-
-.attendance-page .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.attendance-page .page-header h1 {
-    margin-top: 6px;
-}
-
-.attendance-page .student-form-card {
-    margin-top: 18px;
-}
-
-.attendance-quick-actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin: 15px 0;
-}
-
-.attendance-quick-actions button {
-    margin: 0;
-}
-
-.attendance-student-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 14px;
-    align-items: center;
-
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-
-    padding: 14px;
-    margin-bottom: 12px;
-}
-
-.attendance-student-info h3 {
-    margin-bottom: 6px;
-    font-size: 18px;
-}
-
-.attendance-student-info p {
-    margin: 2px 0;
-    color: #64748b;
-    font-size: 14px;
-}
-
-.attendance-options {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.attendance-status-button {
-    width: auto;
-    min-height: 44px;
-    margin: 0;
-    padding: 7px 14px;
-    border-radius: 12px;
-}
-
-.attendance-status-button.present.active {
-    background: #16a34a;
-}
-
-.attendance-status-button.absent.active {
-    background: #dc2626;
-}
-
-.attendance-status-button.leave.active {
-    background: #d97706;
-}
-
-.attendance-record-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-
-    padding: 14px;
-    margin-bottom: 12px;
-}
-
-.attendance-record-card h3 {
-    margin-bottom: 8px;
-}
-
-.attendance-record-card p {
-    margin: 4px 0;
-    color: #475569;
-}
-
-.attendance-summary-line {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-
-.attendance-summary-line span {
-    background: #f1f5f9;
-    border-radius: 10px;
-    padding: 5px 10px;
-}
-
-@media (max-width: 700px) {
+    /* ATTENDANCE */
 
     .attendance-page .page-header {
         align-items: stretch;
@@ -1423,7 +1572,18 @@ body.modal-open {
         width: 100%;
     }
 
+    /* APPLICATION */
+
+    .application-card-header {
+        flex-direction: column;
+    }
+
 }
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
 
 @media (max-width: 430px) {
 
@@ -1432,6 +1592,14 @@ body.modal-open {
     }
 
     .attendance-options {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-grid {
         grid-template-columns: 1fr;
     }
 
