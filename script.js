@@ -1,126 +1,11 @@
 /* =====================================================
-   FRONTEND PART 1
-   SUPABASE CONNECTION
-   ===================================================== */
-
-const SUPABASE_URL = "YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
-
-
-/* =====================================================
-   CHECK SUPABASE CONNECTION
-   ===================================================== */
-
-async function checkSupabaseConnection() {
-
-    try {
-
-        const {
-            data,
-            error
-        } = await supabaseClient.auth.getSession();
-
-        if (error) {
-            throw error;
-        }
-
-        console.log(
-            "Supabase connection successful"
-        );
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "Supabase connection failed:",
-            error
-        );
-
-        return false;
-    }
-}
-
-
-/* =====================================================
-   GET CURRENT SESSION
-   ===================================================== */
-
-async function getCurrentSession() {
-
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.getSession();
-
-    if (error) {
-
-        console.error(
-            "Session error:",
-            error
-        );
-
-        return null;
-    }
-
-    return data.session || null;
-}
-
-
-/* =====================================================
-   GET CURRENT USER
-   ===================================================== */
-
-async function getCurrentUser() {
-
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.getUser();
-
-    if (error) {
-
-        console.error(
-            "User error:",
-            error
-        );
-
-        return null;
-    }
-
-    return data.user || null;
-}
-
-
-/* =====================================================
-   INITIAL CONNECTION TEST
-   ===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
-
-        await checkSupabaseConnection();
-
-    }
-);
-
-
-
-/* =====================================================
    MADRASSA MANAGEMENT SYSTEM
    مدرسہ شہناز اختر للبنات
 
    SCRIPT.JS
    PART 1 / 3
 
-   SUPABASE + SECURITY + LOGIN + DASHBOARD
-   + GENERAL HELPERS
+   SUPABASE + HELPERS + SECURITY + LOGIN + DASHBOARD
 ===================================================== */
 
 "use strict";
@@ -138,6 +23,7 @@ const SUPABASE_ANON_KEY =
 
 
 let supabaseClient = null;
+
 
 try {
 
@@ -192,7 +78,7 @@ const PROFILES_TABLE =
 
 
 /* =====================================================
-   SECURITY SETTINGS
+   SETTINGS
 ===================================================== */
 
 const SESSION_TIMEOUT =
@@ -205,7 +91,7 @@ let inactivityTimer = null;
 
 
 /* =====================================================
-   PAGE
+   CURRENT PAGE
 ===================================================== */
 
 function getCurrentPageName() {
@@ -213,19 +99,14 @@ function getCurrentPageName() {
     const path =
         window.location.pathname || "";
 
-    let file =
+    const file =
         path
             .split("/")
             .pop()
             .trim()
             .toLowerCase();
 
-    if (!file) {
-
-        file = "index.html";
-    }
-
-    return file;
+    return file || "index.html";
 }
 
 
@@ -284,7 +165,10 @@ function getValue(id) {
 }
 
 
-function setValue(id, value) {
+function setValue(
+    id,
+    value
+) {
 
     const element =
         getElement(id);
@@ -299,7 +183,10 @@ function setValue(id, value) {
 }
 
 
-function setText(id, value) {
+function setText(
+    id,
+    value
+) {
 
     const element =
         getElement(id);
@@ -339,6 +226,9 @@ function hideElement(element) {
     element.classList.add(
         "hidden"
     );
+
+    element.style.display =
+        "none";
 }
 
 
@@ -356,12 +246,23 @@ function showMessage(
     element.textContent =
         safeString(message);
 
-    element.style.color =
-        type === "success"
-            ? "#16a34a"
-            : type === "warning"
-                ? "#d97706"
-                : "#dc2626";
+    if (type === "success") {
+
+        element.style.color =
+            "#16a34a";
+
+    } else if (
+        type === "warning"
+    ) {
+
+        element.style.color =
+            "#d97706";
+
+    } else {
+
+        element.style.color =
+            "#dc2626";
+    }
 }
 
 
@@ -441,7 +342,7 @@ function formatDate(value) {
             "ur-PK"
         );
 
-    } catch {
+    } catch (error) {
 
         return safeString(value);
     }
@@ -449,24 +350,8 @@ function formatDate(value) {
 
 
 /* =====================================================
-   URDU / PHONE / CNIC VALIDATION
+   VALIDATION
 ===================================================== */
-
-function isUrduText(value) {
-
-    const text =
-        safeString(value);
-
-    if (!text) {
-
-        return false;
-    }
-
-    return /^[\u0600-\u06FF\s۔،ءآأؤئۃٰ]+$/u.test(
-        text
-    );
-}
-
 
 function cleanDigits(value) {
 
@@ -479,28 +364,52 @@ function formatCNIC(value) {
 
     const digits =
         cleanDigits(value)
-            .slice(0, 13);
+            .slice(
+                0,
+                13
+            );
 
-    if (digits.length <= 5) {
+
+    if (
+        digits.length <= 5
+    ) {
 
         return digits;
     }
 
-    if (digits.length <= 12) {
+
+    if (
+        digits.length <= 12
+    ) {
 
         return (
-            digits.slice(0, 5) +
+            digits.slice(
+                0,
+                5
+            ) +
             "-" +
-            digits.slice(5)
+            digits.slice(
+                5
+            )
         );
     }
 
+
     return (
-        digits.slice(0, 5) +
+        digits.slice(
+            0,
+            5
+        ) +
         "-" +
-        digits.slice(5, 12) +
+        digits.slice(
+            5,
+            12
+        ) +
         "-" +
-        digits.slice(12, 13)
+        digits.slice(
+            12,
+            13
+        )
     );
 }
 
@@ -508,7 +417,8 @@ function formatCNIC(value) {
 function validCNIC(value) {
 
     return (
-        cleanDigits(value).length === 13
+        cleanDigits(value).length ===
+        13
     );
 }
 
@@ -526,33 +436,26 @@ function validPhone(value) {
 
 
 /* =====================================================
-   SESSION STORAGE
+   SESSION HELPERS
 ===================================================== */
-
-function getSessionStorage() {
-
-    const remembered =
-        localStorage.getItem(
-            "rememberMe"
-        ) === "true";
-
-    return remembered
-        ? localStorage
-        : sessionStorage;
-}
-
 
 function getStoredValue(key) {
 
     const sessionValue =
-        sessionStorage.getItem(key);
+        sessionStorage.getItem(
+            key
+        );
 
-    if (sessionValue !== null) {
+    if (
+        sessionValue !== null
+    ) {
 
         return sessionValue;
     }
 
-    return localStorage.getItem(key);
+    return localStorage.getItem(
+        key
+    );
 }
 
 
@@ -562,13 +465,20 @@ function setSessionValue(
     remember = false
 ) {
 
-    sessionStorage.removeItem(key);
-    localStorage.removeItem(key);
+    sessionStorage.removeItem(
+        key
+    );
+
+    localStorage.removeItem(
+        key
+    );
+
 
     const storage =
         remember
             ? localStorage
             : sessionStorage;
+
 
     storage.setItem(
         key,
@@ -576,10 +486,6 @@ function setSessionValue(
     );
 }
 
-
-/* =====================================================
-   AUTHENTICATION
-===================================================== */
 
 function isAuthenticated() {
 
@@ -611,9 +517,24 @@ function getCurrentUsername() {
 }
 
 
+function isAdmin() {
+
+    return (
+        getCurrentRole() ===
+        "admin"
+    );
+}
+
+
+/* =====================================================
+   LOGIN SECURITY
+===================================================== */
+
 function requireLogin() {
 
-    if (!isAuthenticated()) {
+    if (
+        !isAuthenticated()
+    ) {
 
         redirectToLogin();
 
@@ -626,14 +547,16 @@ function requireLogin() {
 
 function requireAdmin() {
 
-    if (!requireLogin()) {
+    if (
+        !requireLogin()
+    ) {
 
         return false;
     }
 
+
     if (
-        getCurrentRole() !==
-        "admin"
+        !isAdmin()
     ) {
 
         alert(
@@ -648,7 +571,7 @@ function requireAdmin() {
 
 
 /* =====================================================
-   LOGOUT
+   CLEAR SESSION
 ===================================================== */
 
 function clearSession() {
@@ -663,6 +586,7 @@ function clearSession() {
 
     ];
 
+
     keys.forEach(
         key => {
 
@@ -675,14 +599,24 @@ function clearSession() {
             );
         }
     );
+
+
+    localStorage.removeItem(
+        "rememberMe"
+    );
 }
 
+
+/* =====================================================
+   LOGOUT
+===================================================== */
 
 function logoutUser(
     message = ""
 ) {
 
     clearSession();
+
 
     if (message) {
 
@@ -691,6 +625,7 @@ function logoutUser(
             message
         );
     }
+
 
     window.location.href =
         "login.html?logout=true";
@@ -705,63 +640,79 @@ function redirectToLogin() {
 
 
 /* =====================================================
-   5 MINUTE INACTIVITY LOGOUT
+   INACTIVITY SECURITY
 ===================================================== */
 
 function updateLastActivity() {
 
-    if (!isAuthenticated()) {
+    if (
+        !isAuthenticated()
+    ) {
 
         return;
     }
 
-    const storage =
-        getSessionStorage();
 
-    storage.setItem(
+    const remember =
+        localStorage.getItem(
+            "rememberMe"
+        ) === "true";
+
+
+    setSessionValue(
         "lastActivity",
-        String(Date.now())
+        Date.now(),
+        remember
     );
 }
 
 
 function checkSessionTimeout() {
 
-    if (!isAuthenticated()) {
+    if (
+        !isAuthenticated()
+    ) {
 
-        return;
+        return true;
     }
 
-    const last =
+
+    const lastActivity =
         Number(
             getStoredValue(
                 "lastActivity"
             )
         );
 
+
     if (
-        last &&
-        Date.now() - last >
+        lastActivity &&
+        Date.now() -
+            lastActivity >
             SESSION_TIMEOUT
     ) {
 
         logoutUser(
-            "غیر فعالیت کی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
+            "پانچ منٹ غیر فعالیت کی وجہ سے آپ کو لاگ آؤٹ کر دیا گیا ہے۔"
         );
 
-        return;
+        return false;
     }
 
-    updateLastActivity();
+
+    return true;
 }
 
 
 function resetInactivityTimer() {
 
-    if (!isAuthenticated()) {
+    if (
+        !isAuthenticated()
+    ) {
 
         return;
     }
+
 
     if (inactivityTimer) {
 
@@ -770,7 +721,9 @@ function resetInactivityTimer() {
         );
     }
 
+
     updateLastActivity();
+
 
     inactivityTimer =
         setTimeout(
@@ -786,14 +739,23 @@ function resetInactivityTimer() {
 }
 
 
-function initializeInactivitySecurity() {
+function initializeInactivityProtection() {
 
-    if (!isAuthenticated()) {
+    if (
+        !isAuthenticated()
+    ) {
 
         return;
     }
 
-    checkSessionTimeout();
+
+    if (
+        !checkSessionTimeout()
+    ) {
+
+        return;
+    }
+
 
     const events = [
 
@@ -803,6 +765,7 @@ function initializeInactivitySecurity() {
         "scroll"
 
     ];
+
 
     events.forEach(
         eventName => {
@@ -817,12 +780,13 @@ function initializeInactivitySecurity() {
         }
     );
 
+
     resetInactivityTimer();
 }
 
 
 /* =====================================================
-   ROLE PAGE PROTECTION
+   PAGE SECURITY
 ===================================================== */
 
 function protectCurrentPage() {
@@ -836,6 +800,7 @@ function protectCurrentPage() {
 
     ];
 
+
     if (
         publicPages.includes(
             currentFile
@@ -845,15 +810,15 @@ function protectCurrentPage() {
         return true;
     }
 
-    if (!isAuthenticated()) {
+
+    if (
+        !isAuthenticated()
+    ) {
 
         redirectToLogin();
 
         return false;
     }
-
-    const role =
-        getCurrentRole();
 
 
     const adminOnlyPages = [
@@ -869,11 +834,11 @@ function protectCurrentPage() {
         adminOnlyPages.includes(
             currentFile
         ) &&
-        role !== "admin"
+        !isAdmin()
     ) {
 
         alert(
-            "آپ کو اس صفحے کی اجازت نہیں ہے۔"
+            "اس صفحے تک رسائی صرف ایڈمن کو حاصل ہے۔"
         );
 
         window.location.href =
@@ -881,6 +846,7 @@ function protectCurrentPage() {
 
         return false;
     }
+
 
     return true;
 }
@@ -892,74 +858,74 @@ function protectCurrentPage() {
 
 function initializeHomePage() {
 
-    const adminButton =
-        getElement(
-            "adminLoginButton"
-        );
+    const buttons = {
 
-    const teacherButton =
-        getElement(
-            "teacherLoginButton"
-        );
+        adminLoginButton:
+            "admin",
 
-    const studentButton =
-        getElement(
-            "studentLoginButton"
-        );
+        teacherLoginButton:
+            "teacher",
+
+        studentLoginButton:
+            "student"
+
+    };
 
 
-    if (adminButton) {
+    Object.entries(
+        buttons
+    ).forEach(
+        ([id, role]) => {
 
-        adminButton.addEventListener(
-            "click",
-            () => {
+            const button =
+                getElement(id);
 
-                sessionStorage.setItem(
-                    "selectedRole",
-                    "admin"
-                );
 
-                window.location.href =
-                    "login.html";
+            if (!button) {
+
+                return;
             }
-        );
-    }
 
 
-    if (teacherButton) {
+            button.addEventListener(
+                "click",
+                () => {
 
-        teacherButton.addEventListener(
-            "click",
-            () => {
+                    sessionStorage.setItem(
+                        "selectedRole",
+                        role
+                    );
 
-                sessionStorage.setItem(
-                    "selectedRole",
-                    "teacher"
-                );
-
-                window.location.href =
-                    "login.html";
-            }
-        );
-    }
+                    window.location.href =
+                        "login.html";
+                }
+            );
+        }
+    );
 
 
-    if (studentButton) {
+    getElement(
+        "studentApplyButton"
+    )?.addEventListener(
+        "click",
+        () => {
 
-        studentButton.addEventListener(
-            "click",
-            () => {
+            window.location.href =
+                "student-apply.html";
+        }
+    );
 
-                sessionStorage.setItem(
-                    "selectedRole",
-                    "student"
-                );
 
-                window.location.href =
-                    "login.html";
-            }
-        );
-    }
+    getElement(
+        "teacherApplyButton"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "teacher-apply.html";
+        }
+    );
 }
 
 
@@ -974,21 +940,22 @@ function initializePasswordToggle() {
             "password"
         );
 
-    const toggle =
+    const button =
         getElement(
             "togglePassword"
         );
 
+
     if (
         !password ||
-        !toggle
+        !button
     ) {
 
         return;
     }
 
 
-    toggle.addEventListener(
+    button.addEventListener(
         "click",
         () => {
 
@@ -996,12 +963,14 @@ function initializePasswordToggle() {
                 password.type ===
                 "password";
 
+
             password.type =
                 hidden
                     ? "text"
                     : "password";
 
-            toggle.textContent =
+
+            button.textContent =
                 hidden
                     ? "🙈"
                     : "👁️";
@@ -1014,7 +983,7 @@ function initializePasswordToggle() {
    LOGIN
 ===================================================== */
 
-async function handleLogin() {
+async function performLogin() {
 
     const username =
         getValue(
@@ -1044,7 +1013,9 @@ async function handleLogin() {
         );
 
 
-    clearMessage(message);
+    clearMessage(
+        message
+    );
 
 
     if (
@@ -1061,7 +1032,9 @@ async function handleLogin() {
     }
 
 
-    if (!checkSupabase()) {
+    if (
+        !checkSupabase()
+    ) {
 
         showMessage(
             message,
@@ -1084,18 +1057,10 @@ async function handleLogin() {
 
         if (button) {
 
-            button.disabled = true;
+            button.disabled =
+                true;
         }
 
-
-        /*
-         * Login is read from profiles.
-         *
-         * IMPORTANT:
-         * Database RLS must protect this table.
-         * Secret/service_role key must NEVER
-         * be placed in this browser file.
-         */
 
         let query =
             supabaseClient
@@ -1108,8 +1073,7 @@ async function handleLogin() {
                 .eq(
                     "username",
                     username
-                )
-                .limit(1);
+                );
 
 
         if (selectedRole) {
@@ -1126,7 +1090,9 @@ async function handleLogin() {
             data,
             error
         } =
-            await query.maybeSingle();
+            await query
+                .limit(1)
+                .maybeSingle();
 
 
         if (error) {
@@ -1146,25 +1112,10 @@ async function handleLogin() {
         }
 
 
-        /*
-         * This comparison supports the current
-         * project structure only.
-         *
-         * Real password verification should be
-         * handled through Supabase Auth/server-side
-         * password hashing rather than exposing
-         * password hashes to the browser.
-         */
-
-        const storedPassword =
+        if (
             safeString(
                 data.password_hash
-            );
-
-
-        if (
-            storedPassword !==
-            password
+            ) !== password
         ) {
 
             showMessage(
@@ -1204,11 +1155,13 @@ async function handleLogin() {
             remember
         );
 
+
         setSessionValue(
             "userRole",
             role,
             remember
         );
+
 
         setSessionValue(
             "username",
@@ -1216,11 +1169,13 @@ async function handleLogin() {
             remember
         );
 
+
         setSessionValue(
             "profileId",
             data.id,
             remember
         );
+
 
         setSessionValue(
             "lastActivity",
@@ -1260,23 +1215,26 @@ async function handleLogin() {
             error
         );
 
+
         showMessage(
             message,
             "لاگ اِن کے دوران خرابی پیش آئی۔"
         );
 
+
     } finally {
 
         if (button) {
 
-            button.disabled = false;
+            button.disabled =
+                false;
         }
     }
 }
 
 
 /* =====================================================
-   LOGIN PAGE INITIALIZATION
+   LOGIN PAGE
 ===================================================== */
 
 function initializeLoginPage() {
@@ -1284,14 +1242,14 @@ function initializeLoginPage() {
     initializePasswordToggle();
 
 
-    const loginButton =
-        getElement(
-            "loginButton"
-        );
-
-    const loginForm =
+    const form =
         getElement(
             "loginForm"
+        );
+
+    const button =
+        getElement(
+            "loginButton"
         );
 
     const backButton =
@@ -1325,40 +1283,35 @@ function initializeLoginPage() {
     }
 
 
-    if (loginButton) {
+    if (form) {
 
-        loginButton.addEventListener(
-            "click",
-            handleLogin
-        );
-    }
-
-
-    if (loginForm) {
-
-        loginForm.addEventListener(
+        form.addEventListener(
             "submit",
             event => {
 
                 event.preventDefault();
 
-                handleLogin();
+                performLogin();
             }
         );
-    }
 
+    } else if (button) {
 
-    if (backButton) {
-
-        backButton.addEventListener(
+        button.addEventListener(
             "click",
-            () => {
-
-                window.location.href =
-                    "index.html";
-            }
+            performLogin
         );
     }
+
+
+    backButton?.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "index.html";
+        }
+    );
 }
 
 
@@ -1366,15 +1319,9 @@ function initializeLoginPage() {
    DASHBOARD COUNTS
 ===================================================== */
 
-async function updateDashboardStudentCount() {
-
-    const element =
-        getElement(
-            "studentTotal"
-        );
+async function updateDashboardCounts() {
 
     if (
-        !element ||
         !checkSupabase()
     ) {
 
@@ -1384,244 +1331,209 @@ async function updateDashboardStudentCount() {
 
     try {
 
-        const {
-            count,
-            error
-        } =
-            await supabaseClient
-                .from(
-                    STUDENTS_TABLE
-                )
-                .select(
-                    "id",
-                    {
-                        count: "exact",
-                        head: true
-                    }
-                );
+        const [
+            studentsResult,
+            teachersResult
+        ] =
+            await Promise.all([
+
+                supabaseClient
+                    .from(
+                        STUDENTS_TABLE
+                    )
+                    .select(
+                        "id,residence_type,student_class"
+                    ),
+
+                supabaseClient
+                    .from(
+                        TEACHERS_TABLE
+                    )
+                    .select(
+                        "id"
+                    )
+
+            ]);
 
 
-        if (error) {
+        if (
+            studentsResult.error
+        ) {
 
-            throw error;
+            throw studentsResult.error;
         }
 
 
-        element.textContent =
-            Number.isFinite(count)
-                ? count
-                : 0;
+        if (
+            teachersResult.error
+        ) {
 
-
-    } catch (error) {
-
-        console.error(
-            "Student count error:",
-            error
-        );
-
-        element.textContent =
-            "0";
-    }
-}
-
-
-async function updateDashboardTeacherCount() {
-
-    const element =
-        getElement(
-            "teacherTotal"
-        );
-
-    if (
-        !element ||
-        !checkSupabase()
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const {
-            count,
-            error
-        } =
-            await supabaseClient
-                .from(
-                    TEACHERS_TABLE
-                )
-                .select(
-                    "id",
-                    {
-                        count: "exact",
-                        head: true
-                    }
-                );
-
-
-        if (error) {
-
-            throw error;
+            throw teachersResult.error;
         }
 
 
-        element.textContent =
-            Number.isFinite(count)
-                ? count
-                : 0;
+        const students =
+            studentsResult.data || [];
+
+        const teachers =
+            teachersResult.data || [];
 
 
-    } catch (error) {
-
-        console.error(
-            "Teacher count error:",
-            error
+        setText(
+            "studentTotal",
+            students.length
         );
 
-        element.textContent =
-            "0";
-    }
-}
 
-
-async function updateDashboardHostelCount() {
-
-    const element =
-        getElement(
-            "hostelTotal"
+        setText(
+            "teacherTotal",
+            teachers.length
         );
 
-    if (
-        !element ||
-        !checkSupabase()
-    ) {
 
-        return;
-    }
-
-
-    try {
-
-        const {
-            count,
-            error
-        } =
-            await supabaseClient
-                .from(
-                    STUDENTS_TABLE
-                )
-                .select(
-                    "id",
-                    {
-                        count: "exact",
-                        head: true
-                    }
-                )
-                .eq(
-                    "residence_type",
+        setText(
+            "hostelTotal",
+            students.filter(
+                student =>
+                    student.residence_type ===
                     "ہاسٹل"
-                );
-
-
-        if (error) {
-
-            throw error;
-        }
-
-
-        element.textContent =
-            Number.isFinite(count)
-                ? count
-                : 0;
-
-
-    } catch (error) {
-
-        console.error(
-            "Hostel count error:",
-            error
+            ).length
         );
-
-        element.textContent =
-            "0";
-    }
-}
-
-
-async function updateDashboardClassCount() {
-
-    const element =
-        getElement(
-            "classTotal"
-        );
-
-    if (
-        !element ||
-        !checkSupabase()
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from(
-                    STUDENTS_TABLE
-                )
-                .select(
-                    "student_class"
-                );
-
-
-        if (error) {
-
-            throw error;
-        }
 
 
         const classes =
             new Set(
-                (data || [])
+                students
                     .map(
-                        item =>
+                        student =>
                             safeString(
-                                item.student_class
+                                student.student_class
                             )
                     )
                     .filter(Boolean)
             );
 
 
-        element.textContent =
-            classes.size;
+        setText(
+            "classTotal",
+            classes.size
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Class count error:",
+            "Dashboard count error:",
             error
         );
-
-        element.textContent =
-            "0";
     }
 }
 
 
 /* =====================================================
-   DASHBOARD MENU
+   DASHBOARD WELCOME
 ===================================================== */
 
-function initializeDashboardMenu() {
+function updateWelcomeMessage() {
+
+    const element =
+        getElement(
+            "welcomeMessage"
+        );
+
+
+    if (!element) {
+
+        return;
+    }
+
+
+    const username =
+        getCurrentUsername();
+
+    const role =
+        getCurrentRole();
+
+
+    let roleName =
+        "صارف";
+
+
+    if (
+        role === "admin"
+    ) {
+
+        roleName =
+            "ایڈمن";
+
+    } else if (
+        role === "teacher"
+    ) {
+
+        roleName =
+            "استاد";
+
+    } else if (
+        role === "student"
+    ) {
+
+        roleName =
+            "طالبہ";
+    }
+
+
+    element.textContent =
+        username
+            ? `خوش آمدید، ${username}`
+            : `خوش آمدید، ${roleName}`;
+}
+
+
+/* =====================================================
+   DASHBOARD PERMISSIONS
+===================================================== */
+
+function applyDashboardPermissions() {
+
+    if (
+        isAdmin()
+    ) {
+
+        return;
+    }
+
+
+    const teachersMenu =
+        getElement(
+            "teachersMenu"
+        );
+
+    const approvalsMenu =
+        getElement(
+            "approvalsMenu"
+        );
+
+
+    if (teachersMenu) {
+
+        teachersMenu.style.display =
+            "none";
+    }
+
+
+    if (approvalsMenu) {
+
+        approvalsMenu.style.display =
+            "none";
+    }
+}
+
+
+/* =====================================================
+   DASHBOARD NAVIGATION
+===================================================== */
+
+function initializeDashboardNavigation() {
 
     const routes = {
 
@@ -1657,6 +1569,7 @@ function initializeDashboardMenu() {
             const button =
                 getElement(id);
 
+
             if (!button) {
 
                 return;
@@ -1667,60 +1580,146 @@ function initializeDashboardMenu() {
                 "click",
                 () => {
 
+                    if (
+                        (
+                            id ===
+                            "teachersMenu" ||
+                            id ===
+                            "approvalsMenu"
+                        ) &&
+                        !isAdmin()
+                    ) {
+
+                        alert(
+                            "یہ حصہ صرف ایڈمن کے لیے ہے۔"
+                        );
+
+                        return;
+                    }
+
+
                     window.location.href =
                         page;
                 }
             );
         }
     );
+
+
+    document
+        .querySelectorAll(
+            "[data-page]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const page =
+                            safeString(
+                                button.dataset.page
+                            );
+
+
+                        const pages = {
+
+                            students:
+                                "students.html",
+
+                            teachers:
+                                "teachers.html",
+
+                            attendance:
+                                "attendance.html",
+
+                            hostel:
+                                "hostel.html",
+
+                            fees:
+                                "fees.html",
+
+                            reports:
+                                "reports.html",
+
+                            approvals:
+                                "approvals.html"
+
+                        };
+
+
+                        const destination =
+                            pages[page];
+
+
+                        if (!destination) {
+
+                            return;
+                        }
+
+
+                        if (
+                            (
+                                page ===
+                                "teachers" ||
+                                page ===
+                                "approvals"
+                            ) &&
+                            !isAdmin()
+                        ) {
+
+                            alert(
+                                "یہ حصہ صرف ایڈمن کے لیے ہے۔"
+                            );
+
+                            return;
+                        }
+
+
+                        window.location.href =
+                            destination;
+                    }
+                );
+            }
+        );
 }
 
 
 /* =====================================================
-   GLOBAL LOGOUT BUTTON
+   DASHBOARD INITIALIZATION
 ===================================================== */
 
-function initializeLogoutButton() {
+async function initializeDashboardPage() {
 
-    const button =
-        getElement(
-            "logoutButton"
-        );
-
-    if (!button) {
+    if (
+        !requireLogin()
+    ) {
 
         return;
     }
 
 
-    button.addEventListener(
-        "click",
-        () => {
+    updateWelcomeMessage();
 
-            logoutUser();
-        }
-    );
+    applyDashboardPermissions();
+
+    initializeDashboardNavigation();
+
+
+    await updateDashboardCounts();
 }
 
 
 /* =====================================================
-   BACK TO DASHBOARD
+   BACK BUTTONS
 ===================================================== */
 
-function initializeBackToDashboard() {
+function initializeBackButtons() {
 
-    const button =
-        getElement(
-            "backToDashboard"
-        );
-
-    if (!button) {
-
-        return;
-    }
-
-
-    button.addEventListener(
+    getElement(
+        "backToDashboard"
+    )?.addEventListener(
         "click",
         () => {
 
@@ -1728,92 +1727,107 @@ function initializeBackToDashboard() {
                 "dashboard.html";
         }
     );
+
+
+    getElement(
+        "backButton"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "index.html";
+        }
+    );
+
+
+    getElement(
+        "backToHome"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "index.html";
+        }
+    );
+
+
+    document
+        .querySelectorAll(
+            "[data-back='home']"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            "index.html";
+                    }
+                );
+            }
+        );
 }
 
 
 /* =====================================================
-   DASHBOARD
+   LOGOUT BUTTON
 ===================================================== */
 
-async function initializeDashboardPage() {
+function initializeLogoutButtons() {
 
-    if (!requireLogin()) {
+    document
+        .querySelectorAll(
+            "#logoutButton"
+        )
+        .forEach(
+            button => {
 
-        return;
-    }
+                button.addEventListener(
+                    "click",
+                    () => {
 
-
-    const username =
-        getCurrentUsername();
-
-    const welcome =
-        getElement(
-            "welcomeMessage"
+                        logoutUser();
+                    }
+                );
+            }
         );
-
-
-    if (
-        welcome &&
-        username
-    ) {
-
-        welcome.textContent =
-            `خوش آمدید، ${username}`;
-    }
-
-
-    initializeDashboardMenu();
-
-
-    await Promise.allSettled([
-
-        updateDashboardStudentCount(),
-
-        updateDashboardTeacherCount(),
-
-        updateDashboardHostelCount(),
-
-        updateDashboardClassCount()
-
-    ]);
 }
 
 
 /* =====================================================
-   GLOBAL INPUT FORMATTERS
+   INPUT FORMATTERS
 ===================================================== */
 
 function initializeInputFormatters() {
 
-    const cnicFields = [
+    const cnicIds = [
 
         "studentCNIC",
         "teacherCNIC",
-        "applicationCNIC",
-        "applicantCNIC"
+        "applyStudentCNIC",
+        "applyTeacherCNIC"
 
     ];
 
 
-    cnicFields.forEach(
+    cnicIds.forEach(
         id => {
 
-            const element =
+            const input =
                 getElement(id);
 
-            if (!element) {
 
-                return;
-            }
-
-
-            element.addEventListener(
+            input?.addEventListener(
                 "input",
                 () => {
 
-                    element.value =
+                    input.value =
                         formatCNIC(
-                            element.value
+                            input.value
                         );
                 }
             );
@@ -1821,36 +1835,31 @@ function initializeInputFormatters() {
     );
 
 
-    const phoneFields = [
+    const phoneIds = [
 
         "phone",
         "studentPhone",
         "teacherPhone",
-        "applicationPhone",
-        "applicantPhone"
+        "applyStudentPhone",
+        "applyTeacherPhone"
 
     ];
 
 
-    phoneFields.forEach(
+    phoneIds.forEach(
         id => {
 
-            const element =
+            const input =
                 getElement(id);
 
-            if (!element) {
 
-                return;
-            }
-
-
-            element.addEventListener(
+            input?.addEventListener(
                 "input",
                 () => {
 
-                    element.value =
+                    input.value =
                         cleanDigits(
-                            element.value
+                            input.value
                         ).slice(
                             0,
                             11
@@ -1863,43 +1872,14 @@ function initializeInputFormatters() {
 
 
 /* =====================================================
-   GLOBAL ERROR SAFETY
+   END PART 1 / 3
+   PART 2 MUST BE PASTED DIRECTLY BELOW THIS
 ===================================================== */
 
-window.addEventListener(
-    "error",
-    event => {
-
-        console.error(
-            "Global error:",
-            event.error ||
-            event.message
-        );
-    }
-);
-
-
-window.addEventListener(
-    "unhandledrejection",
-    event => {
-
-        console.error(
-            "Unhandled promise rejection:",
-            event.reason
-        );
-    }
-);
-
-
 /* =====================================================
-   END OF PART 1 / 3
+   MADRASSA MANAGEMENT SYSTEM
+   مدرسہ شہناز اختر للبنات
 
-   DO NOT ADD ANOTHER script.js FILE.
-   PART 2 MUST BE PASTED DIRECTLY BELOW THIS PART.
-===================================================== */
-
-
-/* =====================================================
    SCRIPT.JS
    PART 2 / 3
 
@@ -1909,7 +1889,7 @@ window.addEventListener(
 
 
 /* =====================================================
-   STUDENT ELEMENTS / STATE
+   STUDENT STATE / ELEMENTS
 ===================================================== */
 
 let studentsCache = [];
@@ -1947,38 +1927,48 @@ const mahramSection =
 
 
 /* =====================================================
-   STUDENT FORM
+   OPEN STUDENT FORM
 ===================================================== */
 
 function openStudentForm() {
 
     if (!requireAdmin()) {
+
         return;
     }
 
+
     editingStudentId = null;
 
+
     if (studentForm) {
+
         studentForm.reset();
     }
+
 
     setValue(
         "editStudentId",
         ""
     );
 
+
     setText(
         "formTitle",
         "نئی طالبہ کا اندراج"
     );
 
+
     if (mahramList) {
+
         mahramList.innerHTML = "";
     }
+
 
     hideElement(
         mahramSection
     );
+
 
     hideElement(
         getElement(
@@ -1986,19 +1976,23 @@ function openStudentForm() {
         )
     );
 
+
     hideElement(
         getElement(
             "transferDateGroup"
         )
     );
 
+
     clearMessage(
         studentFormMessage
     );
 
+
     showElement(
         studentFormContainer
     );
+
 
     window.scrollTo({
         top: 0,
@@ -2007,21 +2001,31 @@ function openStudentForm() {
 }
 
 
+/* =====================================================
+   CLOSE STUDENT FORM
+===================================================== */
+
 function closeStudentForm() {
 
     editingStudentId = null;
 
+
     if (studentForm) {
+
         studentForm.reset();
     }
 
+
     if (mahramList) {
+
         mahramList.innerHTML = "";
     }
+
 
     hideElement(
         studentFormContainer
     );
+
 
     clearMessage(
         studentFormMessage
@@ -2040,30 +2044,47 @@ function updateTransferFields() {
             "admissionType"
         );
 
+
     const previous =
         getElement(
             "previousMadrassaGroup"
         );
+
 
     const transfer =
         getElement(
             "transferDateGroup"
         );
 
-    if (type === "منتقلی") {
 
-        showElement(previous);
-        showElement(transfer);
+    if (
+        type === "منتقلی"
+    ) {
+
+        showElement(
+            previous
+        );
+
+        showElement(
+            transfer
+        );
 
     } else {
 
-        hideElement(previous);
-        hideElement(transfer);
+        hideElement(
+            previous
+        );
+
+        hideElement(
+            transfer
+        );
+
 
         setValue(
             "previousMadrassa",
             ""
         );
+
 
         setValue(
             "transferDate",
@@ -2084,14 +2105,15 @@ function updateResidenceFields() {
             "residenceType"
         );
 
+
     if (
-        residence ===
-        "ہاسٹل"
+        residence === "ہاسٹل"
     ) {
 
         showElement(
             mahramSection
         );
+
 
         if (
             mahramList &&
@@ -2107,20 +2129,28 @@ function updateResidenceFields() {
             mahramSection
         );
 
+
         if (mahramList) {
+
             mahramList.innerHTML = "";
         }
     }
 }
 
 
+/* =====================================================
+   ADD MAHRAM
+===================================================== */
+
 function addMahramField(
     data = {}
 ) {
 
     if (!mahramList) {
+
         return;
     }
+
 
     if (
         mahramList.children.length >=
@@ -2139,6 +2169,7 @@ function addMahramField(
         document.createElement(
             "div"
         );
+
 
     card.className =
         "mahram-card";
@@ -2161,6 +2192,7 @@ function addMahramField(
 
         </div>
 
+
         <div class="form-grid">
 
             <div class="form-group">
@@ -2178,6 +2210,7 @@ function addMahramField(
 
             </div>
 
+
             <div class="form-group">
 
                 <label>
@@ -2192,6 +2225,7 @@ function addMahramField(
                 >
 
             </div>
+
 
             <div class="form-group">
 
@@ -2209,6 +2243,7 @@ function addMahramField(
                 >
 
             </div>
+
 
             <div class="form-group">
 
@@ -2228,6 +2263,7 @@ function addMahramField(
             </div>
 
         </div>
+
 
         <label class="mahram-confirm">
 
@@ -2253,6 +2289,7 @@ function addMahramField(
             ".remove-mahram"
         );
 
+
     removeButton?.addEventListener(
         "click",
         () => {
@@ -2266,6 +2303,7 @@ function addMahramField(
         card.querySelector(
             ".mahram-phone"
         );
+
 
     phone?.addEventListener(
         "input",
@@ -2287,6 +2325,7 @@ function addMahramField(
             ".mahram-cnic"
         );
 
+
     cnic?.addEventListener(
         "input",
         () => {
@@ -2300,11 +2339,17 @@ function addMahramField(
 }
 
 
+/* =====================================================
+   COLLECT MAHRAMS
+===================================================== */
+
 function collectMahrams() {
 
     if (!mahramList) {
+
         return [];
     }
+
 
     return Array.from(
         mahramList.querySelectorAll(
@@ -2352,6 +2397,10 @@ function collectMahrams() {
     );
 }
 
+
+/* =====================================================
+   VALIDATE MAHRAMS
+===================================================== */
 
 function validateMahrams(
     mahrams
@@ -2448,10 +2497,16 @@ function validateMahrams(
 
 
 /* =====================================================
-   STUDENT DATA
+   STUDENT FORM DATA
 ===================================================== */
 
 function getStudentFormData() {
+
+    const residenceType =
+        getValue(
+            "residenceType"
+        );
+
 
     return {
 
@@ -2491,6 +2546,9 @@ function getStudentFormData() {
             cleanDigits(
                 getValue(
                     "phone"
+                ) ||
+                getValue(
+                    "studentPhone"
                 )
             ),
 
@@ -2515,9 +2573,7 @@ function getStudentFormData() {
             ),
 
         residence_type:
-            getValue(
-                "residenceType"
-            ),
+            residenceType,
 
         previous_madrassa:
             getValue(
@@ -2530,9 +2586,7 @@ function getStudentFormData() {
             ) || null,
 
         mahrams:
-            getValue(
-                "residenceType"
-            ) === "ہاسٹل"
+            residenceType === "ہاسٹل"
                 ? collectMahrams()
                 : []
 
@@ -2671,6 +2725,7 @@ async function loadStudents() {
 
 
         if (error) {
+
             throw error;
         }
 
@@ -2691,6 +2746,7 @@ async function loadStudents() {
             error
         );
 
+
         studentsList.innerHTML = `
 
             <div class="empty-students">
@@ -2710,6 +2766,7 @@ function renderStudents(
 ) {
 
     if (!studentsList) {
+
         return;
     }
 
@@ -2763,7 +2820,7 @@ function renderStudents(
 
                             <span>
                                 داخلہ نمبر:
-                                ${escapeHTML(student.admission_no)}
+                                ${escapeHTML(student.admission_no || "—")}
                             </span>
 
                         </div>
@@ -2909,6 +2966,7 @@ async function saveStudent(
 
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -2935,6 +2993,7 @@ async function saveStudent(
 
 
     if (!checkSupabase()) {
+
         return;
     }
 
@@ -2948,7 +3007,9 @@ async function saveStudent(
     try {
 
         if (button) {
-            button.disabled = true;
+
+            button.disabled =
+                true;
         }
 
 
@@ -2987,6 +3048,7 @@ async function saveStudent(
 
 
         if (result.error) {
+
             throw result.error;
         }
 
@@ -3016,15 +3078,19 @@ async function saveStudent(
             error
         );
 
+
         showMessage(
             studentFormMessage,
             "طالبہ کا ریکارڈ محفوظ نہیں ہو سکا۔"
         );
 
+
     } finally {
 
         if (button) {
-            button.disabled = false;
+
+            button.disabled =
+                false;
         }
     }
 }
@@ -3037,6 +3103,7 @@ async function saveStudent(
 function editStudent(id) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -3104,6 +3171,11 @@ function editStudent(id) {
     );
 
     setValue(
+        "studentPhone",
+        student.phone
+    );
+
+    setValue(
         "dateOfBirth",
         student.date_of_birth
     );
@@ -3146,12 +3218,14 @@ function editStudent(id) {
 
 
     updateTransferFields();
+
     updateResidenceFields();
 
 
     if (mahramList) {
 
         mahramList.innerHTML = "";
+
 
         if (
             student.residence_type ===
@@ -3165,9 +3239,14 @@ function editStudent(id) {
                     ? student.mahrams
                     : [];
 
+
             mahrams.forEach(
-                addMahramField
+                mahram =>
+                    addMahramField(
+                        mahram
+                    )
             );
+
 
             if (
                 mahrams.length === 0
@@ -3198,6 +3277,7 @@ function editStudent(id) {
 async function deleteStudent(id) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -3211,6 +3291,7 @@ async function deleteStudent(id) {
 
 
     if (!student) {
+
         return;
     }
 
@@ -3222,6 +3303,7 @@ async function deleteStudent(id) {
 
 
     if (!confirmed) {
+
         return;
     }
 
@@ -3243,6 +3325,7 @@ async function deleteStudent(id) {
 
 
         if (error) {
+
             throw error;
         }
 
@@ -3256,6 +3339,7 @@ async function deleteStudent(id) {
             "Delete student error:",
             error
         );
+
 
         alert(
             "طالبہ کا ریکارڈ حذف نہیں ہو سکا۔"
@@ -3301,16 +3385,41 @@ function showStudentDetails(id) {
             ? mahrams.map(
                 (mahram, index) => `
 
-                    <p>
-                        <strong>
-                            محرم ${index + 1}:
-                        </strong>
-                        ${escapeHTML(mahram.name)}
-                        —
-                        ${escapeHTML(mahram.relation)}
-                        —
-                        ${escapeHTML(mahram.phone)}
-                    </p>
+                    <div class="mahram-detail">
+
+                        <p>
+                            <strong>
+                                محرم ${index + 1}:
+                            </strong>
+
+                            ${escapeHTML(mahram.name || "—")}
+                        </p>
+
+                        <p>
+                            <strong>
+                                رشتہ:
+                            </strong>
+
+                            ${escapeHTML(mahram.relation || "—")}
+                        </p>
+
+                        <p>
+                            <strong>
+                                موبائل:
+                            </strong>
+
+                            ${escapeHTML(mahram.phone || "—")}
+                        </p>
+
+                        <p>
+                            <strong>
+                                شناختی کارڈ:
+                            </strong>
+
+                            ${escapeHTML(mahram.cnic || "—")}
+                        </p>
+
+                    </div>
 
                 `
             ).join("")
@@ -3325,27 +3434,27 @@ function showStudentDetails(id) {
 
         <p>
             <strong>نام:</strong>
-            ${escapeHTML(student.name)}
+            ${escapeHTML(student.name || "—")}
         </p>
 
         <p>
             <strong>والد:</strong>
-            ${escapeHTML(student.father_name)}
+            ${escapeHTML(student.father_name || "—")}
         </p>
 
         <p>
             <strong>سرپرست:</strong>
-            ${escapeHTML(student.guardian_name)}
+            ${escapeHTML(student.guardian_name || "—")}
         </p>
 
         <p>
             <strong>شناختی کارڈ:</strong>
-            ${escapeHTML(student.cnic)}
+            ${escapeHTML(student.cnic || "—")}
         </p>
 
         <p>
             <strong>موبائل:</strong>
-            ${escapeHTML(student.phone)}
+            ${escapeHTML(student.phone || "—")}
         </p>
 
         <p>
@@ -3360,17 +3469,17 @@ function showStudentDetails(id) {
 
         <p>
             <strong>داخلہ نمبر:</strong>
-            ${escapeHTML(student.admission_no)}
+            ${escapeHTML(student.admission_no || "—")}
         </p>
 
         <p>
-            <strong>داخلہ:</strong>
-            ${escapeHTML(student.admission_type)}
+            <strong>داخلہ کی قسم:</strong>
+            ${escapeHTML(student.admission_type || "—")}
         </p>
 
         <p>
             <strong>کلاس:</strong>
-            ${escapeHTML(student.student_class)}
+            ${escapeHTML(student.student_class || "—")}
         </p>
 
         <p>
@@ -3380,12 +3489,12 @@ function showStudentDetails(id) {
 
         <p>
             <strong>رہائش:</strong>
-            ${escapeHTML(student.residence_type)}
+            ${escapeHTML(student.residence_type || "—")}
         </p>
 
         <p>
             <strong>پتہ:</strong>
-            ${escapeHTML(student.address)}
+            ${escapeHTML(student.address || "—")}
         </p>
 
 
@@ -3401,8 +3510,10 @@ function showStudentDetails(id) {
         "hidden"
     );
 
+
     studentDetailsOverlay.style.display =
         "flex";
+
 
     document.body.classList.add(
         "modal-open"
@@ -3410,18 +3521,26 @@ function showStudentDetails(id) {
 }
 
 
+/* =====================================================
+   CLOSE STUDENT DETAILS
+===================================================== */
+
 function closeStudentDetails() {
 
     if (!studentDetailsOverlay) {
+
         return;
     }
+
 
     studentDetailsOverlay.style.display =
         "none";
 
+
     studentDetailsOverlay.classList.add(
         "hidden"
     );
+
 
     document.body.classList.remove(
         "modal-open"
@@ -3459,12 +3578,16 @@ function searchStudents() {
 
                     student.name,
                     student.father_name,
+                    student.guardian_name,
                     student.admission_no,
                     student.phone,
+                    student.cnic,
                     student.student_class
 
                 ]
-                    .map(safeString)
+                    .map(
+                        safeString
+                    )
                     .join(" ")
                     .toLowerCase();
 
@@ -3489,6 +3612,7 @@ function searchStudents() {
 async function initializeStudentsPage() {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -3503,6 +3627,14 @@ async function initializeStudentsPage() {
 
     getElement(
         "cancelStudentForm"
+    )?.addEventListener(
+        "click",
+        closeStudentForm
+    );
+
+
+    getElement(
+        "cancelStudentButton"
     )?.addEventListener(
         "click",
         closeStudentForm
@@ -3529,7 +3661,10 @@ async function initializeStudentsPage() {
         "addMahram"
     )?.addEventListener(
         "click",
-        () => addMahramField()
+        () => {
+
+            addMahramField();
+        }
     );
 
 
@@ -3573,41 +3708,63 @@ async function initializeStudentsPage() {
 
 
 /* =====================================================
-   TEACHERS
+   TEACHER STATE / ELEMENTS
 ===================================================== */
 
 let teachersCache = [];
 let editingTeacherId = null;
 
+
 const teacherForm =
-    getElement("teacherForm");
+    getElement(
+        "teacherForm"
+    );
+
 
 const teacherFormContainer =
-    getElement("teacherFormContainer");
+    getElement(
+        "teacherFormContainer"
+    );
+
 
 const teacherFormMessage =
-    getElement("teacherFormMessage");
+    getElement(
+        "teacherFormMessage"
+    );
+
 
 const teacherList =
-    getElement("teacherList");
+    getElement(
+        "teacherList"
+    );
+
 
 const teacherSearch =
-    getElement("teacherSearch");
+    getElement(
+        "teacherSearch"
+    );
+
 
 const teacherDetailsOverlay =
-    getElement("teacherDetailsOverlay");
+    getElement(
+        "teacherDetailsOverlay"
+    );
+
 
 const teacherDetailsContent =
-    getElement("teacherDetailsContent");
+    getElement(
+        "teacherDetailsContent"
+    );
 
 
 /* =====================================================
-   TEACHER FORM
+   OPEN TEACHER FORM
 ===================================================== */
 
 function openTeacherForm() {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -3621,6 +3778,12 @@ function openTeacherForm() {
     setValue(
         "editTeacherId",
         ""
+    );
+
+
+    setValue(
+        "teacherStatus",
+        "active"
     );
 
 
@@ -3638,18 +3801,37 @@ function openTeacherForm() {
     showElement(
         teacherFormContainer
     );
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
+
+/* =====================================================
+   CLOSE TEACHER FORM
+===================================================== */
 
 function closeTeacherForm() {
 
     editingTeacherId = null;
 
+
     teacherForm?.reset();
+
+
+    setValue(
+        "editTeacherId",
+        ""
+    );
+
 
     hideElement(
         teacherFormContainer
     );
+
 
     clearMessage(
         teacherFormMessage
@@ -3658,7 +3840,7 @@ function closeTeacherForm() {
 
 
 /* =====================================================
-   TEACHER DATA
+   TEACHER FORM DATA
 ===================================================== */
 
 function getTeacherFormData() {
@@ -3694,6 +3876,11 @@ function getTeacherFormData() {
                 )
             ),
 
+        date_of_birth:
+            getValue(
+                "teacherDateOfBirth"
+            ) || null,
+
         qualification:
             getValue(
                 "teacherQualification"
@@ -3704,17 +3891,23 @@ function getTeacherFormData() {
                 "teacherJoiningDate"
             ) || null,
 
+        status:
+            getValue(
+                "teacherStatus"
+            ) || "active",
+
         address:
             getValue(
                 "teacherAddress"
-            ),
-
-        status:
-            "active"
+            )
 
     };
 }
 
+
+/* =====================================================
+   VALIDATE TEACHER
+===================================================== */
 
 function validateTeacherData(
     data
@@ -3722,19 +3915,25 @@ function validateTeacherData(
 
     if (
         !data.teacher_code ||
-        !data.name
+        !data.name ||
+        !data.father_name ||
+        !data.phone ||
+        !data.cnic ||
+        !data.qualification ||
+        !data.joining_date ||
+        !data.status ||
+        !data.address
     ) {
 
         return {
             valid: false,
             message:
-                "استاد کا کوڈ اور نام ضروری ہیں۔"
+                "تمام ضروری معلومات مکمل کریں۔"
         };
     }
 
 
     if (
-        data.phone &&
         !validPhone(
             data.phone
         )
@@ -3743,13 +3942,12 @@ function validateTeacherData(
         return {
             valid: false,
             message:
-                "موبائل نمبر درست درج کریں۔"
+                "موبائل نمبر 03 سے شروع ہونے والا 11 ہندسوں کا ہونا چاہیے۔"
         };
     }
 
 
     if (
-        data.cnic &&
         !validCNIC(
             data.cnic
         )
@@ -3758,7 +3956,7 @@ function validateTeacherData(
         return {
             valid: false,
             message:
-                "شناختی کارڈ نمبر درست درج کریں۔"
+                "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔"
         };
     }
 
@@ -3805,6 +4003,7 @@ async function loadTeachers() {
 
 
         if (error) {
+
             throw error;
         }
 
@@ -3825,6 +4024,7 @@ async function loadTeachers() {
             error
         );
 
+
         teacherList.innerHTML = `
 
             <div class="teacher-empty">
@@ -3844,6 +4044,7 @@ function renderTeachers(
 ) {
 
     if (!teacherList) {
+
         return;
     }
 
@@ -3856,13 +4057,13 @@ function renderTeachers(
 
     setText(
         "teacherTotal",
-        teachers.length
+        teachersCache.length
     );
 
 
     setText(
         "activeTeacherTotal",
-        teachers.filter(
+        teachersCache.filter(
             teacher =>
                 safeString(
                     teacher.status
@@ -3874,7 +4075,7 @@ function renderTeachers(
 
     setText(
         "pendingTeacherTotal",
-        teachers.filter(
+        teachersCache.filter(
             teacher =>
                 safeString(
                     teacher.status
@@ -3901,12 +4102,16 @@ function renderTeachers(
         teachers.map(
             teacher => `
 
-                <div class="teacher-card">
+                <div
+                    class="teacher-card"
+                    data-id="${escapeHTML(teacher.id)}"
+                >
 
                     <h3>
                         👩‍🏫
-                        ${escapeHTML(teacher.name)}
+                        ${escapeHTML(teacher.name || "—")}
                     </h3>
+
 
                     <div class="teacher-card-info">
 
@@ -3923,6 +4128,17 @@ function renderTeachers(
                         <p>
                             قابلیت:
                             ${escapeHTML(teacher.qualification || "—")}
+                        </p>
+
+                        <p>
+                            حیثیت:
+                            ${
+                                safeString(
+                                    teacher.status
+                                ).toLowerCase() === "active"
+                                    ? "فعال"
+                                    : "غیر فعال"
+                            }
                         </p>
 
                     </div>
@@ -4034,6 +4250,13 @@ async function saveTeacher(
 
 
     if (!requireAdmin()) {
+
+        return;
+    }
+
+
+    if (!checkSupabase()) {
+
         return;
     }
 
@@ -4059,17 +4282,24 @@ async function saveTeacher(
     }
 
 
+    const button =
+        getElement(
+            "saveTeacherButton"
+        );
+
+
     try {
 
-        const button =
-            getElement(
-                "saveTeacherButton"
-            );
-
-
         if (button) {
-            button.disabled = true;
+
+            button.disabled =
+                true;
         }
+
+
+        clearMessage(
+            teacherFormMessage
+        );
 
 
         let result;
@@ -4102,6 +4332,7 @@ async function saveTeacher(
 
 
         if (result.error) {
+
             throw result.error;
         }
 
@@ -4109,8 +4340,8 @@ async function saveTeacher(
         showMessage(
             teacherFormMessage,
             editingTeacherId
-                ? "استاد کا ریکارڈ تبدیل ہو گیا۔"
-                : "نیا استاد شامل ہو گیا۔",
+                ? "استاد کا ریکارڈ کامیابی سے تبدیل ہو گیا۔"
+                : "نیا استاد کامیابی سے شامل ہو گیا۔",
             "success"
         );
 
@@ -4131,20 +4362,19 @@ async function saveTeacher(
             error
         );
 
+
         showMessage(
             teacherFormMessage,
             "استاد کا ریکارڈ محفوظ نہیں ہو سکا۔"
         );
 
+
     } finally {
 
-        const button =
-            getElement(
-                "saveTeacherButton"
-            );
-
         if (button) {
-            button.disabled = false;
+
+            button.disabled =
+                false;
         }
     }
 }
@@ -4157,6 +4387,7 @@ async function saveTeacher(
 function editTeacher(id) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -4170,6 +4401,11 @@ function editTeacher(id) {
 
 
     if (!teacher) {
+
+        alert(
+            "استاد کا ریکارڈ نہیں ملا۔"
+        );
+
         return;
     }
 
@@ -4183,40 +4419,60 @@ function editTeacher(id) {
         teacher.id
     );
 
+
     setValue(
         "teacherCode",
         teacher.teacher_code
     );
+
 
     setValue(
         "teacherName",
         teacher.name
     );
 
+
     setValue(
         "teacherFatherName",
         teacher.father_name
     );
+
 
     setValue(
         "teacherPhone",
         teacher.phone
     );
 
+
     setValue(
         "teacherCNIC",
         teacher.cnic
     );
+
+
+    setValue(
+        "teacherDateOfBirth",
+        teacher.date_of_birth
+    );
+
 
     setValue(
         "teacherQualification",
         teacher.qualification
     );
 
+
     setValue(
         "teacherJoiningDate",
         teacher.joining_date
     );
+
+
+    setValue(
+        "teacherStatus",
+        teacher.status || "active"
+    );
+
 
     setValue(
         "teacherAddress",
@@ -4227,6 +4483,11 @@ function editTeacher(id) {
     setText(
         "teacherFormTitle",
         "استاد کا ریکارڈ تبدیل کریں"
+    );
+
+
+    clearMessage(
+        teacherFormMessage
     );
 
 
@@ -4249,6 +4510,13 @@ function editTeacher(id) {
 async function deleteTeacher(id) {
 
     if (!requireAdmin()) {
+
+        return;
+    }
+
+
+    if (!checkSupabase()) {
+
         return;
     }
 
@@ -4262,15 +4530,18 @@ async function deleteTeacher(id) {
 
 
     if (!teacher) {
+
         return;
     }
 
 
-    if (
-        !window.confirm(
+    const confirmed =
+        window.confirm(
             `کیا آپ واقعی ${teacher.name} کا ریکارڈ حذف کرنا چاہتے ہیں؟`
-        )
-    ) {
+        );
+
+
+    if (!confirmed) {
 
         return;
     }
@@ -4293,6 +4564,7 @@ async function deleteTeacher(id) {
 
 
         if (error) {
+
             throw error;
         }
 
@@ -4306,6 +4578,7 @@ async function deleteTeacher(id) {
             "Delete teacher error:",
             error
         );
+
 
         alert(
             "استاد کا ریکارڈ حذف نہیں ہو سکا۔"
@@ -4338,6 +4611,14 @@ function showTeacherDetails(id) {
     }
 
 
+    const status =
+        safeString(
+            teacher.status
+        ).toLowerCase() === "active"
+            ? "فعال"
+            : "غیر فعال";
+
+
     teacherDetailsContent.innerHTML = `
 
         <h3>
@@ -4346,7 +4627,7 @@ function showTeacherDetails(id) {
 
         <p>
             <strong>نام:</strong>
-            ${escapeHTML(teacher.name)}
+            ${escapeHTML(teacher.name || "—")}
         </p>
 
         <p>
@@ -4370,6 +4651,11 @@ function showTeacherDetails(id) {
         </p>
 
         <p>
+            <strong>تاریخ پیدائش:</strong>
+            ${escapeHTML(formatDate(teacher.date_of_birth))}
+        </p>
+
+        <p>
             <strong>قابلیت:</strong>
             ${escapeHTML(teacher.qualification || "—")}
         </p>
@@ -4380,15 +4666,25 @@ function showTeacherDetails(id) {
         </p>
 
         <p>
+            <strong>حیثیت:</strong>
+            ${escapeHTML(status)}
+        </p>
+
+        <p>
             <strong>پتہ:</strong>
             ${escapeHTML(teacher.address || "—")}
         </p>
     `;
 
 
-    showElement(
-        teacherDetailsOverlay
+    teacherDetailsOverlay.classList.remove(
+        "hidden"
     );
+
+
+    teacherDetailsOverlay.style.display =
+        "flex";
+
 
     document.body.classList.add(
         "modal-open"
@@ -4396,11 +4692,26 @@ function showTeacherDetails(id) {
 }
 
 
+/* =====================================================
+   CLOSE TEACHER DETAILS
+===================================================== */
+
 function closeTeacherDetails() {
 
-    hideElement(
-        teacherDetailsOverlay
+    if (!teacherDetailsOverlay) {
+
+        return;
+    }
+
+
+    teacherDetailsOverlay.style.display =
+        "none";
+
+
+    teacherDetailsOverlay.classList.add(
+        "hidden"
     );
+
 
     document.body.classList.remove(
         "modal-open"
@@ -4430,20 +4741,23 @@ function searchTeachers() {
     }
 
 
-    renderTeachers(
+    const filtered =
         teachersCache.filter(
             teacher => {
 
                 const text = [
 
                     teacher.name,
+                    teacher.father_name,
                     teacher.teacher_code,
                     teacher.phone,
                     teacher.cnic,
                     teacher.qualification
 
                 ]
-                    .map(safeString)
+                    .map(
+                        safeString
+                    )
                     .join(" ")
                     .toLowerCase();
 
@@ -4452,18 +4766,23 @@ function searchTeachers() {
                     query
                 );
             }
-        )
+        );
+
+
+    renderTeachers(
+        filtered
     );
 }
 
 
 /* =====================================================
-   INITIALIZE TEACHERS
+   INITIALIZE TEACHERS PAGE
 ===================================================== */
 
 async function initializeTeachersPage() {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -4535,6 +4854,7 @@ async function submitStudentApplication(
 
 
     if (!checkSupabase()) {
+
         return;
     }
 
@@ -4551,6 +4871,12 @@ async function submitStudentApplication(
     const button =
         getElement(
             "submitStudentApplication"
+        );
+
+
+    const residenceType =
+        getValue(
+            "residenceType"
         );
 
 
@@ -4582,6 +4908,9 @@ async function submitStudentApplication(
             cleanDigits(
                 getValue(
                     "phone"
+                ) ||
+                getValue(
+                    "studentPhone"
                 )
             ),
 
@@ -4601,9 +4930,7 @@ async function submitStudentApplication(
             ),
 
         residence_type:
-            getValue(
-                "residenceType"
-            ),
+            residenceType,
 
         admission_type:
             getValue(
@@ -4621,9 +4948,7 @@ async function submitStudentApplication(
             ) || null,
 
         mahrams:
-            getValue(
-                "residenceType"
-            ) === "ہاسٹل"
+            residenceType === "ہاسٹل"
                 ? collectMahrams()
                 : [],
 
@@ -4707,7 +5032,9 @@ async function submitStudentApplication(
     try {
 
         if (button) {
-            button.disabled = true;
+
+            button.disabled =
+                true;
         }
 
 
@@ -4724,6 +5051,7 @@ async function submitStudentApplication(
 
 
         if (error) {
+
             throw error;
         }
 
@@ -4741,8 +5069,14 @@ async function submitStudentApplication(
 
 
         if (mahramList) {
+
             mahramList.innerHTML = "";
         }
+
+
+        hideElement(
+            mahramSection
+        );
 
 
     } catch (error) {
@@ -4752,15 +5086,19 @@ async function submitStudentApplication(
             error
         );
 
+
         showMessage(
             message,
             "درخواست جمع نہیں ہو سکی۔"
         );
 
+
     } finally {
 
         if (button) {
-            button.disabled = false;
+
+            button.disabled =
+                false;
         }
     }
 }
@@ -4778,6 +5116,7 @@ async function submitTeacherApplication(
 
 
     if (!checkSupabase()) {
+
         return;
     }
 
@@ -4823,6 +5162,11 @@ async function submitTeacherApplication(
                 )
             ),
 
+        date_of_birth:
+            getValue(
+                "teacherDateOfBirth"
+            ) || null,
+
         qualification:
             getValue(
                 "teacherQualification"
@@ -4841,9 +5185,11 @@ async function submitTeacherApplication(
 
     if (
         !application.name ||
+        !application.father_name ||
         !application.phone ||
         !application.cnic ||
-        !application.qualification
+        !application.qualification ||
+        !application.address
     ) {
 
         showMessage(
@@ -4888,7 +5234,9 @@ async function submitTeacherApplication(
     try {
 
         if (button) {
-            button.disabled = true;
+
+            button.disabled =
+                true;
         }
 
 
@@ -4905,6 +5253,7 @@ async function submitTeacherApplication(
 
 
         if (error) {
+
             throw error;
         }
 
@@ -4928,15 +5277,19 @@ async function submitTeacherApplication(
             error
         );
 
+
         showMessage(
             message,
             "درخواست جمع نہیں ہو سکی۔"
         );
 
+
     } finally {
 
         if (button) {
-            button.disabled = false;
+
+            button.disabled =
+                false;
         }
     }
 }
@@ -4980,7 +5333,10 @@ function initializeStudentApplicationPage() {
         "addMahram"
     )?.addEventListener(
         "click",
-        () => addMahramField()
+        () => {
+
+            addMahramField();
+        }
     );
 }
 
@@ -5005,7 +5361,7 @@ function initializeTeacherApplicationPage() {
 
 
 /* =====================================================
-   APPROVALS
+   APPROVAL STATE
 ===================================================== */
 
 let studentApplicationsCache = [];
@@ -5019,11 +5375,13 @@ let teacherApplicationsCache = [];
 async function loadApprovals() {
 
     if (!requireAdmin()) {
+
         return;
     }
 
 
     if (!checkSupabase()) {
+
         return;
     }
 
@@ -5071,12 +5429,18 @@ async function loadApprovals() {
             ]);
 
 
-        if (studentsResult.error) {
+        if (
+            studentsResult.error
+        ) {
+
             throw studentsResult.error;
         }
 
 
-        if (teachersResult.error) {
+        if (
+            teachersResult.error
+        ) {
+
             throw teachersResult.error;
         }
 
@@ -5101,6 +5465,7 @@ async function loadApprovals() {
             error
         );
 
+
         showMessage(
             getElement(
                 "approvalMessage"
@@ -5124,6 +5489,7 @@ function renderStudentApplications() {
 
 
     if (!container) {
+
         return;
     }
 
@@ -5152,7 +5518,7 @@ function renderStudentApplications() {
 
                         <h3>
                             👧
-                            ${escapeHTML(application.name)}
+                            ${escapeHTML(application.name || "—")}
                         </h3>
 
                         <div class="student-info">
@@ -5260,6 +5626,7 @@ function renderTeacherApplications() {
 
 
     if (!container) {
+
         return;
     }
 
@@ -5288,10 +5655,15 @@ function renderTeacherApplications() {
 
                         <h3>
                             👩‍🏫
-                            ${escapeHTML(application.name)}
+                            ${escapeHTML(application.name || "—")}
                         </h3>
 
                         <div class="teacher-card-info">
+
+                            <p>
+                                والد:
+                                ${escapeHTML(application.father_name || "—")}
+                            </p>
 
                             <p>
                                 موبائل:
@@ -5387,6 +5759,7 @@ async function approveStudentApplication(
 ) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -5420,11 +5793,6 @@ async function approveStudentApplication(
 
 
     try {
-
-        /*
-         * Application is converted into
-         * an active student record.
-         */
 
         const studentData = {
 
@@ -5491,6 +5859,7 @@ async function approveStudentApplication(
 
 
         if (insertError) {
+
             throw insertError;
         }
 
@@ -5522,6 +5891,7 @@ async function approveStudentApplication(
 
 
         if (updateError) {
+
             throw updateError;
         }
 
@@ -5545,6 +5915,7 @@ async function approveStudentApplication(
             error
         );
 
+
         showMessage(
             getElement(
                 "approvalMessage"
@@ -5564,6 +5935,7 @@ async function rejectStudentApplication(
 ) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -5607,6 +5979,7 @@ async function rejectStudentApplication(
 
 
         if (error) {
+
             throw error;
         }
 
@@ -5620,6 +5993,7 @@ async function rejectStudentApplication(
             "Reject student error:",
             error
         );
+
 
         alert(
             "درخواست مسترد نہیں ہو سکی۔"
@@ -5637,6 +6011,7 @@ async function approveTeacherApplication(
 ) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -5650,6 +6025,11 @@ async function approveTeacherApplication(
 
 
     if (!application) {
+
+        alert(
+            "درخواست نہیں ملی۔"
+        );
+
         return;
     }
 
@@ -5684,6 +6064,9 @@ async function approveTeacherApplication(
             cnic:
                 application.cnic,
 
+            date_of_birth:
+                application.date_of_birth,
+
             qualification:
                 application.qualification,
 
@@ -5712,6 +6095,7 @@ async function approveTeacherApplication(
 
 
         if (insertError) {
+
             throw insertError;
         }
 
@@ -5743,6 +6127,7 @@ async function approveTeacherApplication(
 
 
         if (updateError) {
+
             throw updateError;
         }
 
@@ -5766,6 +6151,7 @@ async function approveTeacherApplication(
             error
         );
 
+
         showMessage(
             getElement(
                 "approvalMessage"
@@ -5785,6 +6171,7 @@ async function rejectTeacherApplication(
 ) {
 
     if (!requireAdmin()) {
+
         return;
     }
 
@@ -5828,6 +6215,7 @@ async function rejectTeacherApplication(
 
 
         if (error) {
+
             throw error;
         }
 
@@ -5841,6 +6229,7 @@ async function rejectTeacherApplication(
             "Reject teacher error:",
             error
         );
+
 
         alert(
             "درخواست مسترد نہیں ہو سکی۔"
@@ -5856,31 +6245,30 @@ async function rejectTeacherApplication(
 async function initializeApprovalsPage() {
 
     if (!requireAdmin()) {
+
         return;
     }
+
 
     await loadApprovals();
 }
 
 
 /* =====================================================
-   END OF PART 2 / 3
-
-   PASTE PART 3 DIRECTLY BELOW THIS.
+   END PART 2 / 3
+   PART 3 MUST BE PASTED DIRECTLY BELOW THIS
 ===================================================== */
 
 
-
 /* =====================================================
+   MADRASSA MANAGEMENT SYSTEM
+   مدرسہ شہناز اختر للبنات
+
    SCRIPT.JS
    PART 3 / 3
 
-   ATTENDANCE
-   DASHBOARD
-   NAVIGATION
-   LOGIN EVENTS
-   PAGE INITIALIZATION
-   SECURITY / SESSION
+   ATTENDANCE + ANNOUNCEMENTS + FEEDBACK
+   DASHBOARD + SESSION + FINAL INITIALIZATION
 ===================================================== */
 
 
@@ -5890,79 +6278,88 @@ async function initializeApprovalsPage() {
 
 let attendanceStudentsCache = [];
 let attendanceRecordsCache = [];
-let attendanceDraft = {};
 
 
 /* =====================================================
-   ATTENDANCE ELEMENTS
+   ATTENDANCE HELPERS
 ===================================================== */
 
-const attendanceClass =
-    getElement("attendanceClass");
+function getAttendanceDate() {
 
-const attendanceDate =
-    getElement("attendanceDate");
-
-const attendancePeriod =
-    getElement("attendancePeriod");
-
-const attendanceStudentsList =
-    getElement("attendanceStudentsList");
-
-const attendanceMessage =
-    getElement("attendanceMessage");
-
-const attendanceRecordsList =
-    getElement("attendanceRecordsList");
+    return (
+        getValue("attendanceDate") ||
+        todayDate()
+    );
+}
 
 
-/* =====================================================
-   ATTENDANCE DATE
-===================================================== */
+function getAttendanceClass() {
 
-function setDefaultAttendanceDate() {
+    return getValue(
+        "attendanceClass"
+    );
+}
+
+
+function getAttendancePeriod() {
+
+    const value =
+        Number(
+            getValue(
+                "attendancePeriod"
+            )
+        );
+
 
     if (
-        attendanceDate &&
-        !attendanceDate.value
+        value < 1 ||
+        value > DAILY_PERIODS
     ) {
 
-        attendanceDate.value =
-            todayDate();
+        return 0;
     }
+
+
+    return value;
 }
 
 
 /* =====================================================
-   LOAD STUDENTS FOR ATTENDANCE
+   LOAD ATTENDANCE STUDENTS
 ===================================================== */
 
 async function loadAttendanceStudents() {
 
     if (!checkSupabase()) {
+
         return;
     }
 
 
-    const selectedClass =
-        safeString(
-            attendanceClass?.value
+    const studentClass =
+        getAttendanceClass();
+
+
+    const container =
+        getElement(
+            "attendanceStudentsList"
         );
 
 
-    if (!selectedClass) {
+    if (!container) {
 
-        attendanceStudentsCache = [];
+        return;
+    }
 
-        if (attendanceStudentsList) {
 
-            attendanceStudentsList.innerHTML = `
+    if (!studentClass) {
 
-                <div class="empty-students">
-                    پہلے کلاس منتخب کریں۔
-                </div>
-            `;
-        }
+        container.innerHTML = `
+
+            <div class="empty-students">
+                پہلے کلاس منتخب کریں۔
+            </div>
+        `;
 
         return;
     }
@@ -5975,11 +6372,13 @@ async function loadAttendanceStudents() {
             error
         } =
             await supabaseClient
-                .from(STUDENTS_TABLE)
+                .from(
+                    STUDENTS_TABLE
+                )
                 .select("*")
                 .eq(
                     "student_class",
-                    selectedClass
+                    studentClass
                 )
                 .order(
                     "name",
@@ -5990,6 +6389,7 @@ async function loadAttendanceStudents() {
 
 
         if (error) {
+
             throw error;
         }
 
@@ -5998,21 +6398,7 @@ async function loadAttendanceStudents() {
             data || [];
 
 
-        attendanceDraft = {};
-
-
-        attendanceStudentsCache
-            .forEach(
-                student => {
-
-                    attendanceDraft[
-                        String(student.id)
-                    ] = "present";
-                }
-            );
-
-
-        renderAttendanceStudents();
+        await loadExistingAttendance();
 
 
     } catch (error) {
@@ -6023,9 +6409,113 @@ async function loadAttendanceStudents() {
         );
 
 
-        showMessage(
-            attendanceMessage,
-            "طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔"
+        container.innerHTML = `
+
+            <div class="empty-students">
+                طالبات کا ریکارڈ لوڈ نہیں ہو سکا۔
+            </div>
+        `;
+    }
+}
+
+
+/* =====================================================
+   LOAD EXISTING ATTENDANCE
+===================================================== */
+
+async function loadExistingAttendance() {
+
+    const container =
+        getElement(
+            "attendanceStudentsList"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    const attendanceDate =
+        getAttendanceDate();
+
+
+    const studentClass =
+        getAttendanceClass();
+
+
+    const period =
+        getAttendancePeriod();
+
+
+    if (
+        !attendanceDate ||
+        !studentClass ||
+        !period
+    ) {
+
+        renderAttendanceStudents(
+            []
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    ATTENDANCE_TABLE
+                )
+                .select("*")
+                .eq(
+                    "attendance_date",
+                    attendanceDate
+                )
+                .eq(
+                    "student_class",
+                    studentClass
+                )
+                .eq(
+                    "period_no",
+                    period
+                );
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        attendanceRecordsCache =
+            data || [];
+
+
+        renderAttendanceStudents(
+            attendanceStudentsCache
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Existing attendance error:",
+            error
+        );
+
+
+        attendanceRecordsCache = [];
+
+
+        renderAttendanceStudents(
+            attendanceStudentsCache
         );
     }
 }
@@ -6035,18 +6525,25 @@ async function loadAttendanceStudents() {
    RENDER ATTENDANCE STUDENTS
 ===================================================== */
 
-function renderAttendanceStudents() {
+function renderAttendanceStudents(
+    students
+) {
 
-    if (!attendanceStudentsList) {
+    const container =
+        getElement(
+            "attendanceStudentsList"
+        );
+
+
+    if (!container) {
+
         return;
     }
 
 
-    if (
-        !attendanceStudentsCache.length
-    ) {
+    if (!students.length) {
 
-        attendanceStudentsList.innerHTML = `
+        container.innerHTML = `
 
             <div class="empty-students">
                 اس کلاس میں کوئی طالبہ موجود نہیں۔
@@ -6057,169 +6554,96 @@ function renderAttendanceStudents() {
     }
 
 
-    attendanceStudentsList.innerHTML =
-        attendanceStudentsCache
-            .map(
-                student => {
-
-                    const status =
-                        attendanceDraft[
-                            String(student.id)
-                        ] || "present";
-
-
-                    return `
-
-                        <div
-                            class="attendance-student-row"
-                            data-student-id="${escapeHTML(student.id)}"
-                        >
-
-                            <div class="attendance-student-info">
-
-                                <h3>
-                                    ${escapeHTML(student.name)}
-                                </h3>
-
-                                <p>
-                                    داخلہ نمبر:
-                                    ${escapeHTML(student.admission_no || "—")}
-                                </p>
-
-                                <p>
-                                    کلاس:
-                                    ${escapeHTML(student.student_class || "—")}
-                                </p>
-
-                            </div>
-
-
-                            <div class="attendance-options">
-
-                                <button
-                                    type="button"
-                                    class="
-                                        attendance-status-button
-                                        present
-                                        ${status === "present" ? "active" : ""}
-                                    "
-                                    data-status="present"
-                                    data-id="${escapeHTML(student.id)}"
-                                >
-                                    حاضر
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="
-                                        attendance-status-button
-                                        absent
-                                        ${status === "absent" ? "active" : ""}
-                                    "
-                                    data-status="absent"
-                                    data-id="${escapeHTML(student.id)}"
-                                >
-                                    غیر حاضر
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="
-                                        attendance-status-button
-                                        leave
-                                        ${status === "leave" ? "active" : ""}
-                                    "
-                                    data-status="leave"
-                                    data-id="${escapeHTML(student.id)}"
-                                >
-                                    رخصت
-                                </button>
-
-                            </div>
-
-                        </div>
-                    `;
-                }
-            )
-            .join("");
-
-
-    attendanceStudentsList
-        .querySelectorAll(
-            ".attendance-status-button"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            String(
-                                button.dataset.id
-                            );
-
-                        const status =
-                            button.dataset.status;
-
-
-                        attendanceDraft[id] =
-                            status;
-
-
-                        const row =
-                            button.closest(
-                                ".attendance-student-row"
-                            );
-
-
-                        row
-                            ?.querySelectorAll(
-                                ".attendance-status-button"
-                            )
-                            .forEach(
-                                item => {
-
-                                    item.classList.remove(
-                                        "active"
-                                    );
-                                }
-                            );
-
-
-                        button.classList.add(
-                            "active"
-                        );
-                    }
-                );
-            }
-        );
-}
-
-
-/* =====================================================
-   MARK ALL ATTENDANCE
-===================================================== */
-
-function markAllAttendance(
-    status
-) {
-
-    attendanceStudentsCache
-        .forEach(
+    container.innerHTML =
+        students.map(
             student => {
 
-                attendanceDraft[
-                    String(student.id)
-                ] = status;
+                const existing =
+                    attendanceRecordsCache.find(
+                        record =>
+                            String(
+                                record.student_id
+                            ) ===
+                            String(
+                                student.id
+                            )
+                    );
+
+
+                const status =
+                    existing?.status ||
+                    "present";
+
+
+                return `
+
+                    <div
+                        class="attendance-student-card"
+                        data-student-id="${escapeHTML(student.id)}"
+                    >
+
+                        <div class="attendance-student-name">
+
+                            <strong>
+                                ${escapeHTML(student.name || "—")}
+                            </strong>
+
+                            <span>
+                                ${escapeHTML(student.admission_no || "")}
+                            </span>
+
+                        </div>
+
+
+                        <div class="attendance-options">
+
+                            <label>
+
+                                <input
+                                    type="radio"
+                                    name="attendance-${escapeHTML(student.id)}"
+                                    value="present"
+                                    ${status === "present" ? "checked" : ""}
+                                >
+
+                                حاضر
+
+                            </label>
+
+
+                            <label>
+
+                                <input
+                                    type="radio"
+                                    name="attendance-${escapeHTML(student.id)}"
+                                    value="absent"
+                                    ${status === "absent" ? "checked" : ""}
+                                >
+
+                                غیر حاضر
+
+                            </label>
+
+
+                            <label>
+
+                                <input
+                                    type="radio"
+                                    name="attendance-${escapeHTML(student.id)}"
+                                    value="leave"
+                                    ${status === "leave" ? "checked" : ""}
+                                >
+
+                                رخصت
+
+                            </label>
+
+                        </div>
+
+                    </div>
+                `;
             }
-        );
-
-
-    renderAttendanceStudents();
+        ).join("");
 }
 
 
@@ -6229,40 +6653,47 @@ function markAllAttendance(
 
 async function saveAttendance() {
 
-    if (!isAuthenticated()) {
+    if (
+        !requireTeacherOrAdmin()
+    ) {
 
-        redirectToLogin();
         return;
     }
 
 
-    const selectedClass =
-        safeString(
-            attendanceClass?.value
+    if (!checkSupabase()) {
+
+        return;
+    }
+
+
+    const message =
+        getElement(
+            "attendanceMessage"
         );
 
 
-    const selectedDate =
-        safeString(
-            attendanceDate?.value
-        );
+    const attendanceDate =
+        getAttendanceDate();
 
 
-    const selectedPeriod =
-        safeString(
-            attendancePeriod?.value
-        );
+    const studentClass =
+        getAttendanceClass();
+
+
+    const period =
+        getAttendancePeriod();
 
 
     if (
-        !selectedClass ||
-        !selectedDate ||
-        !selectedPeriod
+        !attendanceDate ||
+        !studentClass ||
+        !period
     ) {
 
         showMessage(
-            attendanceMessage,
-            "کلاس، تاریخ اور پیریڈ منتخب کریں۔"
+            message,
+            "تاریخ، کلاس اور پیریڈ منتخب کریں۔"
         );
 
         return;
@@ -6274,20 +6705,65 @@ async function saveAttendance() {
     ) {
 
         showMessage(
-            attendanceMessage,
-            "حاضری کے لیے کوئی طالبہ موجود نہیں۔"
+            message,
+            "اس کلاس میں کوئی طالبہ موجود نہیں۔"
         );
 
         return;
     }
 
 
-    if (!checkSupabase()) {
-        return;
-    }
+    const teacherId =
+        getCurrentUserId();
 
 
-    const saveButton =
+    const teacherName =
+        getCurrentUsername();
+
+
+    const records =
+        attendanceStudentsCache.map(
+            student => {
+
+                const selected =
+                    document.querySelector(
+                        `input[name="attendance-${student.id}"]:checked`
+                    );
+
+
+                return {
+
+                    student_id:
+                        student.id,
+
+                    student_name:
+                        student.name,
+
+                    student_class:
+                        studentClass,
+
+                    attendance_date:
+                        attendanceDate,
+
+                    period_no:
+                        period,
+
+                    status:
+                        selected?.value ||
+                        "present",
+
+                    teacher_id:
+                        teacherId || null,
+
+                    teacher_name:
+                        teacherName || null
+
+                };
+            }
+        );
+
+
+    const button =
         getElement(
             "saveAttendanceButton"
         );
@@ -6295,59 +6771,16 @@ async function saveAttendance() {
 
     try {
 
-        if (saveButton) {
-            saveButton.disabled = true;
+        if (button) {
+
+            button.disabled = true;
         }
 
 
         clearMessage(
-            attendanceMessage
+            message
         );
 
-
-        const teacherIdentifier =
-            getCurrentUsername();
-
-
-        const records =
-            attendanceStudentsCache
-                .map(
-                    student => ({
-
-                        student_id:
-                            student.id,
-
-                        student_name:
-                            student.name,
-
-                        student_class:
-                            selectedClass,
-
-                        attendance_date:
-                            selectedDate,
-
-                        period_no:
-                            selectedPeriod,
-
-                        status:
-                            attendanceDraft[
-                                String(student.id)
-                            ] || "present",
-
-                        marked_by:
-                            teacherIdentifier
-
-                    })
-                );
-
-
-        /*
-         * Delete the old attendance for the same
-         * class/date/period before saving again.
-         *
-         * Database RLS must still restrict who is
-         * allowed to perform this operation.
-         */
 
         const {
             error: deleteError
@@ -6358,20 +6791,21 @@ async function saveAttendance() {
                 )
                 .delete()
                 .eq(
-                    "student_class",
-                    selectedClass
+                    "attendance_date",
+                    attendanceDate
                 )
                 .eq(
-                    "attendance_date",
-                    selectedDate
+                    "student_class",
+                    studentClass
                 )
                 .eq(
                     "period_no",
-                    selectedPeriod
+                    period
                 );
 
 
         if (deleteError) {
+
             throw deleteError;
         }
 
@@ -6389,18 +6823,19 @@ async function saveAttendance() {
 
 
         if (insertError) {
+
             throw insertError;
         }
 
 
         showMessage(
-            attendanceMessage,
+            message,
             "حاضری کامیابی سے محفوظ ہو گئی۔",
             "success"
         );
 
 
-        await loadAttendanceRecords();
+        await loadExistingAttendance();
 
 
     } catch (error) {
@@ -6412,30 +6847,582 @@ async function saveAttendance() {
 
 
         showMessage(
-            attendanceMessage,
+            message,
             "حاضری محفوظ نہیں ہو سکی۔"
         );
 
 
     } finally {
 
-        if (saveButton) {
-            saveButton.disabled = false;
+        if (button) {
+
+            button.disabled = false;
         }
     }
 }
 
 
 /* =====================================================
-   LOAD ATTENDANCE RECORDS
+   INITIALIZE ATTENDANCE PAGE
 ===================================================== */
 
-async function loadAttendanceRecords() {
+async function initializeAttendancePage() {
 
     if (
-        !attendanceRecordsList ||
-        !checkSupabase()
+        !requireTeacherOrAdmin()
     ) {
+
+        return;
+    }
+
+
+    setValue(
+        "attendanceDate",
+        todayDate()
+    );
+
+
+    getElement(
+        "attendanceClass"
+    )?.addEventListener(
+        "change",
+        loadAttendanceStudents
+    );
+
+
+    getElement(
+        "attendancePeriod"
+    )?.addEventListener(
+        "change",
+        loadAttendanceStudents
+    );
+
+
+    getElement(
+        "attendanceDate"
+    )?.addEventListener(
+        "change",
+        loadAttendanceStudents
+    );
+
+
+    getElement(
+        "loadAttendanceButton"
+    )?.addEventListener(
+        "click",
+        loadAttendanceStudents
+    );
+
+
+    getElement(
+        "saveAttendanceButton"
+    )?.addEventListener(
+        "click",
+        saveAttendance
+    );
+}
+
+
+/* =====================================================
+   ANNOUNCEMENTS STATE
+===================================================== */
+
+let announcementsCache = [];
+
+
+/* =====================================================
+   LOAD ANNOUNCEMENTS
+===================================================== */
+
+async function loadAnnouncements() {
+
+    if (!checkSupabase()) {
+
+        return;
+    }
+
+
+    const container =
+        getElement(
+            "announcementsList"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    ANNOUNCEMENTS_TABLE
+                )
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        announcementsCache =
+            data || [];
+
+
+        renderAnnouncements();
+
+
+    } catch (error) {
+
+        console.error(
+            "Load announcements error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty-students">
+                اعلانات لوڈ نہیں ہو سکے۔
+            </div>
+        `;
+    }
+}
+
+
+/* =====================================================
+   RENDER ANNOUNCEMENTS
+===================================================== */
+
+function renderAnnouncements() {
+
+    const container =
+        getElement(
+            "announcementsList"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    const role =
+        getCurrentRole();
+
+
+    let records =
+        announcementsCache;
+
+
+    if (
+        role === ROLE_STUDENT
+    ) {
+
+        const studentClass =
+            safeString(
+                getCurrentUser()?.student_class
+            );
+
+
+        records =
+            announcementsCache.filter(
+                item =>
+                    !item.student_class ||
+                    item.student_class ===
+                        studentClass
+            );
+    }
+
+
+    if (!records.length) {
+
+        container.innerHTML = `
+
+            <div class="empty-students">
+                ابھی کوئی اعلان موجود نہیں۔
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        records.map(
+            item => `
+
+                <div class="announcement-card">
+
+                    <div class="announcement-header">
+
+                        <h3>
+                            📢
+                            ${escapeHTML(item.title || "اعلان")}
+                        </h3>
+
+                        <span>
+                            ${escapeHTML(formatDate(item.created_at))}
+                        </span>
+
+                    </div>
+
+
+                    <p>
+                        ${escapeHTML(item.message || "")}
+                    </p>
+
+
+                    ${
+                        item.student_class
+                            ? `
+                                <div class="announcement-class">
+                                    کلاس:
+                                    ${escapeHTML(item.student_class)}
+                                </div>
+                            `
+                            : `
+                                <div class="announcement-class">
+                                    تمام طالبات
+                                </div>
+                            `
+                    }
+
+
+                    ${
+                        item.created_by_name
+                            ? `
+                                <small>
+                                    جاری کنندہ:
+                                    ${escapeHTML(item.created_by_name)}
+                                </small>
+                            `
+                            : ""
+                    }
+
+
+                    ${
+                        role === ROLE_ADMIN
+                            ? `
+                                <button
+                                    type="button"
+                                    class="delete-announcement"
+                                    data-id="${escapeHTML(item.id)}"
+                                >
+                                    حذف کریں
+                                </button>
+                            `
+                            : ""
+                    }
+
+                </div>
+            `
+        ).join("");
+
+
+    container
+        .querySelectorAll(
+            ".delete-announcement"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteAnnouncement(
+                            button.dataset.id
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+/* =====================================================
+   SAVE ANNOUNCEMENT
+===================================================== */
+
+async function saveAnnouncement(
+    event
+) {
+
+    event?.preventDefault();
+
+
+    if (
+        !requireTeacherOrAdmin()
+    ) {
+
+        return;
+    }
+
+
+    if (!checkSupabase()) {
+
+        return;
+    }
+
+
+    const title =
+        getValue(
+            "announcementTitle"
+        );
+
+
+    const messageText =
+        getValue(
+            "announcementText"
+        ) ||
+        getValue(
+            "announcementMessage"
+        );
+
+
+    const studentClass =
+        getValue(
+            "announcementClass"
+        ) || null;
+
+
+    const message =
+        getElement(
+            "announcementFormMessage"
+        );
+
+
+    if (
+        !title ||
+        !messageText
+    ) {
+
+        showMessage(
+            message,
+            "عنوان اور اعلان لکھیں۔"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from(
+                    ANNOUNCEMENTS_TABLE
+                )
+                .insert([{
+
+                    title:
+                        title,
+
+                    message:
+                        messageText,
+
+                    student_class:
+                        studentClass,
+
+                    created_by:
+                        getCurrentUserId() ||
+                        null,
+
+                    created_by_name:
+                        getCurrentUsername() ||
+                        null
+
+                }]);
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        showMessage(
+            message,
+            "اعلان کامیابی سے جاری ہو گیا۔",
+            "success"
+        );
+
+
+        getElement(
+            "announcementForm"
+        )?.reset();
+
+
+        await loadAnnouncements();
+
+
+    } catch (error) {
+
+        console.error(
+            "Save announcement error:",
+            error
+        );
+
+
+        showMessage(
+            message,
+            "اعلان محفوظ نہیں ہو سکا۔"
+        );
+    }
+}
+
+
+/* =====================================================
+   DELETE ANNOUNCEMENT
+===================================================== */
+
+async function deleteAnnouncement(id) {
+
+    if (!requireAdmin()) {
+
+        return;
+    }
+
+
+    if (
+        !window.confirm(
+            "کیا آپ یہ اعلان حذف کرنا چاہتے ہیں؟"
+        )
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from(
+                    ANNOUNCEMENTS_TABLE
+                )
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        await loadAnnouncements();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete announcement error:",
+            error
+        );
+
+
+        alert(
+            "اعلان حذف نہیں ہو سکا۔"
+        );
+    }
+}
+
+
+/* =====================================================
+   INITIALIZE ANNOUNCEMENTS PAGE
+===================================================== */
+
+async function initializeAnnouncementsPage() {
+
+    if (!isAuthenticated()) {
+
+        redirectToLogin();
+
+        return;
+    }
+
+
+    const role =
+        getCurrentRole();
+
+
+    const form =
+        getElement(
+            "announcementForm"
+        );
+
+
+    if (
+        role !== ROLE_ADMIN &&
+        role !== ROLE_TEACHER
+    ) {
+
+        hideElement(
+            form
+        );
+    }
+
+
+    form?.addEventListener(
+        "submit",
+        saveAnnouncement
+    );
+
+
+    await loadAnnouncements();
+}
+
+
+/* =====================================================
+   FEEDBACK STATE
+===================================================== */
+
+let feedbackCache = [];
+
+
+/* =====================================================
+   LOAD FEEDBACK
+===================================================== */
+
+async function loadFeedback() {
+
+    if (!checkSupabase()) {
+
+        return;
+    }
+
+
+    const container =
+        getElement(
+            "feedbackList"
+        );
+
+
+    if (!container) {
 
         return;
     }
@@ -6446,38 +7433,56 @@ async function loadAttendanceRecords() {
         let query =
             supabaseClient
                 .from(
-                    ATTENDANCE_TABLE
+                    FEEDBACK_TABLE
                 )
                 .select("*")
                 .order(
-                    "attendance_date",
+                    "created_at",
                     {
                         ascending: false
                     }
                 );
 
 
+        const role =
+            getCurrentRole();
+
+
         if (
-            attendanceClass?.value
+            role === ROLE_TEACHER
         ) {
 
-            query =
-                query.eq(
-                    "student_class",
-                    attendanceClass.value
-                );
+            const teacherId =
+                getCurrentUserId();
+
+
+            if (teacherId) {
+
+                query =
+                    query.eq(
+                        "teacher_id",
+                        teacherId
+                    );
+            }
         }
 
 
         if (
-            attendanceDate?.value
+            role === ROLE_STUDENT
         ) {
 
-            query =
-                query.eq(
-                    "attendance_date",
-                    attendanceDate.value
-                );
+            const studentId =
+                getCurrentUserId();
+
+
+            if (studentId) {
+
+                query =
+                    query.eq(
+                        "student_id",
+                        studentId
+                    );
+            }
         }
 
 
@@ -6489,29 +7494,30 @@ async function loadAttendanceRecords() {
 
 
         if (error) {
+
             throw error;
         }
 
 
-        attendanceRecordsCache =
+        feedbackCache =
             data || [];
 
 
-        renderAttendanceRecords();
+        renderFeedback();
 
 
     } catch (error) {
 
         console.error(
-            "Load attendance records error:",
+            "Load feedback error:",
             error
         );
 
 
-        attendanceRecordsList.innerHTML = `
+        container.innerHTML = `
 
             <div class="empty-students">
-                حاضری کا ریکارڈ لوڈ نہیں ہو سکا۔
+                تاثرات لوڈ نہیں ہو سکے۔
             </div>
         `;
     }
@@ -6519,211 +7525,378 @@ async function loadAttendanceRecords() {
 
 
 /* =====================================================
-   RENDER ATTENDANCE RECORDS
+   RENDER FEEDBACK
 ===================================================== */
 
-function renderAttendanceRecords() {
+function renderFeedback() {
 
-    if (!attendanceRecordsList) {
+    const container =
+        getElement(
+            "feedbackList"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    if (!feedbackCache.length) {
+
+        container.innerHTML = `
+
+            <div class="empty-students">
+                ابھی کوئی تبصرہ موجود نہیں۔
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        feedbackCache.map(
+            item => `
+
+                <div class="feedback-card">
+
+                    <div class="feedback-tags">
+
+                        <span>
+                            طالبہ:
+                            ${escapeHTML(item.student_name || "—")}
+                        </span>
+
+                        <span>
+                            استاد:
+                            ${escapeHTML(item.teacher_name || "—")}
+                        </span>
+
+                    </div>
+
+
+                    ${
+                        item.rating
+                            ? `
+                                <p>
+                                    درجہ بندی:
+                                    ${escapeHTML(item.rating)}
+                                    / 5
+                                </p>
+                            `
+                            : ""
+                    }
+
+
+                    <p>
+                        ${escapeHTML(item.comment || "")}
+                    </p>
+
+
+                    <small>
+                        ${escapeHTML(formatDate(item.created_at))}
+                    </small>
+
+                </div>
+            `
+        ).join("");
+}
+
+
+/* =====================================================
+   SAVE FEEDBACK
+===================================================== */
+
+async function saveFeedback(
+    event
+) {
+
+    event?.preventDefault();
+
+
+    if (
+        !requireTeacherOrAdmin()
+    ) {
+
+        return;
+    }
+
+
+    if (!checkSupabase()) {
+
+        return;
+    }
+
+
+    const studentId =
+        getValue(
+            "feedbackStudent"
+        );
+
+
+    const student =
+        studentsCache.find(
+            item =>
+                String(item.id) ===
+                String(studentId)
+        );
+
+
+    const comment =
+        getValue(
+            "feedbackComment"
+        );
+
+
+    const rating =
+        Number(
+            getValue(
+                "feedbackRating"
+            )
+        ) || null;
+
+
+    const message =
+        getElement(
+            "feedbackMessage"
+        );
+
+
+    if (
+        !studentId ||
+        !student ||
+        !comment
+    ) {
+
+        showMessage(
+            message,
+            "طالبہ منتخب کریں اور تبصرہ لکھیں۔"
+        );
+
         return;
     }
 
 
     if (
-        !attendanceRecordsCache.length
+        rating !== null &&
+        (
+            rating < 1 ||
+            rating > 5
+        )
     ) {
 
-        attendanceRecordsList.innerHTML = `
-
-            <div class="empty-students">
-                ابھی کوئی حاضری ریکارڈ موجود نہیں۔
-            </div>
-        `;
+        showMessage(
+            message,
+            "درجہ بندی 1 سے 5 تک ہونی چاہیے۔"
+        );
 
         return;
     }
 
 
-    const grouped = {};
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from(
+                    FEEDBACK_TABLE
+                )
+                .insert([{
+
+                    student_id:
+                        student.id,
+
+                    student_name:
+                        student.name,
+
+                    teacher_id:
+                        getCurrentUserId() ||
+                        null,
+
+                    teacher_name:
+                        getCurrentUsername() ||
+                        null,
+
+                    rating:
+                        rating,
+
+                    comment:
+                        comment
+
+                }]);
 
 
-    attendanceRecordsCache
-        .forEach(
-            record => {
+        if (error) {
 
-                const key = [
-                    record.attendance_date,
-                    record.student_class,
-                    record.period_no
-                ].join("|");
+            throw error;
+        }
 
 
-                if (!grouped[key]) {
-
-                    grouped[key] = {
-
-                        date:
-                            record.attendance_date,
-
-                        studentClass:
-                            record.student_class,
-
-                        period:
-                            record.period_no,
-
-                        records: []
-
-                    };
-                }
-
-
-                grouped[key].records.push(
-                    record
-                );
-            }
+        showMessage(
+            message,
+            "تبصرہ کامیابی سے محفوظ ہو گیا۔",
+            "success"
         );
 
 
-    attendanceRecordsList.innerHTML =
-        Object.values(grouped)
-            .map(
-                group => {
-
-                    const present =
-                        group.records.filter(
-                            record =>
-                                record.status ===
-                                "present"
-                        ).length;
+        getElement(
+            "feedbackForm"
+        )?.reset();
 
 
-                    const absent =
-                        group.records.filter(
-                            record =>
-                                record.status ===
-                                "absent"
-                        ).length;
+        await loadFeedback();
 
 
-                    const leave =
-                        group.records.filter(
-                            record =>
-                                record.status ===
-                                "leave"
-                        ).length;
+    } catch (error) {
+
+        console.error(
+            "Save feedback error:",
+            error
+        );
 
 
-                    return `
-
-                        <div class="attendance-record-card">
-
-                            <h3>
-                                ${escapeHTML(group.studentClass)}
-                            </h3>
-
-                            <p>
-                                تاریخ:
-                                ${escapeHTML(formatDate(group.date))}
-                            </p>
-
-                            <p>
-                                پیریڈ:
-                                ${escapeHTML(group.period)}
-                            </p>
-
-
-                            <div class="attendance-summary-line">
-
-                                <span>
-                                    حاضر:
-                                    ${present}
-                                </span>
-
-                                <span>
-                                    غیر حاضر:
-                                    ${absent}
-                                </span>
-
-                                <span>
-                                    رخصت:
-                                    ${leave}
-                                </span>
-
-                            </div>
-
-                        </div>
-                    `;
-                }
-            )
-            .join("");
+        showMessage(
+            message,
+            "تبصرہ محفوظ نہیں ہو سکا۔"
+        );
+    }
 }
 
 
 /* =====================================================
-   INITIALIZE ATTENDANCE
+   LOAD FEEDBACK STUDENTS
 ===================================================== */
 
-async function initializeAttendancePage() {
+async function loadFeedbackStudents() {
 
-    if (!isAuthenticated()) {
+    const select =
+        getElement(
+            "feedbackStudent"
+        );
 
-        redirectToLogin();
+
+    if (!select) {
+
         return;
     }
 
 
-    setDefaultAttendanceDate();
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    STUDENTS_TABLE
+                )
+                .select(
+                    "id,name,student_class,admission_no"
+                )
+                .order(
+                    "name",
+                    {
+                        ascending: true
+                    }
+                );
 
 
-    attendanceClass
-        ?.addEventListener(
-            "change",
-            async () => {
+        if (error) {
 
-                await loadAttendanceStudents();
-                await loadAttendanceRecords();
+            throw error;
+        }
+
+
+        studentsCache =
+            data || [];
+
+
+        select.innerHTML = `
+
+            <option value="">
+                طالبہ منتخب کریں
+            </option>
+
+            ${
+                studentsCache.map(
+                    student => `
+
+                        <option
+                            value="${escapeHTML(student.id)}"
+                        >
+                            ${escapeHTML(student.name)}
+                            ${
+                                student.student_class
+                                    ? ` - ${escapeHTML(student.student_class)}`
+                                    : ""
+                            }
+                        </option>
+                    `
+                ).join("")
             }
+        `;
+
+
+    } catch (error) {
+
+        console.error(
+            "Feedback students error:",
+            error
+        );
+    }
+}
+
+
+/* =====================================================
+   INITIALIZE FEEDBACK PAGE
+===================================================== */
+
+async function initializeFeedbackPage() {
+
+    if (!isAuthenticated()) {
+
+        redirectToLogin();
+
+        return;
+    }
+
+
+    const role =
+        getCurrentRole();
+
+
+    const form =
+        getElement(
+            "feedbackForm"
         );
 
 
-    attendanceDate
-        ?.addEventListener(
-            "change",
-            loadAttendanceRecords
+    if (
+        role === ROLE_ADMIN ||
+        role === ROLE_TEACHER
+    ) {
+
+        await loadFeedbackStudents();
+
+
+        form?.addEventListener(
+            "submit",
+            saveFeedback
         );
 
+    } else {
 
-    getElement(
-        "markAllPresent"
-    )?.addEventListener(
-        "click",
-        () =>
-            markAllAttendance(
-                "present"
-            )
-    );
+        hideElement(
+            form
+        );
+    }
 
 
-    getElement(
-        "markAllAbsent"
-    )?.addEventListener(
-        "click",
-        () =>
-            markAllAttendance(
-                "absent"
-            )
-    );
-
-
-    getElement(
-        "saveAttendanceButton"
-    )?.addEventListener(
-        "click",
-        saveAttendance
-    );
-
-
-    await loadAttendanceRecords();
+    await loadFeedback();
 }
 
 
@@ -6734,6 +7907,7 @@ async function initializeAttendancePage() {
 async function updateDashboardCounts() {
 
     if (!checkSupabase()) {
+
         return;
     }
 
@@ -6751,7 +7925,11 @@ async function updateDashboardCounts() {
                         STUDENTS_TABLE
                     )
                     .select(
-                        "id,residence_type"
+                        "id",
+                        {
+                            count: "exact",
+                            head: true
+                        }
                     ),
 
                 supabaseClient
@@ -6759,73 +7937,42 @@ async function updateDashboardCounts() {
                         TEACHERS_TABLE
                     )
                     .select(
-                        "id"
+                        "id",
+                        {
+                            count: "exact",
+                            head: true
+                        }
                     )
 
             ]);
 
 
         if (
-            studentsResult.error
+            !studentsResult.error
         ) {
 
-            throw studentsResult.error;
+            setText(
+                "studentTotal",
+                studentsResult.count || 0
+            );
         }
 
 
         if (
-            teachersResult.error
+            !teachersResult.error
         ) {
 
-            throw teachersResult.error;
+            setText(
+                "teacherTotal",
+                teachersResult.count || 0
+            );
         }
-
-
-        const students =
-            studentsResult.data || [];
-
-
-        const teachers =
-            teachersResult.data || [];
-
-
-        setText(
-            "studentTotal",
-            students.length
-        );
-
-
-        setText(
-            "teacherTotal",
-            teachers.length
-        );
-
-
-        setText(
-            "hostelTotal",
-            students.filter(
-                student =>
-                    student.residence_type ===
-                    "ہاسٹل"
-            ).length
-        );
-
-
-        /*
-         * Six classes are currently configured
-         * in the attendance system.
-         */
-
-        setText(
-            "classTotal",
-            "6"
-        );
 
 
     } catch (error) {
 
         console.error(
-            "Dashboard counts error:",
+            "Dashboard count error:",
             error
         );
     }
@@ -6833,64 +7980,159 @@ async function updateDashboardCounts() {
 
 
 /* =====================================================
-   DASHBOARD WELCOME
+   DASHBOARD APPROVAL COUNT
 ===================================================== */
 
-function updateWelcomeMessage() {
+async function updatePendingApprovalCount() {
 
-    const element =
-        getElement(
-            "welcomeMessage"
-        );
+    if (
+        getCurrentRole() !==
+        ROLE_ADMIN
+    ) {
 
-
-    if (!element) {
         return;
     }
 
 
-    const username =
-        getCurrentUsername();
+    if (!checkSupabase()) {
 
-
-    const role =
-        getCurrentRole();
-
-
-    let roleName =
-        "صارف";
-
-
-    if (role === "admin") {
-
-        roleName =
-            "ایڈمن";
-
-    } else if (
-        role === "teacher"
-    ) {
-
-        roleName =
-            "استاد";
-
-    } else if (
-        role === "student"
-    ) {
-
-        roleName =
-            "طالبہ";
+        return;
     }
 
 
-    element.textContent =
-        username
-            ? `خوش آمدید، ${username}`
-            : `خوش آمدید، ${roleName}`;
+    try {
+
+        const [
+            studentResult,
+            teacherResult
+        ] =
+            await Promise.all([
+
+                supabaseClient
+                    .from(
+                        STUDENT_APPLICATIONS_TABLE
+                    )
+                    .select(
+                        "id",
+                        {
+                            count: "exact",
+                            head: true
+                        }
+                    )
+                    .eq(
+                        "status",
+                        "pending"
+                    ),
+
+                supabaseClient
+                    .from(
+                        TEACHER_APPLICATIONS_TABLE
+                    )
+                    .select(
+                        "id",
+                        {
+                            count: "exact",
+                            head: true
+                        }
+                    )
+                    .eq(
+                        "status",
+                        "pending"
+                    )
+
+            ]);
+
+
+        const total =
+            (
+                studentResult.count ||
+                0
+            ) +
+            (
+                teacherResult.count ||
+                0
+            );
+
+
+        setText(
+            "pendingApprovalTotal",
+            total
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Pending approval count error:",
+            error
+        );
+    }
 }
 
 
 /* =====================================================
-   DASHBOARD ROLE SECURITY
+   DASHBOARD USER INFORMATION
+===================================================== */
+
+function showDashboardUser() {
+
+    const user =
+        getCurrentUser();
+
+
+    if (!user) {
+
+        return;
+    }
+
+
+    setText(
+        "currentUserName",
+        user.name ||
+        user.username ||
+        "صارف"
+    );
+
+
+    let roleText =
+        "صارف";
+
+
+    if (
+        user.role ===
+        ROLE_ADMIN
+    ) {
+
+        roleText =
+            "ایڈمن";
+
+    } else if (
+        user.role ===
+        ROLE_TEACHER
+    ) {
+
+        roleText =
+            "استاد";
+
+    } else if (
+        user.role ===
+        ROLE_STUDENT
+    ) {
+
+        roleText =
+            "طالبہ";
+    }
+
+
+    setText(
+        "currentUserRole",
+        roleText
+    );
+}
+
+
+/* =====================================================
+   ROLE BASED DASHBOARD MENU
 ===================================================== */
 
 function applyDashboardPermissions() {
@@ -6899,132 +8141,65 @@ function applyDashboardPermissions() {
         getCurrentRole();
 
 
-    const teachersMenu =
-        getElement(
-            "teachersMenu"
+    document
+        .querySelectorAll(
+            "[data-admin-only]"
+        )
+        .forEach(
+            element => {
+
+                element.style.display =
+                    role === ROLE_ADMIN
+                        ? ""
+                        : "none";
+            }
         );
-
-
-    const approvalsMenu =
-        getElement(
-            "approvalsMenu"
-        );
-
-
-    /*
-     * Only admin can access teacher management
-     * and approval management.
-     */
-
-    if (
-        role !== "admin"
-    ) {
-
-        if (teachersMenu) {
-            teachersMenu.style.display =
-                "none";
-        }
-
-
-        if (approvalsMenu) {
-            approvalsMenu.style.display =
-                "none";
-        }
-    }
-}
-
-
-/* =====================================================
-   MENU NAVIGATION
-===================================================== */
-
-function initializeDashboardNavigation() {
-
-    const pages = {
-
-        students:
-            "students.html",
-
-        teachers:
-            "teachers.html",
-
-        attendance:
-            "attendance.html",
-
-        hostel:
-            "hostel.html",
-
-        fees:
-            "fees.html",
-
-        reports:
-            "reports.html",
-
-        approvals:
-            "approvals.html"
-
-    };
 
 
     document
         .querySelectorAll(
-            "[data-page]"
+            "[data-teacher-only]"
         )
         .forEach(
-            button => {
+            element => {
 
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const page =
-                            button.dataset.page;
-
-
-                        const destination =
-                            pages[page];
+                element.style.display =
+                    role === ROLE_TEACHER
+                        ? ""
+                        : "none";
+            }
+        );
 
 
-                        if (!destination) {
+    document
+        .querySelectorAll(
+            "[data-student-only]"
+        )
+        .forEach(
+            element => {
 
-                            alert(
-                                "یہ حصہ ابھی تیار نہیں کیا گیا۔"
-                            );
-
-                            return;
-                        }
-
-
-                        if (
-                            page === "teachers" &&
-                            !isAdmin()
-                        ) {
-
-                            alert(
-                                "یہ حصہ صرف ایڈمن کے لیے ہے۔"
-                            );
-
-                            return;
-                        }
+                element.style.display =
+                    role === ROLE_STUDENT
+                        ? ""
+                        : "none";
+            }
+        );
 
 
-                        if (
-                            page === "approvals" &&
-                            !isAdmin()
-                        ) {
+    document
+        .querySelectorAll(
+            "[data-teacher-admin]"
+        )
+        .forEach(
+            element => {
 
-                            alert(
-                                "منظوری کا حصہ صرف ایڈمن کے لیے ہے۔"
-                            );
-
-                            return;
-                        }
-
-
-                        window.location.href =
-                            destination;
-                    }
-                );
+                element.style.display =
+                    (
+                        role === ROLE_ADMIN ||
+                        role === ROLE_TEACHER
+                    )
+                        ? ""
+                        : "none";
             }
         );
 }
@@ -7039,53 +8214,35 @@ async function initializeDashboardPage() {
     if (!isAuthenticated()) {
 
         redirectToLogin();
+
         return;
     }
 
 
-    updateWelcomeMessage();
+    showDashboardUser();
 
     applyDashboardPermissions();
 
-    initializeDashboardNavigation();
 
-    await updateDashboardCounts();
+    await Promise.allSettled([
+
+        updateDashboardCounts(),
+
+        updatePendingApprovalCount()
+
+    ]);
 }
 
 
 /* =====================================================
-   BACK BUTTONS
+   PASSWORD VISIBILITY
 ===================================================== */
 
-function initializeBackButtons() {
-
-    getElement(
-        "backToDashboard"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "dashboard.html";
-        }
-    );
-
-
-    getElement(
-        "backButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "index.html";
-        }
-    );
-
+function initializePasswordToggles() {
 
     document
         .querySelectorAll(
-            "[data-back='home']"
+            ".password-toggle, [data-password-toggle]"
         )
         .forEach(
             button => {
@@ -7094,8 +8251,53 @@ function initializeBackButtons() {
                     "click",
                     () => {
 
-                        window.location.href =
-                            "index.html";
+                        let input = null;
+
+
+                        const targetId =
+                            button.dataset.target;
+
+
+                        if (targetId) {
+
+                            input =
+                                getElement(
+                                    targetId
+                                );
+                        }
+
+
+                        if (!input) {
+
+                            input =
+                                button.parentElement
+                                    ?.querySelector(
+                                        'input[type="password"], input[data-password-field]'
+                                    );
+                        }
+
+
+                        if (!input) {
+
+                            return;
+                        }
+
+
+                        const hidden =
+                            input.type ===
+                            "password";
+
+
+                        input.type =
+                            hidden
+                                ? "text"
+                                : "password";
+
+
+                        button.textContent =
+                            hidden
+                                ? "🙈"
+                                : "👁️";
                     }
                 );
             }
@@ -7104,229 +8306,7 @@ function initializeBackButtons() {
 
 
 /* =====================================================
-   HOME PAGE BUTTONS
-===================================================== */
-
-function initializeHomePage() {
-
-    getElement(
-        "adminLoginButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            sessionStorage.setItem(
-                "requestedRole",
-                "admin"
-            );
-
-            window.location.href =
-                "login.html";
-        }
-    );
-
-
-    getElement(
-        "teacherLoginButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            sessionStorage.setItem(
-                "requestedRole",
-                "teacher"
-            );
-
-            window.location.href =
-                "login.html";
-        }
-    );
-
-
-    getElement(
-        "studentLoginButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            sessionStorage.setItem(
-                "requestedRole",
-                "student"
-            );
-
-            window.location.href =
-                "login.html";
-        }
-    );
-
-
-    /*
-     * Public application buttons.
-     * These work when the corresponding IDs
-     * exist in index.html.
-     */
-
-    getElement(
-        "studentApplyButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "student-apply.html";
-        }
-    );
-
-
-    getElement(
-        "teacherApplyButton"
-    )?.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "teacher-apply.html";
-        }
-    );
-}
-
-
-/* =====================================================
-   PASSWORD VISIBILITY
-===================================================== */
-
-function initializePasswordToggle() {
-
-    const password =
-        getElement(
-            "password"
-        );
-
-
-    const button =
-        getElement(
-            "togglePassword"
-        );
-
-
-    if (
-        !password ||
-        !button
-    ) {
-
-        return;
-    }
-
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            const hidden =
-                password.type ===
-                "password";
-
-
-            password.type =
-                hidden
-                    ? "text"
-                    : "password";
-
-
-            button.textContent =
-                hidden
-                    ? "🙈"
-                    : "👁️";
-
-
-            button.setAttribute(
-                "aria-label",
-                hidden
-                    ? "پاس ورڈ چھپائیں"
-                    : "پاس ورڈ دکھائیں"
-            );
-        }
-    );
-}
-
-
-/* =====================================================
-   LOGIN BUTTON
-===================================================== */
-
-function initializeLoginPage() {
-
-    const loginForm =
-        getElement(
-            "loginForm"
-        );
-
-
-    const loginButton =
-        getElement(
-            "loginButton"
-        );
-
-
-    if (
-        !loginForm ||
-        !loginButton
-    ) {
-
-        return;
-    }
-
-
-    /*
-     * Prevent the browser's default form
-     * submission.
-     */
-
-    loginForm.addEventListener(
-        "submit",
-        event => {
-
-            event.preventDefault();
-
-            performLogin();
-        }
-    );
-
-
-    loginButton.addEventListener(
-        "click",
-        performLogin
-    );
-
-
-    initializePasswordToggle();
-}
-
-
-/* =====================================================
-   LOGOUT BUTTON
-===================================================== */
-
-function initializeLogoutButtons() {
-
-    document
-        .querySelectorAll(
-            "#logoutButton"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    logoutUser
-                );
-            }
-        );
-}
-
-
-/* =====================================================
-   CNIC / PHONE INPUT FORMATTERS
+   INPUT FORMATTERS
 ===================================================== */
 
 function initializeInputFormatters() {
@@ -7334,7 +8314,8 @@ function initializeInputFormatters() {
     const cnicIds = [
 
         "studentCNIC",
-        "teacherCNIC"
+        "teacherCNIC",
+        "loginCNIC"
 
     ];
 
@@ -7363,6 +8344,7 @@ function initializeInputFormatters() {
     const phoneIds = [
 
         "phone",
+        "studentPhone",
         "teacherPhone"
 
     ];
@@ -7394,15 +8376,162 @@ function initializeInputFormatters() {
 
 
 /* =====================================================
-   SESSION ACTIVITY
+   AUTO SAVE DRAFT
+===================================================== */
+
+function initializeDraftAutoSave() {
+
+    if (
+        getCurrentRole() !==
+        ROLE_ADMIN
+    ) {
+
+        return;
+    }
+
+
+    const forms =
+        document.querySelectorAll(
+            "form[data-draft]"
+        );
+
+
+    forms.forEach(
+        form => {
+
+            const key =
+                `madrassa_draft_${currentFile}_${form.id}`;
+
+
+            try {
+
+                const saved =
+                    localStorage.getItem(
+                        key
+                    );
+
+
+                if (saved) {
+
+                    const data =
+                        JSON.parse(
+                            saved
+                        );
+
+
+                    Object.entries(
+                        data
+                    ).forEach(
+                        ([name, value]) => {
+
+                            const field =
+                                form.elements[
+                                    name
+                                ];
+
+
+                            if (!field) {
+
+                                return;
+                            }
+
+
+                            if (
+                                field.type ===
+                                "checkbox"
+                            ) {
+
+                                field.checked =
+                                    Boolean(value);
+
+                            } else {
+
+                                field.value =
+                                    value ?? "";
+                            }
+                        }
+                    );
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Draft restore error:",
+                    error
+                );
+            }
+
+
+            form.addEventListener(
+                "input",
+                () => {
+
+                    const data = {};
+
+
+                    Array.from(
+                        form.elements
+                    ).forEach(
+                        field => {
+
+                            if (
+                                !field.name ||
+                                field.type ===
+                                "password"
+                            ) {
+
+                                return;
+                            }
+
+
+                            if (
+                                field.type ===
+                                "checkbox"
+                            ) {
+
+                                data[field.name] =
+                                    field.checked;
+
+                            } else {
+
+                                data[field.name] =
+                                    field.value;
+                            }
+                        }
+                    );
+
+
+                    localStorage.setItem(
+                        key,
+                        JSON.stringify(
+                            data
+                        )
+                    );
+                }
+            );
+
+
+            form.addEventListener(
+                "submit",
+                () => {
+
+                    localStorage.removeItem(
+                        key
+                    );
+                }
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   SESSION INACTIVITY
 ===================================================== */
 
 let inactivityTimer = null;
 
-
-/* =====================================================
-   RESET INACTIVITY TIMER
-===================================================== */
 
 function resetInactivityTimer() {
 
@@ -7414,39 +8543,26 @@ function resetInactivityTimer() {
     }
 
 
-    if (inactivityTimer) {
+    clearTimeout(
+        inactivityTimer
+    );
 
-        clearTimeout(
-            inactivityTimer
-        );
-    }
-
-
-    /*
-     * Five minute inactivity logout.
-     */
 
     inactivityTimer =
         setTimeout(
             () => {
 
-                alert(
-                    "غیر فعالیت کی وجہ سے آپ کا سیشن ختم ہو گیا ہے۔"
+                logoutUser(
+                    true
                 );
 
-                logoutUser();
-
             },
-            5 * 60 * 1000
+            INACTIVITY_LIMIT
         );
 }
 
 
-/* =====================================================
-   ACTIVITY LISTENERS
-===================================================== */
-
-function initializeInactivityProtection() {
+function initializeInactivityLogout() {
 
     if (
         !isAuthenticated()
@@ -7485,84 +8601,37 @@ function initializeInactivityProtection() {
 
 
 /* =====================================================
-   PROTECT PRIVATE PAGES
+   LOGOUT BUTTONS
 ===================================================== */
 
-function protectCurrentPage() {
+function initializeLogoutButtons() {
 
-    const publicPages = [
-
-        "",
-        "index.html",
-        "login.html",
-        "student-apply.html",
-        "teacher-apply.html"
-
-    ];
-
-
-    if (
-        publicPages.includes(
-            currentFile
+    document
+        .querySelectorAll(
+            ".logout-button, [data-logout]"
         )
-    ) {
+        .forEach(
+            button => {
 
-        return true;
-    }
+                button.addEventListener(
+                    "click",
+                    event => {
 
+                        event.preventDefault();
 
-    if (
-        !isAuthenticated()
-    ) {
-
-        redirectToLogin();
-
-        return false;
-    }
-
-
-    /*
-     * Admin-only pages.
-     */
-
-    const adminOnlyPages = [
-
-        "students.html",
-        "teachers.html",
-        "approvals.html"
-
-    ];
-
-
-    if (
-        adminOnlyPages.includes(
-            currentFile
-        ) &&
-        !isAdmin()
-    ) {
-
-        alert(
-            "اس صفحے تک رسائی صرف ایڈمن کو حاصل ہے۔"
+                        logoutUser();
+                    }
+                );
+            }
         );
-
-
-        window.location.href =
-            "dashboard.html";
-
-
-        return false;
-    }
-
-
-    return true;
 }
 
 
 /* =====================================================
-   KEYBOARD MODAL CLOSE
+   ESCAPE KEY MODALS
 ===================================================== */
 
-function initializeKeyboardEvents() {
+function initializeEscapeKey() {
 
     document.addEventListener(
         "keydown",
@@ -7586,90 +8655,24 @@ function initializeKeyboardEvents() {
 
 
 /* =====================================================
-   GLOBAL ERROR HANDLER
-===================================================== */
-
-window.addEventListener(
-    "error",
-    event => {
-
-        console.error(
-            "Global JavaScript error:",
-            event.error ||
-            event.message
-        );
-    }
-);
-
-
-/* =====================================================
-   UNHANDLED PROMISE ERROR
-===================================================== */
-
-window.addEventListener(
-    "unhandledrejection",
-    event => {
-
-        console.error(
-            "Unhandled promise error:",
-            event.reason
-        );
-    }
-);
-
-
-/* =====================================================
-   PAGE ROUTER
+   PAGE ROUTING
 ===================================================== */
 
 async function initializeCurrentPage() {
 
-    /*
-     * These initializers are safe on every page
-     * because they only attach listeners when
-     * matching elements exist.
-     */
-
-    initializeHomePage();
-
-    initializeBackButtons();
-
-    initializeLogoutButtons();
-
-    initializeInputFormatters();
-
-    initializeKeyboardEvents();
+    const page =
+        currentFile;
 
 
-    /*
-     * Check private page access before loading
-     * database information.
-     */
-
-    if (
-        !protectCurrentPage()
-    ) {
-
-        return;
-    }
-
-
-    switch (currentFile) {
-
-
-        /* =========================
-           HOME
-        ========================== */
+    switch (page) {
 
         case "":
         case "index.html":
 
+            initializeLoginPage();
+
             break;
 
-
-        /* =========================
-           LOGIN
-        ========================== */
 
         case "login.html":
 
@@ -7678,20 +8681,13 @@ async function initializeCurrentPage() {
             break;
 
 
-        /* =========================
-           DASHBOARD
-        ========================== */
-
+        case "admin.html":
         case "dashboard.html":
 
             await initializeDashboardPage();
 
             break;
 
-
-        /* =========================
-           STUDENTS
-        ========================== */
 
         case "students.html":
 
@@ -7700,20 +8696,12 @@ async function initializeCurrentPage() {
             break;
 
 
-        /* =========================
-           TEACHERS
-        ========================== */
-
         case "teachers.html":
 
             await initializeTeachersPage();
 
             break;
 
-
-        /* =========================
-           ATTENDANCE
-        ========================== */
 
         case "attendance.html":
 
@@ -7722,31 +8710,19 @@ async function initializeCurrentPage() {
             break;
 
 
-        /* =========================
-           STUDENT APPLICATION
-        ========================== */
+        case "announcements.html":
 
-        case "student-apply.html":
-
-            initializeStudentApplicationPage();
+            await initializeAnnouncementsPage();
 
             break;
 
 
-        /* =========================
-           TEACHER APPLICATION
-        ========================== */
+        case "feedback.html":
 
-        case "teacher-apply.html":
-
-            initializeTeacherApplicationPage();
+            await initializeFeedbackPage();
 
             break;
 
-
-        /* =========================
-           ADMIN APPROVALS
-        ========================== */
 
         case "approvals.html":
 
@@ -7755,48 +8731,201 @@ async function initializeCurrentPage() {
             break;
 
 
+        case "student-application.html":
+
+            initializeStudentApplicationPage();
+
+            break;
+
+
+        case "teacher-application.html":
+
+            initializeTeacherApplicationPage();
+
+            break;
+
+
+        case "teacher.html":
+
+            if (
+                !requireRole(
+                    ROLE_TEACHER
+                )
+            ) {
+
+                return;
+            }
+
+
+            showDashboardUser();
+
+            applyDashboardPermissions();
+
+            break;
+
+
+        case "student.html":
+
+            if (
+                !requireRole(
+                    ROLE_STUDENT
+                )
+            ) {
+
+                return;
+            }
+
+
+            showDashboardUser();
+
+            applyDashboardPermissions();
+
+            break;
+
+
         default:
 
-            console.log(
-                "No special initializer for:",
-                currentFile
-            );
+            break;
     }
-
-
-    /*
-     * Start inactivity protection only after
-     * private-page security is verified.
-     */
-
-    initializeInactivityProtection();
 }
 
 
 /* =====================================================
-   START APPLICATION
+   GLOBAL INITIALIZATION
 ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+async function initializeApplication() {
 
-        try {
+    try {
 
-            await initializeCurrentPage();
+        initializePasswordToggles();
 
-        } catch (error) {
+        initializeInputFormatters();
 
-            console.error(
-                "Application initialization error:",
-                error
-            );
-        }
+        initializeLogoutButtons();
+
+        initializeEscapeKey();
+
+
+        await initializeCurrentPage();
+
+
+        initializeDraftAutoSave();
+
+        initializeInactivityLogout();
+
+
+    } catch (error) {
+
+        console.error(
+            "Application initialization error:",
+            error
+        );
     }
-);
+}
 
 
 /* =====================================================
-   END OF SCRIPT.JS
+   DOM READY
+===================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeApplication
+    );
+
+} else {
+
+    initializeApplication();
+}
+
+
+/* =====================================================
+   GLOBAL FUNCTIONS FOR HTML BUTTONS
+===================================================== */
+
+window.openStudentForm =
+    openStudentForm;
+
+window.closeStudentForm =
+    closeStudentForm;
+
+window.addMahramField =
+    addMahramField;
+
+window.editStudent =
+    editStudent;
+
+window.deleteStudent =
+    deleteStudent;
+
+window.showStudentDetails =
+    showStudentDetails;
+
+window.closeStudentDetails =
+    closeStudentDetails;
+
+
+window.openTeacherForm =
+    openTeacherForm;
+
+window.closeTeacherForm =
+    closeTeacherForm;
+
+window.editTeacher =
+    editTeacher;
+
+window.deleteTeacher =
+    deleteTeacher;
+
+window.showTeacherDetails =
+    showTeacherDetails;
+
+window.closeTeacherDetails =
+    closeTeacherDetails;
+
+
+window.loadAttendanceStudents =
+    loadAttendanceStudents;
+
+window.saveAttendance =
+    saveAttendance;
+
+
+window.saveAnnouncement =
+    saveAnnouncement;
+
+window.deleteAnnouncement =
+    deleteAnnouncement;
+
+
+window.saveFeedback =
+    saveFeedback;
+
+
+window.approveStudentApplication =
+    approveStudentApplication;
+
+window.rejectStudentApplication =
+    rejectStudentApplication;
+
+window.approveTeacherApplication =
+    approveTeacherApplication;
+
+window.rejectTeacherApplication =
+    rejectTeacherApplication;
+
+
+window.logoutUser =
+    logoutUser;
+
+
+/* =====================================================
+   END SCRIPT.JS
    PART 3 / 3
 ===================================================== */
