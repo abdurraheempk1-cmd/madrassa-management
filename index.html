@@ -61,39 +61,114 @@
         </div>
 
         <p class="subtitle">
-            براہِ کرم اپنا اکاؤنٹ منتخب کریں
+            لاگ اِن یا نئے داخلے کے لیے مطلوبہ آپشن منتخب کریں
         </p>
 
 
-        <button
-            type="button"
-            id="adminLoginButton"
-        >
-            👑 ایڈمن لاگ اِن
-        </button>
+        <!-- =========================
+             LOGIN SECTION
+        ========================== -->
 
-        <button
-            type="button"
-            id="teacherLoginButton"
-        >
-            👩‍🏫 استاد لاگ اِن
-        </button>
+        <div class="home-section">
 
-        <button
-            type="button"
-            id="studentLoginButton"
-        >
-            👧 طالبہ لاگ اِن
-        </button>
+            <h2 class="home-section-title">
+                🔐 لاگ اِن
+            </h2>
+
+
+            <button
+                type="button"
+                id="adminLoginButton"
+                data-role="admin"
+            >
+                👑 ایڈمن لاگ اِن
+            </button>
+
+
+            <button
+                type="button"
+                id="teacherLoginButton"
+                data-role="teacher"
+            >
+                👩‍🏫 استاد لاگ اِن
+            </button>
+
+
+            <button
+                type="button"
+                id="studentLoginButton"
+                data-role="student"
+            >
+                👧 طالبہ لاگ اِن
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             APPLICATION SECTION
+        ========================== -->
+
+        <div class="home-section application-section">
+
+            <h2 class="home-section-title">
+                📝 نیا داخلہ / درخواست
+            </h2>
+
+            <p class="application-note">
+                نئی درخواست جمع ہونے کے بعد ایڈمن کی منظوری ضروری ہوگی۔
+            </p>
+
+
+            <button
+                type="button"
+                id="studentApplyButton"
+                class="application-button"
+            >
+                👧 نئی طالبہ داخلہ درخواست
+            </button>
+
+
+            <button
+                type="button"
+                id="teacherApplyButton"
+                class="application-button"
+            >
+                👩‍🏫 نئے استاد کی درخواست
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             SECURITY NOTICE
+        ========================== -->
+
+        <div class="approval-notice">
+
+            🔒 طالبہ یا استاد کی نئی درخواست جمع ہونے کے بعد
+            وہ فوراً فعال اکاؤنٹ نہیں بنے گا۔
+            ایڈمن کی منظوری کے بعد ہی اکاؤنٹ فعال ہوگا۔
+
+        </div>
 
     </main>
 
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
-    <script src="script.js"></script>
+
+    <!-- =========================
+         MAIN SCRIPT
+    ========================== -->
+
+    <script src="script.js?v=20"></script>
 
 </body>
 
