@@ -192,6 +192,111 @@
 
 
         <!-- =========================
+             ADMIN APPROVAL STATISTICS
+        ========================== -->
+
+        <div
+            id="adminApprovalStats"
+            class="stats-grid admin-only"
+        >
+
+
+            <!-- PENDING STUDENTS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <strong id="pendingStudentTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        طالبات کی زیرِ منظوری درخواستیں
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PENDING TEACHERS -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <strong id="pendingTeacherTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        اساتذہ کی زیرِ منظوری درخواستیں
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TODAY ATTENDANCE -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <strong id="todayAttendanceTotal">
+                        0
+                    </strong>
+
+                    <span>
+                        آج کی حاضری
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL PENDING -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔔
+                </div>
+
+                <div>
+
+                    <strong id="totalPendingApplications">
+                        0
+                    </strong>
+
+                    <span>
+                        کل زیرِ منظوری درخواستیں
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =========================
              MAIN MENU
         ========================== -->
 
@@ -269,8 +374,39 @@
                 </span>
 
                 <small>
-                    روزانہ حاضری
+                    روزانہ چھ کلاسوں کی حاضری
                 </small>
+
+            </button>
+
+
+            <!-- APPROVALS -->
+
+            <button
+                type="button"
+                class="menu-card admin-only"
+                id="approvalsMenu"
+                data-page="approvals"
+            >
+
+                <span class="menu-icon">
+                    ✅
+                </span>
+
+                <span>
+                    درخواستوں کی منظوری
+                </span>
+
+                <small>
+                    طالبات اور اساتذہ کی درخواستیں
+                </small>
+
+                <span
+                    id="approvalBadge"
+                    class="approval-badge hidden"
+                >
+                    0
+                </span>
 
             </button>
 
@@ -341,11 +477,46 @@
                 </span>
 
                 <small>
-                    مختلف رپورٹس
+                    حاضری اور دیگر رپورٹس
                 </small>
 
             </button>
 
+
+        </div>
+
+
+        <!-- =========================
+             ADMIN APPROVAL NOTICE
+        ========================== -->
+
+        <div
+            id="adminApprovalNotice"
+            class="approval-notice admin-only hidden"
+        >
+
+            <strong>
+                🔔 نئی درخواستیں موجود ہیں
+            </strong>
+
+            <p>
+                طالبات یا اساتذہ کی نئی درخواستوں کو
+                فعال کرنے سے پہلے ان کی معلومات کی جانچ
+                اور ایڈمن منظوری ضروری ہے۔
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             SECURITY INFORMATION
+        ========================== -->
+
+        <div class="dashboard-security-note">
+
+            🔒 اکاؤنٹ، درخواست کی منظوری، طالبات و اساتذہ
+            میں تبدیلی اور حساس انتظامی کارروائیاں
+            صرف مجاز ایڈمن کے ذریعے کی جائیں گی۔
 
         </div>
 
@@ -379,7 +550,7 @@
          MAIN SCRIPT
     ========================== -->
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20"></script>
 
 
 </body>
