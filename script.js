@@ -1,4 +1,118 @@
 /* =====================================================
+   FRONTEND PART 1
+   SUPABASE CONNECTION
+   ===================================================== */
+
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+
+/* =====================================================
+   CHECK SUPABASE CONNECTION
+   ===================================================== */
+
+async function checkSupabaseConnection() {
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.getSession();
+
+        if (error) {
+            throw error;
+        }
+
+        console.log(
+            "Supabase connection successful"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Supabase connection failed:",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* =====================================================
+   GET CURRENT SESSION
+   ===================================================== */
+
+async function getCurrentSession() {
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+
+        console.error(
+            "Session error:",
+            error
+        );
+
+        return null;
+    }
+
+    return data.session || null;
+}
+
+
+/* =====================================================
+   GET CURRENT USER
+   ===================================================== */
+
+async function getCurrentUser() {
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getUser();
+
+    if (error) {
+
+        console.error(
+            "User error:",
+            error
+        );
+
+        return null;
+    }
+
+    return data.user || null;
+}
+
+
+/* =====================================================
+   INITIAL CONNECTION TEST
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        await checkSupabaseConnection();
+
+    }
+);
+
+
+
+/* =====================================================
    MADRASSA MANAGEMENT SYSTEM
    مدرسہ شہناز اختر للبنات
 
