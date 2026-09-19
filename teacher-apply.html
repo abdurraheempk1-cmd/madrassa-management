@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        استاد کی درخواست - مدرسہ شہناز اختر للبنات
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+    <main class="teacher-page">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="teacher-header">
+
+            <div class="teacher-header-buttons">
+
+                <button
+                    type="button"
+                    id="backToHome"
+                    class="back-button"
+                >
+                    ↩️ واپس جائیں
+                </button>
+
+            </div>
+
+
+            <div>
+
+                <h1>
+                    📝 استاد کی درخواست
+                </h1>
+
+                <p class="address">
+                    مدرسہ شہناز اختر للبنات
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             INFORMATION
+        ========================== -->
+
+        <div class="mahram-warning">
+
+            درخواست جمع ہونے کے بعد ایڈمن اس کی جانچ کرے گا۔
+            ایڈمن کی منظوری کے بغیر استاد کا اکاؤنٹ فعال نہیں ہوگا۔
+
+        </div>
+
+
+        <!-- =========================
+             APPLICATION FORM
+        ========================== -->
+
+        <div class="teacher-section">
+
+            <h2>
+                👩‍🏫 نئے استاد کی درخواست
+            </h2>
+
+
+            <div
+                id="teacherApplyMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+
+            <form id="teacherApplyForm">
+
+
+                <!-- =========================
+                     PERSONAL INFORMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        👤 ذاتی معلومات
+                    </h3>
+
+
+                    <div class="teacher-form-grid">
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherName">
+                                استاد کا نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherName"
+                                required
+                                placeholder="استاد کا نام"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherFatherName">
+                                والد کا نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherFatherName"
+                                required
+                                placeholder="والد کا نام"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherCNIC">
+                                شناختی کارڈ نمبر
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherCNIC"
+                                inputmode="numeric"
+                                maxlength="15"
+                                required
+                                placeholder="00000-0000000-0"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherPhone">
+                                موبائل نمبر
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="applyTeacherPhone"
+                                inputmode="numeric"
+                                maxlength="11"
+                                required
+                                placeholder="03XXXXXXXXX"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherDateOfBirth">
+                                تاریخ پیدائش
+                            </label>
+
+                            <input
+                                type="date"
+                                id="applyTeacherDateOfBirth"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field full-width">
+
+                            <label for="applyTeacherAddress">
+                                مکمل پتہ
+                            </label>
+
+                            <textarea
+                                id="applyTeacherAddress"
+                                rows="3"
+                                required
+                                placeholder="مکمل پتہ درج کریں"
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     EDUCATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        📚 تعلیمی معلومات
+                    </h3>
+
+
+                    <div class="teacher-form-grid">
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherQualification">
+                                تعلیمی قابلیت
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherQualification"
+                                required
+                                placeholder="مثلاً عالمہ، ایم اے، بی اے"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherSpecialization">
+                                تخصص / مہارت
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherSpecialization"
+                                placeholder="مثلاً حفظ، تجوید، درس نظامی"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherExperience">
+                                تدریسی تجربہ
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherExperience"
+                                placeholder="مثلاً 3 سال"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherPreviousInstitute">
+                                سابقہ ادارہ
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherPreviousInstitute"
+                                placeholder="سابقہ مدرسہ یا ادارہ"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     TEACHING INFORMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        🏫 تدریسی معلومات
+                    </h3>
+
+
+                    <div class="teacher-form-grid">
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherPreferredClass">
+                                مطلوبہ کلاس
+                            </label>
+
+                            <select
+                                id="applyTeacherPreferredClass"
+                                required
+                            >
+
+                                <option value="">
+                                    منتخب کریں
+                                </option>
+
+                                <option value="ناظرہ">
+                                    ناظرہ
+                                </option>
+
+                                <option value="حفظ">
+                                    حفظ
+                                </option>
+
+                                <option value="ترجمہ">
+                                    ترجمہ
+                                </option>
+
+                                <option value="درس نظامی">
+                                    درس نظامی
+                                </option>
+
+                                <option value="دیگر">
+                                    دیگر
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherAvailableFrom">
+                                دستیابی کی تاریخ
+                            </label>
+
+                            <input
+                                type="date"
+                                id="applyTeacherAvailableFrom"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     ACCOUNT INFORMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <h3>
+                        🔐 اکاؤنٹ کی معلومات
+                    </h3>
+
+
+                    <div class="mahram-warning">
+
+                        یہ معلومات صرف درخواست کے لیے ہیں۔
+                        اکاؤنٹ ایڈمن کی منظوری کے بعد ہی فعال ہوگا۔
+
+                    </div>
+
+
+                    <div class="teacher-form-grid">
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherUsername">
+                                صارف نام
+                            </label>
+
+                            <input
+                                type="text"
+                                id="applyTeacherUsername"
+                                autocomplete="username"
+                                required
+                                placeholder="صارف نام منتخب کریں"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherPassword">
+                                پاس ورڈ
+                            </label>
+
+                            <input
+                                type="password"
+                                id="applyTeacherPassword"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                                placeholder="کم از کم 8 حروف"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-field">
+
+                            <label for="applyTeacherConfirmPassword">
+                                پاس ورڈ دوبارہ درج کریں
+                            </label>
+
+                            <input
+                                type="password"
+                                id="applyTeacherConfirmPassword"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                                placeholder="پاس ورڈ دوبارہ درج کریں"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     CONFIRMATION
+                ========================== -->
+
+                <div class="form-section">
+
+                    <label class="mahram-confirm">
+
+                        <input
+                            type="checkbox"
+                            id="teacherApplyConfirmation"
+                            required
+                        >
+
+                        میں تصدیق کرتی ہوں کہ فراہم کردہ تمام معلومات درست ہیں۔
+
+                    </label>
+
+                </div>
+
+
+                <!-- =========================
+                     SUBMIT
+                ========================== -->
+
+                <div class="teacher-form-buttons">
+
+
+                    <button
+                        type="submit"
+                        id="submitTeacherApplication"
+                        class="save-button"
+                    >
+                        📤 درخواست جمع کریں
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelTeacherApplication"
+                        class="cancel-button"
+                    >
+                        ❌ منسوخ کریں
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             APPLICATION STATUS
+        ========================== -->
+
+        <div class="teacher-section">
+
+            <h2>
+                🔎 درخواست کی حالت
+            </h2>
+
+
+            <p class="address">
+                درخواست نمبر درج کرکے اپنی درخواست کی حالت دیکھیں۔
+            </p>
+
+
+            <div class="teacher-form-grid">
+
+
+                <div class="teacher-field full-width">
+
+                    <label for="teacherApplicationNumber">
+                        درخواست نمبر
+                    </label>
+
+                    <input
+                        type="text"
+                        id="teacherApplicationNumber"
+                        placeholder="درخواست نمبر"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="button"
+                id="checkTeacherApplicationStatus"
+                class="primary-button"
+            >
+                🔍 حالت دیکھیں
+            </button>
+
+
+            <div
+                id="teacherApplicationStatusResult"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+
+        <!-- =========================
+             SECURITY INFORMATION
+        ========================== -->
+
+        <div class="mahram-warning">
+
+            🔒 درخواست جمع کرنے سے براہِ راست استاد کا اکاؤنٹ نہیں بنے گا۔
+            درخواست پہلے ایڈمن کے پاس جائے گی۔
+            منظوری کے بعد استاد کا کوڈ، باقاعدہ ریکارڈ اور فعال اکاؤنٹ بنایا جائے گا۔
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- =========================
+         MAIN SCRIPT
+    ========================== -->
+
+    <script src="script.js?v=20"></script>
+
+
+</body>
+
+</html>
