@@ -65,7 +65,7 @@
                 </h1>
 
                 <p>
-                    طالبات اور اساتذہ کی نئی درخواستیں
+                    طالبات اور اساتذہ کی درخواستوں کا انتظام
                 </p>
 
             </div>
@@ -74,43 +74,23 @@
 
 
         <!-- =========================
-             SECURITY MESSAGE
+             SECURITY NOTICE
         ========================== -->
 
-        <div class="mahram-warning">
+        <div class="security-card">
 
-            🔒 یہ صفحہ صرف ایڈمن کے لیے ہے۔
-            درخواست منظور یا مسترد کرنے کا اختیار صرف ایڈمن کو حاصل ہے۔
+            🔐 یہ صفحہ صرف ایڈمن کے لیے ہے۔
+            کسی بھی طالبہ یا استاد کا اکاؤنٹ
+            ایڈمن کی منظوری کے بغیر فعال نہیں ہوگا۔
 
         </div>
 
 
         <!-- =========================
-             SUMMARY
+             STATISTICS
         ========================== -->
 
         <div class="stats-grid">
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ⏳
-                </div>
-
-                <div>
-
-                    <strong id="pendingApplicationsTotal">
-                        0
-                    </strong>
-
-                    <span>
-                        کل زیرِ منظوری
-                    </span>
-
-                </div>
-
-            </div>
 
 
             <div class="stat-card">
@@ -121,12 +101,12 @@
 
                 <div>
 
-                    <strong id="pendingStudentsTotal">
+                    <strong id="pendingStudentApplications">
                         0
                     </strong>
 
                     <span>
-                        طالبات کی درخواستیں
+                        طالبات کی زیرِ منظوری درخواستیں
                     </span>
 
                 </div>
@@ -142,12 +122,12 @@
 
                 <div>
 
-                    <strong id="pendingTeachersTotal">
+                    <strong id="pendingTeacherApplications">
                         0
                     </strong>
 
                     <span>
-                        اساتذہ کی درخواستیں
+                        اساتذہ کی زیرِ منظوری درخواستیں
                     </span>
 
                 </div>
@@ -168,7 +148,7 @@
                     </strong>
 
                     <span>
-                        منظور شدہ
+                        منظور شدہ درخواستیں
                     </span>
 
                 </div>
@@ -176,93 +156,26 @@
             </div>
 
 
-        </div>
+            <div class="stat-card">
 
-
-        <!-- =========================
-             FILTERS
-        ========================== -->
-
-        <div class="student-form-card">
-
-            <h2>
-                🔍 درخواستیں تلاش کریں
-            </h2>
-
-
-            <div class="form-grid">
-
-
-                <div class="form-group">
-
-                    <label for="approvalTypeFilter">
-                        درخواست کی قسم
-                    </label>
-
-                    <select id="approvalTypeFilter">
-
-                        <option value="all">
-                            تمام درخواستیں
-                        </option>
-
-                        <option value="student">
-                            طالبات
-                        </option>
-
-                        <option value="teacher">
-                            اساتذہ
-                        </option>
-
-                    </select>
-
+                <div class="stat-icon">
+                    ❌
                 </div>
 
+                <div>
 
-                <div class="form-group">
+                    <strong id="rejectedApplicationsTotal">
+                        0
+                    </strong>
 
-                    <label for="approvalStatusFilter">
-                        درخواست کی حالت
-                    </label>
-
-                    <select id="approvalStatusFilter">
-
-                        <option value="pending">
-                            زیرِ منظوری
-                        </option>
-
-                        <option value="approved">
-                            منظور شدہ
-                        </option>
-
-                        <option value="rejected">
-                            مسترد شدہ
-                        </option>
-
-                        <option value="all">
-                            تمام
-                        </option>
-
-                    </select>
+                    <span>
+                        نامنظور درخواستیں
+                    </span>
 
                 </div>
-
-
-                <div class="form-group full-width">
-
-                    <label for="approvalSearch">
-                        تلاش کریں
-                    </label>
-
-                    <input
-                        type="search"
-                        id="approvalSearch"
-                        placeholder="نام، موبائل نمبر یا درخواست نمبر"
-                    >
-
-                </div>
-
 
             </div>
+
 
         </div>
 
@@ -276,11 +189,13 @@
             class="student-list-section"
         >
 
+
             <div class="student-list-header">
 
                 <h2>
                     👧 طالبات کی درخواستیں
                 </h2>
+
 
                 <span id="studentApplicationCount">
                     0
@@ -289,24 +204,29 @@
             </div>
 
 
+            <div
+                id="studentApplicationsMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+
             <div id="studentApplicationsList">
 
                 <div class="empty-students">
 
                     <div class="empty-icon">
-                        📋
+                        👧
                     </div>
 
-                    ابھی کوئی درخواست موجود نہیں۔
+                    درخواستیں لوڈ ہو رہی ہیں۔
 
                 </div>
 
             </div>
 
+
         </section>
-
-
-        <br>
 
 
         <!-- =========================
@@ -318,11 +238,13 @@
             class="student-list-section"
         >
 
+
             <div class="student-list-header">
 
                 <h2>
                     👩‍🏫 اساتذہ کی درخواستیں
                 </h2>
+
 
                 <span id="teacherApplicationCount">
                     0
@@ -331,19 +253,27 @@
             </div>
 
 
+            <div
+                id="teacherApplicationsMessage"
+                class="message"
+                aria-live="polite"
+            ></div>
+
+
             <div id="teacherApplicationsList">
 
                 <div class="empty-students">
 
                     <div class="empty-icon">
-                        📋
+                        👩‍🏫
                     </div>
 
-                    ابھی کوئی درخواست موجود نہیں۔
+                    درخواستیں لوڈ ہو رہی ہیں۔
 
                 </div>
 
             </div>
+
 
         </section>
 
@@ -352,23 +282,20 @@
 
 
     <!-- =================================================
-         APPLICATION DETAILS MODAL
+         APPLICATION DETAILS
     ================================================== -->
 
     <div
         id="applicationDetailsOverlay"
         class="student-details-overlay hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="applicationDetailsTitle"
     >
 
-        <div
-            id="applicationDetailsBox"
-            class="student-details-box"
-        >
 
+        <div class="student-details-box">
 
-            <!-- =========================
-                 MODAL HEADER
-            ========================== -->
 
             <div class="student-details-header">
 
@@ -381,16 +308,13 @@
                     type="button"
                     id="closeApplicationDetails"
                     class="close-details-button"
+                    aria-label="تفصیلات بند کریں"
                 >
                     ✖
                 </button>
 
             </div>
 
-
-            <!-- =========================
-                 DETAILS
-            ========================== -->
 
             <div id="applicationDetailsContent"></div>
 
@@ -404,12 +328,13 @@
                 class="form-section"
             >
 
+
                 <h3>
-                    🔐 ایڈمن فیصلہ
+                    📝 ایڈمن فیصلہ
                 </h3>
 
 
-                <div class="form-group">
+                <div class="form-group full-width">
 
                     <label for="applicationAdminNote">
                         ایڈمن نوٹ
@@ -417,18 +342,10 @@
 
                     <textarea
                         id="applicationAdminNote"
-                        rows="3"
-                        placeholder="ضرورت ہو تو نوٹ درج کریں"
+                        placeholder="ضرورت کے مطابق نوٹ درج کریں"
                     ></textarea>
 
                 </div>
-
-
-                <div
-                    id="approvalSecurityMessage"
-                    class="form-message"
-                    aria-live="polite"
-                ></div>
 
 
                 <div class="form-buttons">
@@ -448,28 +365,34 @@
                         id="rejectApplicationButton"
                         class="delete-student"
                     >
-                        ❌ درخواست مسترد کریں
+                        ❌ درخواست نامنظور کریں
                     </button>
 
 
                 </div>
+
 
             </div>
 
 
         </div>
 
+
     </div>
 
 
     <!-- =================================================
-         FINAL CONFIRMATION MODAL
+         APPROVAL CONFIRMATION
     ================================================== -->
 
     <div
         id="approvalConfirmationOverlay"
         class="student-details-overlay hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="approvalConfirmationTitle"
     >
+
 
         <div class="student-details-box">
 
@@ -492,22 +415,11 @@
             </div>
 
 
-            <div class="mahram-warning">
+            <div id="approvalConfirmationContent">
 
-                ⚠️ اس کارروائی کی تصدیق کریں۔
-                منظوری کے بعد باقاعدہ طالبہ یا استاد کا ریکارڈ بنایا جائے گا۔
+                کیا آپ واقعی اس درخواست پر کارروائی کرنا چاہتے ہیں؟
 
             </div>
-
-
-            <div id="approvalConfirmationContent"></div>
-
-
-            <div
-                id="approvalConfirmationMessage"
-                class="form-message"
-                aria-live="polite"
-            ></div>
 
 
             <div class="form-buttons">
@@ -515,7 +427,7 @@
 
                 <button
                     type="button"
-                    id="confirmApprovalAction"
+                    id="confirmApplicationDecision"
                     class="save-button"
                 >
                     ✅ تصدیق کریں
@@ -524,7 +436,7 @@
 
                 <button
                     type="button"
-                    id="cancelApprovalAction"
+                    id="cancelApplicationDecision"
                     class="cancel-button"
                 >
                     ❌ منسوخ کریں
@@ -533,7 +445,9 @@
 
             </div>
 
+
         </div>
+
 
     </div>
 
@@ -551,7 +465,7 @@
          MAIN SCRIPT
     ========================== -->
 
-    <script src="script.js?v=20"></script>
+    <script src="script.js?v=21"></script>
 
 
 </body>
