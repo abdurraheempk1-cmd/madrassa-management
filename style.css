@@ -22,6 +22,10 @@ body {
     color: #172033;
 }
 
+body.modal-open {
+    overflow: hidden;
+}
+
 /* =====================================================
    GENERAL
 ===================================================== */
@@ -75,10 +79,6 @@ textarea {
     display: none !important;
 }
 
-body.modal-open {
-    overflow: hidden;
-}
-
 .message,
 .form-message {
     min-height: 30px;
@@ -98,29 +98,22 @@ body.modal-open {
 }
 
 .cancel-button,
-.back-button {
-    background: #eef2f7;
-    color: #475569;
-}
-
-.cancel-button:hover,
-.back-button:hover {
-    background: #e2e8f0;
-    box-shadow: none;
-}
-
+.back-button,
 .logout-button {
     background: #eef2f7;
     color: #475569;
 }
 
+.cancel-button:hover,
+.back-button:hover,
 .logout-button:hover {
     background: #e2e8f0;
     box-shadow: none;
 }
 
 .delete-student,
-.delete-teacher {
+.delete-teacher,
+.reject-application {
     background: #dc2626;
 }
 
@@ -130,8 +123,13 @@ body.modal-open {
 }
 
 .view-student,
-.view-teacher {
+.view-teacher,
+.view-application {
     background: #2563eb;
+}
+
+.approve-application {
+    background: #16a34a;
 }
 
 /* =====================================================
@@ -189,6 +187,44 @@ body.modal-open {
     margin-bottom: 25px;
 }
 
+.home-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.home-section-title {
+    margin-bottom: 12px;
+    font-size: 19px;
+    line-height: 2;
+}
+
+.application-section {
+    margin-top: 25px;
+}
+
+.application-note {
+    margin-bottom: 12px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 2;
+}
+
+.application-button {
+    background: #475569;
+}
+
+.approval-notice {
+    margin-top: 20px;
+    padding: 13px;
+    border: 1px solid #fed7aa;
+    border-radius: 12px;
+    background: #fff7ed;
+    color: #9a3412;
+    font-size: 13px;
+    line-height: 2;
+}
+
 /* =====================================================
    LOGIN
 ===================================================== */
@@ -221,6 +257,22 @@ body.modal-open {
 .login-container .address {
     text-align: center;
     margin-bottom: 25px;
+}
+
+.selected-role-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f1f5ff;
+    color: #475569;
+}
+
+.selected-role-box strong {
+    color: #2563eb;
 }
 
 .login-container label {
@@ -305,6 +357,29 @@ body.modal-open {
     font-size: 14px;
     font-weight: 400;
     color: #64748b;
+}
+
+.login-security-note {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    font-size: 13px;
+    line-height: 2;
+    text-align: center;
+}
+
+.rejected-notice {
+    margin-top: 15px;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 13px;
+    line-height: 2;
 }
 
 /* =====================================================
@@ -464,7 +539,7 @@ body.modal-open {
 }
 
 /* =====================================================
-   STUDENTS
+   STUDENTS / COMMON PAGE
 ===================================================== */
 
 .students-page {
@@ -790,7 +865,7 @@ body.modal-open {
 }
 
 /* =====================================================
-   DETAILS MODALS
+   MODALS
 ===================================================== */
 
 .student-details-overlay,
@@ -904,10 +979,6 @@ body.modal-open {
 .teacher-header-buttons button {
     width: auto;
     min-width: 130px;
-    margin: 0;
-}
-
-.teacher-header-buttons .logout-button {
     margin: 0;
 }
 
@@ -1032,10 +1103,6 @@ body.modal-open {
     align-items: center;
     margin-bottom: 15px;
     gap: 10px;
-}
-
-.teacher-list-header h2 {
-    margin: 0;
 }
 
 .teacher-list-count {
@@ -1308,18 +1375,6 @@ body.modal-open {
     font-size: 13px;
 }
 
-.approve-application {
-    background: #16a34a;
-}
-
-.reject-application {
-    background: #dc2626;
-}
-
-.view-application {
-    background: #2563eb;
-}
-
 #applicationDecisionSection {
     margin-top: 20px;
 }
@@ -1342,7 +1397,7 @@ body.modal-open {
 }
 
 /* =====================================================
-   SECURITY / APPROVAL INDICATORS
+   SECURITY / STATUS
 ===================================================== */
 
 .security-card {
@@ -1419,8 +1474,6 @@ body.modal-open {
         font-size: 16px;
     }
 
-    /* DASHBOARD */
-
     .dashboard {
         min-height: calc(100vh - 20px);
         padding: 20px 14px;
@@ -1452,8 +1505,6 @@ body.modal-open {
         padding: 10px;
     }
 
-    /* STUDENTS */
-
     .students-header {
         align-items: stretch;
         flex-direction: column;
@@ -1481,15 +1532,10 @@ body.modal-open {
     }
 
     .student-card-buttons,
-    .application-actions {
-        grid-template-columns: 1fr;
-    }
-
+    .application-actions,
     .form-buttons {
         grid-template-columns: 1fr;
     }
-
-    /* MODALS */
 
     .student-details-overlay,
     .teacher-details-overlay {
@@ -1503,8 +1549,6 @@ body.modal-open {
         border-radius: 16px;
         padding: 16px;
     }
-
-    /* TEACHERS */
 
     .teacher-page {
         padding: 0;
@@ -1548,8 +1592,6 @@ body.modal-open {
         font-size: 25px;
     }
 
-    /* ATTENDANCE */
-
     .attendance-page .page-header {
         align-items: stretch;
         flex-direction: column;
@@ -1572,14 +1614,10 @@ body.modal-open {
         width: 100%;
     }
 
-    /* APPLICATION */
-
     .application-card-header {
         flex-direction: column;
     }
-
 }
-
 
 /* =====================================================
    SMALL MOBILE
@@ -1587,20 +1625,10 @@ body.modal-open {
 
 @media (max-width: 430px) {
 
-    .attendance-quick-actions {
-        grid-template-columns: 1fr;
-    }
-
-    .attendance-options {
-        grid-template-columns: 1fr;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
+    .attendance-quick-actions,
+    .attendance-options,
+    .stats-grid,
     .menu-grid {
         grid-template-columns: 1fr;
     }
-
-}
+   }
