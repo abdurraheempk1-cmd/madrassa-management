@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اساتذہ کے نوٹس | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="admin-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="adminMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            اساتذہ کے نوٹس
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="adminSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    ایڈمن پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="admin.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+
+                <a href="teachers.html"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>اساتذہ</strong>
+                </a>
+
+
+                <a href="admin-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+
+                <a href="admin-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+
+                <a href="admin-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+
+                <a href="admin-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+
+                <a href="admin-feedback.html"
+                   class="portal-nav-link active">
+                    <span>✎</span>
+                    <strong>اساتذہ کے نوٹس</strong>
+                </a>
+
+
+                <a href="admin-accounts.html"
+                   class="portal-nav-link">
+                    <span>🔐</span>
+                    <strong>اکاؤنٹس اور منظوری</strong>
+                </a>
+
+
+                <a href="admin-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="adminLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        اساتذہ کے نوٹس
+                    </h1>
+
+                    <p>
+                        طالبات کے بارے میں اساتذہ کی رائے اور تدریسی نوٹس
+                    </p>
+
+                </div>
+
+
+                <a href="admin.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="adminFeedbackMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نوٹس کا خلاصہ
+                        </h2>
+
+                        <p>
+                            محفوظ شدہ استاد نوٹس کی موجودہ معلومات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                کل نوٹس
+                            </span>
+
+                            <strong id="adminFeedbackTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                طالبات
+                            </span>
+
+                            <strong id="adminFeedbackStudentCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                اساتذہ
+                            </span>
+
+                            <strong id="adminFeedbackTeacherCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                آج کے نوٹس
+                            </span>
+
+                            <strong id="adminFeedbackTodayCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نوٹس تلاش کریں
+                        </h2>
+
+                        <p>
+                            طالبہ، استاد، جماعت، قسم یا تاریخ کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminFeedbackFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <!-- STUDENT -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackStudentSearch">
+                            طالبہ
+                        </label>
+
+                        <input type="search"
+                               id="adminFeedbackStudentSearch"
+                               placeholder="نام یا داخلہ نمبر">
+
+                    </div>
+
+
+                    <!-- TEACHER -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackTeacherFilter">
+                            استاد
+                        </label>
+
+                        <select id="adminFeedbackTeacherFilter">
+
+                            <option value="">
+                                تمام اساتذہ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CLASS -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="adminFeedbackClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TYPE -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackTypeFilter">
+                            نوٹ کی قسم
+                        </label>
+
+                        <select id="adminFeedbackTypeFilter">
+
+                            <option value="">
+                                تمام اقسام
+                            </option>
+
+                            <option value="general">
+                                عمومی
+                            </option>
+
+                            <option value="academic">
+                                تعلیمی
+                            </option>
+
+                            <option value="attendance">
+                                حاضری
+                            </option>
+
+                            <option value="homework">
+                                ہوم ورک
+                            </option>
+
+                            <option value="behavior">
+                                رویہ
+                            </option>
+
+                            <option value="progress">
+                                پیش رفت
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="adminFeedbackDateFilter">
+
+                    </div>
+
+
+                    <!-- TEXT SEARCH -->
+
+                    <div class="portal-field">
+
+                        <label for="adminFeedbackTextSearch">
+                            نوٹ تلاش کریں
+                        </label>
+
+                        <input type="search"
+                               id="adminFeedbackTextSearch"
+                               placeholder="نوٹ میں تلاش کریں">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearAdminFeedbackFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- FEEDBACK LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            تمام نوٹس
+                        </h2>
+
+                        <p id="adminFeedbackRecordCount">
+                            نوٹس لوڈ کیے جا رہے ہیں...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>وقت</th>
+                                <th>طالبہ</th>
+                                <th>داخلہ نمبر</th>
+                                <th>جماعت</th>
+                                <th>استاد</th>
+                                <th>قسم</th>
+                                <th>نوٹ</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminFeedbackBody">
+
+                            <tr>
+
+                                <td colspan="9"
+                                    class="table-empty">
+                                    نوٹس لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- FEEDBACK DETAILS MODAL -->
+
+            <div class="portal-modal"
+                 id="adminFeedbackDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminFeedbackDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نوٹ کی مکمل تفصیل
+                            </span>
+
+                            <h2 id="adminFeedbackDetailsStudentName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminFeedbackDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <!-- STUDENT DETAILS -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            طالبہ کی معلومات
+                        </h3>
+
+
+                        <div class="student-profile-details">
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    طالبہ
+                                </span>
+
+                                <strong id="adminFeedbackDetailsStudent">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    والد کا نام
+                                </span>
+
+                                <strong id="adminFeedbackDetailsFatherName">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    داخلہ نمبر
+                                </span>
+
+                                <strong id="adminFeedbackDetailsAdmissionNo">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    جماعت
+                                </span>
+
+                                <strong id="adminFeedbackDetailsClass">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- TEACHER DETAILS -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            استاد کی معلومات
+                        </h3>
+
+
+                        <div class="student-profile-details">
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    استاد
+                                </span>
+
+                                <strong id="adminFeedbackDetailsTeacher">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    استاد نمبر
+                                </span>
+
+                                <strong id="adminFeedbackDetailsTeacherId">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    تاریخ
+                                </span>
+
+                                <strong id="adminFeedbackDetailsDate">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    وقت
+                                </span>
+
+                                <strong id="adminFeedbackDetailsTime">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    نوٹ کی قسم
+                                </span>
+
+                                <strong id="adminFeedbackDetailsType">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTE -->
+
+                    <div class="announcement-message-box">
+
+                        <span>
+                            استاد کا نوٹ / رائے
+                        </span>
+
+                        <p id="adminFeedbackDetailsText">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-readonly-note">
+                        🔒 یہ استاد کا محفوظ شدہ ریکارڈ ہے۔ طالبہ اسے تبدیل نہیں کر سکتی۔
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="closeAdminFeedbackDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELETE CONFIRMATION -->
+
+            <div class="portal-modal"
+                 id="adminDeleteFeedbackModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminDeleteFeedbackOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نوٹ حذف کریں
+                            </span>
+
+                            <h2>
+                                تصدیق
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminDeleteFeedback"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <p class="portal-confirmation-text">
+                        کیا آپ واقعی یہ نوٹ حذف کرنا چاہتے ہیں؟
+                    </p>
+
+
+                    <input type="hidden"
+                           id="adminDeleteFeedbackId">
+
+
+                    <div class="profile-readonly-note">
+                        حذف کرنے کا عمل صرف مجاز ایڈمن کے لیے ہے۔
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="confirmAdminDeleteFeedback"
+                                class="small-action-button danger">
+                            حذف کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="cancelAdminDeleteFeedback"
+                                class="small-action-button secondary">
+                            منسوخ کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
