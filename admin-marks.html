@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>نمبر | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="admin-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="adminMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            نمبر
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="adminSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    ایڈمن پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="admin.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a href="teachers.html"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>اساتذہ</strong>
+                </a>
+
+                <a href="admin-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+                <a href="admin-marks.html"
+                   class="portal-nav-link active">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+                <a href="admin-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a href="admin-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a href="admin-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>اساتذہ کے نوٹس</strong>
+                </a>
+
+                <a href="admin-accounts.html"
+                   class="portal-nav-link">
+                    <span>🔐</span>
+                    <strong>اکاؤنٹس اور منظوری</strong>
+                </a>
+
+                <a href="admin-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="adminLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        امتحانات اور نمبر
+                    </h1>
+
+                    <p>
+                        تمام طالبات کے امتحانی نتائج کا مکمل ریکارڈ
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        id="openAdminAddMarksButton"
+                        class="small-action-button">
+                    نئے نمبر
+                </button>
+
+            </section>
+
+
+            <div id="adminMarksMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نتائج کا خلاصہ
+                        </h2>
+
+                        <p>
+                            محفوظ امتحانی ریکارڈ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid compact-stat-grid">
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                کل ریکارڈ
+                            </span>
+
+                            <strong id="adminMarksTotalRecords">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                کل نمبر
+                            </span>
+
+                            <strong id="adminMarksTotalMarks">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                حاصل کردہ نمبر
+                            </span>
+
+                            <strong id="adminMarksObtainedMarks">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                مجموعی فیصد
+                            </span>
+
+                            <strong id="adminMarksPercentage">
+                                0%
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نتائج تلاش کریں
+                        </h2>
+
+                        <p>
+                            طالبہ، جماعت، مضمون، امتحان یا تاریخ کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminMarksFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksStudentSearch">
+                            طالبہ
+                        </label>
+
+                        <input type="search"
+                               id="adminMarksStudentSearch"
+                               placeholder="نام یا داخلہ نمبر">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="adminMarksClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksSubjectFilter">
+                            مضمون
+                        </label>
+
+                        <input type="text"
+                               id="adminMarksSubjectFilter"
+                               placeholder="مضمون">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksExamFilter">
+                            امتحان
+                        </label>
+
+                        <input type="text"
+                               id="adminMarksExamFilter"
+                               placeholder="امتحان">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="adminMarksDateFilter">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminMarksTeacherFilter">
+                            استاد
+                        </label>
+
+                        <select id="adminMarksTeacherFilter">
+
+                            <option value="">
+                                تمام اساتذہ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearAdminMarksFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- MARKS LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            امتحانی ریکارڈ
+                        </h2>
+
+                        <p id="adminMarksRecordCount">
+                            ریکارڈ لوڈ کیا جا رہا ہے...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>طالبہ</th>
+                                <th>داخلہ نمبر</th>
+                                <th>جماعت</th>
+                                <th>مضمون</th>
+                                <th>امتحان</th>
+                                <th>پرچہ</th>
+                                <th>کل نمبر</th>
+                                <th>حاصل کردہ</th>
+                                <th>فیصد</th>
+                                <th>استاد</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminMarksBody">
+
+                            <tr>
+
+                                <td colspan="12"
+                                    class="table-empty">
+                                    نتائج لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ADD MARKS MODAL -->
+
+            <div class="portal-modal"
+                 id="adminAddMarksModal"
+                 hidden>
+
+                <div class="portal-modal-overlay"
+                     id="adminAddMarksOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نئے نمبر
+                            </span>
+
+                            <h2>
+                                امتحانی نمبر شامل کریں
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminAddMarks"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="adminAddMarksForm">
+
+
+                        <!-- CLASS -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksClass">
+                                جماعت
+                            </label>
+
+                            <select id="adminAddMarksClass"
+                                    required>
+
+                                <option value="">
+                                    جماعت منتخب کریں
+                                </option>
+
+                                <option value="ثانویہ عامہ">
+                                    ثانویہ عامہ
+                                </option>
+
+                                <option value="ثانویہ خاصہ">
+                                    ثانویہ خاصہ
+                                </option>
+
+                                <option value="عالیہ اول">
+                                    عالیہ اول
+                                </option>
+
+                                <option value="عالیہ دوم">
+                                    عالیہ دوم
+                                </option>
+
+                                <option value="عالمیہ اول">
+                                    عالمیہ اول
+                                </option>
+
+                                <option value="عالمیہ دوم / دورۂ حدیث">
+                                    عالمیہ دوم / دورۂ حدیث
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- STUDENT -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksStudent">
+                                طالبہ
+                            </label>
+
+                            <select id="adminAddMarksStudent"
+                                    required>
+
+                                <option value="">
+                                    پہلے جماعت منتخب کریں
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- SUBJECT -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksSubject">
+                                مضمون
+                            </label>
+
+                            <input type="text"
+                                   id="adminAddMarksSubject"
+                                   maxlength="100"
+                                   required>
+
+                        </div>
+
+
+                        <!-- EXAM -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksExam">
+                                امتحان
+                            </label>
+
+                            <input type="text"
+                                   id="adminAddMarksExam"
+                                   maxlength="100"
+                                   placeholder="مثلاً ماہانہ امتحان"
+                                   required>
+
+                        </div>
+
+
+                        <!-- PAPER -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksPaper">
+                                پرچہ
+                            </label>
+
+                            <input type="text"
+                                   id="adminAddMarksPaper"
+                                   maxlength="100">
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksDate">
+                                امتحان کی تاریخ
+                            </label>
+
+                            <input type="date"
+                                   id="adminAddMarksDate"
+                                   required>
+
+                        </div>
+
+
+                        <!-- TOTAL -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksTotal">
+                                کل نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="adminAddMarksTotal"
+                                   min="1"
+                                   step="1"
+                                   inputmode="numeric"
+                                   required>
+
+                        </div>
+
+
+                        <!-- OBTAINED -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksObtained">
+                                حاصل کردہ نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="adminAddMarksObtained"
+                                   min="0"
+                                   step="0.01"
+                                   inputmode="decimal"
+                                   required>
+
+                        </div>
+
+
+                        <!-- NOTE -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAddMarksNote">
+                                نوٹ
+                            </label>
+
+                            <textarea id="adminAddMarksNote"
+                                      rows="4"
+                                      maxlength="500"></textarea>
+
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveAdminAddMarks"
+                                    class="small-action-button">
+                                نمبر محفوظ کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelAdminAddMarks"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- EDIT MARK MODAL -->
+
+            <div class="portal-modal"
+                 id="adminEditMarkModal"
+                 hidden>
+
+                <div class="portal-modal-overlay"
+                     id="adminEditMarkOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نمبر میں تصحیح
+                            </span>
+
+                            <h2 id="adminEditMarkStudentName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminEditMark"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="adminEditMarkForm">
+
+                        <input type="hidden"
+                               id="adminEditMarkId">
+
+
+                        <div class="student-profile-details">
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    داخلہ نمبر
+                                </span>
+
+                                <strong id="adminEditMarkAdmissionNo">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    جماعت
+                                </span>
+
+                                <strong id="adminEditMarkClass">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    مضمون
+                                </span>
+
+                                <strong id="adminEditMarkSubject">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-detail-item">
+
+                                <span>
+                                    امتحان
+                                </span>
+
+                                <strong id="adminEditMarkExam">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminEditMarkTotal">
+                                کل نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="adminEditMarkTotal"
+                                   min="1"
+                                   step="1"
+                                   required>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminEditMarkObtained">
+                                حاصل کردہ نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="adminEditMarkObtained"
+                                   min="0"
+                                   step="0.01"
+                                   required>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminEditMarkNote">
+                                نوٹ
+                            </label>
+
+                            <textarea id="adminEditMarkNote"
+                                      rows="4"
+                                      maxlength="500"></textarea>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminEditMarkReason">
+                                تصحیح کی وجہ
+                            </label>
+
+                            <textarea id="adminEditMarkReason"
+                                      rows="4"
+                                      maxlength="500"
+                                      required
+                                      placeholder="نمبر تبدیل کرنے کی وجہ لکھیں"></textarea>
+
+                        </div>
+
+
+                        <div class="profile-readonly-note">
+                            ایڈمن کی طرف سے کی گئی تبدیلی ریکارڈ میں محفوظ کی جائے گی۔
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveAdminEditMark"
+                                    class="small-action-button">
+                                تبدیلی محفوظ کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelAdminEditMark"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT YEAR RESULT MODAL -->
+
+            <div class="portal-modal"
+                 id="adminStudentMarksDetailsModal"
+                 hidden>
+
+                <div class="portal-modal-overlay"
+                     id="adminStudentMarksDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                طالبہ کا مکمل نتیجہ
+                            </span>
+
+                            <h2 id="adminMarksDetailsStudentName">
+                                —
+                            </h2>
+
+                            <p>
+                                داخلہ نمبر:
+                                <strong id="adminMarksDetailsAdmissionNo">
+                                    —
+                                </strong>
+                            </p>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminStudentMarksDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <!-- YEAR FILTER -->
+
+                    <div class="portal-filter-grid">
+
+                        <div class="portal-field">
+
+                            <label for="adminMarksDetailsYear">
+                                سال
+                            </label>
+
+                            <select id="adminMarksDetailsYear">
+                                <option value="">
+                                    تمام سال
+                                </option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminMarksDetailsSubjectFilter">
+                                مضمون
+                            </label>
+
+                            <input type="text"
+                                   id="adminMarksDetailsSubjectFilter"
+                                   placeholder="تمام مضامین">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUMMARY -->
+
+                    <div class="dashboard-stat-grid compact-stat-grid">
+
+                        <article class="dashboard-stat-card">
+
+                            <div>
+
+                                <span>
+                                    کل نمبر
+                                </span>
+
+                                <strong id="adminStudentMarksTotal">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="dashboard-stat-card">
+
+                            <div>
+
+                                <span>
+                                    حاصل کردہ
+                                </span>
+
+                                <strong id="adminStudentMarksObtained">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="dashboard-stat-card">
+
+                            <div>
+
+                                <span>
+                                    فیصد
+                                </span>
+
+                                <strong id="adminStudentMarksPercentage">
+                                    0%
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+                    <!-- ALL PAPERS -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            تمام امتحانی پرچے
+                        </h3>
+
+
+                        <div class="responsive-table-wrapper">
+
+                            <table class="portal-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>تاریخ</th>
+                                        <th>مضمون</th>
+                                        <th>امتحان</th>
+                                        <th>پرچہ</th>
+                                        <th>کل نمبر</th>
+                                        <th>حاصل کردہ</th>
+                                        <th>فیصد</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="adminStudentMarksDetailsBody">
+
+                                    <tr>
+
+                                        <td colspan="7"
+                                            class="table-empty">
+                                            ریکارڈ لوڈ کیا جا رہا ہے...
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="closeAdminStudentMarksDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+  </html>
