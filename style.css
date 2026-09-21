@@ -3225,7 +3225,498 @@ body:not(.admin-portal-page):not(.home-page) button {
     }
 }
 
+/* =========================================================
+   PROFESSIONAL PROFILE PRINT / PDF
+   ========================================================= */
 
+body.profile-print-page {
+    background: #eef2f6;
+    padding: 24px;
+    direction: rtl;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.profile-print-page .print-toolbar {
+    max-width: 210mm;
+    margin: 0 auto 18px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.profile-print-page .print-toolbar button {
+    width: auto;
+    min-width: 145px;
+    min-height: 44px;
+    margin: 0;
+    padding: 7px 18px;
+    border-radius: 9px;
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   MAIN A4 DOCUMENT
+   ========================================================= */
+
+.profile-print-page .print-profile-document {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 14mm 13mm;
+    background: #ffffff;
+    color: #111827;
+    border-radius: 4px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.profile-print-page .print-profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    text-align: center;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 3px double #1f2937;
+}
+
+.profile-print-page .print-logo {
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    flex-shrink: 0;
+}
+
+.profile-print-page .print-profile-header h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.8;
+}
+
+.profile-print-page .print-profile-header p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.profile-print-page .print-profile-header h2 {
+    display: inline-block;
+    margin: 8px 0 0;
+    padding: 3px 18px;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+   ========================================================= */
+
+.profile-print-page .print-status,
+.profile-print-page .print-error {
+    padding: 16px;
+    margin: 18px 0;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.profile-print-page .print-error {
+    border-color: #b91c1c;
+    color: #991b1b;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.profile-print-page .print-section {
+    margin: 0 0 18px;
+    padding: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.profile-print-page .print-section h3 {
+    margin: 0 0 10px;
+    padding: 7px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    background: #f3f4f6;
+    border-right: 4px solid #1f2937;
+    border-bottom: 1px solid #d1d5db;
+}
+
+
+/* =========================================================
+   PERSONAL INFORMATION GRID
+   ========================================================= */
+
+.profile-print-page .print-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 14px;
+}
+
+.profile-print-page .print-info-item {
+    display: flex;
+    gap: 8px;
+    min-height: 36px;
+    padding: 5px 8px;
+    border-bottom: 1px dotted #cbd5e1;
+}
+
+.profile-print-page .print-info-label {
+    min-width: 115px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.profile-print-page .print-info-value {
+    flex: 1;
+    color: #111827;
+}
+
+
+/* =========================================================
+   SUMMARY BOXES
+   ========================================================= */
+
+.profile-print-page .print-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.profile-print-page .print-summary-card {
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    padding: 8px;
+    text-align: center;
+    background: #fafafa;
+}
+
+.profile-print-page .print-summary-card strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.profile-print-page .print-table-wrap {
+    width: 100%;
+    overflow: visible;
+}
+
+.profile-print-page table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    margin: 6px 0 12px;
+    font-size: 12px;
+}
+
+.profile-print-page table th,
+.profile-print-page table td {
+    border: 1px solid #9ca3af;
+    padding: 5px 6px;
+    text-align: right;
+    vertical-align: top;
+    line-height: 1.8;
+}
+
+.profile-print-page table th {
+    background: #f3f4f6;
+    font-weight: 700;
+}
+
+.profile-print-page table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+
+/* =========================================================
+   HISTORY / NOTE CARDS
+   ========================================================= */
+
+.profile-print-page .print-history-item {
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.profile-print-page .print-history-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.profile-print-page .print-muted {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RECEIPTS / FEE SLIPS / SALARY SLIPS
+   ========================================================= */
+
+.profile-print-page .print-receipt {
+    position: relative;
+    margin: 10px 0 14px;
+    padding: 12px;
+    border: 2px solid #374151;
+    border-radius: 6px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.profile-print-page .print-receipt-header {
+    text-align: center;
+    padding-bottom: 7px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #9ca3af;
+}
+
+.profile-print-page .print-receipt-header strong {
+    display: block;
+    font-size: 16px;
+}
+
+.profile-print-page .print-receipt-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px 14px;
+}
+
+.profile-print-page .print-receipt-number {
+    font-family: Arial, sans-serif;
+    direction: ltr;
+    display: inline-block;
+}
+
+
+/* =========================================================
+   DOCUMENTS
+   ========================================================= */
+
+.profile-print-page .print-document-item {
+    padding: 8px 10px;
+    margin-bottom: 7px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    break-inside: avoid;
+}
+
+.profile-print-page .document-verified {
+    font-weight: 700;
+}
+
+.profile-print-page .print-document-image {
+    display: block;
+    max-width: 100%;
+    max-height: 220mm;
+    object-fit: contain;
+    margin: 10px auto;
+    border: 1px solid #d1d5db;
+}
+
+
+/* =========================================================
+   EMPTY DATA
+   ========================================================= */
+
+.profile-print-page .print-empty {
+    padding: 8px 12px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    color: #6b7280;
+    text-align: center;
+}
+
+
+/* =========================================================
+   FOOTER / SIGNATURE
+   ========================================================= */
+
+.profile-print-page .print-profile-footer {
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 2px solid #374151;
+    font-size: 12px;
+}
+
+.profile-print-page .signature-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 45px;
+    text-align: center;
+}
+
+.profile-print-page .signature-area > div {
+    min-width: 160px;
+}
+
+
+/* =========================================================
+   PAGE BREAK HELPERS
+   ========================================================= */
+
+.profile-print-page .print-page-break {
+    break-before: page;
+    page-break-before: always;
+}
+
+.profile-print-page .avoid-page-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+
+/* =========================================================
+   MOBILE / TABLET
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    body.profile-print-page {
+        padding: 8px;
+    }
+
+    .profile-print-page .print-profile-document {
+        min-height: auto;
+        padding: 18px 12px;
+        border-radius: 8px;
+    }
+
+    .profile-print-page .print-profile-header {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .profile-print-page .print-profile-header h1 {
+        font-size: 21px;
+    }
+
+    .profile-print-page .print-info-grid,
+    .profile-print-page .print-receipt-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-print-page .print-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-print-page .signature-area {
+        gap: 15px;
+    }
+
+    .profile-print-page table {
+        font-size: 11px;
+    }
+}
+
+
+/* =========================================================
+   PRINT / SAVE AS PDF
+   ========================================================= */
+
+@page {
+    size: A4;
+    margin: 10mm;
+}
+
+
+@media print {
+
+    html,
+    body {
+        background: white !important;
+    }
+
+    body.profile-print-page {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .profile-print-page .no-print {
+        display: none !important;
+    }
+
+    .profile-print-page .print-profile-document {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .profile-print-page .print-section {
+        break-inside: auto;
+        page-break-inside: auto;
+    }
+
+    .profile-print-page .print-section h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+
+    .profile-print-page table thead {
+        display: table-header-group;
+    }
+
+    .profile-print-page table tr,
+    .profile-print-page .print-history-item,
+    .profile-print-page .print-receipt,
+    .profile-print-page .print-document-item {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .profile-print-page a {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
 /* =========================================================
    END PART 3 / 3
    COMPLETE STYLE.CSS
