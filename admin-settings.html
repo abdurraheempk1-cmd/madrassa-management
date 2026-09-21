@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ترتیبات | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="admin-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="adminMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            ترتیبات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="adminSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    ایڈمن پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="admin.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+
+                <a href="teachers.html"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>اساتذہ</strong>
+                </a>
+
+
+                <a href="admin-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+
+                <a href="admin-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+
+                <a href="admin-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+
+                <a href="admin-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+
+                <a href="admin-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>اساتذہ کے نوٹس</strong>
+                </a>
+
+
+                <a href="admin-accounts.html"
+                   class="portal-nav-link">
+                    <span>🔐</span>
+                    <strong>اکاؤنٹس اور منظوری</strong>
+                </a>
+
+
+                <a href="admin-settings.html"
+                   class="portal-nav-link active">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="adminLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        ترتیبات
+                    </h1>
+
+                    <p>
+                        ایڈمن اکاؤنٹ اور سیکیورٹی کی ترتیبات
+                    </p>
+
+                </div>
+
+
+                <a href="admin.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="adminSettingsMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- ADMIN PROFILE -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            ایڈمن پروفائل
+                        </h2>
+
+                        <p>
+                            اکاؤنٹ کی بنیادی معلومات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-profile-card">
+
+
+                    <div class="student-profile-header">
+
+                        <div class="student-profile-avatar">
+                            👤
+                        </div>
+
+
+                        <div class="student-profile-heading">
+
+                            <span class="profile-label">
+                                ایڈمن
+                            </span>
+
+                            <h2 id="settingsAdminName">
+                                —
+                            </h2>
+
+                            <p>
+                                ایڈمن نمبر:
+                                <strong id="settingsAdminId">
+                                    —
+                                </strong>
+                            </p>
+
+                        </div>
+
+
+                        <span class="student-status-badge"
+                              id="settingsAdminStatus">
+                            فعال
+                        </span>
+
+                    </div>
+
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                نام
+                            </span>
+
+                            <strong id="settingsAdminFullName">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                فون نمبر
+                            </span>
+
+                            <strong id="settingsAdminPhone">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ کی قسم
+                            </span>
+
+                            <strong>
+                                ایڈمن
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ کی حالت
+                            </span>
+
+                            <strong id="settingsAdminAccountStatus">
+                                فعال
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ بنانے کی تاریخ
+                            </span>
+
+                            <strong id="settingsAdminCreatedAt">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                آخری لاگ اِن
+                            </span>
+
+                            <strong id="settingsAdminLastLogin">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-readonly-note">
+                        🔒 یہ بنیادی اکاؤنٹ معلومات صرف دیکھنے کے لیے ہیں۔
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CHANGE PASSWORD -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            پاس ورڈ تبدیل کریں
+                        </h2>
+
+                        <p>
+                            موجودہ پاس ورڈ کی تصدیق کے بعد نیا پاس ورڈ مقرر کریں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminChangePasswordForm"
+                      class="settings-form">
+
+
+                    <!-- CURRENT PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="currentAdminPassword">
+                            موجودہ پاس ورڈ
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="currentAdminPassword"
+                                   autocomplete="current-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="currentAdminPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NEW PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="newAdminPassword">
+                            نیا پاس ورڈ
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="newAdminPassword"
+                                   minlength="8"
+                                   autocomplete="new-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="newAdminPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+
+                        <small class="portal-field-help">
+                            پاس ورڈ کم از کم 8 حروف پر مشتمل ہونا چاہیے۔
+                        </small>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="confirmAdminPassword">
+                            نیا پاس ورڈ دوبارہ لکھیں
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="confirmAdminPassword"
+                                   minlength="8"
+                                   autocomplete="new-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="confirmAdminPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD REQUIREMENTS -->
+
+                    <div class="password-requirements">
+
+                        <strong>
+                            پاس ورڈ کی شرائط
+                        </strong>
+
+
+                        <div id="adminPasswordLengthRequirement"
+                             class="password-requirement">
+                            ○ کم از کم 8 حروف
+                        </div>
+
+
+                        <div id="adminPasswordMatchRequirement"
+                             class="password-requirement">
+                            ○ دونوں نئے پاس ورڈ ایک جیسے ہوں
+                        </div>
+
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="submit"
+                                id="changeAdminPasswordButton"
+                                class="small-action-button">
+                            پاس ورڈ تبدیل کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- SYSTEM INFORMATION -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نظام کی معلومات
+                        </h2>
+
+                        <p>
+                            مدرسہ مینجمنٹ سسٹم کی بنیادی معلومات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-information-card">
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            🕌
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                مدرسہ شہناز اختر للبنات
+                            </strong>
+
+                            <p>
+                                گاؤں ہل غورغشتوں، ضلع بونیر
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            👥
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                اکاؤنٹ منظوری
+                            </strong>
+
+                            <p>
+                                طالبات اور اساتذہ کے اکاؤنٹس کی تخلیق اور اہم تبدیلی ایڈمن منظوری کے تحت ہوگی۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            📝
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                تبدیلیوں کا ریکارڈ
+                            </strong>
+
+                            <p>
+                                اکاؤنٹس پر کی گئی اہم تبدیلیاں ریکارڈ میں محفوظ کی جائیں گی۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            📱
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                خودکار اسکرین ترتیب
+                            </strong>
+
+                            <p>
+                                نظام موبائل، ٹیبلٹ، لیپ ٹاپ اور کمپیوٹر کی اسکرین کے مطابق خودکار طور پر ترتیب پائے گا۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SECURITY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            سیکیورٹی
+                        </h2>
+
+                        <p>
+                            اکاؤنٹ اور سیشن کی حفاظت
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-information-card">
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            🔒
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                پاس ورڈ محفوظ رکھیں
+                            </strong>
+
+                            <p>
+                                ایڈمن پاس ورڈ کسی دوسرے شخص کے ساتھ شیئر نہ کریں۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            ⏱
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                5 منٹ غیر فعالیت
+                            </strong>
+
+                            <p>
+                                مسلسل 5 منٹ غیر فعالیت کے بعد سیشن خودکار طور پر ختم ہوگا۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            🛡
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                ایڈمن اختیار
+                            </strong>
+
+                            <p>
+                                طالبات اور اساتذہ کے بنیادی ریکارڈ اور اکاؤنٹ منظوری صرف مجاز ایڈمن کے اختیار میں ہوگی۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SESSION -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            موجودہ سیشن
+                        </h2>
+
+                        <p>
+                            موجودہ Login سیشن کی معلومات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="student-profile-details">
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            Login وقت
+                        </span>
+
+                        <strong id="settingsAdminSessionStart">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            آخری سرگرمی
+                        </span>
+
+                        <strong id="settingsAdminLastActivity">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            سیشن کی حالت
+                        </span>
+
+                        <strong id="settingsAdminSessionStatus">
+                            فعال
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOGOUT -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            خروج
+                        </h2>
+
+                        <p>
+                            موجودہ ایڈمن اکاؤنٹ سے محفوظ طریقے سے باہر نکلیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button type="button"
+                        id="settingsAdminLogoutButton"
+                        class="settings-logout-button">
+                    اکاؤنٹ سے خروج
+                </button>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
