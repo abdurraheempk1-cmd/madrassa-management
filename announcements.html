@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اعلانات | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body class="student-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="studentMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            اعلانات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="studentSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    طالبہ پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="student.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="student.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+
+                <a href="my-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>میری حاضری</strong>
+                </a>
+
+
+                <a href="my-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>میرے نمبر</strong>
+                </a>
+
+
+                <a href="homework.html"
+                   class="portal-nav-link">
+
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+
+                    <span class="nav-count"
+                          id="studentHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="announcements.html"
+                   class="portal-nav-link active">
+
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+
+                    <span class="nav-count"
+                          id="studentAnnouncementCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="studentLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="studentSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+            <!-- PAGE HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        اعلانات
+                    </h1>
+
+                    <p>
+                        مدرسہ اور اساتذہ کی تازہ معلومات
+                    </p>
+
+                </div>
+
+
+                <a href="student.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="studentAnnouncementMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلانات کا خلاصہ
+                        </h2>
+
+                        <p>
+                            پڑھے اور نہ پڑھے گئے اعلانات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            🔔
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل اعلانات
+                            </span>
+
+                            <strong id="announcementTotalCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ●
+                        </span>
+
+                        <div>
+
+                            <span>
+                                نہیں پڑھے
+                            </span>
+
+                            <strong id="announcementUnreadCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <span>
+                                پڑھے گئے
+                            </span>
+
+                            <strong id="announcementReadCount">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلانات تلاش کریں
+                        </h2>
+
+                        <p>
+                            حالت یا تاریخ کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="studentAnnouncementFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="announcementStatusFilter">
+                            حالت
+                        </label>
+
+                        <select id="announcementStatusFilter">
+
+                            <option value="">
+                                تمام اعلانات
+                            </option>
+
+                            <option value="unread">
+                                نہیں پڑھے
+                            </option>
+
+                            <option value="read">
+                                پڑھے گئے
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="announcementDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="announcementDateFilter">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAnnouncementFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- ANNOUNCEMENT LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            تمام اعلانات
+                        </h2>
+
+                        <p id="studentAnnouncementRecordCount">
+                            اعلانات لوڈ کیے جا رہے ہیں...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="studentAnnouncementList"
+                     class="announcement-card-list">
+
+                    <div class="portal-empty-state">
+                        اعلانات لوڈ کیے جا رہے ہیں...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ANNOUNCEMENT DETAILS -->
+
+            <div class="portal-modal"
+                 id="announcementDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="announcementModalOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اعلان
+                            </span>
+
+                            <h2 id="announcementModalTitle">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAnnouncementModal"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <div class="announcement-meta-grid">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جاری کنندہ
+                            </span>
+
+                            <strong id="announcementModalSender">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="announcementModalClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong id="announcementModalDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                وقت
+                            </span>
+
+                            <strong id="announcementModalTime">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="announcement-message-box">
+
+                        <span>
+                            اعلان
+                        </span>
+
+                        <p id="announcementModalMessage">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div class="announcement-read-information">
+
+                        <span>
+                            حالت:
+                        </span>
+
+                        <strong id="announcementModalReadStatus">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="announcementModalCloseButton"
+                                class="small-action-button">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
