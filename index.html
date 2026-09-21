@@ -2,7 +2,6 @@
 <html lang="ur" dir="rtl">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,9 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        مدرسہ شہناز اختر للبنات
-    </title>
+    <title>مدرسہ شہناز اختر للبنات</title>
 
     <link
         rel="preconnect"
@@ -34,39 +31,46 @@
         rel="stylesheet"
         href="style.css"
     >
-
 </head>
 
-<body>
+<body class="home-page">
 
-    <main class="container">
+    <main class="container home-container">
 
-        <div
-            class="logo"
-            aria-hidden="true"
-        >
-            🕌
-        </div>
+        <!-- =========================
+             HEADER
+        ========================== -->
 
-        <h1>
-            مدرسہ شہناز اختر للبنات
-        </h1>
+        <header class="home-header">
 
-        <p class="address">
-            گاؤں غرشٹو، ضلع بونیر
-        </p>
+            <div
+                class="logo"
+                aria-hidden="true"
+            >
+                🕌
+            </div>
 
-        <div class="system-title">
-            مدرسہ مینجمنٹ سسٹم
-        </div>
+            <h1>
+                مدرسہ شہناز اختر للبنات
+            </h1>
 
-        <p class="subtitle">
-            لاگ اِن یا نئی درخواست کے لیے مطلوبہ آپشن منتخب کریں
-        </p>
+            <p class="address">
+                گاؤں ہل غورغشتوں، ضلع بونیر
+            </p>
+
+            <div class="system-title">
+                مدرسہ مینجمنٹ سسٹم
+            </div>
+
+            <p class="subtitle">
+                لاگ اِن یا نئی درخواست کے لیے مطلوبہ آپشن منتخب کریں
+            </p>
+
+        </header>
 
 
         <!-- =========================
-             LOGIN SECTION
+             LOGIN
         ========================== -->
 
         <section class="home-section">
@@ -75,35 +79,42 @@
                 🔐 لاگ اِن
             </h2>
 
-            <button
-                type="button"
-                id="adminLoginButton"
-                data-role="admin"
-            >
-                👑 ایڈمن لاگ اِن
-            </button>
+            <div class="home-button-grid">
 
-            <button
-                type="button"
-                id="teacherLoginButton"
-                data-role="teacher"
-            >
-                👩‍🏫 استاد لاگ اِن
-            </button>
+                <button
+                    type="button"
+                    id="adminLoginButton"
+                    class="home-action-button"
+                >
+                    <span>👑</span>
+                    ایڈمن لاگ اِن
+                </button>
 
-            <button
-                type="button"
-                id="studentLoginButton"
-                data-role="student"
-            >
-                👧 طالبہ لاگ اِن
-            </button>
+                <button
+                    type="button"
+                    id="teacherLoginButton"
+                    class="home-action-button"
+                >
+                    <span>👩‍🏫</span>
+                    استاد لاگ اِن
+                </button>
+
+                <button
+                    type="button"
+                    id="studentLoginButton"
+                    class="home-action-button"
+                >
+                    <span>👧</span>
+                    طالبہ لاگ اِن
+                </button>
+
+            </div>
 
         </section>
 
 
         <!-- =========================
-             APPLICATION SECTION
+             APPLICATIONS
         ========================== -->
 
         <section class="home-section application-section">
@@ -113,39 +124,37 @@
             </h2>
 
             <p class="application-note">
-                نئی درخواست جمع ہونے کے بعد ایڈمن کی منظوری ضروری ہوگی۔
+                نئی درخواست کے لیے مطلوبہ آپشن منتخب کریں۔
             </p>
 
-            <button
-                type="button"
-                id="studentApplyButton"
-                class="application-button"
-            >
-                👧 نئی طالبہ داخلہ درخواست
-            </button>
+            <div class="application-button-grid">
 
-            <button
-                type="button"
-                id="teacherApplyButton"
-                class="application-button"
-            >
-                👩‍🏫 نئے استاد کی درخواست
-            </button>
+                <button
+                    type="button"
+                    id="studentApplyButton"
+                    class="home-action-button application-button"
+                >
+                    <span>👧</span>
+                    طالبہ داخلہ درخواست
+                </button>
+
+                <button
+                    type="button"
+                    id="teacherApplyButton"
+                    class="home-action-button application-button"
+                >
+                    <span>👩‍🏫</span>
+                    استاد کی درخواست
+                </button>
+
+            </div>
+
+            <p class="approval-notice">
+                🔒 طالبہ یا استاد کی درخواست جمع ہونے سے اکاؤنٹ فوراً فعال نہیں ہوگا۔
+                ایڈمن کی منظوری کے بعد ہی اکاؤنٹ فعال کیا جائے گا۔
+            </p>
 
         </section>
-
-
-        <!-- =========================
-             SECURITY NOTICE
-        ========================== -->
-
-        <div class="approval-notice">
-
-            🔒 طالبہ یا استاد کی درخواست جمع ہونے سے
-            اکاؤنٹ فوراً فعال نہیں ہوگا۔
-            ایڈمن کی منظوری کے بعد ہی اکاؤنٹ فعال کیا جائے گا۔
-
-        </div>
 
     </main>
 
@@ -163,7 +172,113 @@
          MAIN SCRIPT
     ========================== -->
 
-    <script src="script.js?v=21"></script>
+    <script src="script.js?v=22"></script>
+
+
+    <!-- =========================
+         HOME BUTTON ROUTING
+    ========================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const adminButton =
+                    document.getElementById(
+                        "adminLoginButton"
+                    );
+
+                const teacherButton =
+                    document.getElementById(
+                        "teacherLoginButton"
+                    );
+
+                const studentButton =
+                    document.getElementById(
+                        "studentLoginButton"
+                    );
+
+                const studentApplyButton =
+                    document.getElementById(
+                        "studentApplyButton"
+                    );
+
+                const teacherApplyButton =
+                    document.getElementById(
+                        "teacherApplyButton"
+                    );
+
+
+                if (adminButton) {
+
+                    adminButton.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "login.html?role=admin";
+                        }
+                    );
+                }
+
+
+                if (teacherButton) {
+
+                    teacherButton.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "login.html?role=teacher";
+                        }
+                    );
+                }
+
+
+                if (studentButton) {
+
+                    studentButton.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "login.html?role=student";
+                        }
+                    );
+                }
+
+
+                if (studentApplyButton) {
+
+                    studentApplyButton.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "student-apply.html";
+                        }
+                    );
+                }
+
+
+                if (teacherApplyButton) {
+
+                    teacherApplyButton.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "teacher-apply.html";
+                        }
+                    );
+                }
+
+            }
+        );
+
+    </script>
 
 </body>
 
