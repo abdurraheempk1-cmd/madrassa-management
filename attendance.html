@@ -2,475 +2,676 @@
 <html lang="ur" dir="rtl">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>
-        حاضری - مدرسہ شہناز اختر للبنات
-    </title>
+    <title>حاضری | مدرسہ شہناز اختر للبنات</title>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet"
+          href="style.css">
 </head>
 
-<body>
+<body class="teacher-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="teacherMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            حاضری
+        </div>
+
+    </header>
 
 
-    <main class="attendance-page">
+    <div class="portal-layout">
 
+        <!-- SIDEBAR -->
 
-        <!-- =========================
-             HEADER
-        ========================== -->
+        <aside class="portal-sidebar"
+               id="teacherSidebar">
 
-        <div class="page-header">
+            <div class="portal-brand">
 
-            <button
-                type="button"
-                id="backToDashboard"
-                class="back-button"
-            >
-                ↩️ ڈیش بورڈ
-            </button>
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
 
-
-            <div>
-
-                <h1>
-                    📋 حاضری
-                </h1>
-
-                <p class="address">
+                <h2>
                     مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
                 </p>
 
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             ATTENDANCE INFORMATION
-        ========================== -->
-
-        <div class="security-card">
-
-            📌 ہر استاد اپنی مقررہ کلاس کی حاضری درج کرے گا۔
-            ایک دن میں ہر کلاس کی حاضری الگ محفوظ ہوگی۔
-
-        </div>
-
-
-        <!-- =========================
-             ATTENDANCE SELECTION
-        ========================== -->
-
-        <div class="student-form-card">
-
-            <h2>
-                📝 حاضری درج کریں
-            </h2>
-
-
-            <div
-                id="attendanceMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
-
-
-            <div class="form-grid">
-
-
-                <!-- DATE -->
-
-                <div class="form-group">
-
-                    <label for="attendanceDate">
-                        تاریخ
-                    </label>
-
-                    <input
-                        type="date"
-                        id="attendanceDate"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- CLASS -->
-
-                <div class="form-group">
-
-                    <label for="attendanceClass">
-                        کلاس
-                    </label>
-
-                    <select
-                        id="attendanceClass"
-                        required
-                    >
-
-                        <option value="">
-                            کلاس منتخب کریں
-                        </option>
-
-                        <option value="ناظرہ">
-                            ناظرہ
-                        </option>
-
-                        <option value="حفظ">
-                            حفظ
-                        </option>
-
-                        <option value="ترجمہ">
-                            ترجمہ
-                        </option>
-
-                        <option value="درس نظامی">
-                            درس نظامی
-                        </option>
-
-                        <option value="دیگر">
-                            دیگر
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- PERIOD -->
-
-                <div class="form-group">
-
-                    <label for="attendancePeriod">
-                        پیریڈ
-                    </label>
-
-                    <select
-                        id="attendancePeriod"
-                        required
-                    >
-
-                        <option value="">
-                            پیریڈ منتخب کریں
-                        </option>
-
-                        <option value="1">
-                            پہلا پیریڈ
-                        </option>
-
-                        <option value="2">
-                            دوسرا پیریڈ
-                        </option>
-
-                        <option value="3">
-                            تیسرا پیریڈ
-                        </option>
-
-                        <option value="4">
-                            چوتھا پیریڈ
-                        </option>
-
-                        <option value="5">
-                            پانچواں پیریڈ
-                        </option>
-
-                        <option value="6">
-                            چھٹا پیریڈ
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- TEACHER -->
-
-                <div class="form-group">
-
-                    <label for="attendanceTeacher">
-                        استاد
-                    </label>
-
-                    <select
-                        id="attendanceTeacher"
-                        required
-                    >
-
-                        <option value="">
-                            استاد منتخب کریں
-                        </option>
-
-                    </select>
-
-                </div>
-
+                <span class="portal-role-label">
+                    استاد پورٹل
+                </span>
 
             </div>
 
 
-            <button
-                type="button"
-                id="loadAttendanceStudents"
-                class="primary-button"
-            >
-                👧 طالبات لوڈ کریں
-            </button>
+            <nav class="portal-navigation">
+
+                <a href="teacher.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="teacher.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+                <a href="attendance.html"
+                   class="portal-nav-link active">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+                <a href="teacher-students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a href="teacher-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+                <a href="teacher-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a href="teacher-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a href="teacher-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+                <a href="teacher-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
 
 
-        </div>
+            <div class="portal-sidebar-footer">
 
-
-        <!-- =========================
-             STUDENT ATTENDANCE
-        ========================== -->
-
-        <div
-            id="attendanceStudentsSection"
-            class="student-form-card hidden"
-        >
-
-
-            <h2>
-                👧 طالبات کی حاضری
-            </h2>
-
-
-            <!-- QUICK ACTIONS -->
-
-            <div class="attendance-quick-actions">
-
-
-                <button
-                    type="button"
-                    id="markAllPresent"
-                    class="save-button"
-                >
-                    ✅ سب حاضر
+                <button type="button"
+                        id="teacherLogoutButton"
+                        class="portal-logout-button">
+                    خروج
                 </button>
 
-
-                <button
-                    type="button"
-                    id="clearAttendance"
-                    class="cancel-button"
-                >
-                    🔄 انتخاب ختم کریں
-                </button>
-
-
             </div>
 
-
-            <!-- STUDENT LIST -->
-
-            <div id="attendanceStudentsList"></div>
+        </aside>
 
 
-            <!-- SAVE -->
-
-            <button
-                type="button"
-                id="saveAttendance"
-                class="save-button"
-            >
-                💾 حاضری محفوظ کریں
-            </button>
-
-
+        <div class="portal-sidebar-overlay"
+             id="teacherSidebarOverlay">
         </div>
 
 
-        <!-- =========================
-             ATTENDANCE RECORD
-        ========================== -->
+        <!-- MAIN -->
 
-        <div class="student-form-card">
+        <main class="portal-main">
 
+            <!-- HEADER -->
 
-            <h2>
-                📚 محفوظ شدہ حاضری
-            </h2>
+            <section class="portal-topbar">
 
+                <div>
 
-            <div class="form-grid">
+                    <h1>
+                        طالبات کی حاضری
+                    </h1>
 
-
-                <div class="form-group">
-
-                    <label for="attendanceRecordDate">
-                        تاریخ
-                    </label>
-
-                    <input
-                        type="date"
-                        id="attendanceRecordDate"
-                    >
+                    <p>
+                        روزانہ چھ پیریڈ کی حاضری درج کریں
+                    </p>
 
                 </div>
 
 
-                <div class="form-group">
+                <a href="teacher.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
 
-                    <label for="attendanceRecordClass">
-                        کلاس
-                    </label>
-
-                    <select id="attendanceRecordClass">
-
-                        <option value="">
-                            تمام کلاسیں
-                        </option>
-
-                        <option value="ناظرہ">
-                            ناظرہ
-                        </option>
-
-                        <option value="حفظ">
-                            حفظ
-                        </option>
-
-                        <option value="ترجمہ">
-                            ترجمہ
-                        </option>
-
-                        <option value="درس نظامی">
-                            درس نظامی
-                        </option>
-
-                        <option value="دیگر">
-                            دیگر
-                        </option>
-
-                    </select>
-
-                </div>
+            </section>
 
 
-                <div class="form-group">
-
-                    <label for="attendanceRecordPeriod">
-                        پیریڈ
-                    </label>
-
-                    <select id="attendanceRecordPeriod">
-
-                        <option value="">
-                            تمام پیریڈ
-                        </option>
-
-                        <option value="1">
-                            پہلا پیریڈ
-                        </option>
-
-                        <option value="2">
-                            دوسرا پیریڈ
-                        </option>
-
-                        <option value="3">
-                            تیسرا پیریڈ
-                        </option>
-
-                        <option value="4">
-                            چوتھا پیریڈ
-                        </option>
-
-                        <option value="5">
-                            پانچواں پیریڈ
-                        </option>
-
-                        <option value="6">
-                            چھٹا پیریڈ
-                        </option>
-
-                    </select>
-
-                </div>
-
-
+            <div id="attendanceMessage"
+                 class="portal-message"
+                 hidden>
             </div>
 
 
-            <button
-                type="button"
-                id="loadAttendanceRecords"
-                class="primary-button"
-            >
-                🔍 ریکارڈ دیکھیں
-            </button>
+            <!-- ATTENDANCE SELECTION -->
 
+            <section class="portal-section">
 
-            <div
-                id="attendanceRecordsMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
+                <div class="portal-section-heading">
 
+                    <div>
 
-            <div id="attendanceRecordsList">
+                        <h2>
+                            حاضری منتخب کریں
+                        </h2>
 
-                <div class="empty-students">
+                        <p>
+                            تاریخ، جماعت اور پیریڈ منتخب کریں
+                        </p>
 
-                    <div class="empty-icon">
-                        📋
                     </div>
 
-                    حاضری کا ریکارڈ دیکھنے کے لیے
-                    تاریخ یا کلاس منتخب کریں۔
+                </div>
+
+
+                <form id="attendanceSelectionForm"
+                      class="portal-filter-grid">
+
+
+                    <!-- DATE -->
+
+                    <div class="portal-field">
+
+                        <label for="attendanceDate">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="attendanceDate"
+                               required>
+
+                    </div>
+
+
+                    <!-- CLASS -->
+
+                    <div class="portal-field">
+
+                        <label for="attendanceClass">
+                            جماعت
+                        </label>
+
+                        <select id="attendanceClass"
+                                required>
+
+                            <option value="">
+                                جماعت منتخب کریں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PERIOD -->
+
+                    <div class="portal-field">
+
+                        <label for="attendancePeriod">
+                            پیریڈ
+                        </label>
+
+                        <select id="attendancePeriod"
+                                required>
+
+                            <option value="">
+                                پیریڈ منتخب کریں
+                            </option>
+
+                            <option value="1">
+                                پہلا پیریڈ
+                            </option>
+
+                            <option value="2">
+                                دوسرا پیریڈ
+                            </option>
+
+                            <option value="3">
+                                تیسرا پیریڈ
+                            </option>
+
+                            <option value="4">
+                                چوتھا پیریڈ
+                            </option>
+
+                            <option value="5">
+                                پانچواں پیریڈ
+                            </option>
+
+                            <option value="6">
+                                چھٹا پیریڈ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                id="loadAttendanceButton"
+                                class="small-action-button">
+                            طالبات دکھائیں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- SELECTED SESSION -->
+
+            <section class="portal-section"
+                     id="attendanceSessionSection"
+                     hidden>
+
+                <div class="attendance-session-summary">
+
+                    <div>
+
+                        <span>
+                            تاریخ
+                        </span>
+
+                        <strong id="selectedAttendanceDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            جماعت
+                        </span>
+
+                        <strong id="selectedAttendanceClass">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            پیریڈ
+                        </span>
+
+                        <strong id="selectedAttendancePeriod">
+                            —
+                        </strong>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </section>
 
 
-        </div>
+            <!-- QUICK ATTENDANCE ACTIONS -->
+
+            <section class="portal-section"
+                     id="attendanceQuickActions"
+                     hidden>
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            فوری انتخاب
+                        </h2>
+
+                        <p>
+                            ضرورت کے مطابق سب طالبات کی حالت ایک ساتھ مقرر کریں
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-    </main>
+                <div class="attendance-bulk-actions">
+
+                    <button type="button"
+                            id="markAllPresentButton"
+                            class="attendance-bulk-button present">
+                        سب حاضر
+                    </button>
+
+                    <button type="button"
+                            id="markAllAbsentButton"
+                            class="attendance-bulk-button absent">
+                        سب غیر حاضر
+                    </button>
+
+                    <button type="button"
+                            id="markAllLeaveButton"
+                            class="attendance-bulk-button leave">
+                        سب رخصت
+                    </button>
+
+                </div>
+
+            </section>
 
 
-    <!-- =========================
-         SUPABASE
-    ========================== -->
+            <!-- STUDENT ATTENDANCE LIST -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+            <section class="portal-section"
+                     id="attendanceStudentsSection"
+                     hidden>
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            طالبات
+                        </h2>
+
+                        <p id="attendanceStudentCount">
+                            0 طالبات
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-    <!-- =========================
-         MAIN SCRIPT
-    ========================== -->
+                <div id="attendanceStudentList"
+                     class="attendance-student-list">
 
-    <script src="script.js?v=21"></script>
+                    <div class="portal-empty-state">
+                        طالبات لوڈ کی جا رہی ہیں...
+                    </div>
 
+                </div>
+
+
+                <!-- SAVE -->
+
+                <div class="attendance-save-area">
+
+                    <div class="attendance-current-summary">
+
+                        <div>
+                            <span>حاضر</span>
+                            <strong id="currentPresentCount">0</strong>
+                        </div>
+
+                        <div>
+                            <span>غیر حاضر</span>
+                            <strong id="currentAbsentCount">0</strong>
+                        </div>
+
+                        <div>
+                            <span>رخصت</span>
+                            <strong id="currentLeaveCount">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <button type="button"
+                            id="saveAttendanceButton"
+                            class="small-action-button">
+                        حاضری محفوظ کریں
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ATTENDANCE HISTORY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            سابقہ حاضری
+                        </h2>
+
+                        <p>
+                            تاریخ کے مطابق پہلے محفوظ کیے گئے ریکارڈ دیکھیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="teacherAttendanceHistoryForm"
+                      class="portal-filter-grid">
+
+                    <div class="portal-field">
+
+                        <label for="attendanceHistoryDate">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="attendanceHistoryDate">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="attendanceHistoryClass">
+                            جماعت
+                        </label>
+
+                        <select id="attendanceHistoryClass">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="attendanceHistoryPeriod">
+                            پیریڈ
+                        </label>
+
+                        <select id="attendanceHistoryPeriod">
+
+                            <option value="">
+                                تمام پیریڈ
+                            </option>
+
+                            <option value="1">پہلا پیریڈ</option>
+                            <option value="2">دوسرا پیریڈ</option>
+                            <option value="3">تیسرا پیریڈ</option>
+                            <option value="4">چوتھا پیریڈ</option>
+                            <option value="5">پانچواں پیریڈ</option>
+                            <option value="6">چھٹا پیریڈ</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            ریکارڈ تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAttendanceHistory"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>پیریڈ</th>
+                                <th>جماعت</th>
+                                <th>طالبہ</th>
+                                <th>حالت</th>
+                                <th>نوٹ</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="teacherAttendanceHistoryBody">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="table-empty">
+                                    ریکارڈ تلاش کرنے کے لیے اوپر سے انتخاب کریں۔
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
 
 </body>
 
