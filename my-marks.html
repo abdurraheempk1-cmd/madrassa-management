@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>میرے نمبر | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body class="student-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="studentMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            میرے نمبر
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="studentSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    طالبہ پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="student.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="student.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+                <a href="my-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>میری حاضری</strong>
+                </a>
+
+                <a href="my-marks.html"
+                   class="portal-nav-link active">
+                    <span>▤</span>
+                    <strong>میرے نمبر</strong>
+                </a>
+
+                <a href="homework.html"
+                   class="portal-nav-link">
+
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+
+                    <span class="nav-count"
+                          id="studentHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+                <a href="announcements.html"
+                   class="portal-nav-link">
+
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+
+                    <span class="nav-count"
+                          id="studentAnnouncementCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+                <a href="settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="studentLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="studentSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+            <!-- PAGE HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        میرے نمبر
+                    </h1>
+
+                    <p>
+                        امتحانات، مضامین اور سالانہ تعلیمی کارکردگی
+                    </p>
+
+                </div>
+
+                <a href="student.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="studentMarksMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- OVERALL SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            مجموعی نتیجہ
+                        </h2>
+
+                        <p>
+                            تمام دستیاب امتحانات کا خلاصہ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid">
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            📝
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل پرچے
+                            </span>
+
+                            <strong id="marksTotalPapers">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ▤
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل نمبر
+                            </span>
+
+                            <strong id="marksTotalMarks">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <span>
+                                حاصل کردہ نمبر
+                            </span>
+
+                            <strong id="marksObtainedMarks">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            %
+                        </span>
+
+                        <div>
+
+                            <span>
+                                مجموعی فیصد
+                            </span>
+
+                            <strong id="marksOverallPercentage">
+                                0%
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="portal-progress">
+
+                    <div id="marksOverallProgress"
+                         class="portal-progress-bar"
+                         style="width: 0%;">
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            نمبر تلاش کریں
+                        </h2>
+
+                        <p>
+                            مضمون، امتحان یا تاریخ کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="studentMarksFilterForm"
+                      class="portal-filter-grid">
+
+                    <div class="portal-field">
+
+                        <label for="marksSubjectFilter">
+                            مضمون
+                        </label>
+
+                        <select id="marksSubjectFilter">
+
+                            <option value="">
+                                تمام مضامین
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="marksExamFilter">
+                            امتحان
+                        </label>
+
+                        <select id="marksExamFilter">
+
+                            <option value="">
+                                تمام امتحانات
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="marksDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="marksDateFilter">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearMarksFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- SUBJECT SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            مضمون کے مطابق کارکردگی
+                        </h2>
+
+                        <p>
+                            ہر مضمون کے تمام پرچوں کا خلاصہ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>مضمون</th>
+                                <th>کل پرچے</th>
+                                <th>کل نمبر</th>
+                                <th>حاصل کردہ</th>
+                                <th>فیصد</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="studentSubjectMarksBody">
+
+                            <tr>
+
+                                <td colspan="5"
+                                    class="table-empty">
+                                    ریکارڈ لوڈ کیا جا رہا ہے...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- COMPLETE EXAM RECORD -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            تمام امتحانات اور پرچے
+                        </h2>
+
+                        <p id="studentMarksRecordCount">
+                            تمام دستیاب ریکارڈ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>مضمون</th>
+                                <th>امتحان</th>
+                                <th>پرچہ</th>
+                                <th>کل نمبر</th>
+                                <th>حاصل کردہ</th>
+                                <th>فیصد</th>
+                                <th>نوٹ</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="studentMarksRecordsBody">
+
+                            <tr>
+
+                                <td colspan="8"
+                                    class="table-empty">
+                                    نمبر لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
