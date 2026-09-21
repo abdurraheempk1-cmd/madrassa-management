@@ -1768,3 +1768,407 @@ textarea {
     }
 
 }
+
+
+/* =========================================================
+   HOME PAGE — PROFESSIONAL RESPONSIVE DESIGN
+   Paste this at the END of style.css
+   ========================================================= */
+
+
+/* =========================
+   HOME PAGE
+   ========================= */
+
+.home-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #f4f7fb;
+}
+
+.home-container {
+    width: min(94%, 920px);
+    margin: 0 auto;
+    padding: 28px 18px 40px;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.home-header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.home-page .logo {
+    font-size: clamp(34px, 6vw, 50px);
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.home-page h1 {
+    margin: 0;
+    font-size: clamp(24px, 4vw, 38px);
+    line-height: 1.8;
+    font-weight: 700;
+    color: #172033;
+}
+
+.home-page .address {
+    margin: 2px 0 10px;
+    font-size: clamp(12px, 2vw, 15px);
+    color: #64748b;
+}
+
+.home-page .system-title {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: #e8eef8;
+    color: #334155;
+    font-size: clamp(13px, 2vw, 16px);
+    font-weight: 600;
+}
+
+.home-page .subtitle {
+    margin: 9px auto 0;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #64748b;
+}
+
+
+/* =========================
+   SECTIONS
+   ========================= */
+
+.home-section {
+    width: 100%;
+    margin: 16px auto;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5eaf1;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.home-section-title {
+    margin: 0 0 14px;
+    text-align: center;
+    font-size: clamp(18px, 3vw, 23px);
+    line-height: 1.8;
+    font-weight: 700;
+    color: #172033;
+}
+
+
+/* =========================
+   BUTTON GRID
+   ========================= */
+
+.home-button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    justify-content: center;
+}
+
+.application-button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 220px));
+    justify-content: center;
+    gap: 10px;
+}
+
+
+/* =========================
+   PROFESSIONAL BUTTONS
+   ========================= */
+
+.home-page .home-action-button {
+    width: 100%;
+    min-height: 46px;
+    margin: 0;
+    padding: 8px 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #1e293b;
+
+    font-family: "Noto Nastaliq Urdu", serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.8;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 7px rgba(15, 23, 42, 0.06);
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.home-page .home-action-button:hover {
+    background: #f8fafc;
+    border-color: #b8c5d8;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.09);
+    transform: translateY(-1px);
+}
+
+.home-page .home-action-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.home-page .home-action-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.home-page .home-action-button span {
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* =========================
+   APPLICATION BUTTONS
+   ========================= */
+
+.home-page .application-button {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   SMALL INFORMATION TEXT
+   ========================= */
+
+.home-page .application-note {
+    margin: -4px 0 13px;
+    text-align: center;
+
+    font-size: 11px !important;
+    font-weight: 400;
+    line-height: 1.9;
+
+    color: #64748b;
+}
+
+
+/* =========================
+   APPROVAL NOTICE
+   ========================= */
+
+.home-page .approval-notice {
+    max-width: 620px;
+    margin: 15px auto 0;
+    padding: 7px 10px;
+
+    text-align: center;
+
+    font-size: 11px !important;
+    font-weight: 400;
+    line-height: 2;
+
+    color: #64748b;
+    background: #f8fafc;
+
+    border: 1px solid #e8edf4;
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .home-container {
+        width: min(96%, 650px);
+        padding: 20px 12px 30px;
+    }
+
+    .home-section {
+        padding: 16px;
+        margin: 13px auto;
+        border-radius: 14px;
+    }
+
+    .home-button-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .home-page .home-action-button {
+        min-height: 44px;
+        padding: 7px 8px;
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .home-container {
+        width: 100%;
+        padding: 16px 10px 26px;
+    }
+
+    .home-header {
+        margin-bottom: 14px;
+    }
+
+    .home-page .logo {
+        font-size: 36px;
+        margin-bottom: 3px;
+    }
+
+    .home-page h1 {
+        font-size: 23px;
+        line-height: 1.9;
+    }
+
+    .home-page .address {
+        font-size: 12px;
+        margin-top: 0;
+    }
+
+    .home-page .system-title {
+        font-size: 13px;
+        padding: 4px 12px;
+    }
+
+    .home-page .subtitle {
+        font-size: 11px;
+        margin-top: 7px;
+    }
+
+    .home-section {
+        padding: 14px 11px;
+        margin: 11px auto;
+        border-radius: 12px;
+    }
+
+    .home-section-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+
+    /* Login buttons remain compact */
+
+    .home-button-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+
+    /* Application buttons */
+
+    .application-button-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+
+    .home-page .home-action-button {
+        min-height: 42px;
+        padding: 6px 5px;
+
+        border-radius: 8px;
+
+        font-size: 11px;
+        line-height: 1.8;
+    }
+
+    .home-page .home-action-button span {
+        font-size: 14px;
+    }
+
+    .home-page .application-note {
+        font-size: 10px !important;
+        margin-bottom: 10px;
+    }
+
+    .home-page .approval-notice {
+        font-size: 10px !important;
+        line-height: 1.9;
+        padding: 6px 8px;
+        margin-top: 11px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .home-page h1 {
+        font-size: 20px;
+    }
+
+    .home-button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .application-button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-page .home-action-button {
+        width: min(100%, 250px);
+        margin-inline: auto;
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   LARGE COMPUTER SCREEN
+   ========================================================= */
+
+@media (min-width: 1100px) {
+
+    .home-container {
+        max-width: 960px;
+        padding-top: 40px;
+    }
+
+    .home-section {
+        padding: 24px 28px;
+    }
+
+    .home-page .home-action-button {
+        max-width: 240px;
+        justify-self: center;
+    }
+
+}
