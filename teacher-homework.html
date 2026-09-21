@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ہوم ورک | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="teacher-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="teacherMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            ہوم ورک
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="teacherSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    استاد پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="teacher.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="teacher.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+
+                <a href="attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+
+                <a href="teacher-students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+
+                <a href="teacher-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+
+                <a href="teacher-homework.html"
+                   class="portal-nav-link active">
+
+                    <span>📚</span>
+
+                    <strong>
+                        ہوم ورک
+                    </strong>
+
+                    <span class="nav-count"
+                          id="teacherHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="teacher-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+
+                <a href="teacher-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+
+                <a href="teacher-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="teacherLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="teacherSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        ہوم ورک
+                    </h1>
+
+                    <p>
+                        ہوم ورک جاری کریں اور طالبات کا جمع شدہ کام چیک کریں
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        id="openCreateHomeworkButton"
+                        class="small-action-button">
+                    نیا ہوم ورک
+                </button>
+
+            </section>
+
+
+            <div id="teacherHomeworkMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            ہوم ورک کا خلاصہ
+                        </h2>
+
+                        <p>
+                            آپ کی تدریسی سرگرمی
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            📚
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل ہوم ورک
+                            </span>
+
+                            <strong id="teacherHomeworkTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ◷
+                        </span>
+
+                        <div>
+
+                            <span>
+                                فعال ہوم ورک
+                            </span>
+
+                            <strong id="teacherHomeworkActive">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ↑
+                        </span>
+
+                        <div>
+
+                            <span>
+                                جانچ کے منتظر
+                            </span>
+
+                            <strong id="teacherHomeworkPendingReview">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <span>
+                                مکمل جانچ
+                            </span>
+
+                            <strong id="teacherHomeworkReviewed">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            ہوم ورک تلاش کریں
+                        </h2>
+
+                        <p>
+                            جماعت، مضمون یا حالت کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="teacherHomeworkFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherHomeworkClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="teacherHomeworkClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherHomeworkSubjectFilter">
+                            مضمون
+                        </label>
+
+                        <input type="text"
+                               id="teacherHomeworkSubjectFilter"
+                               placeholder="مضمون">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherHomeworkStatusFilter">
+                            حالت
+                        </label>
+
+                        <select id="teacherHomeworkStatusFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="active">
+                                فعال
+                            </option>
+
+                            <option value="expired">
+                                مدت مکمل
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearTeacherHomeworkFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- HOMEWORK LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            میرے جاری کردہ ہوم ورک
+                        </h2>
+
+                        <p id="teacherHomeworkRecordCount">
+                            ریکارڈ لوڈ کیا جا رہا ہے...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="teacherHomeworkList"
+                     class="homework-card-list">
+
+                    <div class="portal-empty-state">
+                        ہوم ورک لوڈ کیا جا رہا ہے...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CREATE HOMEWORK MODAL -->
+
+            <div class="portal-modal"
+                 id="createHomeworkModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="createHomeworkOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نیا ہوم ورک
+                            </span>
+
+                            <h2>
+                                ہوم ورک جاری کریں
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeCreateHomeworkModal"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="createTeacherHomeworkForm">
+
+
+                        <!-- CLASS -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkClass">
+                                جماعت
+                            </label>
+
+                            <select id="homeworkClass"
+                                    required>
+
+                                <option value="">
+                                    جماعت منتخب کریں
+                                </option>
+
+                                <option value="ثانویہ عامہ">
+                                    ثانویہ عامہ
+                                </option>
+
+                                <option value="ثانویہ خاصہ">
+                                    ثانویہ خاصہ
+                                </option>
+
+                                <option value="عالیہ اول">
+                                    عالیہ اول
+                                </option>
+
+                                <option value="عالیہ دوم">
+                                    عالیہ دوم
+                                </option>
+
+                                <option value="عالمیہ اول">
+                                    عالمیہ اول
+                                </option>
+
+                                <option value="عالمیہ دوم / دورۂ حدیث">
+                                    عالمیہ دوم / دورۂ حدیث
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- SUBJECT -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkSubject">
+                                مضمون
+                            </label>
+
+                            <input type="text"
+                                   id="homeworkSubject"
+                                   maxlength="100"
+                                   placeholder="مضمون کا نام"
+                                   required>
+
+                        </div>
+
+
+                        <!-- TITLE -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkTitle">
+                                عنوان
+                            </label>
+
+                            <input type="text"
+                                   id="homeworkTitle"
+                                   maxlength="200"
+                                   placeholder="ہوم ورک کا عنوان"
+                                   required>
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkDescription">
+                                ہوم ورک کی تفصیل
+                            </label>
+
+                            <textarea id="homeworkDescription"
+                                      rows="6"
+                                      maxlength="3000"
+                                      placeholder="طالبات کے لیے مکمل ہدایات لکھیں"
+                                      required></textarea>
+
+                        </div>
+
+
+                        <!-- ASSIGNED DATE -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkAssignedDate">
+                                جاری کرنے کی تاریخ
+                            </label>
+
+                            <input type="date"
+                                   id="homeworkAssignedDate"
+                                   required>
+
+                        </div>
+
+
+                        <!-- DUE DATE -->
+
+                        <div class="portal-field">
+
+                            <label for="homeworkDueDate">
+                                آخری تاریخ
+                            </label>
+
+                            <input type="date"
+                                   id="homeworkDueDate"
+                                   required>
+
+                        </div>
+
+
+                        <!-- FILE -->
+
+                        <div class="portal-field">
+
+                            <label for="teacherHomeworkFile">
+                                فائل
+                            </label>
+
+                            <input type="file"
+                                   id="teacherHomeworkFile"
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+                            <small class="portal-field-help">
+                                ضرورت ہو تو PDF، Word یا تصویر شامل کریں۔
+                            </small>
+
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveTeacherHomeworkButton"
+                                    class="small-action-button">
+                                ہوم ورک جاری کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelCreateHomework"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- HOMEWORK DETAILS / SUBMISSIONS MODAL -->
+
+            <div class="portal-modal"
+                 id="teacherHomeworkDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="teacherHomeworkDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                ہوم ورک کی تفصیل
+                            </span>
+
+                            <h2 id="teacherHomeworkDetailsTitle">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeTeacherHomeworkDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="teacherHomeworkDetailsClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                مضمون
+                            </span>
+
+                            <strong id="teacherHomeworkDetailsSubject">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جاری ہونے کی تاریخ
+                            </span>
+
+                            <strong id="teacherHomeworkDetailsAssignedDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                آخری تاریخ
+                            </span>
+
+                            <strong id="teacherHomeworkDetailsDueDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item profile-detail-wide">
+
+                            <span>
+                                تفصیل
+                            </span>
+
+                            <strong id="teacherHomeworkDetailsDescription">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ATTACHMENT -->
+
+                    <div id="teacherHomeworkAttachmentArea"
+                         class="homework-attachment-area"
+                         hidden>
+
+                        <span>
+                            منسلک فائل
+                        </span>
+
+                        <a id="teacherHomeworkAttachmentLink"
+                           href="#"
+                           target="_blank"
+                           rel="noopener"
+                           class="small-action-button">
+                            فائل دیکھیں
+                        </a>
+
+                    </div>
+
+
+                    <!-- SUBMISSION SUMMARY -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            طالبات کے ہوم ورک
+                        </h3>
+
+
+                        <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        کل طالبات
+                                    </span>
+
+                                    <strong id="homeworkDetailsTotalStudents">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        جمع شدہ
+                                    </span>
+
+                                    <strong id="homeworkDetailsSubmitted">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        زیرِ التواء
+                                    </span>
+
+                                    <strong id="homeworkDetailsPending">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        مکمل
+                                    </span>
+
+                                    <strong id="homeworkDetailsCompleted">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        دوبارہ درست کریں
+                                    </span>
+
+                                    <strong id="homeworkDetailsRevision">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- SUBMISSION LIST -->
+
+                    <section class="profile-modal-section">
+
+                        <div class="portal-section-heading">
+
+                            <div>
+
+                                <h3>
+                                    طالبات کی جمع شدہ فائلیں
+                                </h3>
+
+                                <p>
+                                    ہوم ورک چیک کریں اور رائے درج کریں
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="responsive-table-wrapper">
+
+                            <table class="portal-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>طالبہ</th>
+                                        <th>داخلہ نمبر</th>
+                                        <th>جمع کرنے کی تاریخ</th>
+                                        <th>حالت</th>
+                                        <th>عمل</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="teacherHomeworkSubmissionsBody">
+
+                                    <tr>
+
+                                        <td colspan="5"
+                                            class="table-empty">
+                                            ریکارڈ لوڈ کیا جا رہا ہے...
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="closeTeacherHomeworkDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REVIEW SUBMISSION MODAL -->
+
+            <div class="portal-modal"
+                 id="homeworkReviewModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="homeworkReviewOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                ہوم ورک کی جانچ
+                            </span>
+
+                            <h2 id="reviewHomeworkStudentName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeHomeworkReviewModal"
+                                class="portal-close-button">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                داخلہ نمبر
+                            </span>
+
+                            <strong id="reviewHomeworkAdmissionNo">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جمع کرنے کی تاریخ
+                            </span>
+
+                            <strong id="reviewHomeworkSubmittedDate">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STUDENT TEXT -->
+
+                    <div class="announcement-message-box">
+
+                        <span>
+                            طالبہ کا جواب
+                        </span>
+
+                        <p id="reviewHomeworkStudentText">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <!-- STUDENT FILE -->
+
+                    <div id="reviewHomeworkStudentFileArea"
+                         class="homework-attachment-area"
+                         hidden>
+
+                        <span>
+                            طالبہ کی فائل
+                        </span>
+
+                        <a id="reviewHomeworkStudentFile"
+                           href="#"
+                           target="_blank"
+                           rel="noopener"
+                           class="small-action-button">
+                            فائل دیکھیں
+                        </a>
+
+                    </div>
+
+
+                    <!-- REVIEW FORM -->
+
+                    <form id="teacherHomeworkReviewForm">
+
+                        <input type="hidden"
+                               id="reviewHomeworkSubmissionId">
+
+
+                        <div class="portal-field">
+
+                            <label for="reviewHomeworkStatus">
+                                حالت
+                            </label>
+
+                            <select id="reviewHomeworkStatus"
+                                    required>
+
+                                <option value="">
+                                    حالت منتخب کریں
+                                </option>
+
+                                <option value="completed">
+                                    مکمل
+                                </option>
+
+                                <option value="needs_revision">
+                                    دوبارہ درست کریں
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="reviewHomeworkFeedback">
+                                استاد کی رائے
+                            </label>
+
+                            <textarea id="reviewHomeworkFeedback"
+                                      rows="5"
+                                      maxlength="1000"
+                                      placeholder="طالبہ کے ہوم ورک کے بارے میں رائے لکھیں"></textarea>
+
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveHomeworkReviewButton"
+                                    class="small-action-button">
+                                جانچ محفوظ کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelHomeworkReview"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
