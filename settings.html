@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ترتیبات | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body class="student-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="studentMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            ترتیبات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="studentSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    طالبہ پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="student.html"
+                   class="portal-nav-link">
+
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+
+                </a>
+
+
+                <a href="student.html#profile"
+                   class="portal-nav-link">
+
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+
+                </a>
+
+
+                <a href="my-attendance.html"
+                   class="portal-nav-link">
+
+                    <span>✓</span>
+                    <strong>میری حاضری</strong>
+
+                </a>
+
+
+                <a href="my-marks.html"
+                   class="portal-nav-link">
+
+                    <span>▤</span>
+                    <strong>میرے نمبر</strong>
+
+                </a>
+
+
+                <a href="homework.html"
+                   class="portal-nav-link">
+
+                    <span>📚</span>
+
+                    <strong>
+                        ہوم ورک
+                    </strong>
+
+                    <span class="nav-count"
+                          id="studentHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="announcements.html"
+                   class="portal-nav-link">
+
+                    <span>🔔</span>
+
+                    <strong>
+                        اعلانات
+                    </strong>
+
+                    <span class="nav-count"
+                          id="studentAnnouncementCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="settings.html"
+                   class="portal-nav-link active">
+
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="studentLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="studentSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        ترتیبات
+                    </h1>
+
+                    <p>
+                        اپنے اکاؤنٹ اور پاس ورڈ کی ترتیبات
+                    </p>
+
+                </div>
+
+
+                <a href="student.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="studentSettingsMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اکاؤنٹ کی معلومات
+                        </h2>
+
+                        <p>
+                            یہ معلومات صرف دیکھنے کے لیے ہیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-profile-card">
+
+
+                    <div class="student-profile-header">
+
+                        <div class="student-profile-avatar">
+                            👤
+                        </div>
+
+
+                        <div class="student-profile-heading">
+
+                            <span class="profile-label">
+                                طالبہ
+                            </span>
+
+                            <h2 id="settingsStudentName">
+                                —
+                            </h2>
+
+                            <p>
+                                داخلہ نمبر:
+                                <strong id="settingsAdmissionNo">
+                                    —
+                                </strong>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                والد کا نام
+                            </span>
+
+                            <strong id="settingsFatherName">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="settingsStudentClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                فون نمبر
+                            </span>
+
+                            <strong id="settingsStudentPhone">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ کی حالت
+                            </span>
+
+                            <strong id="settingsAccountStatus">
+                                فعال
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-readonly-note">
+                        🔒 طالبہ اپنی بنیادی معلومات تبدیل نہیں کر سکتی۔
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PASSWORD -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            پاس ورڈ تبدیل کریں
+                        </h2>
+
+                        <p>
+                            اپنے اکاؤنٹ کے لیے نیا محفوظ پاس ورڈ مقرر کریں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="studentChangePasswordForm"
+                      class="settings-form">
+
+
+                    <!-- CURRENT PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="currentStudentPassword">
+                            موجودہ پاس ورڈ
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="currentStudentPassword"
+                                   autocomplete="current-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="currentStudentPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NEW PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="newStudentPassword">
+                            نیا پاس ورڈ
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="newStudentPassword"
+                                   minlength="8"
+                                   autocomplete="new-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="newStudentPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+
+                        <small class="portal-field-help">
+                            پاس ورڈ کم از کم 8 حروف پر مشتمل ہونا چاہیے۔
+                        </small>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="portal-field">
+
+                        <label for="confirmStudentPassword">
+                            نیا پاس ورڈ دوبارہ لکھیں
+                        </label>
+
+
+                        <div class="password-field-wrapper">
+
+                            <input type="password"
+                                   id="confirmStudentPassword"
+                                   minlength="8"
+                                   autocomplete="new-password"
+                                   required>
+
+
+                            <button type="button"
+                                    class="password-eye-button"
+                                    data-password-target="confirmStudentPassword"
+                                    aria-label="پاس ورڈ دکھائیں">
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD REQUIREMENTS -->
+
+                    <div class="password-requirements">
+
+                        <strong>
+                            پاس ورڈ کی شرائط
+                        </strong>
+
+                        <div id="passwordLengthRequirement"
+                             class="password-requirement">
+                            ○ کم از کم 8 حروف
+                        </div>
+
+                        <div id="passwordMatchRequirement"
+                             class="password-requirement">
+                            ○ دونوں نئے پاس ورڈ ایک جیسے ہوں
+                        </div>
+
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="submit"
+                                id="changeStudentPasswordButton"
+                                class="small-action-button">
+                            پاس ورڈ تبدیل کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- SESSION / SECURITY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اکاؤنٹ سیکیورٹی
+                        </h2>
+
+                        <p>
+                            اپنے اکاؤنٹ کو محفوظ رکھیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-information-card">
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            🔒
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                پاس ورڈ کسی کے ساتھ شیئر نہ کریں
+                            </strong>
+
+                            <p>
+                                اپنا پاس ورڈ صرف اپنے پاس محفوظ رکھیں۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-information-item">
+
+                        <span>
+                            ⏱
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                غیر فعالیت پر خودکار خروج
+                            </strong>
+
+                            <p>
+                                حفاظت کے لیے غیر فعالیت کی صورت میں سیشن خود ختم ہو سکتا ہے۔
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOGOUT -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            خروج
+                        </h2>
+
+                        <p>
+                            موجودہ اکاؤنٹ سے محفوظ طریقے سے باہر نکلیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button type="button"
+                        id="settingsLogoutButton"
+                        class="settings-logout-button">
+                    اکاؤنٹ سے خروج
+                </button>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
