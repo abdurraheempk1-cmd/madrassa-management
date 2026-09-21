@@ -1,14089 +1,1333 @@
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
+/* =========================================================
+   مدرسہ شہناز اختر للبنات
    SCRIPT.JS
-   PART 1 / CORE SYSTEM
-   ===================================================== */
+   PART 1 / 3
 
-(function () {
-    "use strict";
+   CORE SYSTEM
+   SUPABASE
+   SESSION
+   ADMIN SECURITY
+   SIDEBAR
+   COMMON HELPERS
+   DASHBOARD
+   ========================================================= */
 
-    /* =====================================================
-       GLOBAL APPLICATION OBJECT
-       ===================================================== */
-
-    const App = window.MadrassaApp =
-        window.MadrassaApp || {};
-
-
-    /* =====================================================
-       SUPABASE CONFIGURATION
-       ===================================================== */
-
-    App.SUPABASE_URL =
-        "https://ggtnetudnjsmsmitvjmb.supabase.co";
-
-    App.SUPABASE_KEY =
-        "sb_publishable_AxbfXMmjCRPS3N7ILRUbQA_U20DE6-s";
-
-    App.supabase = null;
+"use strict";
 
 
-    App.initSupabase = function () {
+/* =========================================================
+   GLOBAL APP
+   ========================================================= */
 
-        if (App.supabase) {
-            return App.supabase;
-        }
-
-        if (
-            !window.supabase ||
-            typeof window.supabase.createClient !== "function"
-        ) {
-            console.error(
-                "Supabase library is not available."
-            );
-
-            return null;
-        }
-
-        try {
-
-            App.supabase =
-                window.supabase.createClient(
-                    App.SUPABASE_URL,
-                    App.SUPABASE_KEY,
-                    {
-                        auth: {
-                            persistSession: false,
-                            autoRefreshToken: false,
-                            detectSessionInUrl: false
-                        }
-                    }
-                );
-
-        } catch (error) {
-
-            console.error(
-                "Supabase initialization error:",
-                error
-            );
-
-            App.supabase = null;
-        }
-
-        return App.supabase;
-    };
+const App = {};
 
 
-    /* =====================================================
-       APPLICATION CONSTANTS
-       ===================================================== */
+/* =========================================================
+   SUPABASE
+   ========================================================= */
 
-    App.APP_NAME =
-        "مدرسہ شہناز اختر للبنات";
+App.SUPABASE_URL =
+    "https://ggtnetudnjsmsmitvjmb.supabase.co";
 
-    App.SESSION_KEY =
-        "madrassa_app_session_v1";
+App.SUPABASE_KEY =
+    "sb_publishable_AxbfXMmjCRPS3N7ILRUbQA_U20DE6-s";
 
-    App.INACTIVITY_LIMIT =
-        5 * 60 * 1000;
-
-    App.ACTIVITY_SAVE_INTERVAL =
-        30 * 1000;
-
-    App.MAX_MAHRAMS = 5;
-
-    App.lastActivitySave = 0;
-
-    App.inactivityTimer = null;
+App.supabase = null;
 
 
-    /* =====================================================
-       PAGE HELPERS
-       ===================================================== */
+/* =========================================================
+   SUPABASE INITIALIZATION
+   ========================================================= */
 
-    App.getCurrentPage = function () {
+function initializeSupabase() {
 
-        const path =
-            window.location.pathname || "";
+    if (App.supabase) {
+        return true;
+    }
 
-        const file =
-            path.split("/").pop();
-
-        return file || "index.html";
-    };
-
-
-    App.currentPage =
-        App.getCurrentPage();
-
-
-    App.isPublicPage = function () {
-
-        return [
-            "index.html",
-            "",
-            "login.html",
-            "student-apply.html",
-            "teacher-apply.html"
-        ].includes(App.currentPage);
-    };
-
-
-    /* =====================================================
-       DOM HELPERS
-       ===================================================== */
-
-    App.byId = function (id) {
-
-        return document.getElementById(id);
-    };
-
-
-    App.show = function (element) {
-
-        if (!element) {
-            return;
-        }
-
-        element.classList.remove("hidden");
-
-        element.style.display = "";
-    };
-
-
-    App.hide = function (element) {
-
-        if (!element) {
-            return;
-        }
-
-        element.classList.add("hidden");
-
-        element.style.display = "none";
-    };
-
-
-    App.setText = function (
-        element,
-        value
+    if (
+        typeof window.supabase === "undefined"
     ) {
 
-        if (!element) {
-            return;
-        }
-
-        element.textContent =
-            value === null ||
-            value === undefined
-                ? ""
-                : String(value);
-    };
-
-
-    App.showMessage = function (
-        element,
-        message,
-        type = "info"
-    ) {
-
-        if (!element) {
-            return;
-        }
-
-        element.textContent =
-            message || "";
-
-        element.classList.remove(
-            "success",
-            "error",
-            "info",
-            "warning",
-            "success-message",
-            "error-message",
-            "info-message"
-        );
-
-        if (type) {
-
-            element.classList.add(type);
-        }
-
-        element.dataset.messageType =
-            type || "info";
-
-        element.style.display =
-            message ? "block" : "none";
-    };
-
-
-    App.clearMessage = function (
-        element
-    ) {
-
-        if (!element) {
-            return;
-        }
-
-        element.textContent = "";
-
-        element.style.display = "none";
-
-        delete element.dataset.messageType;
-    };
-
-
-    App.setButtonBusy = function (
-        button,
-        busy,
-        busyText = "براہ کرم انتظار کریں"
-    ) {
-
-        if (!button) {
-            return;
-        }
-
-        if (busy) {
-
-            if (
-                button.dataset.originalText ===
-                undefined
-            ) {
-                button.dataset.originalText =
-                    button.textContent;
-            }
-
-            button.disabled = true;
-
-            button.textContent =
-                busyText;
-
-        } else {
-
-            button.disabled = false;
-
-            if (
-                button.dataset.originalText !==
-                undefined
-            ) {
-
-                button.textContent =
-                    button.dataset.originalText;
-
-                delete button.dataset.originalText;
-            }
-        }
-    };
-
-
-    /* =====================================================
-       STRING / HTML HELPERS
-       ===================================================== */
-
-    App.escapeHTML = function (value) {
-
-        return String(
-            value === null ||
-            value === undefined
-                ? ""
-                : value
-        )
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    };
-
-
-    App.cleanText = function (value) {
-
-        return String(
-            value === null ||
-            value === undefined
-                ? ""
-                : value
-        ).trim();
-    };
-
-
-    App.digitsOnly = function (value) {
-
-        return String(
-            value || ""
-        ).replace(/\D/g, "");
-    };
-
-
-    App.normalizeCNIC = function (value) {
-
-        return App.digitsOnly(value)
-            .slice(0, 13);
-    };
-
-
-    App.formatCNIC = function (value) {
-
-        const digits =
-            App.normalizeCNIC(value);
-
-        if (digits.length <= 5) {
-            return digits;
-        }
-
-        if (digits.length <= 12) {
-
-            return (
-                digits.slice(0, 5) +
-                "-" +
-                digits.slice(5)
-            );
-        }
-
-        return (
-            digits.slice(0, 5) +
-            "-" +
-            digits.slice(5, 12) +
-            "-" +
-            digits.slice(12, 13)
-        );
-    };
-
-
-    App.normalizePhone = function (value) {
-
-        return App.digitsOnly(value)
-            .slice(0, 11);
-    };
-
-
-    App.isValidCNIC = function (value) {
-
-        return (
-            App.normalizeCNIC(value)
-                .length === 13
-        );
-    };
-
-
-    App.isValidPhone = function (value) {
-
-        return (
-            App.normalizePhone(value)
-                .length === 11
-        );
-    };
-
-
-    App.isUrduText = function (value) {
-
-        const text =
-            App.cleanText(value);
-
-        if (!text) {
-            return false;
-        }
-
-        try {
-
-            return /^[\p{Script=Arabic}\s.'’\-]+$/u
-                .test(text);
-
-        } catch (error) {
-
-            return /^[\u0600-\u06FF\s.'’\-]+$/
-                .test(text);
-        }
-    };
-
-
-    /* =====================================================
-       DATE HELPERS
-       ===================================================== */
-
-    App.todayISO = function () {
-
-        const now =
-            new Date();
-
-        const year =
-            now.getFullYear();
-
-        const month =
-            String(
-                now.getMonth() + 1
-            ).padStart(2, "0");
-
-        const day =
-            String(
-                now.getDate()
-            ).padStart(2, "0");
-
-        return (
-            year +
-            "-" +
-            month +
-            "-" +
-            day
-        );
-    };
-
-
-    App.formatDate = function (value) {
-
-        if (!value) {
-            return "";
-        }
-
-        const date =
-            new Date(
-                String(value).length === 10
-                    ? value + "T00:00:00"
-                    : value
-            );
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-            return String(value);
-        }
-
-        try {
-
-            return date.toLocaleDateString(
-                "ur-PK",
-                {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit"
-                }
-            );
-
-        } catch (error) {
-
-            return String(value);
-        }
-    };
-
-
-    /* =====================================================
-       SESSION STORAGE HELPERS
-       ===================================================== */
-
-    App.getStoredSession = function () {
-
-        let raw = null;
-
-        try {
-
-            raw =
-                sessionStorage.getItem(
-                    App.SESSION_KEY
-                );
-
-            if (!raw) {
-
-                raw =
-                    localStorage.getItem(
-                        App.SESSION_KEY
-                    );
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Session read error:",
-                error
-            );
-
-            return null;
-        }
-
-        if (!raw) {
-            return null;
-        }
-
-        try {
-
-            const session =
-                JSON.parse(raw);
-
-            if (
-                !session ||
-                typeof session !== "object"
-            ) {
-                return null;
-            }
-
-            return session;
-
-        } catch (error) {
-
-            App.clearStoredSession();
-
-            return null;
-        }
-    };
-
-
-    App.clearStoredSession = function () {
-
-        try {
-
-            sessionStorage.removeItem(
-                App.SESSION_KEY
-            );
-
-        } catch (error) {
-            /* ignore */
-        }
-
-        try {
-
-            localStorage.removeItem(
-                App.SESSION_KEY
-            );
-
-        } catch (error) {
-            /* ignore */
-        }
-    };
-
-
-    App.saveSession = function (
-        loginData,
-        remember = false
-    ) {
-
-        if (
-            !loginData ||
-            !loginData.token ||
-            !loginData.role
-        ) {
-            throw new Error(
-                "Invalid login session."
-            );
-        }
-
-        const role =
-            String(
-                loginData.role
-            )
-                .trim()
-                .toLowerCase();
-
-        const session = {
-
-            token:
-                String(
-                    loginData.token
-                ),
-
-            role:
-                role,
-
-            username:
-                loginData.username ||
-                loginData.admin_username ||
-                "",
-
-            accountId:
-                loginData.account_id ||
-                loginData.admin_id ||
-                null,
-
-            teacherId:
-                loginData.teacher_id ||
-                null,
-
-            studentId:
-                loginData.student_id ||
-                null,
-
-            authorizationStatus:
-                loginData.authorization_status ||
-                loginData.auth_status ||
-                "approved",
-
-            remember:
-                Boolean(remember),
-
-            loginTime:
-                Date.now(),
-
-            lastActivity:
-                Date.now()
-        };
-
-
-        App.clearStoredSession();
-
-
-        try {
-
-            if (remember) {
-
-                localStorage.setItem(
-                    App.SESSION_KEY,
-                    JSON.stringify(session)
-                );
-
-            } else {
-
-                sessionStorage.setItem(
-                    App.SESSION_KEY,
-                    JSON.stringify(session)
-                );
-            }
-
-        } catch (error) {
-
-            throw new Error(
-                "Session could not be saved."
-            );
-        }
-
-
-        return session;
-    };
-
-
-    App.updateStoredSession = function (
-        session
-    ) {
-
-        if (!session) {
-            return;
-        }
-
-        try {
-
-            if (session.remember) {
-
-                localStorage.setItem(
-                    App.SESSION_KEY,
-                    JSON.stringify(session)
-                );
-
-                sessionStorage.removeItem(
-                    App.SESSION_KEY
-                );
-
-            } else {
-
-                sessionStorage.setItem(
-                    App.SESSION_KEY,
-                    JSON.stringify(session)
-                );
-
-                localStorage.removeItem(
-                    App.SESSION_KEY
-                );
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Session update error:",
-                error
-            );
-        }
-    };
-
-
-    App.getSessionToken = function () {
-
-        const session =
-            App.getStoredSession();
-
-        return session
-            ? session.token
-            : null;
-    };
-
-
-    App.getCurrentRole = function () {
-
-        const session =
-            App.getStoredSession();
-
-        return session
-            ? session.role
-            : null;
-    };
-
-
-    App.getCurrentUsername =
-        function () {
-
-            const session =
-                App.getStoredSession();
-
-            return session
-                ? session.username
-                : "";
-        };
-
-
-    App.isAuthenticated = function () {
-
-        const session =
-            App.getStoredSession();
-
-        return Boolean(
-            session &&
-            session.token &&
-            session.role
-        );
-    };
-
-
-    /* =====================================================
-       RPC HELPER
-       ===================================================== */
-
-    App.rpc = async function (
-        functionName,
-        params = {}
-    ) {
-
-        const client =
-            App.initSupabase();
-
-        if (!client) {
-
-            throw new Error(
-                "Supabase connection is not available."
-            );
-        }
-
-        const {
-            data,
-            error
-        } =
-            await client.rpc(
-                functionName,
-                params
-            );
-
-
-        if (error) {
-
-            console.error(
-                "RPC error:",
-                functionName,
-                error
-            );
-
-            const message =
-                error.message ||
-                error.details ||
-                "Database request failed.";
-
-            throw new Error(message);
-        }
-
-
-        return data;
-    };
-
-
-    /* =====================================================
-       ROLE / ACCESS HELPERS
-       ===================================================== */
-
-    App.redirectToLogin = function (
-        reason = ""
-    ) {
-
-        const suffix =
-            reason
-                ? "?reason=" +
-                  encodeURIComponent(
-                      reason
-                  )
-                : "";
-
-        window.location.href =
-            "login.html" + suffix;
-    };
-
-
-    App.redirectToDashboard =
-        function () {
-
-            window.location.href =
-                "dashboard.html";
-        };
-
-
-    App.requireSession = function (
-        allowedRoles = null
-    ) {
-
-        const session =
-            App.getStoredSession();
-
-
-        if (
-            !session ||
-            !session.token ||
-            !session.role
-        ) {
-
-            App.redirectToLogin(
-                "login-required"
-            );
-
-            return null;
-        }
-
-
-        const lastActivity =
-            Number(
-                session.lastActivity || 0
-            );
-
-
-        if (
-            !lastActivity ||
-            Date.now() - lastActivity >
-                App.INACTIVITY_LIMIT
-        ) {
-
-            App.logout(
-                "timeout"
-            );
-
-            return null;
-        }
-
-
-        if (
-            Array.isArray(
-                allowedRoles
-            ) &&
-            allowedRoles.length > 0 &&
-            !allowedRoles.includes(
-                session.role
-            )
-        ) {
-
-            App.redirectToDashboard();
-
-            return null;
-        }
-
-
-        return session;
-    };
-
-
-    App.requireAdmin = function () {
-
-        return App.requireSession(
-            ["admin"]
-        );
-    };
-
-
-    /* =====================================================
-       ACTIVITY / INACTIVITY
-       ===================================================== */
-
-    App.touchSession = function (
-        force = false
-    ) {
-
-        const session =
-            App.getStoredSession();
-
-        if (!session) {
-            return;
-        }
-
-
-        const now =
-            Date.now();
-
-
-        if (
-            !force &&
-            now -
-                App.lastActivitySave <
-                App.ACTIVITY_SAVE_INTERVAL
-        ) {
-            return;
-        }
-
-
-        session.lastActivity =
-            now;
-
-        App.lastActivitySave =
-            now;
-
-        App.updateStoredSession(
-            session
-        );
-    };
-
-
-    App.checkInactivity =
-        function () {
-
-            const session =
-                App.getStoredSession();
-
-            if (!session) {
-                return;
-            }
-
-
-            const lastActivity =
-                Number(
-                    session.lastActivity ||
-                    0
-                );
-
-
-            if (
-                !lastActivity ||
-                Date.now() -
-                    lastActivity >
-                    App.INACTIVITY_LIMIT
-            ) {
-
-                App.logout(
-                    "timeout"
-                );
-            }
-        };
-
-
-    App.startInactivityWatcher =
-        function () {
-
-            if (
-                App.inactivityTimer
-            ) {
-
-                clearInterval(
-                    App.inactivityTimer
-                );
-            }
-
-
-            if (
-                !App.isAuthenticated()
-            ) {
-                return;
-            }
-
-
-            const activityEvents = [
-                "pointerdown",
-                "keydown",
-                "touchstart",
-                "scroll"
-            ];
-
-
-            activityEvents.forEach(
-                function (eventName) {
-
-                    window.addEventListener(
-                        eventName,
-                        function () {
-
-                            App.touchSession(
-                                false
-                            );
-                        },
-                        {
-                            passive: true
-                        }
-                    );
-                }
-            );
-
-
-            App.inactivityTimer =
-                window.setInterval(
-                    App.checkInactivity,
-                    10000
-                );
-
-
-            App.checkInactivity();
-        };
-
-
-    /* =====================================================
-       LOGOUT
-       ===================================================== */
-
-    App.logout = async function (
-        reason = "logout"
-    ) {
-
-        const session =
-            App.getStoredSession();
-
-        const token =
-            session
-                ? session.token
-                : null;
-
-
-        App.clearStoredSession();
-
-
-        if (
-            App.inactivityTimer
-        ) {
-
-            clearInterval(
-                App.inactivityTimer
-            );
-
-            App.inactivityTimer =
-                null;
-        }
-
-
-        if (token) {
-
-            try {
-
-                await App.rpc(
-                    "logout_session",
-                    {
-                        p_token:
-                            token
-                    }
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Server logout warning:",
-                    error
-                );
-            }
-        }
-
-
-        const suffix =
-            reason
-                ? "?reason=" +
-                  encodeURIComponent(
-                      reason
-                  )
-                : "";
-
-
-        window.location.href =
-            "login.html" +
-            suffix;
-    };
-
-
-    /* =====================================================
-       COMMON INPUT MASKS
-       ===================================================== */
-
-    App.bindCNICInput = function (
-        input
-    ) {
-
-        if (!input) {
-            return;
-        }
-
-
-        input.setAttribute(
-            "inputmode",
-            "numeric"
-        );
-
-
-        input.addEventListener(
-            "input",
-            function () {
-
-                this.value =
-                    App.formatCNIC(
-                        this.value
-                    );
-            }
-        );
-    };
-
-
-    App.bindPhoneInput = function (
-        input
-    ) {
-
-        if (!input) {
-            return;
-        }
-
-
-        input.setAttribute(
-            "inputmode",
-            "numeric"
-        );
-
-
-        input.addEventListener(
-            "input",
-            function () {
-
-                this.value =
-                    App.normalizePhone(
-                        this.value
-                    );
-            }
-        );
-    };
-
-
-    /* =====================================================
-       DOCUMENT READY
-       ===================================================== */
-
-    App.ready = function (
-        callback
-    ) {
-
-        if (
-            document.readyState ===
-            "loading"
-        ) {
-
-            document.addEventListener(
-                "DOMContentLoaded",
-                callback,
-                {
-                    once: true
-                }
-            );
-
-        } else {
-
-            callback();
-        }
-    };
-
-
-    App.ready(
-        function () {
-
-            App.initSupabase();
-
-            App.startInactivityWatcher();
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 2 / HOME + LOGIN SYSTEM
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
         console.error(
-            "MadrassaApp core is not loaded."
+            "Supabase library not loaded."
         );
 
+        return false;
+    }
+
+    try {
+
+        App.supabase =
+            window.supabase.createClient(
+                App.SUPABASE_URL,
+                App.SUPABASE_KEY
+            );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Supabase initialization error:",
+            error
+        );
+
+        App.supabase = null;
+
+        return false;
+    }
+}
+
+
+initializeSupabase();
+
+
+/* =========================================================
+   TABLE NAMES
+   ========================================================= */
+
+App.TABLES = Object.freeze({
+
+    ADMIN_ACCOUNTS:
+        "AdminAccounts",
+
+    STUDENT_ACCOUNTS:
+        "StudentAccounts",
+
+    TEACHER_ACCOUNTS:
+        "TeacherAccounts",
+
+    STUDENTS:
+        "Students",
+
+    TEACHERS:
+        "Teachers",
+
+    ATTENDANCE:
+        "Attendance",
+
+    MARKS:
+        "Marks",
+
+    HOMEWORK:
+        "Homework",
+
+    HOMEWORK_SUBMISSIONS:
+        "HomeworkSubmissions",
+
+    ANNOUNCEMENTS:
+        "Announcements",
+
+    ANNOUNCEMENT_READS:
+        "AnnouncementReads",
+
+    APP_SESSIONS:
+        "AppSessions",
+
+    STUDENT_APPLICATIONS:
+        "student_applications",
+
+    TEACHER_APPLICATIONS:
+        "teacher_applications"
+
+});
+
+
+/* =========================================================
+   SYSTEM SETTINGS
+   ========================================================= */
+
+App.SESSION_TIMEOUT =
+    5 * 60 * 1000;
+
+App.inactivityTimer = null;
+
+App.currentPage =
+    (
+        window.location.pathname
+            .split("/")
+            .pop() ||
+        "index.html"
+    ).toLowerCase();
+
+
+/* =========================================================
+   DATA CACHE
+   ========================================================= */
+
+App.students = [];
+
+App.teachers = [];
+
+App.attendance = [];
+
+App.marks = [];
+
+App.homework = [];
+
+App.announcements = [];
+
+App.feedback = [];
+
+App.studentAccounts = [];
+
+App.teacherAccounts = [];
+
+App.applications = [];
+
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
+
+function byId(id) {
+
+    return document.getElementById(id);
+}
+
+
+function safeString(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value).trim();
+}
+
+
+function safeNumber(value) {
+
+    const number =
+        Number(value);
+
+    return Number.isFinite(number)
+        ? number
+        : 0;
+}
+
+
+function escapeHTML(value) {
+
+    return safeString(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =========================================================
+   DATE HELPERS
+   ========================================================= */
+
+function getTodayISO() {
+
+    const date =
+        new Date();
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+}
+
+
+function formatDate(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return safeString(value);
+    }
+
+    try {
+
+        return new Intl.DateTimeFormat(
+            "ur-PK",
+            {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            }
+        ).format(date);
+
+    } catch (error) {
+
+        return safeString(value);
+    }
+}
+
+
+function formatTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "—";
+    }
+
+    try {
+
+        return new Intl.DateTimeFormat(
+            "ur-PK",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).format(date);
+
+    } catch (error) {
+
+        return "—";
+    }
+}
+
+
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    return (
+        formatDate(value) +
+        " — " +
+        formatTime(value)
+    );
+}
+
+
+/* =========================================================
+   PERCENTAGE
+   ========================================================= */
+
+function calculatePercentage(
+    obtained,
+    total
+) {
+
+    const obtainedNumber =
+        safeNumber(obtained);
+
+    const totalNumber =
+        safeNumber(total);
+
+    if (
+        totalNumber <= 0
+    ) {
+        return 0;
+    }
+
+    return Math.round(
+        (
+            obtainedNumber /
+            totalNumber
+        ) * 100
+    );
+}
+
+
+/* =========================================================
+   SET ELEMENT TEXT
+   ========================================================= */
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        byId(id);
+
+    if (!element) {
         return;
     }
 
+    element.textContent =
+        value;
+}
 
-    /* =====================================================
-       ROLE HELPERS
-       ===================================================== */
 
-    App.ALLOWED_ROLES = [
-        "admin",
-        "teacher",
-        "student"
+/* =========================================================
+   SHOW / HIDE
+   ========================================================= */
+
+function showElement(element) {
+
+    if (!element) {
+        return;
+    }
+
+    element.hidden = false;
+}
+
+
+function hideElement(element) {
+
+    if (!element) {
+        return;
+    }
+
+    element.hidden = true;
+}
+
+
+/* =========================================================
+   PORTAL MESSAGE
+   ========================================================= */
+
+function showPortalMessage(
+    target,
+    message,
+    type = "info"
+) {
+
+    const element =
+        typeof target === "string"
+            ? byId(target)
+            : target;
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        safeString(message);
+
+    element.className =
+        "portal-message " +
+        safeString(type);
+
+    element.hidden = false;
+}
+
+
+function hidePortalMessage(
+    target
+) {
+
+    const element =
+        typeof target === "string"
+            ? byId(target)
+            : target;
+
+    if (!element) {
+        return;
+    }
+
+    element.hidden = true;
+}
+
+
+/* =========================================================
+   SUPABASE CHECK
+   ========================================================= */
+
+function checkSupabase(
+    messageElement = null
+) {
+
+    if (
+        App.supabase
+    ) {
+        return true;
+    }
+
+    if (
+        initializeSupabase()
+    ) {
+        return true;
+    }
+
+    console.error(
+        "Supabase connection unavailable."
+    );
+
+    if (messageElement) {
+
+        showPortalMessage(
+            messageElement,
+            "ڈیٹا بیس سے رابطہ قائم نہیں ہوسکا۔",
+            "error"
+        );
+    }
+
+    return false;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+function openPortalModal(modal) {
+
+    const element =
+        typeof modal === "string"
+            ? byId(modal)
+            : modal;
+
+    if (!element) {
+        return;
+    }
+
+    element.hidden = false;
+
+    document.body.style.overflow =
+        "hidden";
+}
+
+
+function closePortalModal(modal) {
+
+    const element =
+        typeof modal === "string"
+            ? byId(modal)
+            : modal;
+
+    if (!element) {
+        return;
+    }
+
+    element.hidden = true;
+
+    const anotherOpenModal =
+        document.querySelector(
+            ".portal-modal:not([hidden])"
+        );
+
+    if (!anotherOpenModal) {
+
+        document.body.style.overflow =
+            "";
+    }
+}
+
+
+/* =========================================================
+   CURRENT USER
+   ========================================================= */
+
+function isAuthenticated() {
+
+    return (
+        localStorage.getItem(
+            "loggedIn"
+        ) === "true"
+    );
+}
+
+
+function getCurrentRole() {
+
+    return safeString(
+        localStorage.getItem(
+            "userRole"
+        )
+    ).toLowerCase();
+}
+
+
+function getCurrentUserId() {
+
+    return safeString(
+        localStorage.getItem(
+            "userId"
+        ) ||
+        localStorage.getItem(
+            "accountId"
+        )
+    );
+}
+
+
+function getCurrentUserName() {
+
+    return safeString(
+        localStorage.getItem(
+            "userName"
+        ) ||
+        localStorage.getItem(
+            "accountName"
+        )
+    );
+}
+
+
+function isAdmin() {
+
+    return (
+        isAuthenticated() &&
+        getCurrentRole() ===
+            "admin"
+    );
+}
+
+
+/* =========================================================
+   ADMIN PAGE CHECK
+   ========================================================= */
+
+function isAdminPortalPage() {
+
+    return (
+        App.currentPage ===
+            "admin.html" ||
+
+        App.currentPage.startsWith(
+            "admin-"
+        )
+    );
+}
+
+
+function requireAdmin() {
+
+    if (
+        !isAdminPortalPage()
+    ) {
+        return true;
+    }
+
+    if (
+        isAdmin()
+    ) {
+        return true;
+    }
+
+    window.location.href =
+        "login.html";
+
+    return false;
+}
+
+
+/* =========================================================
+   SESSION STORAGE
+   ========================================================= */
+
+function saveSessionStart() {
+
+    if (
+        !localStorage.getItem(
+            "sessionStart"
+        )
+    ) {
+
+        localStorage.setItem(
+            "sessionStart",
+            String(
+                Date.now()
+            )
+        );
+    }
+}
+
+
+function saveActivityTime() {
+
+    localStorage.setItem(
+        "lastActivity",
+        String(
+            Date.now()
+        )
+    );
+}
+
+
+function getLastActivity() {
+
+    return safeNumber(
+        localStorage.getItem(
+            "lastActivity"
+        )
+    );
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logoutUser(
+    timedOut = false
+) {
+
+    clearTimeout(
+        App.inactivityTimer
+    );
+
+
+    try {
+
+        if (
+            App.supabase &&
+            getCurrentUserId()
+        ) {
+
+            await App.supabase
+                .from(
+                    App.TABLES
+                        .APP_SESSIONS
+                )
+                .update({
+                    is_active: false,
+
+                    ended_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "user_id",
+                    getCurrentUserId()
+                )
+                .eq(
+                    "is_active",
+                    true
+                );
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Session close error:",
+            error
+        );
+    }
+
+
+    const keys = [
+
+        "loggedIn",
+
+        "userRole",
+
+        "userId",
+
+        "userName",
+
+        "accountId",
+
+        "accountName",
+
+        "lastActivity",
+
+        "sessionStart"
+
     ];
 
 
-    App.getRoleLabel = function (
-        role
-    ) {
+    keys.forEach(
+        key => {
 
-        switch (
-            String(role || "")
-                .toLowerCase()
-        ) {
-
-            case "admin":
-                return "ایڈمن";
-
-            case "teacher":
-                return "استاد";
-
-            case "student":
-                return "طالبہ";
-
-            default:
-                return "";
-        }
-    };
-
-
-    App.getURLParameter =
-        function (name) {
-
-            const params =
-                new URLSearchParams(
-                    window.location.search
-                );
-
-            return params.get(name);
-        };
-
-
-    App.getLoginRoleFromURL =
-        function () {
-
-            const role =
-                String(
-                    App.getURLParameter(
-                        "role"
-                    ) || ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            if (
-                App.ALLOWED_ROLES.includes(
-                    role
-                )
-            ) {
-                return role;
-            }
-
-
-            return "admin";
-        };
-
-
-    App.goToLogin = function (
-        role
-    ) {
-
-        const cleanRole =
-            String(role || "")
-                .trim()
-                .toLowerCase();
-
-
-        if (
-            !App.ALLOWED_ROLES.includes(
-                cleanRole
-            )
-        ) {
-            return;
-        }
-
-
-        window.location.href =
-            "login.html?role=" +
-            encodeURIComponent(
-                cleanRole
+            localStorage.removeItem(
+                key
             );
-    };
+        }
+    );
 
 
-    /* =====================================================
-       HOME PAGE
-       ===================================================== */
+    if (timedOut) {
 
-    App.initializeHomePage =
-        function () {
+        sessionStorage.setItem(
+            "logoutMessage",
+            "مسلسل 5 منٹ غیر فعالیت کی وجہ سے سیشن ختم ہوگیا۔"
+        );
+    }
 
-            if (
-                App.currentPage !==
-                    "index.html" &&
-                App.currentPage !== ""
-            ) {
-                return;
+
+    window.location.href =
+        "login.html";
+}
+
+
+/* =========================================================
+   5 MINUTE AUTO LOGOUT
+   ========================================================= */
+
+function resetInactivityTimer() {
+
+    if (
+        !isAuthenticated()
+    ) {
+        return;
+    }
+
+    saveActivityTime();
+
+    clearTimeout(
+        App.inactivityTimer
+    );
+
+    App.inactivityTimer =
+        setTimeout(
+            function () {
+
+                logoutUser(true);
+
+            },
+            App.SESSION_TIMEOUT
+        );
+}
+
+
+function checkExistingInactivity() {
+
+    if (
+        !isAuthenticated()
+    ) {
+        return;
+    }
+
+    const lastActivity =
+        getLastActivity();
+
+    if (
+        lastActivity > 0 &&
+        Date.now() -
+            lastActivity >=
+            App.SESSION_TIMEOUT
+    ) {
+
+        logoutUser(true);
+
+        return;
+    }
+
+    resetInactivityTimer();
+}
+
+
+function initializeInactivitySystem() {
+
+    if (
+        !isAuthenticated()
+    ) {
+        return;
+    }
+
+    saveSessionStart();
+
+    checkExistingInactivity();
+
+
+    [
+        "mousedown",
+        "keydown",
+        "touchstart",
+        "scroll"
+    ].forEach(
+        eventName => {
+
+            document.addEventListener(
+                eventName,
+                resetInactivityTimer,
+                {
+                    passive: true
+                }
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   ADMIN SIDEBAR
+   ========================================================= */
+
+function initializeAdminSidebar() {
+
+    const sidebar =
+        byId(
+            "adminSidebar"
+        );
+
+    const overlay =
+        byId(
+            "adminSidebarOverlay"
+        );
+
+    const menuButton =
+        byId(
+            "adminMenuButton"
+        );
+
+
+    if (!sidebar) {
+        return;
+    }
+
+
+    function openSidebar() {
+
+        sidebar.classList.add(
+            "open"
+        );
+
+        if (overlay) {
+
+            overlay.classList.add(
+                "active"
+            );
+        }
+    }
+
+
+    function closeSidebar() {
+
+        sidebar.classList.remove(
+            "open"
+        );
+
+        if (overlay) {
+
+            overlay.classList.remove(
+                "active"
+            );
+        }
+    }
+
+
+    if (menuButton) {
+
+        menuButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    sidebar.classList
+                        .contains(
+                            "open"
+                        )
+                ) {
+
+                    closeSidebar();
+
+                } else {
+
+                    openSidebar();
+                }
             }
+        );
+    }
 
 
-            const adminLoginButton =
-                App.byId(
-                    "adminLoginButton"
-                );
+    if (overlay) {
 
-            const teacherLoginButton =
-                App.byId(
-                    "teacherLoginButton"
-                );
+        overlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+    }
 
-            const studentLoginButton =
-                App.byId(
-                    "studentLoginButton"
-                );
 
-            const studentApplyButton =
-                App.byId(
-                    "studentApplyButton"
-                );
+    document
+        .querySelectorAll(
+            ".portal-nav-link"
+        )
+        .forEach(
+            link => {
 
-            const teacherApplyButton =
-                App.byId(
-                    "teacherApplyButton"
-                );
-
-
-            if (adminLoginButton) {
-
-                adminLoginButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.goToLogin(
-                                "admin"
-                            );
-                        }
-                    );
-            }
-
-
-            if (teacherLoginButton) {
-
-                teacherLoginButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.goToLogin(
-                                "teacher"
-                            );
-                        }
-                    );
-            }
-
-
-            if (studentLoginButton) {
-
-                studentLoginButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.goToLogin(
-                                "student"
-                            );
-                        }
-                    );
-            }
-
-
-            if (studentApplyButton) {
-
-                studentApplyButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "student-apply.html";
-                        }
-                    );
-            }
-
-
-            if (teacherApplyButton) {
-
-                teacherApplyButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "teacher-apply.html";
-                        }
-                    );
-            }
-        };
-
-
-    /* =====================================================
-       LOGIN PAGE MESSAGE
-       ===================================================== */
-
-    App.showLoginReason =
-        function () {
-
-            const loginMessage =
-                App.byId(
-                    "loginMessage"
-                );
-
-            if (!loginMessage) {
-                return;
-            }
-
-
-            const reason =
-                App.getURLParameter(
-                    "reason"
-                );
-
-
-            if (!reason) {
-                return;
-            }
-
-
-            switch (reason) {
-
-                case "timeout":
-
-                    App.showMessage(
-                        loginMessage,
-                        "غیر فعالیت کی وجہ سے آپ کا سیشن ختم ہوگیا ہے۔ دوبارہ لاگ اِن کریں۔",
-                        "info"
-                    );
-
-                    break;
-
-
-                case "login-required":
-
-                    App.showMessage(
-                        loginMessage,
-                        "براہ کرم پہلے لاگ اِن کریں۔",
-                        "info"
-                    );
-
-                    break;
-
-
-                case "logout":
-
-                    App.showMessage(
-                        loginMessage,
-                        "آپ کامیابی سے لاگ آؤٹ ہوگئے ہیں۔",
-                        "success"
-                    );
-
-                    break;
-
-
-                default:
-                    break;
-            }
-        };
-
-
-    /* =====================================================
-       LOGIN PAGE ROLE
-       ===================================================== */
-
-    App.setLoginPageRole =
-        function (role) {
-
-            const cleanRole =
-                App.ALLOWED_ROLES.includes(
-                    role
-                )
-                    ? role
-                    : "admin";
-
-
-            const loginRole =
-                App.byId(
-                    "loginRole"
-                );
-
-            const selectedRoleText =
-                App.byId(
-                    "selectedRoleText"
-                );
-
-            const selectedRoleBox =
-                App.byId(
-                    "selectedRoleBox"
-                );
-
-
-            if (loginRole) {
-
-                loginRole.value =
-                    cleanRole;
-            }
-
-
-            if (selectedRoleText) {
-
-                selectedRoleText.textContent =
-                    App.getRoleLabel(
-                        cleanRole
-                    );
-            }
-
-
-            if (selectedRoleBox) {
-
-                selectedRoleBox.dataset.role =
-                    cleanRole;
-            }
-        };
-
-
-    /* =====================================================
-       PASSWORD VISIBILITY
-       ===================================================== */
-
-    App.initializePasswordToggle =
-        function () {
-
-            const password =
-                App.byId(
-                    "password"
-                );
-
-            const togglePassword =
-                App.byId(
-                    "togglePassword"
-                );
-
-
-            if (
-                !password ||
-                !togglePassword
-            ) {
-                return;
-            }
-
-
-            togglePassword
-                .addEventListener(
+                link.addEventListener(
                     "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const isHidden =
-                            password.type ===
-                            "password";
-
-
-                        password.type =
-                            isHidden
-                                ? "text"
-                                : "password";
-
-
-                        togglePassword
-                            .setAttribute(
-                                "aria-label",
-                                isHidden
-                                    ? "پاس ورڈ چھپائیں"
-                                    : "پاس ورڈ دکھائیں"
-                            );
-
-
-                        togglePassword
-                            .setAttribute(
-                                "aria-pressed",
-                                isHidden
-                                    ? "true"
-                                    : "false"
-                            );
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       LOGIN
-       ===================================================== */
-
-    App.handleLogin =
-        async function (
-            event
-        ) {
-
-            if (event) {
-                event.preventDefault();
-            }
-
-
-            const loginRole =
-                App.byId(
-                    "loginRole"
-                );
-
-            const username =
-                App.byId(
-                    "username"
-                );
-
-            const password =
-                App.byId(
-                    "password"
-                );
-
-            const rememberMe =
-                App.byId(
-                    "rememberMe"
-                );
-
-            const loginMessage =
-                App.byId(
-                    "loginMessage"
-                );
-
-            const loginButton =
-                App.byId(
-                    "loginButton"
-                );
-
-            const pendingMessage =
-                App.byId(
-                    "pendingAccountMessage"
-                );
-
-            const rejectedMessage =
-                App.byId(
-                    "rejectedAccountMessage"
-                );
-
-
-            App.clearMessage(
-                pendingMessage
-            );
-
-            App.clearMessage(
-                rejectedMessage
-            );
-
-
-            const role =
-                String(
-                    loginRole
-                        ? loginRole.value
-                        : ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            const usernameValue =
-                App.cleanText(
-                    username
-                        ? username.value
-                        : ""
-                );
-
-
-            const passwordValue =
-                password
-                    ? password.value
-                    : "";
-
-
-            if (
-                !App.ALLOWED_ROLES.includes(
-                    role
-                )
-            ) {
-
-                App.showMessage(
-                    loginMessage,
-                    "اکاؤنٹ کی قسم درست نہیں ہے۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!usernameValue) {
-
-                App.showMessage(
-                    loginMessage,
-                    "صارف نام درج کریں۔",
-                    "error"
-                );
-
-                if (username) {
-                    username.focus();
-                }
-
-                return;
-            }
-
-
-            if (!passwordValue) {
-
-                App.showMessage(
-                    loginMessage,
-                    "پاس ورڈ درج کریں۔",
-                    "error"
-                );
-
-                if (password) {
-                    password.focus();
-                }
-
-                return;
-            }
-
-
-            App.clearMessage(
-                loginMessage
-            );
-
-
-            App.setButtonBusy(
-                loginButton,
-                true,
-                "لاگ اِن ہو رہا ہے"
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "login_session",
-                        {
-                            p_role:
-                                role,
-
-                            p_username:
-                                usernameValue,
-
-                            p_password:
-                                passwordValue
-                        }
-                    );
-
-
-                if (
-                    !data ||
-                    !data.token ||
-                    !data.role
-                ) {
-
-                    App.showMessage(
-                        loginMessage,
-                        "صارف نام یا پاس ورڈ غلط ہے، یا اکاؤنٹ ابھی منظور نہیں ہوا۔",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                const returnedRole =
-                    String(
-                        data.role
-                    )
-                        .trim()
-                        .toLowerCase();
-
-
-                if (
-                    returnedRole !== role
-                ) {
-
-                    App.showMessage(
-                        loginMessage,
-                        "اکاؤنٹ کی قسم درست نہیں ہے۔",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                App.saveSession(
-                    data,
-                    Boolean(
-                        rememberMe &&
-                        rememberMe.checked
-                    )
-                );
-
-
-                window.location.replace(
-                    "dashboard.html"
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                App.showMessage(
-                    loginMessage,
-                    "لاگ اِن نہیں ہوسکا۔ صارف نام، پاس ورڈ اور اکاؤنٹ کی منظوری چیک کریں۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    loginButton,
-                    false
+                    closeSidebar
                 );
             }
-        };
-
-
-    /* =====================================================
-       INITIALIZE LOGIN PAGE
-       ===================================================== */
-
-    App.initializeLoginPage =
-        function () {
-
-            if (
-                App.currentPage !==
-                "login.html"
-            ) {
-                return;
-            }
-
-
-            /*
-             * اگر پہلے سے صحیح local session موجود ہے
-             * تو دوبارہ login form نہ دکھائیں۔
-             */
-
-            if (
-                App.isAuthenticated()
-            ) {
-
-                const session =
-                    App.getStoredSession();
-
-
-                if (
-                    session &&
-                    Number(
-                        session.lastActivity ||
-                        0
-                    ) > 0 &&
-                    Date.now() -
-                        Number(
-                            session.lastActivity
-                        ) <=
-                        App.INACTIVITY_LIMIT
-                ) {
-
-                    window.location.replace(
-                        "dashboard.html"
-                    );
-
-                    return;
-                }
-
-
-                App.clearStoredSession();
-            }
-
-
-            const role =
-                App.getLoginRoleFromURL();
-
-
-            App.setLoginPageRole(
-                role
-            );
-
-
-            App.showLoginReason();
-
-
-            App.initializePasswordToggle();
-
-
-            const loginForm =
-                App.byId(
-                    "loginForm"
-                );
-
-            const backButton =
-                App.byId(
-                    "backButton"
-                );
-
-
-            const pendingMessage =
-                App.byId(
-                    "pendingAccountMessage"
-                );
-
-            const rejectedMessage =
-                App.byId(
-                    "rejectedAccountMessage"
-                );
-
-
-            App.clearMessage(
-                pendingMessage
-            );
-
-            App.clearMessage(
-                rejectedMessage
-            );
-
-
-            if (loginForm) {
-
-                loginForm
-                    .addEventListener(
-                        "submit",
-                        App.handleLogin
-                    );
-            }
-
-
-            if (backButton) {
-
-                backButton
-                    .addEventListener(
-                        "click",
-                        function (event) {
-
-                            event.preventDefault();
-
-                            window.location.href =
-                                "index.html";
-                        }
-                    );
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeHomePage();
-
-            App.initializeLoginPage();
-        }
-    );
-
-})();
-
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 3 / DASHBOARD
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
         );
 
-        return;
-    }
 
-
-    /* =====================================================
-       DASHBOARD ROLE PERMISSIONS
-       ===================================================== */
-
-    App.applyDashboardPermissions =
-        function (role) {
-
-            const studentsButton =
-                App.byId(
-                    "studentsButton"
-                );
-
-            const teachersButton =
-                App.byId(
-                    "teachersButton"
-                );
-
-            const attendanceButton =
-                App.byId(
-                    "attendanceButton"
-                );
-
-            const approvalsButton =
-                App.byId(
-                    "approvalsButton"
-                );
-
-            const announcementsButton =
-                App.byId(
-                    "announcementsButton"
-                );
-
-            const reportsButton =
-                App.byId(
-                    "reportsButton"
-                );
-
-
-            const adminOnlyElements =
-                document.querySelectorAll(
-                    ".admin-only"
-                );
-
-
-            adminOnlyElements.forEach(
-                function (element) {
-
-                    if (role === "admin") {
-
-                        App.show(
-                            element
-                        );
-
-                    } else {
-
-                        App.hide(
-                            element
-                        );
-                    }
-                }
-            );
-
-
-            /*
-             * Students and Teachers management
-             * currently uses secure ADMIN RPCs.
-             */
-
-            if (role === "admin") {
-
-                App.show(
-                    studentsButton
-                );
-
-                App.show(
-                    teachersButton
-                );
-
-            } else {
-
-                App.hide(
-                    studentsButton
-                );
-
-                App.hide(
-                    teachersButton
-                );
-            }
-
-
-            /*
-             * Attendance:
-             * Admin + Teacher
-             */
-
-            if (
-                role === "admin" ||
-                role === "teacher"
-            ) {
-
-                App.show(
-                    attendanceButton
-                );
-
-            } else {
-
-                App.hide(
-                    attendanceButton
-                );
-            }
-
-
-            /*
-             * Approvals:
-             * Admin only
-             */
-
-            if (role === "admin") {
-
-                App.show(
-                    approvalsButton
-                );
-
-            } else {
-
-                App.hide(
-                    approvalsButton
-                );
-            }
-
-
-            /*
-             * Announcements:
-             * Keep visible for all logged-in roles.
-             * Actual page/module can be connected later.
-             */
-
-            App.show(
-                announcementsButton
-            );
-
-
-            /*
-             * Reports:
-             * Admin only
-             */
-
-            if (role === "admin") {
-
-                App.show(
-                    reportsButton
-                );
-
-            } else {
-
-                App.hide(
-                    reportsButton
-                );
-            }
-        };
-
-
-    /* =====================================================
-       DASHBOARD HEADER
-       ===================================================== */
-
-    App.renderDashboardHeader =
-        function (session) {
-
-            const dashboardWelcome =
-                App.byId(
-                    "dashboardWelcome"
-                );
-
-            const dashboardRoleText =
-                App.byId(
-                    "dashboardRoleText"
-                );
-
-
-            const username =
-                App.cleanText(
-                    session.username
-                );
-
-
-            if (dashboardWelcome) {
-
-                dashboardWelcome.textContent =
-                    username
-                        ? "خوش آمدید، " +
-                          username
-                        : "خوش آمدید";
-            }
-
-
-            if (dashboardRoleText) {
-
-                dashboardRoleText.textContent =
-                    App.getRoleLabel(
-                        session.role
-                    );
-            }
-        };
-
-
-    /* =====================================================
-       DASHBOARD STATS PLACEHOLDERS
-       ===================================================== */
-
-    App.resetDashboardStats =
+    window.addEventListener(
+        "resize",
         function () {
 
-            const studentTotal =
-                App.byId(
-                    "studentTotal"
-                );
-
-            const teacherTotal =
-                App.byId(
-                    "teacherTotal"
-                );
-
-            const pendingApplicationTotal =
-                App.byId(
-                    "pendingApplicationTotal"
-                );
-
-            const todayAttendanceTotal =
-                App.byId(
-                    "todayAttendanceTotal"
-                );
-
-
-            App.setText(
-                studentTotal,
-                "0"
-            );
-
-            App.setText(
-                teacherTotal,
-                "0"
-            );
-
-            App.setText(
-                pendingApplicationTotal,
-                "0"
-            );
-
-            App.setText(
-                todayAttendanceTotal,
-                "0"
-            );
-        };
-
-
-    /* =====================================================
-       LOAD ADMIN DASHBOARD STATS
-       ===================================================== */
-
-    App.loadAdminDashboardStats =
-        async function (
-            session
-        ) {
-
-            const studentTotal =
-                App.byId(
-                    "studentTotal"
-                );
-
-            const teacherTotal =
-                App.byId(
-                    "teacherTotal"
-                );
-
-            const pendingApplicationTotal =
-                App.byId(
-                    "pendingApplicationTotal"
-                );
-
-            const todayAttendanceTotal =
-                App.byId(
-                    "todayAttendanceTotal"
-                );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "admin_dashboard_stats",
-                        {
-                            p_token:
-                                session.token
-                        }
-                    );
-
-
-                const stats =
-                    data &&
-                    typeof data ===
-                        "object"
-                        ? data
-                        : {};
-
-
-                App.setText(
-                    studentTotal,
-                    Number(
-                        stats.student_total ||
-                        0
-                    )
-                );
-
-
-                App.setText(
-                    teacherTotal,
-                    Number(
-                        stats.teacher_total ||
-                        0
-                    )
-                );
-
-
-                App.setText(
-                    pendingApplicationTotal,
-                    Number(
-                        stats.pending_application_total ||
-                        0
-                    )
-                );
-
-
-                App.setText(
-                    todayAttendanceTotal,
-                    Number(
-                        stats.today_attendance_total ||
-                        0
-                    )
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Dashboard stats error:",
-                    error
-                );
-
-
-                /*
-                 * Invalid/expired server token.
-                 */
-
-                const message =
-                    String(
-                        error &&
-                        error.message
-                            ? error.message
-                            : ""
-                    ).toLowerCase();
-
-
-                if (
-                    message.includes(
-                        "expired"
-                    ) ||
-                    message.includes(
-                        "invalid"
-                    ) ||
-                    message.includes(
-                        "session"
-                    )
-                ) {
-
-                    await App.logout(
-                        "login-required"
-                    );
-                }
-            }
-        };
-
-
-    /* =====================================================
-       NON-ADMIN DASHBOARD STATS
-       ===================================================== */
-
-    App.renderNonAdminDashboardStats =
-        function () {
-
-            const studentTotal =
-                App.byId(
-                    "studentTotal"
-                );
-
-            const teacherTotal =
-                App.byId(
-                    "teacherTotal"
-                );
-
-            const pendingApplicationTotal =
-                App.byId(
-                    "pendingApplicationTotal"
-                );
-
-            const todayAttendanceTotal =
-                App.byId(
-                    "todayAttendanceTotal"
-                );
-
-
-            /*
-             * These admin-wide counts are not exposed
-             * to Teacher/Student accounts.
-             */
-
-            App.setText(
-                studentTotal,
-                "—"
-            );
-
-            App.setText(
-                teacherTotal,
-                "—"
-            );
-
-            App.setText(
-                pendingApplicationTotal,
-                "—"
-            );
-
-            App.setText(
-                todayAttendanceTotal,
-                "—"
-            );
-        };
-
-
-    /* =====================================================
-       DASHBOARD BUTTONS
-       ===================================================== */
-
-    App.initializeDashboardButtons =
-        function (
-            session
-        ) {
-
-            const studentsButton =
-                App.byId(
-                    "studentsButton"
-                );
-
-            const teachersButton =
-                App.byId(
-                    "teachersButton"
-                );
-
-            const attendanceButton =
-                App.byId(
-                    "attendanceButton"
-                );
-
-            const approvalsButton =
-                App.byId(
-                    "approvalsButton"
-                );
-
-            const announcementsButton =
-                App.byId(
-                    "announcementsButton"
-                );
-
-            const reportsButton =
-                App.byId(
-                    "reportsButton"
-                );
-
-            const logoutButton =
-                App.byId(
-                    "logoutButton"
-                );
-
-
-            if (studentsButton) {
-
-                studentsButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            if (
-                                session.role !==
-                                "admin"
-                            ) {
-                                return;
-                            }
-
-
-                            window.location.href =
-                                "students.html";
-                        }
-                    );
-            }
-
-
-            if (teachersButton) {
-
-                teachersButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            if (
-                                session.role !==
-                                "admin"
-                            ) {
-                                return;
-                            }
-
-
-                            window.location.href =
-                                "teachers.html";
-                        }
-                    );
-            }
-
-
-            if (attendanceButton) {
-
-                attendanceButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            if (
-                                session.role !==
-                                    "admin" &&
-                                session.role !==
-                                    "teacher"
-                            ) {
-                                return;
-                            }
-
-
-                            window.location.href =
-                                "attendance.html";
-                        }
-                    );
-            }
-
-
-            if (approvalsButton) {
-
-                approvalsButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            if (
-                                session.role !==
-                                "admin"
-                            ) {
-                                return;
-                            }
-
-
-                            window.location.href =
-                                "approvals.html";
-                        }
-                    );
-            }
-
-
-            if (announcementsButton) {
-
-                announcementsButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            /*
-                             * announcements.html has not
-                             * been supplied yet.
-                             * Do not navigate to a missing page.
-                             */
-
-                            window.alert(
-                                "اعلانات کا صفحہ ابھی شامل نہیں کیا گیا۔"
-                            );
-                        }
-                    );
-            }
-
-
-            if (reportsButton) {
-
-                reportsButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            if (
-                                session.role !==
-                                "admin"
-                            ) {
-                                return;
-                            }
-
-
-                            /*
-                             * reports.html has not
-                             * been supplied yet.
-                             */
-
-                            window.alert(
-                                "رپورٹس کا صفحہ ابھی شامل نہیں کیا گیا۔"
-                            );
-                        }
-                    );
-            }
-
-
-            if (logoutButton) {
-
-                logoutButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.logout(
-                                "logout"
-                            );
-                        }
-                    );
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZE DASHBOARD
-       ===================================================== */
-
-    App.initializeDashboardPage =
-        async function () {
-
             if (
-                App.currentPage !==
-                "dashboard.html"
-            ) {
-                return;
-            }
-
-
-            const session =
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher",
-                        "student"
-                    ]
-                );
-
-
-            if (!session) {
-                return;
-            }
-
-
-            App.touchSession(
-                true
-            );
-
-
-            App.resetDashboardStats();
-
-
-            App.renderDashboardHeader(
-                session
-            );
-
-
-            App.applyDashboardPermissions(
-                session.role
-            );
-
-
-            App.initializeDashboardButtons(
-                session
-            );
-
-
-            if (
-                session.role ===
-                "admin"
+                window.innerWidth >
+                850
             ) {
 
-                await App.loadAdminDashboardStats(
-                    session
-                );
-
-            } else {
-
-                App.renderNonAdminDashboardStats();
+                closeSidebar();
             }
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeDashboardPage();
         }
     );
+}
 
-})();
 
+/* =========================================================
+   LOGOUT BUTTONS
+   ========================================================= */
 
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 4 / STUDENTS MODULE
-   ===================================================== */
+function initializeLogoutButtons() {
 
-(function () {
-    "use strict";
+    [
+        "adminLogoutButton",
+        "settingsAdminLogoutButton"
+    ].forEach(
+        id => {
 
-    const App =
-        window.MadrassaApp;
+            const button =
+                byId(id);
 
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       STUDENT STATE
-       ===================================================== */
-
-    App.studentsCache = [];
-
-    App.editingStudentId = null;
-
-
-    /* =====================================================
-       STUDENT STATUS
-       ===================================================== */
-
-    App.normalizeStudentStatus =
-        function (value) {
-
-            const status =
-                App.cleanText(value)
-                    .toLowerCase();
-
-            if (
-                status === "inactive" ||
-                status === "disabled" ||
-                status === "غیر فعال"
-            ) {
-                return "inactive";
-            }
-
-            return "active";
-        };
-
-
-    App.studentStatusLabel =
-        function (status) {
-
-            return (
-                App.normalizeStudentStatus(
-                    status
-                ) === "inactive"
-                    ? "غیر فعال"
-                    : "فعال"
-            );
-        };
-
-
-    /* =====================================================
-       STUDENT PAGE ELEMENTS
-       ===================================================== */
-
-    App.getStudentElements =
-        function () {
-
-            return {
-
-                backToDashboard:
-                    App.byId(
-                        "backToDashboard"
-                    ),
-
-                studentAdminActions:
-                    App.byId(
-                        "studentAdminActions"
-                    ),
-
-                showStudentForm:
-                    App.byId(
-                        "showStudentForm"
-                    ),
-
-                studentCount:
-                    App.byId(
-                        "studentCount"
-                    ),
-
-                studentFormContainer:
-                    App.byId(
-                        "studentFormContainer"
-                    ),
-
-                formTitle:
-                    App.byId(
-                        "formTitle"
-                    ),
-
-                studentFormMessage:
-                    App.byId(
-                        "studentFormMessage"
-                    ),
-
-                studentForm:
-                    App.byId(
-                        "studentForm"
-                    ),
-
-                editStudentId:
-                    App.byId(
-                        "editStudentId"
-                    ),
-
-                admissionType:
-                    App.byId(
-                        "admissionType"
-                    ),
-
-                admissionNo:
-                    App.byId(
-                        "admissionNo"
-                    ),
-
-                previousMadrassaGroup:
-                    App.byId(
-                        "previousMadrassaGroup"
-                    ),
-
-                previousMadrassa:
-                    App.byId(
-                        "previousMadrassa"
-                    ),
-
-                transferDateGroup:
-                    App.byId(
-                        "transferDateGroup"
-                    ),
-
-                transferDate:
-                    App.byId(
-                        "transferDate"
-                    ),
-
-                studentName:
-                    App.byId(
-                        "studentName"
-                    ),
-
-                fatherName:
-                    App.byId(
-                        "fatherName"
-                    ),
-
-                guardianName:
-                    App.byId(
-                        "guardianName"
-                    ),
-
-                studentCNIC:
-                    App.byId(
-                        "studentCNIC"
-                    ),
-
-                dateOfBirth:
-                    App.byId(
-                        "dateOfBirth"
-                    ),
-
-                studentClass:
-                    App.byId(
-                        "studentClass"
-                    ),
-
-                phone:
-                    App.byId(
-                        "phone"
-                    ),
-
-                admissionDate:
-                    App.byId(
-                        "admissionDate"
-                    ),
-
-                address:
-                    App.byId(
-                        "address"
-                    ),
-
-                residenceType:
-                    App.byId(
-                        "residenceType"
-                    ),
-
-                mahramSection:
-                    App.byId(
-                        "mahramSection"
-                    ),
-
-                mahramList:
-                    App.byId(
-                        "mahramList"
-                    ),
-
-                addMahram:
-                    App.byId(
-                        "addMahram"
-                    ),
-
-                mahramConfirmation:
-                    App.byId(
-                        "mahramConfirmation"
-                    ),
-
-                studentStatus:
-                    App.byId(
-                        "studentStatus"
-                    ),
-
-                saveStudentButton:
-                    App.byId(
-                        "saveStudentButton"
-                    ),
-
-                cancelStudentForm:
-                    App.byId(
-                        "cancelStudentForm"
-                    ),
-
-                studentSearch:
-                    App.byId(
-                        "studentSearch"
-                    ),
-
-                studentListMessage:
-                    App.byId(
-                        "studentListMessage"
-                    ),
-
-                studentsList:
-                    App.byId(
-                        "studentsList"
-                    ),
-
-                studentDetailsOverlay:
-                    App.byId(
-                        "studentDetailsOverlay"
-                    ),
-
-                studentDetailsTitle:
-                    App.byId(
-                        "studentDetailsTitle"
-                    ),
-
-                closeStudentDetails:
-                    App.byId(
-                        "closeStudentDetails"
-                    ),
-
-                studentDetailsContent:
-                    App.byId(
-                        "studentDetailsContent"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       TRANSFER FIELDS
-       ===================================================== */
-
-    App.isTransferAdmission =
-        function (value) {
-
-            const text =
-                App.cleanText(value)
-                    .toLowerCase();
-
-            return (
-                text.includes("منتقل") ||
-                text.includes("transfer")
-            );
-        };
-
-
-    App.updateTransferFields =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            const isTransfer =
-                App.isTransferAdmission(
-                    el.admissionType
-                        ? el.admissionType.value
-                        : ""
-                );
-
-
-            if (isTransfer) {
-
-                App.show(
-                    el.previousMadrassaGroup
-                );
-
-                App.show(
-                    el.transferDateGroup
-                );
-
-            } else {
-
-                App.hide(
-                    el.previousMadrassaGroup
-                );
-
-                App.hide(
-                    el.transferDateGroup
-                );
-
-                if (
-                    el.previousMadrassa
-                ) {
-                    el.previousMadrassa.value =
-                        "";
-                }
-
-                if (el.transferDate) {
-                    el.transferDate.value =
-                        "";
-                }
-            }
-        };
-
-
-    /* =====================================================
-       HOSTEL / MAHRAM
-       ===================================================== */
-
-    App.isHostelResidence =
-        function (value) {
-
-            const text =
-                App.cleanText(value);
-
-            return (
-                text === "ہاسٹل" ||
-                text.toLowerCase() ===
-                    "hostel"
-            );
-        };
-
-
-    App.updateStudentMahramSection =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            const isHostel =
-                App.isHostelResidence(
-                    el.residenceType
-                        ? el.residenceType.value
-                        : ""
-                );
-
-
-            if (isHostel) {
-
-                App.show(
-                    el.mahramSection
-                );
-
-                if (
-                    el.mahramList &&
-                    el.mahramList.children
-                        .length === 0
-                ) {
-
-                    App.addStudentMahramRow();
-                }
-
-            } else {
-
-                App.hide(
-                    el.mahramSection
-                );
-            }
-        };
-
-
-    App.createMahramRow =
-        function (data = {}) {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "mahram-row";
-
-            row.innerHTML = `
-                <div class="form-group">
-                    <label>محرم کا نام</label>
-                    <input
-                        type="text"
-                        class="mahram-name"
-                        autocomplete="off"
-                        value="${App.escapeHTML(
-                            data.name || ""
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>رشتہ</label>
-                    <input
-                        type="text"
-                        class="mahram-relation"
-                        autocomplete="off"
-                        value="${App.escapeHTML(
-                            data.relation || ""
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>فون نمبر</label>
-                    <input
-                        type="tel"
-                        class="mahram-phone"
-                        inputmode="numeric"
-                        maxlength="11"
-                        value="${App.escapeHTML(
-                            App.normalizePhone(
-                                data.phone || ""
-                            )
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>شناختی کارڈ نمبر</label>
-                    <input
-                        type="text"
-                        class="mahram-cnic"
-                        inputmode="numeric"
-                        maxlength="15"
-                        value="${App.escapeHTML(
-                            App.formatCNIC(
-                                data.cnic || ""
-                            )
-                        )}"
-                    >
-                </div>
-
-                <button
-                    type="button"
-                    class="remove-mahram"
-                >
-                    محرم ہٹائیں
-                </button>
-            `;
-
-
-            const phone =
-                row.querySelector(
-                    ".mahram-phone"
-                );
-
-            const cnic =
-                row.querySelector(
-                    ".mahram-cnic"
-                );
-
-            const removeButton =
-                row.querySelector(
-                    ".remove-mahram"
-                );
-
-
-            App.bindPhoneInput(
-                phone
-            );
-
-            App.bindCNICInput(
-                cnic
-            );
-
-
-            if (removeButton) {
-
-                removeButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            row.remove();
-                        }
-                    );
-            }
-
-
-            return row;
-        };
-
-
-    App.addStudentMahramRow =
-        function (data = {}) {
-
-            const el =
-                App.getStudentElements();
-
-            if (!el.mahramList) {
+            if (!button) {
                 return;
             }
 
+            button.addEventListener(
+                "click",
+                function () {
 
-            const count =
-                el.mahramList
-                    .querySelectorAll(
-                        ".mahram-row"
-                    ).length;
-
-
-            if (
-                count >=
-                App.MAX_MAHRAMS
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            el.mahramList.appendChild(
-                App.createMahramRow(
-                    data
-                )
-            );
-        };
-
-
-    App.collectStudentMahrams =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            if (!el.mahramList) {
-                return [];
-            }
-
-
-            const rows =
-                el.mahramList
-                    .querySelectorAll(
-                        ".mahram-row"
-                    );
-
-            const mahrams = [];
-
-
-            rows.forEach(
-                function (row) {
-
-                    const name =
-                        App.cleanText(
-                            row.querySelector(
-                                ".mahram-name"
-                            )?.value
-                        );
-
-                    const relation =
-                        App.cleanText(
-                            row.querySelector(
-                                ".mahram-relation"
-                            )?.value
-                        );
-
-                    const phone =
-                        App.normalizePhone(
-                            row.querySelector(
-                                ".mahram-phone"
-                            )?.value
-                        );
-
-                    const cnic =
-                        App.normalizeCNIC(
-                            row.querySelector(
-                                ".mahram-cnic"
-                            )?.value
-                        );
-
-
-                    if (
-                        name ||
-                        relation ||
-                        phone ||
-                        cnic
-                    ) {
-
-                        mahrams.push({
-                            name:
-                                name,
-
-                            relation:
-                                relation,
-
-                            phone:
-                                phone,
-
-                            cnic:
-                                cnic
-                        });
-                    }
+                    logoutUser(false);
                 }
             );
+        }
+    );
+}
 
 
-            return mahrams;
-        };
+/* =========================================================
+   PASSWORD EYE BUTTONS
+   ========================================================= */
 
+function initializePasswordEyes() {
 
-    App.validateStudentMahrams =
-        function (
-            mahrams,
-            residenceType
-        ) {
+    document
+        .querySelectorAll(
+            "[data-password-target]"
+        )
+        .forEach(
+            button => {
 
-            if (
-                !App.isHostelResidence(
-                    residenceType
-                )
-            ) {
-                return true;
-            }
-
-
-            if (
-                !Array.isArray(
-                    mahrams
-                ) ||
-                mahrams.length < 1 ||
-                mahrams.length >
-                    App.MAX_MAHRAMS
-            ) {
-
-                return false;
-            }
-
-
-            for (
-                const mahram
-                of mahrams
-            ) {
-
-                if (
-                    !App.cleanText(
-                        mahram.name
-                    ) ||
-                    !App.cleanText(
-                        mahram.relation
-                    ) ||
-                    !App.isValidPhone(
-                        mahram.phone
-                    ) ||
-                    !App.isValidCNIC(
-                        mahram.cnic
-                    )
-                ) {
-
-                    return false;
-                }
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       FORM RESET / OPEN / CLOSE
-       ===================================================== */
-
-    App.resetStudentForm =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-
-            if (el.studentForm) {
-
-                el.studentForm.reset();
-            }
-
-
-            App.editingStudentId =
-                null;
-
-
-            if (el.editStudentId) {
-
-                el.editStudentId.value =
-                    "";
-            }
-
-
-            if (el.mahramList) {
-
-                el.mahramList.innerHTML =
-                    "";
-            }
-
-
-            if (el.admissionDate) {
-
-                el.admissionDate.value =
-                    App.todayISO();
-            }
-
-
-            if (el.studentStatus) {
-
-                const activeOption =
-                    Array.from(
-                        el.studentStatus.options ||
-                        []
-                    ).find(
-                        function (option) {
-
-                            return (
-                                App.normalizeStudentStatus(
-                                    option.value
-                                ) ===
-                                "active"
-                            );
-                        }
-                    );
-
-                if (activeOption) {
-
-                    el.studentStatus.value =
-                        activeOption.value;
-                }
-            }
-
-
-            App.clearMessage(
-                el.studentFormMessage
-            );
-
-
-            App.updateTransferFields();
-
-            App.updateStudentMahramSection();
-        };
-
-
-    App.openStudentForm =
-        function (
-            student = null
-        ) {
-
-            const el =
-                App.getStudentElements();
-
-
-            if (!el.studentFormContainer) {
-                return;
-            }
-
-
-            App.show(
-                el.studentFormContainer
-            );
-
-
-            if (student) {
-
-                App.editingStudentId =
-                    student.id;
-
-
-                if (el.editStudentId) {
-
-                    el.editStudentId.value =
-                        student.id || "";
-                }
-
-
-                App.setText(
-                    el.formTitle,
-                    "طالبہ کا ریکارڈ تبدیل کریں"
-                );
-
-
-                if (el.admissionType) {
-                    el.admissionType.value =
-                        student.admission_type ||
-                        "";
-                }
-
-                if (el.admissionNo) {
-                    el.admissionNo.value =
-                        student.admission_no ||
-                        "";
-                }
-
-                if (el.previousMadrassa) {
-                    el.previousMadrassa.value =
-                        student.previous_madrassa ||
-                        "";
-                }
-
-                if (el.transferDate) {
-                    el.transferDate.value =
-                        student.transfer_date ||
-                        "";
-                }
-
-                if (el.studentName) {
-                    el.studentName.value =
-                        student.name ||
-                        "";
-                }
-
-                if (el.fatherName) {
-                    el.fatherName.value =
-                        student.father_name ||
-                        "";
-                }
-
-                if (el.guardianName) {
-                    el.guardianName.value =
-                        student.guardian_name ||
-                        "";
-                }
-
-                if (el.studentCNIC) {
-                    el.studentCNIC.value =
-                        App.formatCNIC(
-                            student.cnic ||
-                            ""
-                        );
-                }
-
-                if (el.dateOfBirth) {
-                    el.dateOfBirth.value =
-                        student.date_of_birth ||
-                        "";
-                }
-
-                if (el.studentClass) {
-                    el.studentClass.value =
-                        student.student_class ||
-                        "";
-                }
-
-                if (el.phone) {
-                    el.phone.value =
-                        App.normalizePhone(
-                            student.phone ||
-                            ""
-                        );
-                }
-
-                if (el.admissionDate) {
-                    el.admissionDate.value =
-                        student.admission_date ||
-                        "";
-                }
-
-                if (el.address) {
-                    el.address.value =
-                        student.address ||
-                        "";
-                }
-
-                if (el.residenceType) {
-                    el.residenceType.value =
-                        student.residence_type ||
-                        "";
-                }
-
-
-                if (el.studentStatus) {
-
-                    const targetStatus =
-                        App.normalizeStudentStatus(
-                            student.status
-                        );
-
-
-                    const option =
-                        Array.from(
-                            el.studentStatus.options ||
-                            []
-                        ).find(
-                            function (item) {
-
-                                return (
-                                    App.normalizeStudentStatus(
-                                        item.value
-                                    ) ===
-                                    targetStatus
-                                );
-                            }
-                        );
-
-
-                    if (option) {
-
-                        el.studentStatus.value =
-                            option.value;
-                    }
-                }
-
-
-                if (el.mahramList) {
-
-                    el.mahramList.innerHTML =
-                        "";
-
-
-                    const mahrams =
-                        Array.isArray(
-                            student.mahrams
-                        )
-                            ? student.mahrams
-                            : [];
-
-
-                    mahrams.forEach(
-                        function (mahram) {
-
-                            App.addStudentMahramRow(
-                                mahram
-                            );
-                        }
-                    );
-                }
-
-
-                App.updateTransferFields();
-
-                App.updateStudentMahramSection();
-
-            } else {
-
-                App.resetStudentForm();
-
-
-                App.setText(
-                    el.formTitle,
-                    "نئی طالبہ شامل کریں"
-                );
-            }
-
-
-            el.studentFormContainer
-                .scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
-        };
-
-
-    App.closeStudentForm =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            App.resetStudentForm();
-
-            App.hide(
-                el.studentFormContainer
-            );
-        };
-
-
-    /* =====================================================
-       STUDENT VALIDATION
-       ===================================================== */
-
-    App.getStudentFormData =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-
-            return {
-
-                id:
-                    App.editingStudentId ||
-                    null,
-
-                admissionNo:
-                    App.cleanText(
-                        el.admissionNo
-                            ? el.admissionNo.value
-                            : ""
-                    ),
-
-                admissionType:
-                    App.cleanText(
-                        el.admissionType
-                            ? el.admissionType.value
-                            : ""
-                    ),
-
-                name:
-                    App.cleanText(
-                        el.studentName
-                            ? el.studentName.value
-                            : ""
-                    ),
-
-                fatherName:
-                    App.cleanText(
-                        el.fatherName
-                            ? el.fatherName.value
-                            : ""
-                    ),
-
-                guardianName:
-                    App.cleanText(
-                        el.guardianName
-                            ? el.guardianName.value
-                            : ""
-                    ),
-
-                cnic:
-                    App.normalizeCNIC(
-                        el.studentCNIC
-                            ? el.studentCNIC.value
-                            : ""
-                    ),
-
-                phone:
-                    App.normalizePhone(
-                        el.phone
-                            ? el.phone.value
-                            : ""
-                    ),
-
-                dateOfBirth:
-                    el.dateOfBirth
-                        ? el.dateOfBirth.value
-                        : "",
-
-                studentClass:
-                    App.cleanText(
-                        el.studentClass
-                            ? el.studentClass.value
-                            : ""
-                    ),
-
-                admissionDate:
-                    el.admissionDate
-                        ? el.admissionDate.value
-                        : "",
-
-                address:
-                    App.cleanText(
-                        el.address
-                            ? el.address.value
-                            : ""
-                    ),
-
-                residenceType:
-                    App.cleanText(
-                        el.residenceType
-                            ? el.residenceType.value
-                            : ""
-                    ),
-
-                previousMadrassa:
-                    App.cleanText(
-                        el.previousMadrassa
-                            ? el.previousMadrassa.value
-                            : ""
-                    ),
-
-                transferDate:
-                    el.transferDate
-                        ? el.transferDate.value
-                        : "",
-
-                mahrams:
-                    App.collectStudentMahrams(),
-
-                status:
-                    App.normalizeStudentStatus(
-                        el.studentStatus
-                            ? el.studentStatus.value
-                            : "active"
-                    )
-            };
-        };
-
-
-    App.validateStudentData =
-        function (data) {
-
-            const el =
-                App.getStudentElements();
-
-
-            if (!data.admissionNo) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "داخلہ نمبر درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.admissionType) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "داخلہ کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.name ||
-                !App.isUrduText(
-                    data.name
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "طالبہ کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.fatherName ||
-                !App.isUrduText(
-                    data.fatherName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "والد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.guardianName ||
-                !App.isUrduText(
-                    data.guardianName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "سرپرست کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidCNIC(
-                    data.cnic
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidPhone(
-                    data.phone
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "فون نمبر 11 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.dateOfBirth) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "تاریخ پیدائش درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.studentClass) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.address) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "پتہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.residenceType) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "رہائش کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.validateStudentMahrams(
-                    data.mahrams,
-                    data.residenceType
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "ہاسٹل طالبہ کے لیے کم از کم ایک اور زیادہ سے زیادہ پانچ مکمل محرم درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                App.isTransferAdmission(
-                    data.admissionType
-                ) &&
-                !data.previousMadrassa
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "سابقہ مدرسہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       SAVE STUDENT
-       ===================================================== */
-
-    App.saveStudent =
-        async function (
-            event
-        ) {
-
-            if (event) {
-                event.preventDefault();
-            }
-
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentElements();
-
-            const data =
-                App.getStudentFormData();
-
-
-            if (
-                !App.validateStudentData(
-                    data
-                )
-            ) {
-                return;
-            }
-
-
-            App.clearMessage(
-                el.studentFormMessage
-            );
-
-
-            App.setButtonBusy(
-                el.saveStudentButton,
-                true,
-                "محفوظ ہو رہا ہے"
-            );
-
-
-            try {
-
-                await App.rpc(
-                    "admin_save_student",
-                    {
-                        p_token:
-                            session.token,
-
-                        p_id:
-                            data.id,
-
-                        p_admission_no:
-                            data.admissionNo,
-
-                        p_admission_type:
-                            data.admissionType,
-
-                        p_name:
-                            data.name,
-
-                        p_father_name:
-                            data.fatherName,
-
-                        p_guardian_name:
-                            data.guardianName,
-
-                        p_cnic:
-                            data.cnic,
-
-                        p_phone:
-                            data.phone,
-
-                        p_date_of_birth:
-                            data.dateOfBirth ||
-                            null,
-
-                        p_student_class:
-                            data.studentClass,
-
-                        p_admission_date:
-                            data.admissionDate ||
-                            null,
-
-                        p_address:
-                            data.address,
-
-                        p_residence_type:
-                            data.residenceType,
-
-                        p_previous_madrassa:
-                            data.previousMadrassa ||
-                            null,
-
-                        p_transfer_date:
-                            data.transferDate ||
-                            null,
-
-                        p_mahrams:
-                            data.mahrams,
-
-                        p_status:
-                            data.status
-                    }
-                );
-
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    data.id
-                        ? "طالبہ کا ریکارڈ کامیابی سے تبدیل ہوگیا۔"
-                        : "نئی طالبہ کامیابی سے شامل ہوگئی۔",
-                    "success"
-                );
-
-
-                await App.loadStudents();
-
-
-                window.setTimeout(
+                button.addEventListener(
+                    "click",
                     function () {
 
-                        App.closeStudentForm();
-                    },
-                    700
-                );
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    error.message ||
-                    "طالبہ کا ریکارڈ محفوظ نہیں ہوسکا۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.saveStudentButton,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LOAD STUDENTS
-       ===================================================== */
-
-    App.loadStudents =
-        async function () {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentElements();
-
-
-            App.showMessage(
-                el.studentListMessage,
-                "ریکارڈ لوڈ ہو رہا ہے۔",
-                "info"
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "admin_get_students",
-                        {
-                            p_token:
-                                session.token
-                        }
-                    );
-
-
-                App.studentsCache =
-                    Array.isArray(data)
-                        ? data
-                        : [];
-
-
-                App.clearMessage(
-                    el.studentListMessage
-                );
-
-
-                App.renderStudents(
-                    App.studentsCache
-                );
-
-            } catch (error) {
-
-                App.studentsCache = [];
-
-
-                App.renderStudents(
-                    []
-                );
-
-
-                App.showMessage(
-                    el.studentListMessage,
-                    error.message ||
-                    "طالبات کا ریکارڈ لوڈ نہیں ہوسکا۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       RENDER STUDENTS
-       ===================================================== */
-
-    App.renderStudents =
-        function (students) {
-
-            const el =
-                App.getStudentElements();
-
-            if (!el.studentsList) {
-                return;
-            }
-
-
-            const list =
-                Array.isArray(students)
-                    ? students
-                    : [];
-
-
-            App.setText(
-                el.studentCount,
-                list.length
-            );
-
-
-            if (
-                list.length === 0
-            ) {
-
-                el.studentsList.innerHTML =
-                    `<div class="empty-state">
-                        کوئی طالبہ موجود نہیں۔
-                    </div>`;
-
-                return;
-            }
-
-
-            el.studentsList.innerHTML =
-                list.map(
-                    function (student) {
-
-                        const status =
-                            App.studentStatusLabel(
-                                student.status
+                        const targetId =
+                            safeString(
+                                button.dataset
+                                    .passwordTarget
                             );
 
-
-                        return `
-                            <div
-                                class="student-card"
-                                data-student-id="${App.escapeHTML(
-                                    student.id
-                                )}"
-                            >
-                                <div class="student-card-main">
-
-                                    <h3>
-                                        ${App.escapeHTML(
-                                            student.name
-                                        )}
-                                    </h3>
-
-                                    <p>
-                                        داخلہ نمبر:
-                                        ${App.escapeHTML(
-                                            student.admission_no ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        والد:
-                                        ${App.escapeHTML(
-                                            student.father_name ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        درجہ:
-                                        ${App.escapeHTML(
-                                            student.student_class ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        حالت:
-                                        ${App.escapeHTML(
-                                            status
-                                        )}
-                                    </p>
-
-                                </div>
-
-                                <div class="student-card-actions">
-
-                                    <button
-                                        type="button"
-                                        class="view-student"
-                                        data-id="${App.escapeHTML(
-                                            student.id
-                                        )}"
-                                    >
-                                        تفصیل
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="edit-student"
-                                        data-id="${App.escapeHTML(
-                                            student.id
-                                        )}"
-                                    >
-                                        ترمیم
-                                    </button>
-
-                                    ${
-                                        App.normalizeStudentStatus(
-                                            student.status
-                                        ) ===
-                                        "active"
-                                            ? `
-                                                <button
-                                                    type="button"
-                                                    class="deactivate-student"
-                                                    data-id="${App.escapeHTML(
-                                                        student.id
-                                                    )}"
-                                                >
-                                                    غیر فعال کریں
-                                                </button>
-                                              `
-                                            : ""
-                                    }
-
-                                </div>
-                            </div>
-                        `;
-                    }
-                ).join("");
-
-
-            App.bindStudentListButtons();
-        };
-
-
-    /* =====================================================
-       SEARCH STUDENTS
-       ===================================================== */
-
-    App.filterStudents =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-
-            const query =
-                App.cleanText(
-                    el.studentSearch
-                        ? el.studentSearch.value
-                        : ""
-                ).toLowerCase();
-
-
-            if (!query) {
-
-                App.renderStudents(
-                    App.studentsCache
-                );
-
-                return;
-            }
-
-
-            const filtered =
-                App.studentsCache.filter(
-                    function (student) {
-
-                        const values = [
-                            student.name,
-                            student.father_name,
-                            student.guardian_name,
-                            student.admission_no,
-                            student.cnic,
-                            student.phone,
-                            student.student_class,
-                            student.address
-                        ];
-
-
-                        return values.some(
-                            function (value) {
-
-                                return String(
-                                    value || ""
-                                )
-                                    .toLowerCase()
-                                    .includes(
-                                        query
-                                    );
-                            }
-                        );
-                    }
-                );
-
-
-            App.renderStudents(
-                filtered
-            );
-        };
-
-
-    /* =====================================================
-       STUDENT DETAILS
-       ===================================================== */
-
-    App.showStudentDetails =
-        function (id) {
-
-            const el =
-                App.getStudentElements();
-
-
-            const student =
-                App.studentsCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!student) {
-                return;
-            }
-
-
-            App.setText(
-                el.studentDetailsTitle,
-                student.name ||
-                "طالبہ کی تفصیل"
-            );
-
-
-            const mahrams =
-                Array.isArray(
-                    student.mahrams
-                )
-                    ? student.mahrams
-                    : [];
-
-
-            const mahramHTML =
-                mahrams.length
-                    ? mahrams.map(
-                        function (
-                            mahram,
-                            index
-                        ) {
-
-                            return `
-                                <div class="mahram-detail">
-                                    <strong>
-                                        محرم ${index + 1}
-                                    </strong>
-
-                                    <p>
-                                        نام:
-                                        ${App.escapeHTML(
-                                            mahram.name ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        رشتہ:
-                                        ${App.escapeHTML(
-                                            mahram.relation ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        فون:
-                                        ${App.escapeHTML(
-                                            mahram.phone ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        شناختی کارڈ:
-                                        ${App.escapeHTML(
-                                            App.formatCNIC(
-                                                mahram.cnic ||
-                                                ""
-                                            )
-                                        )}
-                                    </p>
-                                </div>
-                            `;
-                        }
-                    ).join("")
-                    : "<p>کوئی محرم درج نہیں۔</p>";
-
-
-            if (
-                el.studentDetailsContent
-            ) {
-
-                el.studentDetailsContent.innerHTML = `
-                    <p>
-                        <strong>داخلہ نمبر:</strong>
-                        ${App.escapeHTML(
-                            student.admission_no ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>داخلہ کی قسم:</strong>
-                        ${App.escapeHTML(
-                            student.admission_type ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>طالبہ کا نام:</strong>
-                        ${App.escapeHTML(
-                            student.name ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>والد کا نام:</strong>
-                        ${App.escapeHTML(
-                            student.father_name ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>سرپرست:</strong>
-                        ${App.escapeHTML(
-                            student.guardian_name ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>شناختی کارڈ:</strong>
-                        ${App.escapeHTML(
-                            App.formatCNIC(
-                                student.cnic ||
-                                ""
-                            )
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>فون:</strong>
-                        ${App.escapeHTML(
-                            student.phone ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>تاریخ پیدائش:</strong>
-                        ${App.escapeHTML(
-                            App.formatDate(
-                                student.date_of_birth
-                            )
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>درجہ:</strong>
-                        ${App.escapeHTML(
-                            student.student_class ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>تاریخ داخلہ:</strong>
-                        ${App.escapeHTML(
-                            App.formatDate(
-                                student.admission_date
-                            )
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>پتہ:</strong>
-                        ${App.escapeHTML(
-                            student.address ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>رہائش:</strong>
-                        ${App.escapeHTML(
-                            student.residence_type ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>سابقہ مدرسہ:</strong>
-                        ${App.escapeHTML(
-                            student.previous_madrassa ||
-                            "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>منتقلی کی تاریخ:</strong>
-                        ${App.escapeHTML(
-                            App.formatDate(
-                                student.transfer_date
-                            ) || "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>حالت:</strong>
-                        ${App.escapeHTML(
-                            App.studentStatusLabel(
-                                student.status
-                            )
-                        )}
-                    </p>
-
-                    <hr>
-
-                    <h3>
-                        محرم
-                    </h3>
-
-                    ${mahramHTML}
-                `;
-            }
-
-
-            App.show(
-                el.studentDetailsOverlay
-            );
-        };
-
-
-    App.closeStudentDetailsModal =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            App.hide(
-                el.studentDetailsOverlay
-            );
-        };
-
-
-    /* =====================================================
-       EDIT STUDENT
-       ===================================================== */
-
-    App.editStudent =
-        function (id) {
-
-            const student =
-                App.studentsCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!student) {
-                return;
-            }
-
-
-            App.openStudentForm(
-                student
-            );
-        };
-
-
-    /* =====================================================
-       DEACTIVATE STUDENT
-       ===================================================== */
-
-    App.deactivateStudent =
-        async function (id) {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const student =
-                App.studentsCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!student) {
-                return;
-            }
-
-
-            const confirmed =
-                window.confirm(
-                    "کیا آپ واقعی " +
-                    student.name +
-                    " کو غیر فعال کرنا چاہتے ہیں؟ ریکارڈ حذف نہیں ہوگا۔"
-                );
-
-
-            if (!confirmed) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentElements();
-
-
-            try {
-
-                await App.rpc(
-                    "admin_deactivate_student",
-                    {
-                        p_token:
-                            session.token,
-
-                        p_student_id:
-                            student.id
-                    }
-                );
-
-
-                App.showMessage(
-                    el.studentListMessage,
-                    "طالبہ کو غیر فعال کردیا گیا ہے۔",
-                    "success"
-                );
-
-
-                await App.loadStudents();
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.studentListMessage,
-                    error.message ||
-                    "طالبہ کو غیر فعال نہیں کیا جاسکا۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LIST BUTTON EVENTS
-       ===================================================== */
-
-    App.bindStudentListButtons =
-        function () {
-
-            const el =
-                App.getStudentElements();
-
-            if (!el.studentsList) {
-                return;
-            }
-
-
-            el.studentsList
-                .querySelectorAll(
-                    ".view-student"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.showStudentDetails(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-
-
-            el.studentsList
-                .querySelectorAll(
-                    ".edit-student"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.editStudent(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-
-
-            el.studentsList
-                .querySelectorAll(
-                    ".deactivate-student"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.deactivateStudent(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       INITIALIZE STUDENTS PAGE
-       ===================================================== */
-
-    App.initializeStudentsPage =
-        async function () {
-
-            if (
-                App.currentPage !==
-                "students.html"
-            ) {
-                return;
-            }
-
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentElements();
-
-
-            App.touchSession(
-                true
-            );
-
-
-            App.show(
-                el.studentAdminActions
-            );
-
-
-            App.hide(
-                el.studentFormContainer
-            );
-
-
-            App.hide(
-                el.studentDetailsOverlay
-            );
-
-
-            App.bindCNICInput(
-                el.studentCNIC
-            );
-
-
-            App.bindPhoneInput(
-                el.phone
-            );
-
-
-            if (el.backToDashboard) {
-
-                el.backToDashboard
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "dashboard.html";
-                        }
-                    );
-            }
-
-
-            if (el.showStudentForm) {
-
-                el.showStudentForm
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.openStudentForm();
-                        }
-                    );
-            }
-
-
-            if (el.cancelStudentForm) {
-
-                el.cancelStudentForm
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.closeStudentForm();
-                        }
-                    );
-            }
-
-
-            if (el.studentForm) {
-
-                el.studentForm
-                    .addEventListener(
-                        "submit",
-                        App.saveStudent
-                    );
-            }
-
-
-            if (el.admissionType) {
-
-                el.admissionType
-                    .addEventListener(
-                        "change",
-                        App.updateTransferFields
-                    );
-            }
-
-
-            if (el.residenceType) {
-
-                el.residenceType
-                    .addEventListener(
-                        "change",
-                        App.updateStudentMahramSection
-                    );
-            }
-
-
-            if (el.addMahram) {
-
-                el.addMahram
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.addStudentMahramRow();
-                        }
-                    );
-            }
-
-
-            if (el.studentSearch) {
-
-                el.studentSearch
-                    .addEventListener(
-                        "input",
-                        App.filterStudents
-                    );
-            }
-
-
-            if (el.closeStudentDetails) {
-
-                el.closeStudentDetails
-                    .addEventListener(
-                        "click",
-                        App.closeStudentDetailsModal
-                    );
-            }
-
-
-            if (
-                el.studentDetailsOverlay
-            ) {
-
-                el.studentDetailsOverlay
-                    .addEventListener(
-                        "click",
-                        function (event) {
-
-                            if (
-                                event.target ===
-                                el.studentDetailsOverlay
-                            ) {
-
-                                App.closeStudentDetailsModal();
-                            }
-                        }
-                    );
-            }
-
-
-            App.resetStudentForm();
-
-
-            App.hide(
-                el.studentFormContainer
-            );
-
-
-            await App.loadStudents();
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeStudentsPage();
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 5 / TEACHERS MODULE
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       TEACHER STATE
-       ===================================================== */
-
-    App.teachersCache = [];
-
-    App.editingTeacherId = null;
-
-
-    /* =====================================================
-       TEACHER STATUS HELPERS
-       ===================================================== */
-
-    App.normalizeTeacherStatus =
-        function (value) {
-
-            const status =
-                App.cleanText(value)
-                    .toLowerCase();
-
-
-            if (
-                status === "disabled" ||
-                status === "inactive" ||
-                status === "غیر فعال"
-            ) {
-                return "disabled";
-            }
-
-
-            if (
-                status === "pending" ||
-                status === "زیر التواء" ||
-                status === "زیرِ التواء"
-            ) {
-                return "pending";
-            }
-
-
-            return "active";
-        };
-
-
-    App.teacherStatusLabel =
-        function (status) {
-
-            const normalized =
-                App.normalizeTeacherStatus(
-                    status
-                );
-
-
-            if (
-                normalized ===
-                "disabled"
-            ) {
-                return "غیر فعال";
-            }
-
-
-            if (
-                normalized ===
-                "pending"
-            ) {
-                return "زیر التواء";
-            }
-
-
-            return "فعال";
-        };
-
-
-    /* =====================================================
-       PAGE ELEMENTS
-       ===================================================== */
-
-    App.getTeacherElements =
-        function () {
-
-            return {
-
-                backToDashboard:
-                    App.byId(
-                        "backToDashboard"
-                    ),
-
-                logoutButton:
-                    App.byId(
-                        "logoutButton"
-                    ),
-
-                teacherTotal:
-                    App.byId(
-                        "teacherTotal"
-                    ),
-
-                activeTeacherTotal:
-                    App.byId(
-                        "activeTeacherTotal"
-                    ),
-
-                pendingTeacherTotal:
-                    App.byId(
-                        "pendingTeacherTotal"
-                    ),
-
-                teacherAdminActions:
-                    App.byId(
-                        "teacherAdminActions"
-                    ),
-
-                showTeacherForm:
-                    App.byId(
-                        "showTeacherForm"
-                    ),
-
-                teacherFormContainer:
-                    App.byId(
-                        "teacherFormContainer"
-                    ),
-
-                teacherFormTitle:
-                    App.byId(
-                        "teacherFormTitle"
-                    ),
-
-                teacherFormMessage:
-                    App.byId(
-                        "teacherFormMessage"
-                    ),
-
-                teacherForm:
-                    App.byId(
-                        "teacherForm"
-                    ),
-
-                editTeacherId:
-                    App.byId(
-                        "editTeacherId"
-                    ),
-
-                teacherCode:
-                    App.byId(
-                        "teacherCode"
-                    ),
-
-                teacherName:
-                    App.byId(
-                        "teacherName"
-                    ),
-
-                teacherFatherName:
-                    App.byId(
-                        "teacherFatherName"
-                    ),
-
-                teacherPhone:
-                    App.byId(
-                        "teacherPhone"
-                    ),
-
-                teacherCNIC:
-                    App.byId(
-                        "teacherCNIC"
-                    ),
-
-                teacherDateOfBirth:
-                    App.byId(
-                        "teacherDateOfBirth"
-                    ),
-
-                teacherQualification:
-                    App.byId(
-                        "teacherQualification"
-                    ),
-
-                teacherJoiningDate:
-                    App.byId(
-                        "teacherJoiningDate"
-                    ),
-
-                teacherStatus:
-                    App.byId(
-                        "teacherStatus"
-                    ),
-
-                teacherAddress:
-                    App.byId(
-                        "teacherAddress"
-                    ),
-
-                saveTeacherButton:
-                    App.byId(
-                        "saveTeacherButton"
-                    ),
-
-                cancelTeacherButton:
-                    App.byId(
-                        "cancelTeacherButton"
-                    ),
-
-                teacherSearch:
-                    App.byId(
-                        "teacherSearch"
-                    ),
-
-                teacherListCount:
-                    App.byId(
-                        "teacherListCount"
-                    ),
-
-                teacherListMessage:
-                    App.byId(
-                        "teacherListMessage"
-                    ),
-
-                teacherList:
-                    App.byId(
-                        "teacherList"
-                    ),
-
-                teacherDetailsOverlay:
-                    App.byId(
-                        "teacherDetailsOverlay"
-                    ),
-
-                teacherDetailsTitle:
-                    App.byId(
-                        "teacherDetailsTitle"
-                    ),
-
-                closeTeacherDetails:
-                    App.byId(
-                        "closeTeacherDetails"
-                    ),
-
-                teacherDetailsContent:
-                    App.byId(
-                        "teacherDetailsContent"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       FORM RESET
-       ===================================================== */
-
-    App.resetTeacherForm =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (el.teacherForm) {
-
-                el.teacherForm.reset();
-            }
-
-
-            App.editingTeacherId =
-                null;
-
-
-            if (el.editTeacherId) {
-
-                el.editTeacherId.value =
-                    "";
-            }
-
-
-            if (el.teacherJoiningDate) {
-
-                el.teacherJoiningDate.value =
-                    App.todayISO();
-            }
-
-
-            if (el.teacherStatus) {
-
-                const activeOption =
-                    Array.from(
-                        el.teacherStatus.options ||
-                        []
-                    ).find(
-                        function (option) {
-
-                            return (
-                                App.normalizeTeacherStatus(
-                                    option.value
-                                ) ===
-                                "active"
-                            );
-                        }
-                    );
-
-
-                if (activeOption) {
-
-                    el.teacherStatus.value =
-                        activeOption.value;
-                }
-            }
-
-
-            App.clearMessage(
-                el.teacherFormMessage
-            );
-        };
-
-
-    /* =====================================================
-       OPEN FORM
-       ===================================================== */
-
-    App.openTeacherForm =
-        function (
-            teacher = null
-        ) {
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (!el.teacherFormContainer) {
-                return;
-            }
-
-
-            App.show(
-                el.teacherFormContainer
-            );
-
-
-            if (teacher) {
-
-                App.editingTeacherId =
-                    teacher.id;
-
-
-                if (el.editTeacherId) {
-
-                    el.editTeacherId.value =
-                        teacher.id || "";
-                }
-
-
-                App.setText(
-                    el.teacherFormTitle,
-                    "استاد کا ریکارڈ تبدیل کریں"
-                );
-
-
-                if (el.teacherCode) {
-
-                    el.teacherCode.value =
-                        teacher.teacher_code ||
-                        "";
-                }
-
-
-                if (el.teacherName) {
-
-                    el.teacherName.value =
-                        teacher.name ||
-                        "";
-                }
-
-
-                if (el.teacherFatherName) {
-
-                    el.teacherFatherName.value =
-                        teacher.father_name ||
-                        "";
-                }
-
-
-                if (el.teacherPhone) {
-
-                    el.teacherPhone.value =
-                        App.normalizePhone(
-                            teacher.phone ||
-                            ""
-                        );
-                }
-
-
-                if (el.teacherCNIC) {
-
-                    el.teacherCNIC.value =
-                        App.formatCNIC(
-                            teacher.cnic ||
-                            ""
-                        );
-                }
-
-
-                if (
-                    el.teacherDateOfBirth
-                ) {
-
-                    el.teacherDateOfBirth.value =
-                        teacher.date_of_birth ||
-                        "";
-                }
-
-
-                if (
-                    el.teacherQualification
-                ) {
-
-                    el.teacherQualification.value =
-                        teacher.qualification ||
-                        "";
-                }
-
-
-                if (
-                    el.teacherJoiningDate
-                ) {
-
-                    el.teacherJoiningDate.value =
-                        teacher.joining_date ||
-                        "";
-                }
-
-
-                if (
-                    el.teacherAddress
-                ) {
-
-                    el.teacherAddress.value =
-                        teacher.address ||
-                        "";
-                }
-
-
-                if (
-                    el.teacherStatus
-                ) {
-
-                    const targetStatus =
-                        App.normalizeTeacherStatus(
-                            teacher.status
-                        );
-
-
-                    const option =
-                        Array.from(
-                            el.teacherStatus.options ||
-                            []
-                        ).find(
-                            function (item) {
-
-                                return (
-                                    App.normalizeTeacherStatus(
-                                        item.value
-                                    ) ===
-                                    targetStatus
-                                );
-                            }
-                        );
-
-
-                    if (option) {
-
-                        el.teacherStatus.value =
-                            option.value;
-                    }
-                }
-
-            } else {
-
-                App.resetTeacherForm();
-
-
-                App.setText(
-                    el.teacherFormTitle,
-                    "نیا استاد شامل کریں"
-                );
-            }
-
-
-            el.teacherFormContainer
-                .scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
-        };
-
-
-    /* =====================================================
-       CLOSE FORM
-       ===================================================== */
-
-    App.closeTeacherForm =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            App.resetTeacherForm();
-
-
-            App.hide(
-                el.teacherFormContainer
-            );
-        };
-
-
-    /* =====================================================
-       FORM DATA
-       ===================================================== */
-
-    App.getTeacherFormData =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            return {
-
-                id:
-                    App.editingTeacherId ||
-                    null,
-
-                teacherCode:
-                    App.cleanText(
-                        el.teacherCode
-                            ? el.teacherCode.value
-                            : ""
-                    ),
-
-                name:
-                    App.cleanText(
-                        el.teacherName
-                            ? el.teacherName.value
-                            : ""
-                    ),
-
-                fatherName:
-                    App.cleanText(
-                        el.teacherFatherName
-                            ? el.teacherFatherName.value
-                            : ""
-                    ),
-
-                phone:
-                    App.normalizePhone(
-                        el.teacherPhone
-                            ? el.teacherPhone.value
-                            : ""
-                    ),
-
-                cnic:
-                    App.normalizeCNIC(
-                        el.teacherCNIC
-                            ? el.teacherCNIC.value
-                            : ""
-                    ),
-
-                dateOfBirth:
-                    el.teacherDateOfBirth
-                        ? el.teacherDateOfBirth.value
-                        : "",
-
-                qualification:
-                    App.cleanText(
-                        el.teacherQualification
-                            ? el.teacherQualification.value
-                            : ""
-                    ),
-
-                joiningDate:
-                    el.teacherJoiningDate
-                        ? el.teacherJoiningDate.value
-                        : "",
-
-                status:
-                    App.normalizeTeacherStatus(
-                        el.teacherStatus
-                            ? el.teacherStatus.value
-                            : "active"
-                    ),
-
-                address:
-                    App.cleanText(
-                        el.teacherAddress
-                            ? el.teacherAddress.value
-                            : ""
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       VALIDATION
-       ===================================================== */
-
-    App.validateTeacherData =
-        function (data) {
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (!data.teacherCode) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    "استاد کوڈ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.name ||
-                !App.isUrduText(
-                    data.name
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    "استاد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.fatherName &&
-                !App.isUrduText(
-                    data.fatherName
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    "والد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.phone &&
-                !App.isValidPhone(
-                    data.phone
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    "فون نمبر 11 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.cnic &&
-                !App.isValidCNIC(
-                    data.cnic
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       SAVE TEACHER
-       ===================================================== */
-
-    App.saveTeacher =
-        async function (
-            event
-        ) {
-
-            if (event) {
-                event.preventDefault();
-            }
-
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getTeacherElements();
-
-
-            const data =
-                App.getTeacherFormData();
-
-
-            if (
-                !App.validateTeacherData(
-                    data
-                )
-            ) {
-                return;
-            }
-
-
-            App.clearMessage(
-                el.teacherFormMessage
-            );
-
-
-            App.setButtonBusy(
-                el.saveTeacherButton,
-                true,
-                "محفوظ ہو رہا ہے"
-            );
-
-
-            try {
-
-                await App.rpc(
-                    "admin_save_teacher",
-                    {
-                        p_token:
-                            session.token,
-
-                        p_id:
-                            data.id,
-
-                        p_teacher_code:
-                            data.teacherCode,
-
-                        p_name:
-                            data.name,
-
-                        p_father_name:
-                            data.fatherName ||
-                            null,
-
-                        p_phone:
-                            data.phone ||
-                            null,
-
-                        p_cnic:
-                            data.cnic ||
-                            null,
-
-                        p_date_of_birth:
-                            data.dateOfBirth ||
-                            null,
-
-                        p_address:
-                            data.address ||
-                            null,
-
-                        p_qualification:
-                            data.qualification ||
-                            null,
-
-                        p_joining_date:
-                            data.joiningDate ||
-                            null,
-
-                        p_status:
-                            data.status
-                    }
-                );
-
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    data.id
-                        ? "استاد کا ریکارڈ کامیابی سے تبدیل ہوگیا۔"
-                        : "نیا استاد کامیابی سے شامل ہوگیا۔",
-                    "success"
-                );
-
-
-                await App.loadTeachers();
-
-
-                window.setTimeout(
-                    function () {
-
-                        App.closeTeacherForm();
-                    },
-                    700
-                );
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.teacherFormMessage,
-                    error.message ||
-                    "استاد کا ریکارڈ محفوظ نہیں ہوسکا۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.saveTeacherButton,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LOAD TEACHERS
-       ===================================================== */
-
-    App.loadTeachers =
-        async function () {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getTeacherElements();
-
-
-            App.showMessage(
-                el.teacherListMessage,
-                "ریکارڈ لوڈ ہو رہا ہے۔",
-                "info"
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "admin_get_teachers",
-                        {
-                            p_token:
-                                session.token
-                        }
-                    );
-
-
-                App.teachersCache =
-                    Array.isArray(data)
-                        ? data
-                        : [];
-
-
-                App.clearMessage(
-                    el.teacherListMessage
-                );
-
-
-                App.updateTeacherStats();
-
-
-                App.renderTeachers(
-                    App.teachersCache
-                );
-
-            } catch (error) {
-
-                App.teachersCache =
-                    [];
-
-
-                App.updateTeacherStats();
-
-
-                App.renderTeachers(
-                    []
-                );
-
-
-                App.showMessage(
-                    el.teacherListMessage,
-                    error.message ||
-                    "اساتذہ کا ریکارڈ لوڈ نہیں ہوسکا۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       TEACHER STATS
-       ===================================================== */
-
-    App.updateTeacherStats =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            const total =
-                App.teachersCache.length;
-
-
-            const active =
-                App.teachersCache.filter(
-                    function (teacher) {
-
-                        return (
-                            App.normalizeTeacherStatus(
-                                teacher.status
-                            ) ===
-                            "active"
-                        );
-                    }
-                ).length;
-
-
-            const pending =
-                App.teachersCache.filter(
-                    function (teacher) {
-
-                        return (
-                            App.normalizeTeacherStatus(
-                                teacher.status
-                            ) ===
-                            "pending"
-                        );
-                    }
-                ).length;
-
-
-            App.setText(
-                el.teacherTotal,
-                total
-            );
-
-
-            App.setText(
-                el.activeTeacherTotal,
-                active
-            );
-
-
-            App.setText(
-                el.pendingTeacherTotal,
-                pending
-            );
-
-
-            App.setText(
-                el.teacherListCount,
-                total
-            );
-        };
-
-
-    /* =====================================================
-       RENDER TEACHERS
-       ===================================================== */
-
-    App.renderTeachers =
-        function (teachers) {
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (!el.teacherList) {
-                return;
-            }
-
-
-            const list =
-                Array.isArray(teachers)
-                    ? teachers
-                    : [];
-
-
-            App.setText(
-                el.teacherListCount,
-                list.length
-            );
-
-
-            if (
-                list.length === 0
-            ) {
-
-                el.teacherList.innerHTML =
-                    `<div class="empty-state">
-                        کوئی استاد موجود نہیں۔
-                    </div>`;
-
-                return;
-            }
-
-
-            el.teacherList.innerHTML =
-                list.map(
-                    function (teacher) {
-
-                        const status =
-                            App.teacherStatusLabel(
-                                teacher.status
+                        const input =
+                            byId(
+                                targetId
                             );
 
-
-                        return `
-                            <div
-                                class="teacher-card"
-                                data-teacher-id="${App.escapeHTML(
-                                    teacher.id
-                                )}"
-                            >
-                                <div class="teacher-card-main">
-
-                                    <h3>
-                                        ${App.escapeHTML(
-                                            teacher.name
-                                        )}
-                                    </h3>
-
-                                    <p>
-                                        استاد کوڈ:
-                                        ${App.escapeHTML(
-                                            teacher.teacher_code ||
-                                            ""
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        فون:
-                                        ${App.escapeHTML(
-                                            teacher.phone ||
-                                            "—"
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        قابلیت:
-                                        ${App.escapeHTML(
-                                            teacher.qualification ||
-                                            "—"
-                                        )}
-                                    </p>
-
-                                    <p>
-                                        حالت:
-                                        ${App.escapeHTML(
-                                            status
-                                        )}
-                                    </p>
-
-                                </div>
-
-                                <div class="teacher-card-actions">
-
-                                    <button
-                                        type="button"
-                                        class="view-teacher"
-                                        data-id="${App.escapeHTML(
-                                            teacher.id
-                                        )}"
-                                    >
-                                        تفصیل
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="edit-teacher"
-                                        data-id="${App.escapeHTML(
-                                            teacher.id
-                                        )}"
-                                    >
-                                        ترمیم
-                                    </button>
-
-                                    ${
-                                        App.normalizeTeacherStatus(
-                                            teacher.status
-                                        ) !==
-                                        "disabled"
-                                            ? `
-                                                <button
-                                                    type="button"
-                                                    class="deactivate-teacher"
-                                                    data-id="${App.escapeHTML(
-                                                        teacher.id
-                                                    )}"
-                                                >
-                                                    غیر فعال کریں
-                                                </button>
-                                              `
-                                            : ""
-                                    }
-
-                                </div>
-                            </div>
-                        `;
-                    }
-                ).join("");
-
-
-            App.bindTeacherListButtons();
-        };
-
-
-    /* =====================================================
-       SEARCH
-       ===================================================== */
-
-    App.filterTeachers =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            const query =
-                App.cleanText(
-                    el.teacherSearch
-                        ? el.teacherSearch.value
-                        : ""
-                ).toLowerCase();
-
-
-            if (!query) {
-
-                App.renderTeachers(
-                    App.teachersCache
-                );
-
-                return;
-            }
-
-
-            const filtered =
-                App.teachersCache.filter(
-                    function (teacher) {
-
-                        const values = [
-                            teacher.teacher_code,
-                            teacher.name,
-                            teacher.father_name,
-                            teacher.phone,
-                            teacher.cnic,
-                            teacher.qualification,
-                            teacher.address,
-                            teacher.status
-                        ];
-
-
-                        return values.some(
-                            function (value) {
-
-                                return String(
-                                    value || ""
-                                )
-                                    .toLowerCase()
-                                    .includes(
-                                        query
-                                    );
-                            }
-                        );
-                    }
-                );
-
-
-            App.renderTeachers(
-                filtered
-            );
-        };
-
-
-    /* =====================================================
-       DETAILS
-       ===================================================== */
-
-    App.showTeacherDetails =
-        function (id) {
-
-            const el =
-                App.getTeacherElements();
-
-
-            const teacher =
-                App.teachersCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!teacher) {
-                return;
-            }
-
-
-            App.setText(
-                el.teacherDetailsTitle,
-                teacher.name ||
-                "استاد کی تفصیل"
-            );
-
-
-            if (
-                el.teacherDetailsContent
-            ) {
-
-                el.teacherDetailsContent.innerHTML = `
-                    <p>
-                        <strong>استاد کوڈ:</strong>
-                        ${App.escapeHTML(
-                            teacher.teacher_code ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>نام:</strong>
-                        ${App.escapeHTML(
-                            teacher.name ||
-                            ""
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>والد کا نام:</strong>
-                        ${App.escapeHTML(
-                            teacher.father_name ||
-                            "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>فون:</strong>
-                        ${App.escapeHTML(
-                            teacher.phone ||
-                            "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>شناختی کارڈ:</strong>
-                        ${App.escapeHTML(
-                            teacher.cnic
-                                ? App.formatCNIC(
-                                    teacher.cnic
-                                )
-                                : "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>تاریخ پیدائش:</strong>
-                        ${App.escapeHTML(
-                            App.formatDate(
-                                teacher.date_of_birth
-                            ) || "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>قابلیت:</strong>
-                        ${App.escapeHTML(
-                            teacher.qualification ||
-                            "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>تاریخ شمولیت:</strong>
-                        ${App.escapeHTML(
-                            App.formatDate(
-                                teacher.joining_date
-                            ) || "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>پتہ:</strong>
-                        ${App.escapeHTML(
-                            teacher.address ||
-                            "—"
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>حالت:</strong>
-                        ${App.escapeHTML(
-                            App.teacherStatusLabel(
-                                teacher.status
-                            )
-                        )}
-                    </p>
-                `;
-            }
-
-
-            App.show(
-                el.teacherDetailsOverlay
-            );
-        };
-
-
-    App.closeTeacherDetailsModal =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            App.hide(
-                el.teacherDetailsOverlay
-            );
-        };
-
-
-    /* =====================================================
-       EDIT TEACHER
-       ===================================================== */
-
-    App.editTeacher =
-        function (id) {
-
-            const teacher =
-                App.teachersCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!teacher) {
-                return;
-            }
-
-
-            App.openTeacherForm(
-                teacher
-            );
-        };
-
-
-    /* =====================================================
-       DEACTIVATE TEACHER
-       ===================================================== */
-
-    App.deactivateTeacher =
-        async function (id) {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const teacher =
-                App.teachersCache.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                );
-
-
-            if (!teacher) {
-                return;
-            }
-
-
-            const confirmed =
-                window.confirm(
-                    "کیا آپ واقعی " +
-                    teacher.name +
-                    " کو غیر فعال کرنا چاہتے ہیں؟ ریکارڈ حذف نہیں ہوگا۔"
-                );
-
-
-            if (!confirmed) {
-                return;
-            }
-
-
-            const el =
-                App.getTeacherElements();
-
-
-            try {
-
-                await App.rpc(
-                    "admin_deactivate_teacher",
-                    {
-                        p_token:
-                            session.token,
-
-                        p_teacher_id:
-                            teacher.id
-                    }
-                );
-
-
-                App.showMessage(
-                    el.teacherListMessage,
-                    "استاد کو غیر فعال کردیا گیا ہے۔",
-                    "success"
-                );
-
-
-                await App.loadTeachers();
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.teacherListMessage,
-                    error.message ||
-                    "استاد کو غیر فعال نہیں کیا جاسکا۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LIST BUTTONS
-       ===================================================== */
-
-    App.bindTeacherListButtons =
-        function () {
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (!el.teacherList) {
-                return;
-            }
-
-
-            el.teacherList
-                .querySelectorAll(
-                    ".view-teacher"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.showTeacherDetails(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-
-
-            el.teacherList
-                .querySelectorAll(
-                    ".edit-teacher"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.editTeacher(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-
-
-            el.teacherList
-                .querySelectorAll(
-                    ".deactivate-teacher"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.deactivateTeacher(
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       INITIALIZE PAGE
-       ===================================================== */
-
-    App.initializeTeachersPage =
-        async function () {
-
-            if (
-                App.currentPage !==
-                "teachers.html"
-            ) {
-                return;
-            }
-
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            App.touchSession(
-                true
-            );
-
-
-            const el =
-                App.getTeacherElements();
-
-
-            App.show(
-                el.teacherAdminActions
-            );
-
-
-            App.hide(
-                el.teacherFormContainer
-            );
-
-
-            App.hide(
-                el.teacherDetailsOverlay
-            );
-
-
-            App.bindPhoneInput(
-                el.teacherPhone
-            );
-
-
-            App.bindCNICInput(
-                el.teacherCNIC
-            );
-
-
-            if (
-                el.backToDashboard
-            ) {
-
-                el.backToDashboard
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "dashboard.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.logoutButton
-            ) {
-
-                el.logoutButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.logout(
-                                "logout"
-                            );
-                        }
-                    );
-            }
-
-
-            if (
-                el.showTeacherForm
-            ) {
-
-                el.showTeacherForm
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.openTeacherForm();
-                        }
-                    );
-            }
-
-
-            if (
-                el.cancelTeacherButton
-            ) {
-
-                el.cancelTeacherButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.closeTeacherForm();
-                        }
-                    );
-            }
-
-
-            if (
-                el.teacherForm
-            ) {
-
-                el.teacherForm
-                    .addEventListener(
-                        "submit",
-                        App.saveTeacher
-                    );
-            }
-
-
-            if (
-                el.teacherSearch
-            ) {
-
-                el.teacherSearch
-                    .addEventListener(
-                        "input",
-                        App.filterTeachers
-                    );
-            }
-
-
-            if (
-                el.closeTeacherDetails
-            ) {
-
-                el.closeTeacherDetails
-                    .addEventListener(
-                        "click",
-                        App.closeTeacherDetailsModal
-                    );
-            }
-
-
-            if (
-                el.teacherDetailsOverlay
-            ) {
-
-                el.teacherDetailsOverlay
-                    .addEventListener(
-                        "click",
-                        function (event) {
-
-                            if (
-                                event.target ===
-                                el.teacherDetailsOverlay
-                            ) {
-
-                                App.closeTeacherDetailsModal();
-                            }
-                        }
-                    );
-            }
-
-
-            App.resetTeacherForm();
-
-
-            App.hide(
-                el.teacherFormContainer
-            );
-
-
-            await App.loadTeachers();
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeTeachersPage();
-        }
-    );
-
-})();
-
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 6 / STUDENT APPLICATION
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       APPLICATION HELPERS
-       ===================================================== */
-
-    App.applicationStatusLabel =
-        function (status) {
-
-            switch (
-                App.cleanText(status)
-                    .toLowerCase()
-            ) {
-
-                case "approved":
-                    return "منظور شدہ";
-
-                case "rejected":
-                    return "مسترد شدہ";
-
-                case "pending":
-                    return "زیرِ التواء";
-
-                default:
-                    return "نامعلوم";
-            }
-        };
-
-
-    App.getApplicationErrorMessage =
-        function (error) {
-
-            const message =
-                String(
-                    error &&
-                    error.message
-                        ? error.message
-                        : ""
-                ).toLowerCase();
-
-
-            if (
-                message.includes(
-                    "username already exists"
-                )
-            ) {
-                return "یہ صارف نام پہلے سے استعمال ہو رہا ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "pending application already exists"
-                )
-            ) {
-                return "اس صارف نام سے ایک درخواست پہلے ہی زیرِ التواء ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "invalid cnic"
-                )
-            ) {
-                return "شناختی کارڈ نمبر درست نہیں ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "invalid phone"
-                )
-            ) {
-                return "فون نمبر درست نہیں ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "password"
-                )
-            ) {
-                return "پاس ورڈ کم از کم 8 حروف یا اعداد پر مشتمل ہونا چاہیے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "hostel"
-                ) ||
-                message.includes(
-                    "mahram"
-                )
-            ) {
-                return "ہاسٹل طالبہ کے لیے کم از کم ایک مکمل محرم درج کریں۔";
-            }
-
-
-            return "درخواست جمع نہیں ہوسکی۔ دوبارہ کوشش کریں۔";
-        };
-
-
-    /* =====================================================
-       PAGE ELEMENTS
-       ===================================================== */
-
-    App.getStudentApplicationElements =
-        function () {
-
-            return {
-
-                backToHome:
-                    App.byId(
-                        "backToHome"
-                    ),
-
-                studentApplyMessage:
-                    App.byId(
-                        "studentApplyMessage"
-                    ),
-
-                studentApplyForm:
-                    App.byId(
-                        "studentApplyForm"
-                    ),
-
-                applyAdmissionType:
-                    App.byId(
-                        "applyAdmissionType"
-                    ),
-
-                applyClass:
-                    App.byId(
-                        "applyClass"
-                    ),
-
-                applyPreviousMadrassaGroup:
-                    App.byId(
-                        "applyPreviousMadrassaGroup"
-                    ),
-
-                applyPreviousMadrassa:
-                    App.byId(
-                        "applyPreviousMadrassa"
-                    ),
-
-                applyTransferDateGroup:
-                    App.byId(
-                        "applyTransferDateGroup"
-                    ),
-
-                applyTransferDate:
-                    App.byId(
-                        "applyTransferDate"
-                    ),
-
-                applyStudentName:
-                    App.byId(
-                        "applyStudentName"
-                    ),
-
-                applyFatherName:
-                    App.byId(
-                        "applyFatherName"
-                    ),
-
-                applyGuardianName:
-                    App.byId(
-                        "applyGuardianName"
-                    ),
-
-                applyCNIC:
-                    App.byId(
-                        "applyCNIC"
-                    ),
-
-                applyDateOfBirth:
-                    App.byId(
-                        "applyDateOfBirth"
-                    ),
-
-                applyPhone:
-                    App.byId(
-                        "applyPhone"
-                    ),
-
-                applyAddress:
-                    App.byId(
-                        "applyAddress"
-                    ),
-
-                applyResidenceType:
-                    App.byId(
-                        "applyResidenceType"
-                    ),
-
-                applyMahramSection:
-                    App.byId(
-                        "applyMahramSection"
-                    ),
-
-                applyMahramList:
-                    App.byId(
-                        "applyMahramList"
-                    ),
-
-                addApplyMahram:
-                    App.byId(
-                        "addApplyMahram"
-                    ),
-
-                applyUsername:
-                    App.byId(
-                        "applyUsername"
-                    ),
-
-                applyPassword:
-                    App.byId(
-                        "applyPassword"
-                    ),
-
-                applyConfirmPassword:
-                    App.byId(
-                        "applyConfirmPassword"
-                    ),
-
-                studentApplyConfirmation:
-                    App.byId(
-                        "studentApplyConfirmation"
-                    ),
-
-                submitStudentApplication:
-                    App.byId(
-                        "submitStudentApplication"
-                    ),
-
-                cancelStudentApplication:
-                    App.byId(
-                        "cancelStudentApplication"
-                    ),
-
-                studentApplicationNumber:
-                    App.byId(
-                        "studentApplicationNumber"
-                    ),
-
-                checkStudentApplicationStatus:
-                    App.byId(
-                        "checkStudentApplicationStatus"
-                    ),
-
-                studentApplicationStatusResult:
-                    App.byId(
-                        "studentApplicationStatusResult"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       TRANSFER FIELDS
-       ===================================================== */
-
-    App.updateStudentApplicationTransferFields =
-        function () {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            const value =
-                el.applyAdmissionType
-                    ? el.applyAdmissionType.value
-                    : "";
-
-
-            const isTransfer =
-                typeof App.isTransferAdmission ===
-                "function"
-                    ? App.isTransferAdmission(
-                        value
-                    )
-                    : (
-                        App.cleanText(value)
-                            .toLowerCase()
-                            .includes("transfer") ||
-                        App.cleanText(value)
-                            .includes("منتقل")
-                    );
-
-
-            if (isTransfer) {
-
-                App.show(
-                    el.applyPreviousMadrassaGroup
-                );
-
-                App.show(
-                    el.applyTransferDateGroup
-                );
-
-            } else {
-
-                App.hide(
-                    el.applyPreviousMadrassaGroup
-                );
-
-                App.hide(
-                    el.applyTransferDateGroup
-                );
-
-
-                if (
-                    el.applyPreviousMadrassa
-                ) {
-
-                    el.applyPreviousMadrassa.value =
-                        "";
-                }
-
-
-                if (
-                    el.applyTransferDate
-                ) {
-
-                    el.applyTransferDate.value =
-                        "";
-                }
-            }
-        };
-
-
-    /* =====================================================
-       HOSTEL / MAHRAM
-       ===================================================== */
-
-    App.isStudentApplicationHostel =
-        function (value) {
-
-            const text =
-                App.cleanText(value);
-
-
-            return (
-                text === "ہاسٹل" ||
-                text.toLowerCase() ===
-                    "hostel"
-            );
-        };
-
-
-    App.createStudentApplicationMahramRow =
-        function (data = {}) {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-
-            row.className =
-                "mahram-row";
-
-
-            row.innerHTML = `
-                <div class="form-group">
-                    <label>
-                        محرم کا نام
-                    </label>
-
-                    <input
-                        type="text"
-                        class="apply-mahram-name"
-                        autocomplete="off"
-                        value="${App.escapeHTML(
-                            data.name || ""
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        رشتہ
-                    </label>
-
-                    <input
-                        type="text"
-                        class="apply-mahram-relation"
-                        autocomplete="off"
-                        value="${App.escapeHTML(
-                            data.relation || ""
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        فون نمبر
-                    </label>
-
-                    <input
-                        type="tel"
-                        class="apply-mahram-phone"
-                        inputmode="numeric"
-                        maxlength="11"
-                        value="${App.escapeHTML(
-                            App.normalizePhone(
-                                data.phone || ""
-                            )
-                        )}"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        شناختی کارڈ نمبر
-                    </label>
-
-                    <input
-                        type="text"
-                        class="apply-mahram-cnic"
-                        inputmode="numeric"
-                        maxlength="15"
-                        value="${App.escapeHTML(
-                            App.formatCNIC(
-                                data.cnic || ""
-                            )
-                        )}"
-                    >
-                </div>
-
-                <button
-                    type="button"
-                    class="remove-apply-mahram"
-                >
-                    محرم ہٹائیں
-                </button>
-            `;
-
-
-            const phone =
-                row.querySelector(
-                    ".apply-mahram-phone"
-                );
-
-            const cnic =
-                row.querySelector(
-                    ".apply-mahram-cnic"
-                );
-
-            const removeButton =
-                row.querySelector(
-                    ".remove-apply-mahram"
-                );
-
-
-            App.bindPhoneInput(
-                phone
-            );
-
-
-            App.bindCNICInput(
-                cnic
-            );
-
-
-            if (removeButton) {
-
-                removeButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            row.remove();
-                        }
-                    );
-            }
-
-
-            return row;
-        };
-
-
-    App.addStudentApplicationMahram =
-        function (data = {}) {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            if (!el.applyMahramList) {
-                return;
-            }
-
-
-            const count =
-                el.applyMahramList
-                    .querySelectorAll(
-                        ".mahram-row"
-                    ).length;
-
-
-            if (
-                count >=
-                App.MAX_MAHRAMS
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            el.applyMahramList
-                .appendChild(
-                    App.createStudentApplicationMahramRow(
-                        data
-                    )
-                );
-        };
-
-
-    App.updateStudentApplicationMahramSection =
-        function () {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            const isHostel =
-                App.isStudentApplicationHostel(
-                    el.applyResidenceType
-                        ? el.applyResidenceType.value
-                        : ""
-                );
-
-
-            if (isHostel) {
-
-                App.show(
-                    el.applyMahramSection
-                );
-
-
-                if (
-                    el.applyMahramList &&
-                    el.applyMahramList
-                        .querySelectorAll(
-                            ".mahram-row"
-                        ).length === 0
-                ) {
-
-                    App.addStudentApplicationMahram();
-                }
-
-            } else {
-
-                App.hide(
-                    el.applyMahramSection
-                );
-            }
-        };
-
-
-    App.collectStudentApplicationMahrams =
-        function () {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            if (!el.applyMahramList) {
-                return [];
-            }
-
-
-            const result = [];
-
-
-            el.applyMahramList
-                .querySelectorAll(
-                    ".mahram-row"
-                )
-                .forEach(
-                    function (row) {
-
-                        const name =
-                            App.cleanText(
-                                row.querySelector(
-                                    ".apply-mahram-name"
-                                )?.value
-                            );
-
-
-                        const relation =
-                            App.cleanText(
-                                row.querySelector(
-                                    ".apply-mahram-relation"
-                                )?.value
-                            );
-
-
-                        const phone =
-                            App.normalizePhone(
-                                row.querySelector(
-                                    ".apply-mahram-phone"
-                                )?.value
-                            );
-
-
-                        const cnic =
-                            App.normalizeCNIC(
-                                row.querySelector(
-                                    ".apply-mahram-cnic"
-                                )?.value
-                            );
-
-
-                        if (
-                            name ||
-                            relation ||
-                            phone ||
-                            cnic
-                        ) {
-
-                            result.push({
-                                name:
-                                    name,
-
-                                relation:
-                                    relation,
-
-                                phone:
-                                    phone,
-
-                                cnic:
-                                    cnic
-                            });
-                        }
-                    }
-                );
-
-
-            return result;
-        };
-
-
-    /* =====================================================
-       FORM DATA
-       ===================================================== */
-
-    App.getStudentApplicationData =
-        function () {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            return {
-
-                admissionType:
-                    App.cleanText(
-                        el.applyAdmissionType
-                            ? el.applyAdmissionType.value
-                            : ""
-                    ),
-
-                studentClass:
-                    App.cleanText(
-                        el.applyClass
-                            ? el.applyClass.value
-                            : ""
-                    ),
-
-                previousMadrassa:
-                    App.cleanText(
-                        el.applyPreviousMadrassa
-                            ? el.applyPreviousMadrassa.value
-                            : ""
-                    ),
-
-                transferDate:
-                    el.applyTransferDate
-                        ? el.applyTransferDate.value
-                        : "",
-
-                name:
-                    App.cleanText(
-                        el.applyStudentName
-                            ? el.applyStudentName.value
-                            : ""
-                    ),
-
-                fatherName:
-                    App.cleanText(
-                        el.applyFatherName
-                            ? el.applyFatherName.value
-                            : ""
-                    ),
-
-                guardianName:
-                    App.cleanText(
-                        el.applyGuardianName
-                            ? el.applyGuardianName.value
-                            : ""
-                    ),
-
-                cnic:
-                    App.normalizeCNIC(
-                        el.applyCNIC
-                            ? el.applyCNIC.value
-                            : ""
-                    ),
-
-                dateOfBirth:
-                    el.applyDateOfBirth
-                        ? el.applyDateOfBirth.value
-                        : "",
-
-                phone:
-                    App.normalizePhone(
-                        el.applyPhone
-                            ? el.applyPhone.value
-                            : ""
-                    ),
-
-                address:
-                    App.cleanText(
-                        el.applyAddress
-                            ? el.applyAddress.value
-                            : ""
-                    ),
-
-                residenceType:
-                    App.cleanText(
-                        el.applyResidenceType
-                            ? el.applyResidenceType.value
-                            : ""
-                    ),
-
-                mahrams:
-                    App.collectStudentApplicationMahrams(),
-
-                username:
-                    App.cleanText(
-                        el.applyUsername
-                            ? el.applyUsername.value
-                            : ""
-                    ),
-
-                password:
-                    el.applyPassword
-                        ? el.applyPassword.value
-                        : "",
-
-                confirmPassword:
-                    el.applyConfirmPassword
-                        ? el.applyConfirmPassword.value
-                        : ""
-            };
-        };
-
-
-    /* =====================================================
-       VALIDATION
-       ===================================================== */
-
-    App.validateStudentApplication =
-        function (data) {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            if (!data.admissionType) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "داخلہ کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.studentClass) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.name ||
-                !App.isUrduText(
-                    data.name
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "طالبہ کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.fatherName ||
-                !App.isUrduText(
-                    data.fatherName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "والد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.guardianName ||
-                !App.isUrduText(
-                    data.guardianName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "سرپرست کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidCNIC(
-                    data.cnic
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.dateOfBirth) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "تاریخ پیدائش درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidPhone(
-                    data.phone
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "فون نمبر 11 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.address) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "پتہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.residenceType) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "رہائش کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                typeof App.isTransferAdmission ===
-                    "function" &&
-                App.isTransferAdmission(
-                    data.admissionType
-                ) &&
-                !data.previousMadrassa
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "سابقہ مدرسہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                App.isStudentApplicationHostel(
-                    data.residenceType
-                )
-            ) {
-
-                if (
-                    data.mahrams.length < 1 ||
-                    data.mahrams.length >
-                        App.MAX_MAHRAMS
-                ) {
-
-                    App.showMessage(
-                        el.studentApplyMessage,
-                        "ہاسٹل طالبہ کے لیے کم از کم ایک اور زیادہ سے زیادہ پانچ محرم درج کریں۔",
-                        "error"
-                    );
-
-                    return false;
-                }
-
-
-                for (
-                    const mahram
-                    of data.mahrams
-                ) {
-
-                    if (
-                        !mahram.name ||
-                        !App.isUrduText(
-                            mahram.name
-                        ) ||
-                        !mahram.relation ||
-                        !App.isUrduText(
-                            mahram.relation
-                        ) ||
-                        !App.isValidPhone(
-                            mahram.phone
-                        ) ||
-                        !App.isValidCNIC(
-                            mahram.cnic
-                        )
-                    ) {
-
-                        App.showMessage(
-                            el.studentApplyMessage,
-                            "تمام محرم کی مکمل اور درست معلومات درج کریں۔",
-                            "error"
-                        );
-
-                        return false;
-                    }
-                }
-            }
-
-
-            if (
-                data.username.length < 4
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "صارف نام کم از کم 4 حروف یا اعداد پر مشتمل ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.password.length < 8
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "پاس ورڈ کم از کم 8 حروف یا اعداد پر مشتمل ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.password !==
-                data.confirmPassword
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "دونوں پاس ورڈ ایک جیسے نہیں ہیں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                el.studentApplyConfirmation &&
-                !el.studentApplyConfirmation.checked
-            ) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "درخواست جمع کرنے سے پہلے تصدیق کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       SUBMIT APPLICATION
-       ===================================================== */
-
-    App.submitStudentApplication =
-        async function (event) {
-
-            if (event) {
-                event.preventDefault();
-            }
-
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            const data =
-                App.getStudentApplicationData();
-
-
-            App.clearMessage(
-                el.studentApplyMessage
-            );
-
-
-            if (
-                !App.validateStudentApplication(
-                    data
-                )
-            ) {
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.submitStudentApplication,
-                true,
-                "درخواست جمع ہو رہی ہے"
-            );
-
-
-            try {
-
-                const applicationNo =
-                    await App.rpc(
-                        "submit_student_application",
-                        {
-                            p_admission_type:
-                                data.admissionType,
-
-                            p_student_class:
-                                data.studentClass,
-
-                            p_previous_madrassa:
-                                data.previousMadrassa ||
-                                null,
-
-                            p_transfer_date:
-                                data.transferDate ||
-                                null,
-
-                            p_name:
-                                data.name,
-
-                            p_father_name:
-                                data.fatherName,
-
-                            p_guardian_name:
-                                data.guardianName,
-
-                            p_cnic:
-                                data.cnic,
-
-                            p_date_of_birth:
-                                data.dateOfBirth,
-
-                            p_phone:
-                                data.phone,
-
-                            p_address:
-                                data.address,
-
-                            p_residence_type:
-                                data.residenceType,
-
-                            p_mahrams:
-                                data.mahrams,
-
-                            p_username:
-                                data.username,
-
-                            p_password:
-                                data.password
-                        }
-                    );
-
-
-                if (!applicationNo) {
-
-                    throw new Error(
-                        "Application number missing"
-                    );
-                }
-
-
-                try {
-
-                    localStorage.setItem(
-                        "madrassa_last_student_application_no",
-                        String(
-                            applicationNo
-                        )
-                    );
-
-                } catch (error) {
-                    /* ignore */
-                }
-
-
-                if (
-                    el.studentApplicationNumber
-                ) {
-
-                    if (
-                        "value" in
-                        el.studentApplicationNumber
-                    ) {
-
-                        el.studentApplicationNumber.value =
-                            String(
-                                applicationNo
-                            );
-
-                    } else {
-
-                        el.studentApplicationNumber.textContent =
-                            String(
-                                applicationNo
-                            );
-                    }
-                }
-
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    "درخواست کامیابی سے جمع ہوگئی۔ درخواست نمبر: " +
-                    String(
-                        applicationNo
-                    ),
-                    "success"
-                );
-
-
-                if (
-                    el.studentApplicationStatusResult
-                ) {
-
-                    el.studentApplicationStatusResult.innerHTML = `
-                        <div class="application-status-card">
-                            <p>
-                                <strong>
-                                    درخواست نمبر:
-                                </strong>
-                                ${App.escapeHTML(
-                                    applicationNo
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    حالت:
-                                </strong>
-                                زیرِ التواء
-                            </p>
-                        </div>
-                    `;
-                }
-
-
-                if (
-                    el.studentApplyForm
-                ) {
-
-                    el.studentApplyForm.reset();
-                }
-
-
-                if (
-                    el.applyMahramList
-                ) {
-
-                    el.applyMahramList.innerHTML =
-                        "";
-                }
-
-
-                App.updateStudentApplicationTransferFields();
-
-                App.updateStudentApplicationMahramSection();
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.studentApplyMessage,
-                    App.getApplicationErrorMessage(
-                        error
-                    ),
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.submitStudentApplication,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       CHECK APPLICATION STATUS
-       ===================================================== */
-
-    App.checkStudentApplicationStatus =
-        async function () {
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            const applicationNo =
-                App.cleanText(
-                    el.studentApplicationNumber
-                        ? (
-                            "value" in
-                            el.studentApplicationNumber
-                                ? el.studentApplicationNumber.value
-                                : el.studentApplicationNumber.textContent
-                        )
-                        : ""
-                );
-
-
-            if (!applicationNo) {
-
-                App.showMessage(
-                    el.studentApplicationStatusResult,
-                    "درخواست نمبر درج کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.checkStudentApplicationStatus,
-                true,
-                "چیک ہو رہا ہے"
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "get_student_application_status",
-                        {
-                            p_application_no:
-                                applicationNo
-                        }
-                    );
-
-
-                if (
-                    !data ||
-                    typeof data !==
-                        "object"
-                ) {
-
-                    App.showMessage(
-                        el.studentApplicationStatusResult,
-                        "اس نمبر کی درخواست نہیں ملی۔",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                const statusLabel =
-                    App.applicationStatusLabel(
-                        data.status
-                    );
-
-
-                const note =
-                    App.cleanText(
-                        data.admin_note
-                    );
-
-
-                if (
-                    el.studentApplicationStatusResult
-                ) {
-
-                    el.studentApplicationStatusResult.innerHTML = `
-                        <div class="application-status-card">
-
-                            <p>
-                                <strong>
-                                    درخواست نمبر:
-                                </strong>
-                                ${App.escapeHTML(
-                                    data.application_no ||
-                                    applicationNo
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    طالبہ:
-                                </strong>
-                                ${App.escapeHTML(
-                                    data.name ||
-                                    ""
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    حالت:
-                                </strong>
-                                ${App.escapeHTML(
-                                    statusLabel
-                                )}
-                            </p>
-
-                            ${
-                                note
-                                    ? `
-                                        <p>
-                                            <strong>
-                                                ایڈمن نوٹ:
-                                            </strong>
-                                            ${App.escapeHTML(
-                                                note
-                                            )}
-                                        </p>
-                                      `
-                                    : ""
-                            }
-
-                        </div>
-                    `;
-                }
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.studentApplicationStatusResult,
-                    "درخواست کی حالت معلوم نہیں ہوسکی۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.checkStudentApplicationStatus,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZE PAGE
-       ===================================================== */
-
-    App.initializeStudentApplicationPage =
-        function () {
-
-            if (
-                App.currentPage !==
-                "student-apply.html"
-            ) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentApplicationElements();
-
-
-            App.bindCNICInput(
-                el.applyCNIC
-            );
-
-
-            App.bindPhoneInput(
-                el.applyPhone
-            );
-
-
-            if (
-                el.backToHome
-            ) {
-
-                el.backToHome
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "index.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.cancelStudentApplication
-            ) {
-
-                el.cancelStudentApplication
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "index.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.applyAdmissionType
-            ) {
-
-                el.applyAdmissionType
-                    .addEventListener(
-                        "change",
-                        App.updateStudentApplicationTransferFields
-                    );
-            }
-
-
-            if (
-                el.applyResidenceType
-            ) {
-
-                el.applyResidenceType
-                    .addEventListener(
-                        "change",
-                        App.updateStudentApplicationMahramSection
-                    );
-            }
-
-
-            if (
-                el.addApplyMahram
-            ) {
-
-                el.addApplyMahram
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.addStudentApplicationMahram();
-                        }
-                    );
-            }
-
-
-            if (
-                el.studentApplyForm
-            ) {
-
-                el.studentApplyForm
-                    .addEventListener(
-                        "submit",
-                        App.submitStudentApplication
-                    );
-            }
-
-
-            if (
-                el.checkStudentApplicationStatus
-            ) {
-
-                el.checkStudentApplicationStatus
-                    .addEventListener(
-                        "click",
-                        App.checkStudentApplicationStatus
-                    );
-            }
-
-
-            try {
-
-                const savedApplicationNo =
-                    localStorage.getItem(
-                        "madrassa_last_student_application_no"
-                    );
-
-
-                if (
-                    savedApplicationNo &&
-                    el.studentApplicationNumber &&
-                    "value" in
-                    el.studentApplicationNumber &&
-                    !el.studentApplicationNumber.value
-                ) {
-
-                    el.studentApplicationNumber.value =
-                        savedApplicationNo;
-                }
-
-            } catch (error) {
-                /* ignore */
-            }
-
-
-            App.updateStudentApplicationTransferFields();
-
-            App.updateStudentApplicationMahramSection();
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeStudentApplicationPage();
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 7 / TEACHER APPLICATION
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       PAGE ELEMENTS
-       ===================================================== */
-
-    App.getTeacherApplicationElements =
-        function () {
-
-            return {
-
-                backToHome:
-                    App.byId(
-                        "backToHome"
-                    ),
-
-                teacherApplyMessage:
-                    App.byId(
-                        "teacherApplyMessage"
-                    ),
-
-                teacherApplyForm:
-                    App.byId(
-                        "teacherApplyForm"
-                    ),
-
-                applyTeacherName:
-                    App.byId(
-                        "applyTeacherName"
-                    ),
-
-                applyTeacherFatherName:
-                    App.byId(
-                        "applyTeacherFatherName"
-                    ),
-
-                applyTeacherCNIC:
-                    App.byId(
-                        "applyTeacherCNIC"
-                    ),
-
-                applyTeacherPhone:
-                    App.byId(
-                        "applyTeacherPhone"
-                    ),
-
-                applyTeacherDateOfBirth:
-                    App.byId(
-                        "applyTeacherDateOfBirth"
-                    ),
-
-                applyTeacherAddress:
-                    App.byId(
-                        "applyTeacherAddress"
-                    ),
-
-                applyTeacherQualification:
-                    App.byId(
-                        "applyTeacherQualification"
-                    ),
-
-                applyTeacherSpecialization:
-                    App.byId(
-                        "applyTeacherSpecialization"
-                    ),
-
-                applyTeacherExperience:
-                    App.byId(
-                        "applyTeacherExperience"
-                    ),
-
-                applyTeacherPreviousInstitute:
-                    App.byId(
-                        "applyTeacherPreviousInstitute"
-                    ),
-
-                applyTeacherPreferredClass:
-                    App.byId(
-                        "applyTeacherPreferredClass"
-                    ),
-
-                applyTeacherAvailableFrom:
-                    App.byId(
-                        "applyTeacherAvailableFrom"
-                    ),
-
-                applyTeacherUsername:
-                    App.byId(
-                        "applyTeacherUsername"
-                    ),
-
-                applyTeacherPassword:
-                    App.byId(
-                        "applyTeacherPassword"
-                    ),
-
-                applyTeacherConfirmPassword:
-                    App.byId(
-                        "applyTeacherConfirmPassword"
-                    ),
-
-                teacherApplyConfirmation:
-                    App.byId(
-                        "teacherApplyConfirmation"
-                    ),
-
-                submitTeacherApplication:
-                    App.byId(
-                        "submitTeacherApplication"
-                    ),
-
-                cancelTeacherApplication:
-                    App.byId(
-                        "cancelTeacherApplication"
-                    ),
-
-                teacherApplicationNumber:
-                    App.byId(
-                        "teacherApplicationNumber"
-                    ),
-
-                checkTeacherApplicationStatus:
-                    App.byId(
-                        "checkTeacherApplicationStatus"
-                    ),
-
-                teacherApplicationStatusResult:
-                    App.byId(
-                        "teacherApplicationStatusResult"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       FORM DATA
-       ===================================================== */
-
-    App.getTeacherApplicationData =
-        function () {
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            return {
-
-                name:
-                    App.cleanText(
-                        el.applyTeacherName
-                            ? el.applyTeacherName.value
-                            : ""
-                    ),
-
-                fatherName:
-                    App.cleanText(
-                        el.applyTeacherFatherName
-                            ? el.applyTeacherFatherName.value
-                            : ""
-                    ),
-
-                cnic:
-                    App.normalizeCNIC(
-                        el.applyTeacherCNIC
-                            ? el.applyTeacherCNIC.value
-                            : ""
-                    ),
-
-                phone:
-                    App.normalizePhone(
-                        el.applyTeacherPhone
-                            ? el.applyTeacherPhone.value
-                            : ""
-                    ),
-
-                dateOfBirth:
-                    el.applyTeacherDateOfBirth
-                        ? el.applyTeacherDateOfBirth.value
-                        : "",
-
-                address:
-                    App.cleanText(
-                        el.applyTeacherAddress
-                            ? el.applyTeacherAddress.value
-                            : ""
-                    ),
-
-                qualification:
-                    App.cleanText(
-                        el.applyTeacherQualification
-                            ? el.applyTeacherQualification.value
-                            : ""
-                    ),
-
-                specialization:
-                    App.cleanText(
-                        el.applyTeacherSpecialization
-                            ? el.applyTeacherSpecialization.value
-                            : ""
-                    ),
-
-                experience:
-                    App.cleanText(
-                        el.applyTeacherExperience
-                            ? el.applyTeacherExperience.value
-                            : ""
-                    ),
-
-                previousInstitute:
-                    App.cleanText(
-                        el.applyTeacherPreviousInstitute
-                            ? el.applyTeacherPreviousInstitute.value
-                            : ""
-                    ),
-
-                preferredClass:
-                    App.cleanText(
-                        el.applyTeacherPreferredClass
-                            ? el.applyTeacherPreferredClass.value
-                            : ""
-                    ),
-
-                availableFrom:
-                    el.applyTeacherAvailableFrom
-                        ? el.applyTeacherAvailableFrom.value
-                        : "",
-
-                username:
-                    App.cleanText(
-                        el.applyTeacherUsername
-                            ? el.applyTeacherUsername.value
-                            : ""
-                    ),
-
-                password:
-                    el.applyTeacherPassword
-                        ? el.applyTeacherPassword.value
-                        : "",
-
-                confirmPassword:
-                    el.applyTeacherConfirmPassword
-                        ? el.applyTeacherConfirmPassword.value
-                        : ""
-            };
-        };
-
-
-    /* =====================================================
-       VALIDATION
-       ===================================================== */
-
-    App.validateTeacherApplication =
-        function (data) {
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            if (
-                !data.name ||
-                !App.isUrduText(
-                    data.name
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "استاد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.fatherName &&
-                !App.isUrduText(
-                    data.fatherName
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "والد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidCNIC(
-                    data.cnic
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidPhone(
-                    data.phone
-                )
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "فون نمبر 11 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.dateOfBirth) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "تاریخ پیدائش درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.address) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "پتہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.qualification) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "تعلیمی قابلیت درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.username.length < 4
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "صارف نام کم از کم 4 حروف یا اعداد پر مشتمل ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.password.length < 8
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "پاس ورڈ کم از کم 8 حروف یا اعداد پر مشتمل ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                data.password !==
-                data.confirmPassword
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "دونوں پاس ورڈ ایک جیسے نہیں ہیں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                el.teacherApplyConfirmation &&
-                !el.teacherApplyConfirmation.checked
-            ) {
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "درخواست جمع کرنے سے پہلے تصدیق کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       TEACHER APPLICATION ERROR
-       ===================================================== */
-
-    App.getTeacherApplicationError =
-        function (error) {
-
-            const message =
-                String(
-                    error &&
-                    error.message
-                        ? error.message
-                        : ""
-                ).toLowerCase();
-
-
-            if (
-                message.includes(
-                    "username already exists"
-                )
-            ) {
-
-                return "یہ صارف نام پہلے سے استعمال ہو رہا ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "pending application already exists"
-                )
-            ) {
-
-                return "اس صارف نام سے ایک درخواست پہلے ہی زیرِ التواء ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "invalid cnic"
-                )
-            ) {
-
-                return "شناختی کارڈ نمبر درست نہیں ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "invalid phone"
-                )
-            ) {
-
-                return "فون نمبر درست نہیں ہے۔";
-            }
-
-
-            if (
-                message.includes(
-                    "password"
-                )
-            ) {
-
-                return "پاس ورڈ کم از کم 8 حروف یا اعداد پر مشتمل ہونا چاہیے۔";
-            }
-
-
-            return "درخواست جمع نہیں ہوسکی۔ دوبارہ کوشش کریں۔";
-        };
-
-
-    /* =====================================================
-       SUBMIT TEACHER APPLICATION
-       ===================================================== */
-
-    App.submitTeacherApplication =
-        async function (event) {
-
-            if (event) {
-                event.preventDefault();
-            }
-
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            App.clearMessage(
-                el.teacherApplyMessage
-            );
-
-
-            const data =
-                App.getTeacherApplicationData();
-
-
-            if (
-                !App.validateTeacherApplication(
-                    data
-                )
-            ) {
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.submitTeacherApplication,
-                true,
-                "درخواست جمع ہو رہی ہے"
-            );
-
-
-            try {
-
-                const applicationNo =
-                    await App.rpc(
-                        "submit_teacher_application",
-                        {
-                            p_name:
-                                data.name,
-
-                            p_father_name:
-                                data.fatherName ||
-                                null,
-
-                            p_cnic:
-                                data.cnic,
-
-                            p_phone:
-                                data.phone,
-
-                            p_date_of_birth:
-                                data.dateOfBirth ||
-                                null,
-
-                            p_address:
-                                data.address ||
-                                null,
-
-                            p_qualification:
-                                data.qualification ||
-                                null,
-
-                            p_specialization:
-                                data.specialization ||
-                                null,
-
-                            p_experience:
-                                data.experience ||
-                                null,
-
-                            p_previous_institute:
-                                data.previousInstitute ||
-                                null,
-
-                            p_preferred_class:
-                                data.preferredClass ||
-                                null,
-
-                            p_available_from:
-                                data.availableFrom ||
-                                null,
-
-                            p_username:
-                                data.username,
-
-                            p_password:
-                                data.password
-                        }
-                    );
-
-
-                if (!applicationNo) {
-
-                    throw new Error(
-                        "Application number missing"
-                    );
-                }
-
-
-                try {
-
-                    localStorage.setItem(
-                        "madrassa_last_teacher_application_no",
-                        String(
-                            applicationNo
-                        )
-                    );
-
-                } catch (error) {
-                    /* ignore */
-                }
-
-
-                if (
-                    el.teacherApplicationNumber
-                ) {
-
-                    if (
-                        "value" in
-                        el.teacherApplicationNumber
-                    ) {
-
-                        el.teacherApplicationNumber.value =
-                            String(
-                                applicationNo
-                            );
-
-                    } else {
-
-                        el.teacherApplicationNumber.textContent =
-                            String(
-                                applicationNo
-                            );
-                    }
-                }
-
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    "درخواست کامیابی سے جمع ہوگئی۔ درخواست نمبر: " +
-                    String(
-                        applicationNo
-                    ),
-                    "success"
-                );
-
-
-                if (
-                    el.teacherApplicationStatusResult
-                ) {
-
-                    el.teacherApplicationStatusResult.innerHTML = `
-                        <div class="application-status-card">
-
-                            <p>
-                                <strong>
-                                    درخواست نمبر:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    applicationNo
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    حالت:
-                                </strong>
-
-                                زیرِ التواء
-                            </p>
-
-                        </div>
-                    `;
-                }
-
-
-                if (
-                    el.teacherApplyForm
-                ) {
-
-                    el.teacherApplyForm.reset();
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Teacher application error:",
-                    error
-                );
-
-
-                App.showMessage(
-                    el.teacherApplyMessage,
-                    App.getTeacherApplicationError(
-                        error
-                    ),
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.submitTeacherApplication,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       CHECK TEACHER APPLICATION STATUS
-       ===================================================== */
-
-    App.checkTeacherApplicationStatus =
-        async function () {
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            const applicationNo =
-                App.cleanText(
-                    el.teacherApplicationNumber
-                        ? (
-                            "value" in
-                            el.teacherApplicationNumber
-                                ? el.teacherApplicationNumber.value
-                                : el.teacherApplicationNumber.textContent
-                        )
-                        : ""
-                );
-
-
-            if (!applicationNo) {
-
-                App.showMessage(
-                    el.teacherApplicationStatusResult,
-                    "درخواست نمبر درج کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.checkTeacherApplicationStatus,
-                true,
-                "چیک ہو رہا ہے"
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "get_teacher_application_status",
-                        {
-                            p_application_no:
-                                applicationNo
-                        }
-                    );
-
-
-                if (
-                    !data ||
-                    typeof data !==
-                        "object"
-                ) {
-
-                    App.showMessage(
-                        el.teacherApplicationStatusResult,
-                        "اس نمبر کی درخواست نہیں ملی۔",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                const statusLabel =
-                    typeof App.applicationStatusLabel ===
-                    "function"
-                        ? App.applicationStatusLabel(
-                            data.status
-                        )
-                        : App.cleanText(
-                            data.status
-                        );
-
-
-                const note =
-                    App.cleanText(
-                        data.admin_note
-                    );
-
-
-                if (
-                    el.teacherApplicationStatusResult
-                ) {
-
-                    el.teacherApplicationStatusResult.innerHTML = `
-                        <div class="application-status-card">
-
-                            <p>
-                                <strong>
-                                    درخواست نمبر:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    data.application_no ||
-                                    applicationNo
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    استاد:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    data.name ||
-                                    ""
-                                )}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    حالت:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    statusLabel
-                                )}
-                            </p>
-
-                            ${
-                                note
-                                    ? `
-                                        <p>
-                                            <strong>
-                                                ایڈمن نوٹ:
-                                            </strong>
-
-                                            ${App.escapeHTML(
-                                                note
-                                            )}
-                                        </p>
-                                      `
-                                    : ""
-                            }
-
-                        </div>
-                    `;
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Teacher application status error:",
-                    error
-                );
-
-
-                App.showMessage(
-                    el.teacherApplicationStatusResult,
-                    "درخواست کی حالت معلوم نہیں ہوسکی۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.checkTeacherApplicationStatus,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       RESTORE LAST APPLICATION NUMBER
-       ===================================================== */
-
-    App.restoreTeacherApplicationNumber =
-        function () {
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            if (
-                !el.teacherApplicationNumber ||
-                !(
-                    "value" in
-                    el.teacherApplicationNumber
-                )
-            ) {
-                return;
-            }
-
-
-            if (
-                App.cleanText(
-                    el.teacherApplicationNumber.value
-                )
-            ) {
-                return;
-            }
-
-
-            try {
-
-                const saved =
-                    localStorage.getItem(
-                        "madrassa_last_teacher_application_no"
-                    );
-
-
-                if (saved) {
-
-                    el.teacherApplicationNumber.value =
-                        saved;
-                }
-
-            } catch (error) {
-                /* ignore */
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZE TEACHER APPLICATION PAGE
-       ===================================================== */
-
-    App.initializeTeacherApplicationPage =
-        function () {
-
-            if (
-                App.currentPage !==
-                "teacher-apply.html"
-            ) {
-                return;
-            }
-
-
-            const el =
-                App.getTeacherApplicationElements();
-
-
-            App.bindCNICInput(
-                el.applyTeacherCNIC
-            );
-
-
-            App.bindPhoneInput(
-                el.applyTeacherPhone
-            );
-
-
-            if (
-                el.backToHome
-            ) {
-
-                el.backToHome
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "index.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.cancelTeacherApplication
-            ) {
-
-                el.cancelTeacherApplication
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "index.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.teacherApplyForm
-            ) {
-
-                el.teacherApplyForm
-                    .addEventListener(
-                        "submit",
-                        App.submitTeacherApplication
-                    );
-            }
-
-
-            if (
-                el.checkTeacherApplicationStatus
-            ) {
-
-                el.checkTeacherApplicationStatus
-                    .addEventListener(
-                        "click",
-                        App.checkTeacherApplicationStatus
-                    );
-            }
-
-
-            App.restoreTeacherApplicationNumber();
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeTeacherApplicationPage();
-        }
-    );
-
-})();
-
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 8 / APPLICATION APPROVALS
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       APPROVAL STATE
-       ===================================================== */
-
-    App.studentApplicationsCache = [];
-
-    App.teacherApplicationsCache = [];
-
-    App.selectedApplicationType = null;
-
-    App.selectedApplicationId = null;
-
-    App.pendingApplicationDecision = null;
-
-
-    /* =====================================================
-       PAGE ELEMENTS
-       ===================================================== */
-
-    App.getApprovalElements =
-        function () {
-
-            return {
-
-                backToDashboard:
-                    App.byId(
-                        "backToDashboard"
-                    ),
-
-                pendingStudentApplications:
-                    App.byId(
-                        "pendingStudentApplications"
-                    ),
-
-                pendingTeacherApplications:
-                    App.byId(
-                        "pendingTeacherApplications"
-                    ),
-
-                approvedApplicationsTotal:
-                    App.byId(
-                        "approvedApplicationsTotal"
-                    ),
-
-                rejectedApplicationsTotal:
-                    App.byId(
-                        "rejectedApplicationsTotal"
-                    ),
-
-                studentApplicationsSection:
-                    App.byId(
-                        "studentApplicationsSection"
-                    ),
-
-                studentApplicationCount:
-                    App.byId(
-                        "studentApplicationCount"
-                    ),
-
-                studentApplicationsMessage:
-                    App.byId(
-                        "studentApplicationsMessage"
-                    ),
-
-                studentApplicationsList:
-                    App.byId(
-                        "studentApplicationsList"
-                    ),
-
-                teacherApplicationsSection:
-                    App.byId(
-                        "teacherApplicationsSection"
-                    ),
-
-                teacherApplicationCount:
-                    App.byId(
-                        "teacherApplicationCount"
-                    ),
-
-                teacherApplicationsMessage:
-                    App.byId(
-                        "teacherApplicationsMessage"
-                    ),
-
-                teacherApplicationsList:
-                    App.byId(
-                        "teacherApplicationsList"
-                    ),
-
-                applicationDetailsOverlay:
-                    App.byId(
-                        "applicationDetailsOverlay"
-                    ),
-
-                applicationDetailsTitle:
-                    App.byId(
-                        "applicationDetailsTitle"
-                    ),
-
-                closeApplicationDetails:
-                    App.byId(
-                        "closeApplicationDetails"
-                    ),
-
-                applicationDetailsContent:
-                    App.byId(
-                        "applicationDetailsContent"
-                    ),
-
-                applicationDecisionSection:
-                    App.byId(
-                        "applicationDecisionSection"
-                    ),
-
-                applicationAdminNote:
-                    App.byId(
-                        "applicationAdminNote"
-                    ),
-
-                approveApplicationButton:
-                    App.byId(
-                        "approveApplicationButton"
-                    ),
-
-                rejectApplicationButton:
-                    App.byId(
-                        "rejectApplicationButton"
-                    ),
-
-                approvalConfirmationOverlay:
-                    App.byId(
-                        "approvalConfirmationOverlay"
-                    ),
-
-                approvalConfirmationTitle:
-                    App.byId(
-                        "approvalConfirmationTitle"
-                    ),
-
-                closeApprovalConfirmation:
-                    App.byId(
-                        "closeApprovalConfirmation"
-                    ),
-
-                approvalConfirmationContent:
-                    App.byId(
-                        "approvalConfirmationContent"
-                    ),
-
-                confirmApplicationDecision:
-                    App.byId(
-                        "confirmApplicationDecision"
-                    ),
-
-                cancelApplicationDecision:
-                    App.byId(
-                        "cancelApplicationDecision"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       STATUS HELPERS
-       ===================================================== */
-
-    App.normalizeApplicationStatus =
-        function (status) {
-
-            const value =
-                App.cleanText(
-                    status
-                ).toLowerCase();
-
-
-            if (
-                value === "approved"
-            ) {
-                return "approved";
-            }
-
-
-            if (
-                value === "rejected"
-            ) {
-                return "rejected";
-            }
-
-
-            return "pending";
-        };
-
-
-    App.getApprovalStatusLabel =
-        function (status) {
-
-            const value =
-                App.normalizeApplicationStatus(
-                    status
-                );
-
-
-            if (
-                value === "approved"
-            ) {
-                return "منظور شدہ";
-            }
-
-
-            if (
-                value === "rejected"
-            ) {
-                return "مسترد شدہ";
-            }
-
-
-            return "زیرِ التواء";
-        };
-
-
-    App.getApplicationTypeLabel =
-        function (type) {
-
-            return (
-                type === "teacher"
-                    ? "استاد"
-                    : "طالبہ"
-            );
-        };
-
-
-    /* =====================================================
-       FIND APPLICATION
-       ===================================================== */
-
-    App.findApplication =
-        function (
-            type,
-            id
-        ) {
-
-            const list =
-                type === "teacher"
-                    ? App.teacherApplicationsCache
-                    : App.studentApplicationsCache;
-
-
-            return (
-                list.find(
-                    function (item) {
-
-                        return (
-                            String(
-                                item.id
-                            ) ===
-                            String(id)
-                        );
-                    }
-                ) ||
-                null
-            );
-        };
-
-
-    /* =====================================================
-       STATISTICS
-       ===================================================== */
-
-    App.updateApprovalStats =
-        function () {
-
-            const el =
-                App.getApprovalElements();
-
-
-            const allApplications = [
-                ...App.studentApplicationsCache,
-                ...App.teacherApplicationsCache
-            ];
-
-
-            const pendingStudents =
-                App.studentApplicationsCache
-                    .filter(
-                        function (item) {
-
-                            return (
-                                App.normalizeApplicationStatus(
-                                    item.status
-                                ) ===
-                                "pending"
-                            );
-                        }
-                    ).length;
-
-
-            const pendingTeachers =
-                App.teacherApplicationsCache
-                    .filter(
-                        function (item) {
-
-                            return (
-                                App.normalizeApplicationStatus(
-                                    item.status
-                                ) ===
-                                "pending"
-                            );
-                        }
-                    ).length;
-
-
-            const approved =
-                allApplications
-                    .filter(
-                        function (item) {
-
-                            return (
-                                App.normalizeApplicationStatus(
-                                    item.status
-                                ) ===
-                                "approved"
-                            );
-                        }
-                    ).length;
-
-
-            const rejected =
-                allApplications
-                    .filter(
-                        function (item) {
-
-                            return (
-                                App.normalizeApplicationStatus(
-                                    item.status
-                                ) ===
-                                "rejected"
-                            );
-                        }
-                    ).length;
-
-
-            App.setText(
-                el.pendingStudentApplications,
-                pendingStudents
-            );
-
-
-            App.setText(
-                el.pendingTeacherApplications,
-                pendingTeachers
-            );
-
-
-            App.setText(
-                el.approvedApplicationsTotal,
-                approved
-            );
-
-
-            App.setText(
-                el.rejectedApplicationsTotal,
-                rejected
-            );
-
-
-            App.setText(
-                el.studentApplicationCount,
-                App.studentApplicationsCache.length
-            );
-
-
-            App.setText(
-                el.teacherApplicationCount,
-                App.teacherApplicationsCache.length
-            );
-        };
-
-
-    /* =====================================================
-       APPLICATION CARD
-       ===================================================== */
-
-    App.createApplicationCardHTML =
-        function (
-            application,
-            type
-        ) {
-
-            const status =
-                App.normalizeApplicationStatus(
-                    application.status
-                );
-
-
-            const statusLabel =
-                App.getApprovalStatusLabel(
-                    status
-                );
-
-
-            const applicationNo =
-                application.application_no ||
-                "";
-
-
-            const name =
-                application.name ||
-                "";
-
-
-            const phone =
-                application.phone ||
-                "—";
-
-
-            const submitted =
-                App.formatDate(
-                    application.submitted_at
-                ) || "—";
-
-
-            return `
-                <div
-                    class="application-card"
-                    data-application-id="${App.escapeHTML(
-                        application.id
-                    )}"
-                    data-application-type="${App.escapeHTML(
-                        type
-                    )}"
-                >
-
-                    <div class="application-card-main">
-
-                        <h3>
-                            ${App.escapeHTML(
-                                name
-                            )}
-                        </h3>
-
-                        <p>
-                            درخواست نمبر:
-                            ${App.escapeHTML(
-                                applicationNo
-                            )}
-                        </p>
-
-                        <p>
-                            فون:
-                            ${App.escapeHTML(
-                                phone
-                            )}
-                        </p>
-
-                        <p>
-                            تاریخ:
-                            ${App.escapeHTML(
-                                submitted
-                            )}
-                        </p>
-
-                        <p>
-                            حالت:
-                            ${App.escapeHTML(
-                                statusLabel
-                            )}
-                        </p>
-
-                    </div>
-
-                    <div class="application-card-actions">
-
-                        <button
-                            type="button"
-                            class="view-application"
-                            data-id="${App.escapeHTML(
-                                application.id
-                            )}"
-                            data-type="${App.escapeHTML(
-                                type
-                            )}"
-                        >
-                            تفصیل
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-        };
-
-
-    /* =====================================================
-       RENDER STUDENT APPLICATIONS
-       ===================================================== */
-
-    App.renderStudentApplications =
-        function () {
-
-            const el =
-                App.getApprovalElements();
-
-
-            if (
-                !el.studentApplicationsList
-            ) {
-                return;
-            }
-
-
-            if (
-                App.studentApplicationsCache
-                    .length === 0
-            ) {
-
-                el.studentApplicationsList.innerHTML =
-                    `
-                        <div class="empty-state">
-                            طالبات کی کوئی درخواست موجود نہیں۔
-                        </div>
-                    `;
-
-                return;
-            }
-
-
-            el.studentApplicationsList.innerHTML =
-                App.studentApplicationsCache
-                    .map(
-                        function (application) {
-
-                            return (
-                                App.createApplicationCardHTML(
-                                    application,
-                                    "student"
-                                )
-                            );
-                        }
-                    )
-                    .join("");
-
-
-            App.bindApplicationCards(
-                el.studentApplicationsList
-            );
-        };
-
-
-    /* =====================================================
-       RENDER TEACHER APPLICATIONS
-       ===================================================== */
-
-    App.renderTeacherApplications =
-        function () {
-
-            const el =
-                App.getApprovalElements();
-
-
-            if (
-                !el.teacherApplicationsList
-            ) {
-                return;
-            }
-
-
-            if (
-                App.teacherApplicationsCache
-                    .length === 0
-            ) {
-
-                el.teacherApplicationsList.innerHTML =
-                    `
-                        <div class="empty-state">
-                            اساتذہ کی کوئی درخواست موجود نہیں۔
-                        </div>
-                    `;
-
-                return;
-            }
-
-
-            el.teacherApplicationsList.innerHTML =
-                App.teacherApplicationsCache
-                    .map(
-                        function (application) {
-
-                            return (
-                                App.createApplicationCardHTML(
-                                    application,
-                                    "teacher"
-                                )
-                            );
-                        }
-                    )
-                    .join("");
-
-
-            App.bindApplicationCards(
-                el.teacherApplicationsList
-            );
-        };
-
-
-    /* =====================================================
-       BIND APPLICATION CARDS
-       ===================================================== */
-
-    App.bindApplicationCards =
-        function (container) {
-
-            if (!container) {
-                return;
-            }
-
-
-            container
-                .querySelectorAll(
-                    ".view-application"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                App.showApplicationDetails(
-                                    this.dataset.type,
-                                    this.dataset.id
-                                );
-                            }
-                        );
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       LOAD APPLICATIONS
-       ===================================================== */
-
-    App.loadApplications =
-        async function () {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getApprovalElements();
-
-
-            App.showMessage(
-                el.studentApplicationsMessage,
-                "درخواستیں لوڈ ہو رہی ہیں۔",
-                "info"
-            );
-
-
-            App.showMessage(
-                el.teacherApplicationsMessage,
-                "درخواستیں لوڈ ہو رہی ہیں۔",
-                "info"
-            );
-
-
-            try {
-
-                const results =
-                    await Promise.all([
-                        App.rpc(
-                            "admin_get_student_applications",
-                            {
-                                p_token:
-                                    session.token
-                            }
-                        ),
-
-                        App.rpc(
-                            "admin_get_teacher_applications",
-                            {
-                                p_token:
-                                    session.token
-                            }
-                        )
-                    ]);
-
-
-                App.studentApplicationsCache =
-                    Array.isArray(
-                        results[0]
-                    )
-                        ? results[0]
-                        : [];
-
-
-                App.teacherApplicationsCache =
-                    Array.isArray(
-                        results[1]
-                    )
-                        ? results[1]
-                        : [];
-
-
-                App.clearMessage(
-                    el.studentApplicationsMessage
-                );
-
-
-                App.clearMessage(
-                    el.teacherApplicationsMessage
-                );
-
-
-                App.updateApprovalStats();
-
-                App.renderStudentApplications();
-
-                App.renderTeacherApplications();
-
-            } catch (error) {
-
-                console.error(
-                    "Application loading error:",
-                    error
-                );
-
-
-                App.studentApplicationsCache =
-                    [];
-
-                App.teacherApplicationsCache =
-                    [];
-
-
-                App.updateApprovalStats();
-
-                App.renderStudentApplications();
-
-                App.renderTeacherApplications();
-
-
-                App.showMessage(
-                    el.studentApplicationsMessage,
-                    error.message ||
-                    "درخواستیں لوڈ نہیں ہوسکیں۔",
-                    "error"
-                );
-
-
-                App.showMessage(
-                    el.teacherApplicationsMessage,
-                    error.message ||
-                    "درخواستیں لوڈ نہیں ہوسکیں۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       STUDENT DETAILS HTML
-       ===================================================== */
-
-    App.getStudentApplicationDetailsHTML =
-        function (
-            application
-        ) {
-
-            const mahrams =
-                Array.isArray(
-                    application.mahrams
-                )
-                    ? application.mahrams
-                    : [];
-
-
-            const mahramHTML =
-                mahrams.length > 0
-                    ? mahrams
-                        .map(
-                            function (
-                                mahram,
-                                index
-                            ) {
-
-                                return `
-                                    <div class="mahram-detail">
-
-                                        <h4>
-                                            محرم ${index + 1}
-                                        </h4>
-
-                                        <p>
-                                            <strong>
-                                                نام:
-                                            </strong>
-
-                                            ${App.escapeHTML(
-                                                mahram.name ||
-                                                ""
-                                            )}
-                                        </p>
-
-                                        <p>
-                                            <strong>
-                                                رشتہ:
-                                            </strong>
-
-                                            ${App.escapeHTML(
-                                                mahram.relation ||
-                                                ""
-                                            )}
-                                        </p>
-
-                                        <p>
-                                            <strong>
-                                                فون:
-                                            </strong>
-
-                                            ${App.escapeHTML(
-                                                mahram.phone ||
-                                                ""
-                                            )}
-                                        </p>
-
-                                        <p>
-                                            <strong>
-                                                شناختی کارڈ:
-                                            </strong>
-
-                                            ${App.escapeHTML(
-                                                App.formatCNIC(
-                                                    mahram.cnic ||
-                                                    ""
-                                                )
-                                            )}
-                                        </p>
-
-                                    </div>
-                                `;
-                            }
-                        )
-                        .join("")
-                    : "<p>کوئی محرم درج نہیں۔</p>";
-
-
-            return `
-                <p>
-                    <strong>درخواست نمبر:</strong>
-                    ${App.escapeHTML(
-                        application.application_no ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>طالبہ:</strong>
-                    ${App.escapeHTML(
-                        application.name ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>والد:</strong>
-                    ${App.escapeHTML(
-                        application.father_name ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>سرپرست:</strong>
-                    ${App.escapeHTML(
-                        application.guardian_name ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>شناختی کارڈ:</strong>
-                    ${App.escapeHTML(
-                        App.formatCNIC(
-                            application.cnic ||
-                            ""
-                        )
-                    )}
-                </p>
-
-                <p>
-                    <strong>فون:</strong>
-                    ${App.escapeHTML(
-                        application.phone ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>تاریخ پیدائش:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.date_of_birth
-                        ) || "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>درجہ:</strong>
-                    ${App.escapeHTML(
-                        application.student_class ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>داخلہ کی قسم:</strong>
-                    ${App.escapeHTML(
-                        application.admission_type ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>سابقہ مدرسہ:</strong>
-                    ${App.escapeHTML(
-                        application.previous_madrassa ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>منتقلی کی تاریخ:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.transfer_date
-                        ) || "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>رہائش:</strong>
-                    ${App.escapeHTML(
-                        application.residence_type ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>پتہ:</strong>
-                    ${App.escapeHTML(
-                        application.address ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>صارف نام:</strong>
-                    ${App.escapeHTML(
-                        application.username ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>درخواست کی حالت:</strong>
-                    ${App.escapeHTML(
-                        App.getApprovalStatusLabel(
-                            application.status
-                        )
-                    )}
-                </p>
-
-                <p>
-                    <strong>جمع ہونے کی تاریخ:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.submitted_at
-                        ) || "—"
-                    )}
-                </p>
-
-                ${
-                    application.admin_note
-                        ? `
-                            <p>
-                                <strong>
-                                    سابقہ ایڈمن نوٹ:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    application.admin_note
-                                )}
-                            </p>
-                          `
-                        : ""
-                }
-
-                <hr>
-
-                <h3>
-                    محرم
-                </h3>
-
-                ${mahramHTML}
-            `;
-        };
-
-
-    /* =====================================================
-       TEACHER DETAILS HTML
-       ===================================================== */
-
-    App.getTeacherApplicationDetailsHTML =
-        function (
-            application
-        ) {
-
-            return `
-                <p>
-                    <strong>درخواست نمبر:</strong>
-                    ${App.escapeHTML(
-                        application.application_no ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>استاد:</strong>
-                    ${App.escapeHTML(
-                        application.name ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>والد:</strong>
-                    ${App.escapeHTML(
-                        application.father_name ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>شناختی کارڈ:</strong>
-                    ${App.escapeHTML(
-                        App.formatCNIC(
-                            application.cnic ||
-                            ""
-                        )
-                    )}
-                </p>
-
-                <p>
-                    <strong>فون:</strong>
-                    ${App.escapeHTML(
-                        application.phone ||
-                        ""
-                    )}
-                </p>
-
-                <p>
-                    <strong>تاریخ پیدائش:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.date_of_birth
-                        ) || "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>قابلیت:</strong>
-                    ${App.escapeHTML(
-                        application.qualification ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>تخصص:</strong>
-                    ${App.escapeHTML(
-                        application.specialization ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>تجربہ:</strong>
-                    ${App.escapeHTML(
-                        application.experience ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>سابقہ ادارہ:</strong>
-                    ${App.escapeHTML(
-                        application.previous_institute ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>پسندیدہ درجہ:</strong>
-                    ${App.escapeHTML(
-                        application.preferred_class ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>دستیابی:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.available_from
-                        ) || "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>پتہ:</strong>
-                    ${App.escapeHTML(
-                        application.address ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>صارف نام:</strong>
-                    ${App.escapeHTML(
-                        application.username ||
-                        "—"
-                    )}
-                </p>
-
-                <p>
-                    <strong>درخواست کی حالت:</strong>
-                    ${App.escapeHTML(
-                        App.getApprovalStatusLabel(
-                            application.status
-                        )
-                    )}
-                </p>
-
-                <p>
-                    <strong>جمع ہونے کی تاریخ:</strong>
-                    ${App.escapeHTML(
-                        App.formatDate(
-                            application.submitted_at
-                        ) || "—"
-                    )}
-                </p>
-
-                ${
-                    application.admin_note
-                        ? `
-                            <p>
-                                <strong>
-                                    سابقہ ایڈمن نوٹ:
-                                </strong>
-
-                                ${App.escapeHTML(
-                                    application.admin_note
-                                )}
-                            </p>
-                          `
-                        : ""
-                }
-            `;
-        };
-
-
-    /* =====================================================
-       SHOW APPLICATION DETAILS
-       ===================================================== */
-
-    App.showApplicationDetails =
-        function (
-            type,
-            id
-        ) {
-
-            const el =
-                App.getApprovalElements();
-
-
-            const application =
-                App.findApplication(
-                    type,
-                    id
-                );
-
-
-            if (!application) {
-                return;
-            }
-
-
-            App.selectedApplicationType =
-                type;
-
-            App.selectedApplicationId =
-                application.id;
-
-            App.pendingApplicationDecision =
-                null;
-
-
-            App.setText(
-                el.applicationDetailsTitle,
-                App.getApplicationTypeLabel(
-                    type
-                ) +
-                " کی درخواست"
-            );
-
-
-            if (
-                el.applicationDetailsContent
-            ) {
-
-                el.applicationDetailsContent.innerHTML =
-                    type === "teacher"
-                        ? App.getTeacherApplicationDetailsHTML(
-                            application
-                        )
-                        : App.getStudentApplicationDetailsHTML(
-                            application
-                        );
-            }
-
-
-            if (
-                el.applicationAdminNote
-            ) {
-
-                el.applicationAdminNote.value =
-                    application.admin_note ||
-                    "";
-            }
-
-
-            if (
-                App.normalizeApplicationStatus(
-                    application.status
-                ) === "pending"
-            ) {
-
-                App.show(
-                    el.applicationDecisionSection
-                );
-
-            } else {
-
-                App.hide(
-                    el.applicationDecisionSection
-                );
-            }
-
-
-            App.show(
-                el.applicationDetailsOverlay
-            );
-        };
-
-
-    /* =====================================================
-       CLOSE DETAILS
-       ===================================================== */
-
-    App.closeApplicationDetailsModal =
-        function () {
-
-            const el =
-                App.getApprovalElements();
-
-
-            App.hide(
-                el.applicationDetailsOverlay
-            );
-
-
-            App.selectedApplicationType =
-                null;
-
-            App.selectedApplicationId =
-                null;
-
-            App.pendingApplicationDecision =
-                null;
-        };
-
-
-    /* =====================================================
-       OPEN CONFIRMATION
-       ===================================================== */
-
-    App.openApplicationDecisionConfirmation =
-        function (
-            decision
-        ) {
-
-            const el =
-                App.getApprovalElements();
-
-
-            if (
-                !App.selectedApplicationType ||
-                !App.selectedApplicationId
-            ) {
-                return;
-            }
-
-
-            const application =
-                App.findApplication(
-                    App.selectedApplicationType,
-                    App.selectedApplicationId
-                );
-
-
-            if (!application) {
-                return;
-            }
-
-
-            if (
-                App.normalizeApplicationStatus(
-                    application.status
-                ) !== "pending"
-            ) {
-                return;
-            }
-
-
-            App.pendingApplicationDecision =
-                decision;
-
-
-            const isApproval =
-                decision === "approve";
-
-
-            App.setText(
-                el.approvalConfirmationTitle,
-                isApproval
-                    ? "درخواست منظور کریں"
-                    : "درخواست مسترد کریں"
-            );
-
-
-            if (
-                el.approvalConfirmationContent
-            ) {
-
-                el.approvalConfirmationContent.innerHTML = `
-                    <p>
-                        کیا آپ واقعی
-                        <strong>
-                            ${App.escapeHTML(
-                                application.name ||
-                                ""
-                            )}
-                        </strong>
-                        کی درخواست
-                        ${
-                            isApproval
-                                ? "منظور"
-                                : "مسترد"
-                        }
-                        کرنا چاہتے ہیں؟
-                    </p>
-                `;
-            }
-
-
-            if (
-                el.confirmApplicationDecision
-            ) {
-
-                el.confirmApplicationDecision.textContent =
-                    isApproval
-                        ? "ہاں، منظور کریں"
-                        : "ہاں، مسترد کریں";
-            }
-
-
-            App.show(
-                el.approvalConfirmationOverlay
-            );
-        };
-
-
-    /* =====================================================
-       CLOSE CONFIRMATION
-       ===================================================== */
-
-    App.closeApplicationConfirmation =
-        function () {
-
-            const el =
-                App.getApprovalElements();
-
-
-            App.hide(
-                el.approvalConfirmationOverlay
-            );
-
-
-            App.pendingApplicationDecision =
-                null;
-        };
-
-
-    /* =====================================================
-       EXECUTE DECISION
-       ===================================================== */
-
-    App.executeApplicationDecision =
-        async function () {
-
-            const session =
-                App.requireAdmin();
-
-            if (!session) {
-                return;
-            }
-
-
-            const type =
-                App.selectedApplicationType;
-
-
-            const id =
-                App.selectedApplicationId;
-
-
-            const decision =
-                App.pendingApplicationDecision;
-
-
-            if (
-                !type ||
-                !id ||
-                !decision
-            ) {
-                return;
-            }
-
-
-            const el =
-                App.getApprovalElements();
-
-
-            const note =
-                App.cleanText(
-                    el.applicationAdminNote
-                        ? el.applicationAdminNote.value
-                        : ""
-                );
-
-
-            let rpcName = "";
-
-
-            if (
-                type === "student" &&
-                decision === "approve"
-            ) {
-
-                rpcName =
-                    "admin_approve_student_application";
-
-            } else if (
-                type === "student" &&
-                decision === "reject"
-            ) {
-
-                rpcName =
-                    "admin_reject_student_application";
-
-            } else if (
-                type === "teacher" &&
-                decision === "approve"
-            ) {
-
-                rpcName =
-                    "admin_approve_teacher_application";
-
-            } else if (
-                type === "teacher" &&
-                decision === "reject"
-            ) {
-
-                rpcName =
-                    "admin_reject_teacher_application";
-            }
-
-
-            if (!rpcName) {
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.confirmApplicationDecision,
-                true,
-                decision === "approve"
-                    ? "منظور ہو رہی ہے"
-                    : "مسترد ہو رہی ہے"
-            );
-
-
-            try {
-
-                await App.rpc(
-                    rpcName,
-                    {
-                        p_token:
-                            session.token,
-
-                        p_application_id:
-                            Number(id),
-
-                        p_admin_note:
-                            note ||
-                            null
-                    }
-                );
-
-
-                App.hide(
-                    el.approvalConfirmationOverlay
-                );
-
-
-                App.hide(
-                    el.applicationDetailsOverlay
-                );
-
-
-                App.selectedApplicationType =
-                    null;
-
-                App.selectedApplicationId =
-                    null;
-
-                App.pendingApplicationDecision =
-                    null;
-
-
-                await App.loadApplications();
-
-
-                if (
-                    type === "student"
-                ) {
-
-                    App.showMessage(
-                        el.studentApplicationsMessage,
-                        decision === "approve"
-                            ? "طالبہ کی درخواست منظور ہوگئی۔"
-                            : "طالبہ کی درخواست مسترد ہوگئی۔",
-                        "success"
-                    );
-
-                } else {
-
-                    App.showMessage(
-                        el.teacherApplicationsMessage,
-                        decision === "approve"
-                            ? "استاد کی درخواست منظور ہوگئی۔"
-                            : "استاد کی درخواست مسترد ہوگئی۔",
-                        "success"
-                    );
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Application decision error:",
-                    error
-                );
-
-
-                if (
-                    el.approvalConfirmationContent
-                ) {
-
-                    el.approvalConfirmationContent.innerHTML = `
-                        <p class="error-message">
-                            ${App.escapeHTML(
-                                error.message ||
-                                "درخواست پر کارروائی نہیں ہوسکی۔"
-                            )}
-                        </p>
-                    `;
-                }
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.confirmApplicationDecision,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZE APPROVALS PAGE
-       ===================================================== */
-
-    App.initializeApprovalsPage =
-        async function () {
-
-            if (
-                App.currentPage !==
-                "approvals.html"
-            ) {
-                return;
-            }
-
-
-            const session =
-                App.requireAdmin();
-
-
-            if (!session) {
-                return;
-            }
-
-
-            App.touchSession(
-                true
-            );
-
-
-            const el =
-                App.getApprovalElements();
-
-
-            App.hide(
-                el.applicationDetailsOverlay
-            );
-
-
-            App.hide(
-                el.approvalConfirmationOverlay
-            );
-
-
-            if (
-                el.backToDashboard
-            ) {
-
-                el.backToDashboard
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "dashboard.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.closeApplicationDetails
-            ) {
-
-                el.closeApplicationDetails
-                    .addEventListener(
-                        "click",
-                        App.closeApplicationDetailsModal
-                    );
-            }
-
-
-            if (
-                el.applicationDetailsOverlay
-            ) {
-
-                el.applicationDetailsOverlay
-                    .addEventListener(
-                        "click",
-                        function (event) {
-
-                            if (
-                                event.target ===
-                                el.applicationDetailsOverlay
-                            ) {
-
-                                App.closeApplicationDetailsModal();
-                            }
-                        }
-                    );
-            }
-
-
-            if (
-                el.approveApplicationButton
-            ) {
-
-                el.approveApplicationButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.openApplicationDecisionConfirmation(
-                                "approve"
-                            );
-                        }
-                    );
-            }
-
-
-            if (
-                el.rejectApplicationButton
-            ) {
-
-                el.rejectApplicationButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            App.openApplicationDecisionConfirmation(
-                                "reject"
-                            );
-                        }
-                    );
-            }
-
-
-            if (
-                el.closeApprovalConfirmation
-            ) {
-
-                el.closeApprovalConfirmation
-                    .addEventListener(
-                        "click",
-                        App.closeApplicationConfirmation
-                    );
-            }
-
-
-            if (
-                el.cancelApplicationDecision
-            ) {
-
-                el.cancelApplicationDecision
-                    .addEventListener(
-                        "click",
-                        App.closeApplicationConfirmation
-                    );
-            }
-
-
-            if (
-                el.approvalConfirmationOverlay
-            ) {
-
-                el.approvalConfirmationOverlay
-                    .addEventListener(
-                        "click",
-                        function (event) {
-
-                            if (
-                                event.target ===
-                                el.approvalConfirmationOverlay
-                            ) {
-
-                                App.closeApplicationConfirmation();
-                            }
-                        }
-                    );
-            }
-
-
-            if (
-                el.confirmApplicationDecision
-            ) {
-
-                el.confirmApplicationDecision
-                    .addEventListener(
-                        "click",
-                        App.executeApplicationDecision
-                    );
-            }
-
-
-            await App.loadApplications();
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeApprovalsPage();
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 9 / ATTENDANCE MODULE
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       ATTENDANCE STATE
-       ===================================================== */
-
-    App.attendanceTeachersCache = [];
-
-    App.attendanceStudentsCache = [];
-
-
-    /* =====================================================
-       PAGE ELEMENTS
-       ===================================================== */
-
-    App.getAttendanceElements =
-        function () {
-
-            return {
-
-                backToDashboard:
-                    App.byId(
-                        "backToDashboard"
-                    ),
-
-                attendanceMessage:
-                    App.byId(
-                        "attendanceMessage"
-                    ),
-
-                attendanceDate:
-                    App.byId(
-                        "attendanceDate"
-                    ),
-
-                attendanceClass:
-                    App.byId(
-                        "attendanceClass"
-                    ),
-
-                attendancePeriod:
-                    App.byId(
-                        "attendancePeriod"
-                    ),
-
-                attendanceTeacher:
-                    App.byId(
-                        "attendanceTeacher"
-                    ),
-
-                loadAttendanceStudents:
-                    App.byId(
-                        "loadAttendanceStudents"
-                    ),
-
-                attendanceStudentsSection:
-                    App.byId(
-                        "attendanceStudentsSection"
-                    ),
-
-                markAllPresent:
-                    App.byId(
-                        "markAllPresent"
-                    ),
-
-                clearAttendance:
-                    App.byId(
-                        "clearAttendance"
-                    ),
-
-                attendanceStudentsList:
-                    App.byId(
-                        "attendanceStudentsList"
-                    ),
-
-                saveAttendance:
-                    App.byId(
-                        "saveAttendance"
-                    ),
-
-                attendanceRecordDate:
-                    App.byId(
-                        "attendanceRecordDate"
-                    ),
-
-                attendanceRecordClass:
-                    App.byId(
-                        "attendanceRecordClass"
-                    ),
-
-                attendanceRecordPeriod:
-                    App.byId(
-                        "attendanceRecordPeriod"
-                    ),
-
-                loadAttendanceRecords:
-                    App.byId(
-                        "loadAttendanceRecords"
-                    ),
-
-                attendanceRecordsMessage:
-                    App.byId(
-                        "attendanceRecordsMessage"
-                    ),
-
-                attendanceRecordsList:
-                    App.byId(
-                        "attendanceRecordsList"
-                    )
-            };
-        };
-
-
-    /* =====================================================
-       STATUS HELPERS
-       ===================================================== */
-
-    App.attendanceStatusLabel =
-        function (status) {
-
-            switch (
-                App.cleanText(status)
-                    .toLowerCase()
-            ) {
-
-                case "present":
-                    return "حاضر";
-
-                case "absent":
-                    return "غیر حاضر";
-
-                case "leave":
-                    return "رخصت";
-
-                default:
-                    return "نامعلوم";
-            }
-        };
-
-
-    /* =====================================================
-       LOAD TEACHERS
-       ===================================================== */
-
-    App.loadAttendanceTeachers =
-        async function (
-            session
-        ) {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceTeacher
-            ) {
-                return;
-            }
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "attendance_get_teachers",
-                        {
-                            p_token:
-                                session.token
-                        }
-                    );
-
-
-                App.attendanceTeachersCache =
-                    Array.isArray(data)
-                        ? data
-                        : [];
-
-
-                el.attendanceTeacher.innerHTML =
-                    "";
-
-
-                if (
-                    App.attendanceTeachersCache
-                        .length === 0
-                ) {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-                    option.value = "";
-
-                    option.textContent =
-                        "کوئی استاد موجود نہیں";
-
-                    el.attendanceTeacher
-                        .appendChild(
-                            option
-                        );
-
-                    return;
-                }
-
-
-                if (
-                    session.role ===
-                    "admin"
-                ) {
-
-                    const placeholder =
-                        document.createElement(
-                            "option"
-                        );
-
-                    placeholder.value = "";
-
-                    placeholder.textContent =
-                        "استاد منتخب کریں";
-
-                    el.attendanceTeacher
-                        .appendChild(
-                            placeholder
-                        );
-                }
-
-
-                App.attendanceTeachersCache
-                    .forEach(
-                        function (teacher) {
-
-                            const option =
-                                document.createElement(
-                                    "option"
-                                );
-
-
-                            option.value =
-                                String(
-                                    teacher.teacher_id
-                                );
-
-
-                            option.textContent =
-                                teacher.teacher_name ||
-                                "استاد";
-
-
-                            el.attendanceTeacher
-                                .appendChild(
-                                    option
-                                );
-                        }
-                    );
-
-
-                if (
-                    session.role ===
-                        "teacher" &&
-                    App.attendanceTeachersCache
-                        .length === 1
-                ) {
-
-                    el.attendanceTeacher.value =
-                        String(
-                            App.attendanceTeachersCache[0]
-                                .teacher_id
-                        );
-
-
-                    el.attendanceTeacher.disabled =
-                        true;
-
-                } else {
-
-                    el.attendanceTeacher.disabled =
-                        false;
-                }
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    error.message ||
-                    "اساتذہ کی فہرست لوڈ نہیں ہوسکی۔",
-                    "error"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LOAD STUDENTS
-       ===================================================== */
-
-    App.loadAttendanceStudents =
-        async function () {
-
-            const session =
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getAttendanceElements();
-
-
-            const studentClass =
-                App.cleanText(
-                    el.attendanceClass
-                        ? el.attendanceClass.value
-                        : ""
-                );
-
-
-            const teacherId =
-                Number(
-                    el.attendanceTeacher
-                        ? el.attendanceTeacher.value
-                        : 0
-                );
-
-
-            const attendanceDate =
-                el.attendanceDate
-                    ? el.attendanceDate.value
-                    : "";
-
-
-            const period =
-                Number(
-                    el.attendancePeriod
-                        ? el.attendancePeriod.value
-                        : 0
-                );
-
-
-            if (!attendanceDate) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "حاضری کی تاریخ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!studentClass) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                period < 1 ||
-                period > 6
-            ) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "پیریڈ 1 سے 6 کے درمیان منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!teacherId) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "استاد منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.loadAttendanceStudents,
-                true,
-                "طالبات لوڈ ہو رہی ہیں"
-            );
-
-
-            App.clearMessage(
-                el.attendanceMessage
-            );
-
-
-            try {
-
-                const data =
-                    await App.rpc(
-                        "attendance_get_students",
-                        {
-                            p_token:
-                                session.token,
-
-                            p_class:
-                                studentClass
-                        }
-                    );
-
-
-                App.attendanceStudentsCache =
-                    Array.isArray(data)
-                        ? data
-                        : [];
-
-
-                App.renderAttendanceStudents(
-                    App.attendanceStudentsCache
-                );
-
-
-                App.show(
-                    el.attendanceStudentsSection
-                );
-
-
-                /*
-                 * اگر اسی تاریخ / پیریڈ / استاد کی
-                 * حاضری پہلے موجود ہے تو اسے بھی لوڈ کریں۔
-                 */
-
-                await App.loadExistingAttendanceIntoForm(
-                    session,
-                    attendanceDate,
-                    period,
-                    studentClass,
-                    teacherId
-                );
-
-
-                if (
-                    App.attendanceStudentsCache
-                        .length === 0
-                ) {
-
-                    App.showMessage(
-                        el.attendanceMessage,
-                        "اس درجہ میں کوئی طالبہ موجود نہیں۔",
-                        "info"
-                    );
-
-                } else {
-
-                    App.showMessage(
-                        el.attendanceMessage,
-                        "طالبات کی فہرست لوڈ ہوگئی۔",
-                        "success"
-                    );
-                }
-
-            } catch (error) {
-
-                App.attendanceStudentsCache =
-                    [];
-
-
-                App.renderAttendanceStudents(
-                    []
-                );
-
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    error.message ||
-                    "طالبات کی فہرست لوڈ نہیں ہوسکی۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.loadAttendanceStudents,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       RENDER ATTENDANCE STUDENTS
-       ===================================================== */
-
-    App.renderAttendanceStudents =
-        function (students) {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceStudentsList
-            ) {
-                return;
-            }
-
-
-            const list =
-                Array.isArray(students)
-                    ? students
-                    : [];
-
-
-            if (
-                list.length === 0
-            ) {
-
-                el.attendanceStudentsList.innerHTML =
-                    `
-                        <div class="empty-state">
-                            کوئی طالبہ موجود نہیں۔
-                        </div>
-                    `;
-
-                return;
-            }
-
-
-            el.attendanceStudentsList.innerHTML =
-                list.map(
-                    function (student) {
-
-                        return `
-                            <div
-                                class="attendance-student-row"
-                                data-student-id="${App.escapeHTML(
-                                    student.student_id
-                                )}"
-                            >
-
-                                <div class="attendance-student-info">
-
-                                    <strong>
-                                        ${App.escapeHTML(
-                                            student.student_name ||
-                                            ""
-                                        )}
-                                    </strong>
-
-                                    <span>
-                                        داخلہ نمبر:
-                                        ${App.escapeHTML(
-                                            student.admission_no ||
-                                            ""
-                                        )}
-                                    </span>
-
-                                </div>
-
-
-                                <div class="attendance-options">
-
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            name="attendance_${App.escapeHTML(
-                                                student.student_id
-                                            )}"
-                                            value="present"
-                                        >
-                                        حاضر
-                                    </label>
-
-
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            name="attendance_${App.escapeHTML(
-                                                student.student_id
-                                            )}"
-                                            value="absent"
-                                        >
-                                        غیر حاضر
-                                    </label>
-
-
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            name="attendance_${App.escapeHTML(
-                                                student.student_id
-                                            )}"
-                                            value="leave"
-                                        >
-                                        رخصت
-                                    </label>
-
-                                </div>
-
-
-                                <div class="attendance-note">
-
-                                    <input
-                                        type="text"
-                                        class="attendance-note-input"
-                                        placeholder="نوٹ"
-                                        autocomplete="off"
-                                    >
-
-                                </div>
-
-                            </div>
-                        `;
-                    }
-                ).join("");
-        };
-
-
-    /* =====================================================
-       LOAD EXISTING ATTENDANCE INTO FORM
-       ===================================================== */
-
-    App.loadExistingAttendanceIntoForm =
-        async function (
-            session,
-            attendanceDate,
-            period,
-            studentClass,
-            teacherId
-        ) {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            try {
-
-                const records =
-                    await App.rpc(
-                        "attendance_get_records",
-                        {
-                            p_token:
-                                session.token,
-
-                            p_date:
-                                attendanceDate,
-
-                            p_period:
-                                period,
-
-                            p_class:
-                                studentClass,
-
-                            p_teacher_id:
-                                teacherId
-                        }
-                    );
-
-
-                if (
-                    !Array.isArray(records) ||
-                    records.length === 0
-                ) {
-                    return;
-                }
-
-
-                records.forEach(
-                    function (record) {
-
-                        const row =
-                            el.attendanceStudentsList
-                                ? el.attendanceStudentsList
-                                    .querySelector(
-                                        `[data-student-id="${CSS.escape(
-                                            String(
-                                                record.student_id
-                                            )
-                                        )}"]`
-                                    )
-                                : null;
-
-
-                        if (!row) {
+                        if (!input) {
                             return;
                         }
 
-
-                        const status =
-                            App.cleanText(
-                                record.status
-                            ).toLowerCase();
-
-
-                        const radio =
-                            row.querySelector(
-                                `input[type="radio"][value="${CSS.escape(
-                                    status
-                                )}"]`
-                            );
-
-
-                        if (radio) {
-
-                            radio.checked =
-                                true;
-                        }
-
-
-                        const noteInput =
-                            row.querySelector(
-                                ".attendance-note-input"
-                            );
-
-
-                        if (noteInput) {
-
-                            noteInput.value =
-                                record.note ||
-                                "";
-                        }
-                    }
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Existing attendance load error:",
-                    error
-                );
-            }
-        };
-
-
-    /* =====================================================
-       MARK ALL PRESENT
-       ===================================================== */
-
-    App.markAllAttendancePresent =
-        function () {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceStudentsList
-            ) {
-                return;
-            }
-
-
-            el.attendanceStudentsList
-                .querySelectorAll(
-                    'input[type="radio"][value="present"]'
-                )
-                .forEach(
-                    function (radio) {
-
-                        radio.checked =
-                            true;
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       CLEAR ATTENDANCE
-       ===================================================== */
-
-    App.clearAttendanceForm =
-        function () {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceStudentsList
-            ) {
-                return;
-            }
-
-
-            el.attendanceStudentsList
-                .querySelectorAll(
-                    'input[type="radio"]'
-                )
-                .forEach(
-                    function (radio) {
-
-                        radio.checked =
-                            false;
-                    }
-                );
-
-
-            el.attendanceStudentsList
-                .querySelectorAll(
-                    ".attendance-note-input"
-                )
-                .forEach(
-                    function (input) {
-
-                        input.value =
-                            "";
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       COLLECT ATTENDANCE ROWS
-       ===================================================== */
-
-    App.collectAttendanceRows =
-        function () {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceStudentsList
-            ) {
-                return [];
-            }
-
-
-            const rows = [];
-
-
-            el.attendanceStudentsList
-                .querySelectorAll(
-                    ".attendance-student-row"
-                )
-                .forEach(
-                    function (row) {
-
-                        const studentId =
-                            Number(
-                                row.dataset.studentId
-                            );
-
-
-                        const selected =
-                            row.querySelector(
-                                'input[type="radio"]:checked'
-                            );
-
-
-                        const noteInput =
-                            row.querySelector(
-                                ".attendance-note-input"
-                            );
-
-
                         if (
-                            studentId &&
-                            selected
+                            input.type ===
+                            "password"
                         ) {
 
-                            rows.push({
-                                student_id:
-                                    studentId,
+                            input.type =
+                                "text";
 
-                                status:
-                                    selected.value,
+                            button.textContent =
+                                "🙈";
 
-                                note:
-                                    App.cleanText(
-                                        noteInput
-                                            ? noteInput.value
-                                            : ""
-                                    )
-                            });
+                        } else {
+
+                            input.type =
+                                "password";
+
+                            button.textContent =
+                                "👁";
                         }
                     }
                 );
-
-
-            return rows;
-        };
-
-
-    /* =====================================================
-       SAVE ATTENDANCE
-       ===================================================== */
-
-    App.saveAttendance =
-        async function () {
-
-            const session =
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-
-            if (!session) {
-                return;
             }
-
-
-            const el =
-                App.getAttendanceElements();
-
-
-            const attendanceDate =
-                el.attendanceDate
-                    ? el.attendanceDate.value
-                    : "";
-
-
-            const studentClass =
-                App.cleanText(
-                    el.attendanceClass
-                        ? el.attendanceClass.value
-                        : ""
-                );
-
-
-            const period =
-                Number(
-                    el.attendancePeriod
-                        ? el.attendancePeriod.value
-                        : 0
-                );
-
-
-            const teacherId =
-                Number(
-                    el.attendanceTeacher
-                        ? el.attendanceTeacher.value
-                        : 0
-                );
-
-
-            const rows =
-                App.collectAttendanceRows();
-
-
-            if (!attendanceDate) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "حاضری کی تاریخ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!studentClass) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                period < 1 ||
-                period > 6
-            ) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "درست پیریڈ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!teacherId) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "استاد منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                App.attendanceStudentsCache
-                    .length === 0
-            ) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "پہلے طالبات کی فہرست لوڈ کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                rows.length !==
-                App.attendanceStudentsCache
-                    .length
-            ) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    "تمام طالبات کی حاضری منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.saveAttendance,
-                true,
-                "حاضری محفوظ ہو رہی ہے"
-            );
-
-
-            try {
-
-                const result =
-                    await App.rpc(
-                        "attendance_save",
-                        {
-                            p_token:
-                                session.token,
-
-                            p_teacher_id:
-                                teacherId,
-
-                            p_date:
-                                attendanceDate,
-
-                            p_period:
-                                period,
-
-                            p_class:
-                                studentClass,
-
-                            p_rows:
-                                rows
-                        }
-                    );
-
-
-                const savedCount =
-                    result &&
-                    typeof result ===
-                        "object"
-                        ? Number(
-                            result.saved ||
-                            rows.length
-                        )
-                        : rows.length;
-
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    savedCount +
-                    " طالبات کی حاضری محفوظ ہوگئی۔",
-                    "success"
-                );
-
-
-                /*
-                 * Records filters کو بھی اسی values
-                 * کے ساتھ synchronize کریں۔
-                 */
-
-                if (
-                    el.attendanceRecordDate
-                ) {
-
-                    el.attendanceRecordDate.value =
-                        attendanceDate;
-                }
-
-
-                if (
-                    el.attendanceRecordClass
-                ) {
-
-                    el.attendanceRecordClass.value =
-                        studentClass;
-                }
-
-
-                if (
-                    el.attendanceRecordPeriod
-                ) {
-
-                    el.attendanceRecordPeriod.value =
-                        String(
-                            period
-                        );
-                }
-
-            } catch (error) {
-
-                App.showMessage(
-                    el.attendanceMessage,
-                    error.message ||
-                    "حاضری محفوظ نہیں ہوسکی۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.saveAttendance,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       LOAD ATTENDANCE RECORDS
-       ===================================================== */
-
-    App.loadAttendanceRecords =
-        async function () {
-
-            const session =
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-
-            if (!session) {
-                return;
-            }
-
-
-            const el =
-                App.getAttendanceElements();
-
-
-            const attendanceDate =
-                el.attendanceRecordDate
-                    ? el.attendanceRecordDate.value
-                    : "";
-
-
-            const studentClass =
-                App.cleanText(
-                    el.attendanceRecordClass
-                        ? el.attendanceRecordClass.value
-                        : ""
-                );
-
-
-            const period =
-                Number(
-                    el.attendanceRecordPeriod
-                        ? el.attendanceRecordPeriod.value
-                        : 0
-                );
-
-
-            const teacherId =
-                Number(
-                    el.attendanceTeacher
-                        ? el.attendanceTeacher.value
-                        : 0
-                );
-
-
-            if (!attendanceDate) {
-
-                App.showMessage(
-                    el.attendanceRecordsMessage,
-                    "تاریخ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!studentClass) {
-
-                App.showMessage(
-                    el.attendanceRecordsMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                period < 1 ||
-                period > 6
-            ) {
-
-                App.showMessage(
-                    el.attendanceRecordsMessage,
-                    "درست پیریڈ منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (!teacherId) {
-
-                App.showMessage(
-                    el.attendanceRecordsMessage,
-                    "اوپر استاد منتخب کریں۔",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.loadAttendanceRecords,
-                true,
-                "ریکارڈ لوڈ ہو رہا ہے"
-            );
-
-
-            App.clearMessage(
-                el.attendanceRecordsMessage
-            );
-
-
-            try {
-
-                const records =
-                    await App.rpc(
-                        "attendance_get_records",
-                        {
-                            p_token:
-                                session.token,
-
-                            p_date:
-                                attendanceDate,
-
-                            p_period:
-                                period,
-
-                            p_class:
-                                studentClass,
-
-                            p_teacher_id:
-                                teacherId
-                        }
-                    );
-
-
-                App.renderAttendanceRecords(
-                    Array.isArray(records)
-                        ? records
-                        : []
-                );
-
-            } catch (error) {
-
-                App.renderAttendanceRecords(
-                    []
-                );
-
-
-                App.showMessage(
-                    el.attendanceRecordsMessage,
-                    error.message ||
-                    "حاضری کا ریکارڈ لوڈ نہیں ہوسکا۔",
-                    "error"
-                );
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.loadAttendanceRecords,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       RENDER ATTENDANCE RECORDS
-       ===================================================== */
-
-    App.renderAttendanceRecords =
-        function (records) {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                !el.attendanceRecordsList
-            ) {
-                return;
-            }
-
-
-            const list =
-                Array.isArray(records)
-                    ? records
-                    : [];
-
-
-            if (
-                list.length === 0
-            ) {
-
-                el.attendanceRecordsList.innerHTML =
-                    `
-                        <div class="empty-state">
-                            کوئی حاضری ریکارڈ نہیں ملا۔
-                        </div>
-                    `;
-
-                return;
-            }
-
-
-            el.attendanceRecordsList.innerHTML =
-                list.map(
-                    function (record) {
-
-                        return `
-                            <div class="attendance-record-card">
-
-                                <p>
-                                    <strong>
-                                        طالبہ:
-                                    </strong>
-
-                                    ${App.escapeHTML(
-                                        record.student_name ||
-                                        ""
-                                    )}
-                                </p>
-
-                                <p>
-                                    <strong>
-                                        درجہ:
-                                    </strong>
-
-                                    ${App.escapeHTML(
-                                        record.student_class ||
-                                        ""
-                                    )}
-                                </p>
-
-                                <p>
-                                    <strong>
-                                        تاریخ:
-                                    </strong>
-
-                                    ${App.escapeHTML(
-                                        App.formatDate(
-                                            record.attendance_date
-                                        )
-                                    )}
-                                </p>
-
-                                <p>
-                                    <strong>
-                                        پیریڈ:
-                                    </strong>
-
-                                    ${App.escapeHTML(
-                                        record.period_number
-                                    )}
-                                </p>
-
-                                <p>
-                                    <strong>
-                                        حاضری:
-                                    </strong>
-
-                                    ${App.escapeHTML(
-                                        App.attendanceStatusLabel(
-                                            record.status
-                                        )
-                                    )}
-                                </p>
-
-                                ${
-                                    record.note
-                                        ? `
-                                            <p>
-                                                <strong>
-                                                    نوٹ:
-                                                </strong>
-
-                                                ${App.escapeHTML(
-                                                    record.note
-                                                )}
-                                            </p>
-                                          `
-                                        : ""
-                                }
-
-                            </div>
-                        `;
-                    }
-                ).join("");
-        };
-
-
-    /* =====================================================
-       SYNC RECORD FILTERS
-       ===================================================== */
-
-    App.syncAttendanceRecordFilters =
-        function () {
-
-            const el =
-                App.getAttendanceElements();
-
-
-            if (
-                el.attendanceDate &&
-                el.attendanceRecordDate
-            ) {
-
-                el.attendanceRecordDate.value =
-                    el.attendanceDate.value;
-            }
-
-
-            if (
-                el.attendanceClass &&
-                el.attendanceRecordClass
-            ) {
-
-                el.attendanceRecordClass.value =
-                    el.attendanceClass.value;
-            }
-
-
-            if (
-                el.attendancePeriod &&
-                el.attendanceRecordPeriod
-            ) {
-
-                el.attendanceRecordPeriod.value =
-                    el.attendancePeriod.value;
-            }
-        };
-
-
-    /* =====================================================
-       INITIALIZE ATTENDANCE PAGE
-       ===================================================== */
-
-    App.initializeAttendancePage =
-        async function () {
-
-            if (
-                App.currentPage !==
-                "attendance.html"
-            ) {
-                return;
-            }
-
-
-            const session =
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-
-
-            if (!session) {
-                return;
-            }
-
-
-            App.touchSession(
-                true
-            );
-
-
-            const el =
-                App.getAttendanceElements();
-
-
-            App.hide(
-                el.attendanceStudentsSection
-            );
-
-
-            if (
-                el.attendanceDate &&
-                !el.attendanceDate.value
-            ) {
-
-                el.attendanceDate.value =
-                    App.todayISO();
-            }
-
-
-            if (
-                el.attendanceRecordDate &&
-                !el.attendanceRecordDate.value
-            ) {
-
-                el.attendanceRecordDate.value =
-                    App.todayISO();
-            }
-
-
-            if (
-                el.backToDashboard
-            ) {
-
-                el.backToDashboard
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "dashboard.html";
-                        }
-                    );
-            }
-
-
-            if (
-                el.loadAttendanceStudents
-            ) {
-
-                el.loadAttendanceStudents
-                    .addEventListener(
-                        "click",
-                        App.loadAttendanceStudents
-                    );
-            }
-
-
-            if (
-                el.markAllPresent
-            ) {
-
-                el.markAllPresent
-                    .addEventListener(
-                        "click",
-                        App.markAllAttendancePresent
-                    );
-            }
-
-
-            if (
-                el.clearAttendance
-            ) {
-
-                el.clearAttendance
-                    .addEventListener(
-                        "click",
-                        App.clearAttendanceForm
-                    );
-            }
-
-
-            if (
-                el.saveAttendance
-            ) {
-
-                el.saveAttendance
-                    .addEventListener(
-                        "click",
-                        App.saveAttendance
-                    );
-            }
-
-
-            if (
-                el.loadAttendanceRecords
-            ) {
-
-                el.loadAttendanceRecords
-                    .addEventListener(
-                        "click",
-                        App.loadAttendanceRecords
-                    );
-            }
-
-
-            [
-                el.attendanceDate,
-                el.attendanceClass,
-                el.attendancePeriod
-            ]
-                .filter(Boolean)
-                .forEach(
-                    function (element) {
-
-                        element.addEventListener(
-                            "change",
-                            App.syncAttendanceRecordFilters
-                        );
-                    }
-                );
-
-
-            App.syncAttendanceRecordFilters();
-
-
-            await App.loadAttendanceTeachers(
-                session
-            );
-        };
-
-
-    /* =====================================================
-       INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.initializeAttendancePage();
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 10 / DRAFT + GLOBAL SAFETY + FINAL HELPERS
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
+        );
+}
+
+
+/* =========================================================
+   MODAL CLOSE BINDER
+   ========================================================= */
+
+function bindModalClose(
+    modalId,
+    buttonIds = [],
+    overlayId = ""
+) {
+
+    const modal =
+        byId(
+            modalId
         );
 
+    if (!modal) {
         return;
     }
 
 
-    /* =====================================================
-       DRAFT CONFIGURATION
-       ADMIN FORMS ONLY
-       ===================================================== */
+    buttonIds.forEach(
+        id => {
 
-    App.DRAFT_KEYS = {
+            const button =
+                byId(id);
 
-        student:
-            "madrassa_admin_student_draft_v1",
-
-        teacher:
-            "madrassa_admin_teacher_draft_v1"
-    };
-
-
-    App.DRAFT_SAVE_DELAY =
-        500;
-
-
-    App.studentDraftTimer =
-        null;
-
-    App.teacherDraftTimer =
-        null;
-
-
-    /* =====================================================
-       LOCAL JSON HELPERS
-       ===================================================== */
-
-    App.saveLocalJSON =
-        function (
-            key,
-            value
-        ) {
-
-            try {
-
-                localStorage.setItem(
-                    key,
-                    JSON.stringify(
-                        value
-                    )
-                );
-
-                return true;
-
-            } catch (error) {
-
-                console.warn(
-                    "Draft save error:",
-                    error
-                );
-
-                return false;
+            if (!button) {
+                return;
             }
-        };
 
+            button.addEventListener(
+                "click",
+                function () {
 
-    App.getLocalJSON =
-        function (key) {
-
-            try {
-
-                const value =
-                    localStorage.getItem(
-                        key
+                    closePortalModal(
+                        modal
                     );
-
-
-                if (!value) {
-                    return null;
-                }
-
-
-                return JSON.parse(
-                    value
-                );
-
-            } catch (error) {
-
-                return null;
-            }
-        };
-
-
-    App.removeLocalItem =
-        function (key) {
-
-            try {
-
-                localStorage.removeItem(
-                    key
-                );
-
-            } catch (error) {
-                /* ignore */
-            }
-        };
-
-
-    /* =====================================================
-       STUDENT DRAFT
-       ===================================================== */
-
-    App.saveStudentDraft =
-        function () {
-
-            if (
-                App.currentPage !==
-                "students.html"
-            ) {
-                return;
-            }
-
-
-            if (
-                App.editingStudentId
-            ) {
-                return;
-            }
-
-
-            if (
-                typeof App.getStudentFormData !==
-                "function"
-            ) {
-                return;
-            }
-
-
-            const el =
-                typeof App.getStudentElements ===
-                "function"
-                    ? App.getStudentElements()
-                    : null;
-
-
-            if (
-                !el ||
-                !el.studentFormContainer
-            ) {
-                return;
-            }
-
-
-            const data =
-                App.getStudentFormData();
-
-
-            const hasData =
-                Boolean(
-                    data.admissionNo ||
-                    data.name ||
-                    data.fatherName ||
-                    data.guardianName ||
-                    data.cnic ||
-                    data.phone ||
-                    data.address ||
-                    data.previousMadrassa ||
-                    (
-                        Array.isArray(
-                            data.mahrams
-                        ) &&
-                        data.mahrams.length
-                    )
-                );
-
-
-            if (!hasData) {
-
-                App.removeLocalItem(
-                    App.DRAFT_KEYS.student
-                );
-
-                return;
-            }
-
-
-            App.saveLocalJSON(
-                App.DRAFT_KEYS.student,
-                {
-                    savedAt:
-                        Date.now(),
-
-                    data:
-                        data
                 }
             );
-        };
+        }
+    );
 
 
-    App.scheduleStudentDraft =
-        function () {
+    if (overlayId) {
 
-            if (
-                App.studentDraftTimer
-            ) {
-
-                clearTimeout(
-                    App.studentDraftTimer
-                );
-            }
-
-
-            App.studentDraftTimer =
-                window.setTimeout(
-                    function () {
-
-                        App.saveStudentDraft();
-
-                    },
-                    App.DRAFT_SAVE_DELAY
-                );
-        };
-
-
-    App.clearStudentDraft =
-        function () {
-
-            App.removeLocalItem(
-                App.DRAFT_KEYS.student
-            );
-        };
-
-
-    App.restoreStudentDraft =
-        function () {
-
-            if (
-                App.currentPage !==
-                "students.html"
-            ) {
-                return false;
-            }
-
-
-            if (
-                App.editingStudentId
-            ) {
-                return false;
-            }
-
-
-            const saved =
-                App.getLocalJSON(
-                    App.DRAFT_KEYS.student
-                );
-
-
-            if (
-                !saved ||
-                !saved.data
-            ) {
-                return false;
-            }
-
-
-            const data =
-                saved.data;
-
-
-            const el =
-                App.getStudentElements();
-
-
-            if (
-                el.admissionNo
-            ) {
-                el.admissionNo.value =
-                    data.admissionNo ||
-                    "";
-            }
-
-
-            if (
-                el.admissionType
-            ) {
-                el.admissionType.value =
-                    data.admissionType ||
-                    "";
-            }
-
-
-            if (
-                el.studentName
-            ) {
-                el.studentName.value =
-                    data.name ||
-                    "";
-            }
-
-
-            if (
-                el.fatherName
-            ) {
-                el.fatherName.value =
-                    data.fatherName ||
-                    "";
-            }
-
-
-            if (
-                el.guardianName
-            ) {
-                el.guardianName.value =
-                    data.guardianName ||
-                    "";
-            }
-
-
-            if (
-                el.studentCNIC
-            ) {
-                el.studentCNIC.value =
-                    App.formatCNIC(
-                        data.cnic ||
-                        ""
-                    );
-            }
-
-
-            if (
-                el.phone
-            ) {
-                el.phone.value =
-                    App.normalizePhone(
-                        data.phone ||
-                        ""
-                    );
-            }
-
-
-            if (
-                el.dateOfBirth
-            ) {
-                el.dateOfBirth.value =
-                    data.dateOfBirth ||
-                    "";
-            }
-
-
-            if (
-                el.studentClass
-            ) {
-                el.studentClass.value =
-                    data.studentClass ||
-                    "";
-            }
-
-
-            if (
-                el.admissionDate
-            ) {
-                el.admissionDate.value =
-                    data.admissionDate ||
-                    App.todayISO();
-            }
-
-
-            if (
-                el.address
-            ) {
-                el.address.value =
-                    data.address ||
-                    "";
-            }
-
-
-            if (
-                el.residenceType
-            ) {
-                el.residenceType.value =
-                    data.residenceType ||
-                    "";
-            }
-
-
-            if (
-                el.previousMadrassa
-            ) {
-                el.previousMadrassa.value =
-                    data.previousMadrassa ||
-                    "";
-            }
-
-
-            if (
-                el.transferDate
-            ) {
-                el.transferDate.value =
-                    data.transferDate ||
-                    "";
-            }
-
-
-            if (
-                el.studentStatus
-            ) {
-
-                const targetStatus =
-                    typeof App.normalizeStudentStatus ===
-                    "function"
-                        ? App.normalizeStudentStatus(
-                            data.status
-                        )
-                        : "active";
-
-
-                const option =
-                    Array.from(
-                        el.studentStatus.options ||
-                        []
-                    ).find(
-                        function (item) {
-
-                            return (
-                                App.normalizeStudentStatus(
-                                    item.value
-                                ) ===
-                                targetStatus
-                            );
-                        }
-                    );
-
-
-                if (option) {
-
-                    el.studentStatus.value =
-                        option.value;
-                }
-            }
-
-
-            if (
-                el.mahramList
-            ) {
-
-                el.mahramList.innerHTML =
-                    "";
-
-
-                const mahrams =
-                    Array.isArray(
-                        data.mahrams
-                    )
-                        ? data.mahrams
-                        : [];
-
-
-                mahrams.forEach(
-                    function (mahram) {
-
-                        App.addStudentMahramRow(
-                            mahram
-                        );
-                    }
-                );
-            }
-
-
-            if (
-                typeof App.updateTransferFields ===
-                "function"
-            ) {
-
-                App.updateTransferFields();
-            }
-
-
-            if (
-                typeof App.updateStudentMahramSection ===
-                "function"
-            ) {
-
-                App.updateStudentMahramSection();
-            }
-
-
-            App.showMessage(
-                el.studentFormMessage,
-                "آپ کا پچھلا محفوظ مسودہ بحال کردیا گیا ہے۔",
-                "info"
+        const overlay =
+            byId(
+                overlayId
             );
 
+        if (overlay) {
 
-            return true;
-        };
+            overlay.addEventListener(
+                "click",
+                function () {
 
-
-    /* =====================================================
-       TEACHER DRAFT
-       ===================================================== */
-
-    App.saveTeacherDraft =
-        function () {
-
-            if (
-                App.currentPage !==
-                "teachers.html"
-            ) {
-                return;
-            }
-
-
-            if (
-                App.editingTeacherId
-            ) {
-                return;
-            }
-
-
-            if (
-                typeof App.getTeacherFormData !==
-                "function"
-            ) {
-                return;
-            }
-
-
-            const data =
-                App.getTeacherFormData();
-
-
-            const hasData =
-                Boolean(
-                    data.teacherCode ||
-                    data.name ||
-                    data.fatherName ||
-                    data.phone ||
-                    data.cnic ||
-                    data.qualification ||
-                    data.address
-                );
-
-
-            if (!hasData) {
-
-                App.removeLocalItem(
-                    App.DRAFT_KEYS.teacher
-                );
-
-                return;
-            }
-
-
-            App.saveLocalJSON(
-                App.DRAFT_KEYS.teacher,
-                {
-                    savedAt:
-                        Date.now(),
-
-                    data:
-                        data
+                    closePortalModal(
+                        modal
+                    );
                 }
             );
-        };
-
-
-    App.scheduleTeacherDraft =
-        function () {
-
-            if (
-                App.teacherDraftTimer
-            ) {
-
-                clearTimeout(
-                    App.teacherDraftTimer
-                );
-            }
-
-
-            App.teacherDraftTimer =
-                window.setTimeout(
-                    function () {
-
-                        App.saveTeacherDraft();
-
-                    },
-                    App.DRAFT_SAVE_DELAY
-                );
-        };
-
-
-    App.clearTeacherDraft =
-        function () {
-
-            App.removeLocalItem(
-                App.DRAFT_KEYS.teacher
-            );
-        };
-
-
-    App.restoreTeacherDraft =
-        function () {
-
-            if (
-                App.currentPage !==
-                "teachers.html"
-            ) {
-                return false;
-            }
-
-
-            if (
-                App.editingTeacherId
-            ) {
-                return false;
-            }
-
-
-            const saved =
-                App.getLocalJSON(
-                    App.DRAFT_KEYS.teacher
-                );
-
-
-            if (
-                !saved ||
-                !saved.data
-            ) {
-                return false;
-            }
-
-
-            const data =
-                saved.data;
-
-
-            const el =
-                App.getTeacherElements();
-
-
-            if (
-                el.teacherCode
-            ) {
-                el.teacherCode.value =
-                    data.teacherCode ||
-                    "";
-            }
-
-
-            if (
-                el.teacherName
-            ) {
-                el.teacherName.value =
-                    data.name ||
-                    "";
-            }
-
-
-            if (
-                el.teacherFatherName
-            ) {
-                el.teacherFatherName.value =
-                    data.fatherName ||
-                    "";
-            }
-
-
-            if (
-                el.teacherPhone
-            ) {
-                el.teacherPhone.value =
-                    App.normalizePhone(
-                        data.phone ||
-                        ""
-                    );
-            }
-
-
-            if (
-                el.teacherCNIC
-            ) {
-                el.teacherCNIC.value =
-                    App.formatCNIC(
-                        data.cnic ||
-                        ""
-                    );
-            }
-
-
-            if (
-                el.teacherDateOfBirth
-            ) {
-                el.teacherDateOfBirth.value =
-                    data.dateOfBirth ||
-                    "";
-            }
-
-
-            if (
-                el.teacherQualification
-            ) {
-                el.teacherQualification.value =
-                    data.qualification ||
-                    "";
-            }
-
-
-            if (
-                el.teacherJoiningDate
-            ) {
-                el.teacherJoiningDate.value =
-                    data.joiningDate ||
-                    App.todayISO();
-            }
-
-
-            if (
-                el.teacherAddress
-            ) {
-                el.teacherAddress.value =
-                    data.address ||
-                    "";
-            }
-
-
-            if (
-                el.teacherStatus
-            ) {
-
-                const targetStatus =
-                    App.normalizeTeacherStatus(
-                        data.status
-                    );
-
-
-                const option =
-                    Array.from(
-                        el.teacherStatus.options ||
-                        []
-                    ).find(
-                        function (item) {
-
-                            return (
-                                App.normalizeTeacherStatus(
-                                    item.value
-                                ) ===
-                                targetStatus
-                            );
-                        }
-                    );
-
-
-                if (option) {
-
-                    el.teacherStatus.value =
-                        option.value;
-                }
-            }
-
-
-            App.showMessage(
-                el.teacherFormMessage,
-                "آپ کا پچھلا محفوظ مسودہ بحال کردیا گیا ہے۔",
-                "info"
-            );
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       WRAP STUDENT FORM OPEN / CLOSE
-       ===================================================== */
-
-    if (
-        typeof App.openStudentForm ===
-        "function"
-    ) {
-
-        const originalOpenStudentForm =
-            App.openStudentForm;
-
-
-        App.openStudentForm =
-            function (student = null) {
-
-                originalOpenStudentForm(
-                    student
-                );
-
-
-                if (!student) {
-
-                    App.restoreStudentDraft();
-                }
-            };
+        }
     }
+}
 
 
-    if (
-        typeof App.closeStudentForm ===
-        "function"
-    ) {
+/* =========================================================
+   COMMON MODAL EVENTS
+   ========================================================= */
 
-        const originalCloseStudentForm =
-            App.closeStudentForm;
+function initializeCommonModalEvents() {
 
-
-        App.closeStudentForm =
-            function () {
-
-                App.clearStudentDraft();
-
-                originalCloseStudentForm();
-            };
-    }
+    bindModalClose(
+        "adminAttendanceEditModal",
+        [
+            "closeAdminAttendanceEdit",
+            "cancelAdminAttendanceEdit"
+        ],
+        "adminAttendanceEditOverlay"
+    );
 
 
-    /* =====================================================
-       WRAP TEACHER FORM OPEN / CLOSE
-       ===================================================== */
-
-    if (
-        typeof App.openTeacherForm ===
-        "function"
-    ) {
-
-        const originalOpenTeacherForm =
-            App.openTeacherForm;
+    bindModalClose(
+        "adminAddMarksModal",
+        [
+            "closeAdminAddMarks",
+            "cancelAdminAddMarks"
+        ],
+        "adminAddMarksOverlay"
+    );
 
 
-        App.openTeacherForm =
-            function (teacher = null) {
-
-                originalOpenTeacherForm(
-                    teacher
-                );
-
-
-                if (!teacher) {
-
-                    App.restoreTeacherDraft();
-                }
-            };
-    }
+    bindModalClose(
+        "adminEditMarkModal",
+        [
+            "closeAdminEditMark",
+            "cancelAdminEditMark"
+        ],
+        "adminEditMarkOverlay"
+    );
 
 
-    if (
-        typeof App.closeTeacherForm ===
-        "function"
-    ) {
-
-        const originalCloseTeacherForm =
-            App.closeTeacherForm;
-
-
-        App.closeTeacherForm =
-            function () {
-
-                App.clearTeacherDraft();
-
-                originalCloseTeacherForm();
-            };
-    }
+    bindModalClose(
+        "adminStudentMarksDetailsModal",
+        [
+            "closeAdminStudentMarksDetails",
+            "closeAdminStudentMarksDetailsBottom"
+        ],
+        "adminStudentMarksDetailsOverlay"
+    );
 
 
-    /* =====================================================
-       RPC SESSION ERROR SAFETY
-       ===================================================== */
-
-    if (
-        typeof App.rpc ===
-        "function"
-    ) {
-
-        const originalRPC =
-            App.rpc;
+    bindModalClose(
+        "adminCreateHomeworkModal",
+        [
+            "closeAdminCreateHomework",
+            "cancelAdminCreateHomework"
+        ],
+        "adminCreateHomeworkOverlay"
+    );
 
 
-        App.rpc =
-            async function (
-                functionName,
-                params = {}
-            ) {
-
-                try {
-
-                    return await originalRPC(
-                        functionName,
-                        params
-                    );
-
-                } catch (error) {
-
-                    const message =
-                        String(
-                            error &&
-                            error.message
-                                ? error.message
-                                : ""
-                        ).toLowerCase();
+    bindModalClose(
+        "adminHomeworkDetailsModal",
+        [
+            "closeAdminHomeworkDetails",
+            "closeAdminHomeworkDetailsBottom"
+        ],
+        "adminHomeworkDetailsOverlay"
+    );
 
 
-                    const sessionFailure =
-                        message.includes(
-                            "invalid or expired admin session"
-                        ) ||
-                        message.includes(
-                            "invalid or expired session"
-                        ) ||
-                        message.includes(
-                            "attendance access denied"
-                        );
+    bindModalClose(
+        "adminHomeworkReviewModal",
+        [
+            "closeAdminHomeworkReview",
+            "cancelAdminHomeworkReview"
+        ],
+        "adminHomeworkReviewOverlay"
+    );
 
 
-                    if (
-                        sessionFailure &&
-                        !App.isPublicPage()
-                    ) {
-
-                        App.clearStoredSession();
-
-
-                        window.location.replace(
-                            "login.html?reason=" +
-                            encodeURIComponent(
-                                "login-required"
-                            )
-                        );
-                    }
+    bindModalClose(
+        "adminCreateAnnouncementModal",
+        [
+            "closeAdminCreateAnnouncement",
+            "cancelAdminCreateAnnouncement"
+        ],
+        "adminCreateAnnouncementOverlay"
+    );
 
 
-                    throw error;
-                }
-            };
-    }
+    bindModalClose(
+        "adminAnnouncementDetailsModal",
+        [
+            "closeAdminAnnouncementDetails",
+            "closeAdminAnnouncementDetailsBottom"
+        ],
+        "adminAnnouncementDetailsOverlay"
+    );
 
 
-    /* =====================================================
-       ESCAPE KEY
-       CLOSE OPEN MODALS
-       ===================================================== */
+    bindModalClose(
+        "adminDeleteAnnouncementModal",
+        [
+            "closeAdminDeleteAnnouncement",
+            "cancelAdminDeleteAnnouncement"
+        ],
+        "adminDeleteAnnouncementOverlay"
+    );
 
-    App.handleGlobalEscape =
+
+    bindModalClose(
+        "adminFeedbackDetailsModal",
+        [
+            "closeAdminFeedbackDetails",
+            "closeAdminFeedbackDetailsBottom"
+        ],
+        "adminFeedbackDetailsOverlay"
+    );
+
+
+    bindModalClose(
+        "adminDeleteFeedbackModal",
+        [
+            "closeAdminDeleteFeedback",
+            "cancelAdminDeleteFeedback"
+        ],
+        "adminDeleteFeedbackOverlay"
+    );
+
+
+    bindModalClose(
+        "adminApplicationDetailsModal",
+        [
+            "closeAdminApplicationDetails",
+            "closeAdminApplicationDetailsBottom"
+        ],
+        "adminApplicationDetailsOverlay"
+    );
+
+
+    bindModalClose(
+        "adminApplicationDecisionModal",
+        [
+            "closeAdminApplicationDecision",
+            "cancelAdminApplicationDecision"
+        ],
+        "adminApplicationDecisionOverlay"
+    );
+
+
+    bindModalClose(
+        "adminAccountDetailsModal",
+        [
+            "closeAdminAccountDetails",
+            "closeAdminAccountDetailsBottom"
+        ],
+        "adminAccountDetailsOverlay"
+    );
+
+
+    bindModalClose(
+        "adminAccountStatusModal",
+        [
+            "closeAdminAccountStatus",
+            "cancelAdminAccountStatus"
+        ],
+        "adminAccountStatusOverlay"
+    );
+}
+
+
+/* =========================================================
+   ESCAPE KEY
+   ========================================================= */
+
+function initializeEscapeKey() {
+
+    document.addEventListener(
+        "keydown",
         function (event) {
 
             if (
@@ -14093,2923 +1337,6064 @@
                 return;
             }
 
-
-            if (
-                App.currentPage ===
-                "students.html" &&
-                typeof App.closeStudentDetailsModal ===
-                "function"
-            ) {
-
-                App.closeStudentDetailsModal();
-            }
-
-
-            if (
-                App.currentPage ===
-                "teachers.html" &&
-                typeof App.closeTeacherDetailsModal ===
-                "function"
-            ) {
-
-                App.closeTeacherDetailsModal();
-            }
-
-
-            if (
-                App.currentPage ===
-                "approvals.html"
-            ) {
-
-                if (
-                    typeof App.closeApplicationConfirmation ===
-                    "function"
-                ) {
-
-                    App.closeApplicationConfirmation();
-                }
-
-
-                if (
-                    typeof App.closeApplicationDetailsModal ===
-                    "function"
-                ) {
-
-                    App.closeApplicationDetailsModal();
-                }
-            }
-        };
-
-
-    /* =====================================================
-       ADMIN DRAFT EVENT BINDING
-       ===================================================== */
-
-    App.initializeAdminDrafts =
-        function () {
-
-            const session =
-                App.getStoredSession();
-
-
-            if (
-                !session ||
-                session.role !==
-                "admin"
-            ) {
-                return;
-            }
-
-
-            if (
-                App.currentPage ===
-                "students.html"
-            ) {
-
-                const el =
-                    App.getStudentElements();
-
-
-                if (
-                    el.studentForm
-                ) {
-
-                    el.studentForm
-                        .addEventListener(
-                            "input",
-                            App.scheduleStudentDraft
-                        );
-
-
-                    el.studentForm
-                        .addEventListener(
-                            "change",
-                            App.scheduleStudentDraft
-                        );
-                }
-
-
-                if (
-                    el.addMahram
-                ) {
-
-                    el.addMahram
-                        .addEventListener(
-                            "click",
-                            function () {
-
-                                window.setTimeout(
-                                    App.scheduleStudentDraft,
-                                    0
-                                );
-                            }
-                        );
-                }
-            }
-
-
-            if (
-                App.currentPage ===
-                "teachers.html"
-            ) {
-
-                const el =
-                    App.getTeacherElements();
-
-
-                if (
-                    el.teacherForm
-                ) {
-
-                    el.teacherForm
-                        .addEventListener(
-                            "input",
-                            App.scheduleTeacherDraft
-                        );
-
-
-                    el.teacherForm
-                        .addEventListener(
-                            "change",
-                            App.scheduleTeacherDraft
-                        );
-                }
-            }
-        };
-
-
-    /* =====================================================
-       BASIC PROTECTED PAGE GUARD
-       ===================================================== */
-
-    App.applyFinalPageGuard =
-        function () {
-
-            const adminPages = [
-                "students.html",
-                "teachers.html",
-                "approvals.html"
-            ];
-
-
-            const staffPages = [
-                "attendance.html"
-            ];
-
-
-            if (
-                adminPages.includes(
-                    App.currentPage
-                )
-            ) {
-
-                App.requireSession(
-                    ["admin"]
+            const modal =
+                document.querySelector(
+                    ".portal-modal:not([hidden])"
                 );
 
-                return;
-            }
+            if (modal) {
 
-
-            if (
-                staffPages.includes(
-                    App.currentPage
-                )
-            ) {
-
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-
-                return;
-            }
-
-
-            if (
-                App.currentPage ===
-                "dashboard.html"
-            ) {
-
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher",
-                        "student"
-                    ]
+                closePortalModal(
+                    modal
                 );
             }
-        };
-
-
-    /* =====================================================
-       FINAL INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            document.addEventListener(
-                "keydown",
-                App.handleGlobalEscape
-            );
-
-
-            App.applyFinalPageGuard();
-
-
-            App.initializeAdminDrafts();
         }
     );
+}
 
-})();
+
+/* =========================================================
+   TABLE COUNT
+   ========================================================= */
+
+async function getTableCount(
+    tableName
+) {
+
+    if (
+        !checkSupabase()
+    ) {
+        return 0;
+    }
+
+    try {
+
+        const {
+            count,
+            error
+        } =
+            await App.supabase
+                .from(
+                    tableName
+                )
+                .select(
+                    "id",
+                    {
+                        count: "exact",
+                        head: true
+                    }
+                );
 
 
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 11 / FINAL SAFETY + URDU ERRORS + SESSION FIXES
-   ===================================================== */
+        if (error) {
+            throw error;
+        }
 
-(function () {
-    "use strict";
 
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
+        return safeNumber(
+            count
         );
 
+    } catch (error) {
+
+        console.error(
+            "Count error:",
+            tableName,
+            error
+        );
+
+        return 0;
+    }
+}
+
+
+/* =========================================================
+   PENDING APPLICATION COUNT
+   ========================================================= */
+
+async function getPendingApplicationCount(
+    tableName
+) {
+
+    if (
+        !checkSupabase()
+    ) {
+        return 0;
+    }
+
+    try {
+
+        const {
+            count,
+            error
+        } =
+            await App.supabase
+                .from(
+                    tableName
+                )
+                .select(
+                    "id",
+                    {
+                        count: "exact",
+                        head: true
+                    }
+                )
+                .eq(
+                    "status",
+                    "pending"
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        return safeNumber(
+            count
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Pending application count:",
+            error
+        );
+
+        return 0;
+    }
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
+async function loadAdminDashboard() {
+
+    if (
+        App.currentPage !==
+        "admin.html"
+    ) {
         return;
     }
 
 
-    /* =====================================================
-       USER FRIENDLY URDU DATABASE ERRORS
-       ===================================================== */
-
-    App.translateSystemError =
-        function (
-            message,
-            fallback =
-                "کارروائی مکمل نہیں ہوسکی۔ دوبارہ کوشش کریں۔"
-        ) {
-
-            const original =
-                String(
-                    message || ""
-                ).trim();
-
-
-            if (!original) {
-                return fallback;
-            }
-
-
-            const text =
-                original.toLowerCase();
-
-
-            const translations = [
-
-                [
-                    "invalid or expired admin session",
-                    "آپ کا ایڈمن سیشن ختم ہوچکا ہے۔ دوبارہ لاگ اِن کریں۔"
-                ],
-
-                [
-                    "invalid or expired session",
-                    "آپ کا سیشن ختم ہوچکا ہے۔ دوبارہ لاگ اِن کریں۔"
-                ],
-
-                [
-                    "attendance access denied",
-                    "آپ کو حاضری کے اس حصے تک رسائی حاصل نہیں ہے۔"
-                ],
-
-                [
-                    "teacher access denied",
-                    "استاد کو صرف اپنے حاضری ریکارڈ تک رسائی حاصل ہے۔"
-                ],
-
-                [
-                    "student record not found",
-                    "طالبہ کا ریکارڈ نہیں ملا۔"
-                ],
-
-                [
-                    "teacher record not found",
-                    "استاد کا ریکارڈ نہیں ملا۔"
-                ],
-
-                [
-                    "student application not found",
-                    "طالبہ کی درخواست نہیں ملی۔"
-                ],
-
-                [
-                    "teacher application not found",
-                    "استاد کی درخواست نہیں ملی۔"
-                ],
-
-                [
-                    "pending student application not found",
-                    "طالبہ کی زیرِ التواء درخواست نہیں ملی۔"
-                ],
-
-                [
-                    "pending teacher application not found",
-                    "استاد کی زیرِ التواء درخواست نہیں ملی۔"
-                ],
-
-                [
-                    "application already reviewed",
-                    "اس درخواست پر پہلے ہی کارروائی ہوچکی ہے۔"
-                ],
-
-                [
-                    "application username missing",
-                    "درخواست میں صارف نام موجود نہیں ہے۔"
-                ],
-
-                [
-                    "application password missing",
-                    "درخواست میں پاس ورڈ کی معلومات موجود نہیں ہیں۔"
-                ],
-
-                [
-                    "username already exists",
-                    "یہ صارف نام پہلے سے استعمال ہو رہا ہے۔"
-                ],
-
-                [
-                    "pending application already exists",
-                    "اس صارف نام سے ایک درخواست پہلے ہی زیرِ التواء ہے۔"
-                ],
-
-                [
-                    "admission number already exists",
-                    "یہ داخلہ نمبر پہلے سے موجود ہے۔"
-                ],
-
-                [
-                    "cnic already exists",
-                    "یہ شناختی کارڈ نمبر پہلے سے موجود ہے۔"
-                ],
-
-                [
-                    "student already exists",
-                    "اس طالبہ کا ریکارڈ پہلے سے موجود ہے۔"
-                ],
-
-                [
-                    "teacher already exists",
-                    "اس استاد کا ریکارڈ پہلے سے موجود ہے۔"
-                ],
-
-                [
-                    "invalid cnic",
-                    "شناختی کارڈ نمبر درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid phone number",
-                    "فون نمبر درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid student status",
-                    "طالبہ کی حالت درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid teacher status",
-                    "استاد کی حالت درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid period number",
-                    "پیریڈ نمبر درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid attendance data",
-                    "حاضری کا ڈیٹا درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid attendance status",
-                    "حاضری کی حالت درست نہیں ہے۔"
-                ],
-
-                [
-                    "invalid student",
-                    "طالبہ کا ریکارڈ درست نہیں ہے۔"
-                ],
-
-                [
-                    "hostel student requires 1 to 5 mahrams",
-                    "ہاسٹل طالبہ کے لیے کم از کم ایک اور زیادہ سے زیادہ پانچ محرم ضروری ہیں۔"
-                ],
-
-                [
-                    "student name is required",
-                    "طالبہ کا نام درج کریں۔"
-                ],
-
-                [
-                    "father name is required",
-                    "والد کا نام درج کریں۔"
-                ],
-
-                [
-                    "teacher name is required",
-                    "استاد کا نام درج کریں۔"
-                ],
-
-                [
-                    "admission number is required",
-                    "داخلہ نمبر درج کریں۔"
-                ],
-
-                [
-                    "admission type is required",
-                    "داخلہ کی قسم منتخب کریں۔"
-                ],
-
-                [
-                    "guardian name is required",
-                    "سرپرست کا نام درج کریں۔"
-                ],
-
-                [
-                    "date of birth is required",
-                    "تاریخ پیدائش درج کریں۔"
-                ],
-
-                [
-                    "student class is required",
-                    "درجہ منتخب کریں۔"
-                ],
-
-                [
-                    "address is required",
-                    "پتہ درج کریں۔"
-                ],
-
-                [
-                    "residence type is required",
-                    "رہائش کی قسم منتخب کریں۔"
-                ],
-
-                [
-                    "teacher code is required",
-                    "استاد کوڈ درج کریں۔"
-                ],
-
-                [
-                    "username must contain at least 4 characters",
-                    "صارف نام کم از کم 4 حروف یا اعداد پر مشتمل ہونا چاہیے۔"
-                ],
-
-                [
-                    "password must contain at least 8 characters",
-                    "پاس ورڈ کم از کم 8 حروف یا اعداد پر مشتمل ہونا چاہیے۔"
-                ]
-            ];
-
-
-            for (
-                const item
-                of translations
-            ) {
-
-                if (
-                    text.includes(
-                        item[0]
-                    )
-                ) {
-
-                    return item[1];
-                }
-            }
-
-
-            /*
-             * اگر message پہلے ہی اردو میں ہے
-             * تو وہی دکھائیں۔
-             */
-
-            if (
-                /[\u0600-\u06FF]/
-                    .test(original)
-            ) {
-
-                return original;
-            }
-
-
-            /*
-             * Database/PostgREST کا raw English error
-             * UI پر نہیں دکھانا۔
-             */
-
-            return fallback;
-        };
-
-
-    /* =====================================================
-       SAFE SHOW MESSAGE
-       ===================================================== */
-
     if (
-        typeof App.showMessage ===
-        "function"
+        !checkSupabase()
     ) {
-
-        const originalShowMessage =
-            App.showMessage;
-
-
-        App.showMessage =
-            function (
-                element,
-                message,
-                type = "info"
-            ) {
-
-                let safeMessage =
-                    message;
-
-
-                if (
-                    type === "error"
-                ) {
-
-                    safeMessage =
-                        App.translateSystemError(
-                            message
-                        );
-                }
-
-
-                originalShowMessage(
-                    element,
-                    safeMessage,
-                    type
-                );
-            };
+        return;
     }
 
 
-    /* =====================================================
-       STRICT 5 MINUTE INACTIVITY
-       ===================================================== */
+    try {
 
-    App.touchSession =
-        function (
-            force = false
-        ) {
+        const [
+            students,
+            teachers,
+            homework,
+            announcements,
+            studentPending,
+            teacherPending
+        ] =
+            await Promise.all([
 
-            const session =
-                App.getStoredSession();
+                getTableCount(
+                    App.TABLES
+                        .STUDENTS
+                ),
+
+                getTableCount(
+                    App.TABLES
+                        .TEACHERS
+                ),
+
+                getTableCount(
+                    App.TABLES
+                        .HOMEWORK
+                ),
+
+                getTableCount(
+                    App.TABLES
+                        .ANNOUNCEMENTS
+                ),
+
+                getPendingApplicationCount(
+                    App.TABLES
+                        .STUDENT_APPLICATIONS
+                ),
+
+                getPendingApplicationCount(
+                    App.TABLES
+                        .TEACHER_APPLICATIONS
+                )
+
+            ]);
 
 
-            if (!session) {
-                return;
-            }
+        const pending =
+            studentPending +
+            teacherPending;
 
 
-            const now =
-                Date.now();
+        [
+            "adminStudentTotal",
+            "studentTotal"
+        ].forEach(
+            id => {
 
-
-            const lastActivity =
-                Number(
-                    session.lastActivity ||
-                    0
+                setText(
+                    id,
+                    students
                 );
+            }
+        );
 
 
-            /*
-             * پہلے timeout چیک ہوگا۔
-             * 5 منٹ بعد پہلی touch/click
-             * session کو دوبارہ زندہ نہیں کرے گی۔
-             */
+        [
+            "adminTeacherTotal",
+            "teacherTotal"
+        ].forEach(
+            id => {
 
-            if (
-                lastActivity &&
-                now -
-                    lastActivity >
-                    App.INACTIVITY_LIMIT
-            ) {
-
-                App.logout(
-                    "timeout"
+                setText(
+                    id,
+                    teachers
                 );
-
-                return;
             }
+        );
 
 
-            if (
-                !force &&
-                now -
-                    App.lastActivitySave <
-                    App.ACTIVITY_SAVE_INTERVAL
-            ) {
+        [
+            "adminHomeworkTotalDashboard",
+            "dashboardHomeworkTotal"
+        ].forEach(
+            id => {
 
-                return;
+                setText(
+                    id,
+                    homework
+                );
             }
+        );
 
 
-            session.lastActivity =
-                now;
+        [
+            "adminAnnouncementTotalDashboard",
+            "dashboardAnnouncementTotal"
+        ].forEach(
+            id => {
+
+                setText(
+                    id,
+                    announcements
+                );
+            }
+        );
 
 
-            App.lastActivitySave =
-                now;
+        [
+            "adminPendingAccounts",
+            "dashboardPendingAccounts"
+        ].forEach(
+            id => {
+
+                setText(
+                    id,
+                    pending
+                );
+            }
+        );
 
 
-            App.updateStoredSession(
-                session
+        const badge =
+            byId(
+                "adminPendingApprovalCount"
             );
-        };
 
 
-    App.checkInactivity =
-        function () {
+        if (badge) {
 
-            const session =
-                App.getStoredSession();
+            badge.textContent =
+                pending;
 
-
-            if (!session) {
-                return;
-            }
+            badge.hidden =
+                pending <= 0;
+        }
 
 
-            const lastActivity =
-                Number(
-                    session.lastActivity ||
-                    0
-                );
+    } catch (error) {
 
+        console.error(
+            "Admin dashboard error:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   DEFAULT DATES
+   ========================================================= */
+
+function initializeDefaultDates() {
+
+    const today =
+        getTodayISO();
+
+
+    [
+        "adminAttendanceDate",
+        "adminAddMarksDate",
+        "adminHomeworkAssignedDate"
+    ].forEach(
+        id => {
+
+            const input =
+                byId(id);
 
             if (
-                !lastActivity ||
-                Date.now() -
-                    lastActivity >
-                    App.INACTIVITY_LIMIT
+                input &&
+                !input.value
             ) {
 
-                App.logout(
-                    "timeout"
-                );
+                input.value =
+                    today;
             }
-        };
+        }
+    );
+}
 
 
-    /* =====================================================
-       SAFE SINGLE LOGOUT
-       ===================================================== */
+/* =========================================================
+   CURRENT SESSION INFORMATION
+   ========================================================= */
 
-    App.logoutInProgress =
-        false;
+function updateVisibleSessionInformation() {
+
+    const sessionStart =
+        safeNumber(
+            localStorage.getItem(
+                "sessionStart"
+            )
+        );
+
+    const lastActivity =
+        getLastActivity();
 
 
-    App.logout =
-        async function (
-            reason = "logout"
+    if (sessionStart) {
+
+        setText(
+            "settingsAdminSessionStart",
+            formatDateTime(
+                sessionStart
+            )
+        );
+    }
+
+
+    if (lastActivity) {
+
+        setText(
+            "settingsAdminLastActivity",
+            formatDateTime(
+                lastActivity
+            )
+        );
+    }
+
+
+    if (isAuthenticated()) {
+
+        setText(
+            "settingsAdminSessionStatus",
+            "فعال"
+        );
+    }
+}
+
+
+/* =========================================================
+   PART 1 INITIALIZATION
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        initializeSupabase();
+
+
+        if (
+            !requireAdmin()
+        ) {
+            return;
+        }
+
+
+        initializeAdminSidebar();
+
+        initializeLogoutButtons();
+
+        initializePasswordEyes();
+
+        initializeDefaultDates();
+
+        initializeCommonModalEvents();
+
+        initializeEscapeKey();
+
+        initializeInactivitySystem();
+
+        updateVisibleSessionInformation();
+
+
+        if (
+            App.currentPage ===
+            "admin.html"
         ) {
 
-            if (
-                App.logoutInProgress
-            ) {
-                return;
-            }
+            await loadAdminDashboard();
+        }
+
+    }
+);
 
 
-            App.logoutInProgress =
-                true;
+/* =========================================================
+   END PART 1 / 3
+
+   PART 2 MUST BE PASTED DIRECTLY BELOW THIS LINE.
+   ========================================================= */
+
+/* =========================================================
+   مدرسہ شہناز اختر للبنات
+   SCRIPT.JS
+   PART 2 / 3
+
+   ATTENDANCE
+   MARKS
+   HOMEWORK
+   ========================================================= */
 
 
-            const session =
-                App.getStoredSession();
+/* =========================================================
+   GENERIC VALUE HELPERS
+   ========================================================= */
+
+function firstValue(
+    object,
+    keys,
+    fallback = ""
+) {
+
+    if (!object) {
+        return fallback;
+    }
+
+    for (const key of keys) {
+
+        if (
+            object[key] !== null &&
+            object[key] !== undefined &&
+            object[key] !== ""
+        ) {
+
+            return object[key];
+        }
+    }
+
+    return fallback;
+}
 
 
-            const token =
-                session
-                    ? session.token
-                    : null;
+function normalizeStatus(value) {
+
+    return safeString(value)
+        .toLowerCase();
+}
 
 
-            App.clearStoredSession();
+function urduAttendanceStatus(value) {
+
+    const status =
+        normalizeStatus(value);
+
+    if (
+        status === "present" ||
+        status === "حاضر"
+    ) {
+        return "حاضر";
+    }
+
+    if (
+        status === "absent" ||
+        status === "غیر حاضر"
+    ) {
+        return "غیر حاضر";
+    }
+
+    if (
+        status === "leave" ||
+        status === "چھٹی"
+    ) {
+        return "چھٹی";
+    }
+
+    if (
+        status === "late" ||
+        status === "تاخیر"
+    ) {
+        return "تاخیر";
+    }
+
+    return safeString(value) || "—";
+}
 
 
-            if (
-                App.inactivityTimer
-            ) {
+/* =========================================================
+   LOAD STUDENTS
+   ========================================================= */
 
-                clearInterval(
-                    App.inactivityTimer
-                );
+async function loadStudentsForAdmin() {
 
+    if (!checkSupabase()) {
+        return [];
+    }
 
-                App.inactivityTimer =
-                    null;
-            }
+    try {
 
-
-            /*
-             * Server session کو بھی ختم کریں۔
-             * زیادہ delay ہونے کی صورت میں
-             * login redirect نہیں رکے گا۔
-             */
-
-            if (token) {
-
-                try {
-
-                    const client =
-                        App.initSupabase();
-
-
-                    if (client) {
-
-                        await Promise.race([
-
-                            client.rpc(
-                                "logout_session",
-                                {
-                                    p_token:
-                                        token
-                                }
-                            ),
-
-                            new Promise(
-                                function (
-                                    resolve
-                                ) {
-
-                                    window.setTimeout(
-                                        resolve,
-                                        1200
-                                    );
-                                }
-                            )
-                        ]);
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.STUDENTS
+                )
+                .select("*")
+                .order(
+                    "name",
+                    {
+                        ascending: true
                     }
-
-                } catch (error) {
-
-                    console.warn(
-                        "Server logout warning:",
-                        error
-                    );
-                }
-            }
-
-
-            const suffix =
-                "?reason=" +
-                encodeURIComponent(
-                    reason
                 );
 
 
-            window.location.replace(
-                "login.html" +
-                suffix
-            );
-        };
+        if (error) {
+            throw error;
+        }
 
 
-    /* =====================================================
-       CHECK SESSION WHEN TAB RETURNS
-       ===================================================== */
-
-    App.handleVisibilityChange =
-        function () {
-
-            if (
-                document.visibilityState ===
-                "visible"
-            ) {
-
-                App.checkInactivity();
-            }
-        };
+        App.students =
+            Array.isArray(data)
+                ? data
+                : [];
 
 
-    /* =====================================================
-       APPROVAL EXECUTION
-       FINAL SAFE VERSION
-       ===================================================== */
+        return App.students;
 
-    App.executeApplicationDecision =
-        async function () {
+    } catch (error) {
 
-            const session =
-                App.requireAdmin();
+        console.error(
+            "Students load error:",
+            error
+        );
 
+        App.students = [];
 
-            if (!session) {
-                return;
-            }
-
-
-            const type =
-                App.selectedApplicationType;
+        return [];
+    }
+}
 
 
-            const id =
-                App.selectedApplicationId;
+/* =========================================================
+   LOAD TEACHERS
+   ========================================================= */
+
+async function loadTeachersForAdmin() {
+
+    if (!checkSupabase()) {
+        return [];
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.TEACHERS
+                )
+                .select("*")
+                .order(
+                    "name",
+                    {
+                        ascending: true
+                    }
+                );
 
 
-            const decision =
-                App.pendingApplicationDecision;
+        if (error) {
+            throw error;
+        }
 
 
-            if (
-                !type ||
-                !id ||
-                !decision
-            ) {
-                return;
-            }
+        App.teachers =
+            Array.isArray(data)
+                ? data
+                : [];
 
 
-            const el =
-                App.getApprovalElements();
+        return App.teachers;
+
+    } catch (error) {
+
+        console.error(
+            "Teachers load error:",
+            error
+        );
+
+        App.teachers = [];
+
+        return [];
+    }
+}
 
 
-            const note =
-                App.cleanText(
-                    el.applicationAdminNote
-                        ? el.applicationAdminNote.value
+/* =========================================================
+   STUDENT HELPERS
+   ========================================================= */
+
+function findStudentById(id) {
+
+    return App.students.find(
+        student =>
+            String(student.id) ===
+            String(id)
+    ) || null;
+}
+
+
+function findTeacherById(id) {
+
+    return App.teachers.find(
+        teacher =>
+            String(teacher.id) ===
+            String(id)
+    ) || null;
+}
+
+
+function getStudentName(student) {
+
+    return safeString(
+        firstValue(
+            student,
+            [
+                "name",
+                "student_name",
+                "studentName"
+            ],
+            "—"
+        )
+    );
+}
+
+
+function getTeacherName(teacher) {
+
+    return safeString(
+        firstValue(
+            teacher,
+            [
+                "name",
+                "teacher_name",
+                "teacherName"
+            ],
+            "—"
+        )
+    );
+}
+
+
+function getStudentClass(student) {
+
+    return safeString(
+        firstValue(
+            student,
+            [
+                "student_class",
+                "class",
+                "class_name"
+            ],
+            ""
+        )
+    );
+}
+
+
+function getStudentAdmissionNo(student) {
+
+    return safeString(
+        firstValue(
+            student,
+            [
+                "admission_no",
+                "admissionNo"
+            ],
+            ""
+        )
+    );
+}
+
+
+/* =========================================================
+   SELECT OPTION HELPERS
+   ========================================================= */
+
+function fillStudentSelect(
+    select,
+    students = App.students,
+    placeholder = "طالبہ منتخب کریں"
+) {
+
+    if (!select) {
+        return;
+    }
+
+    const currentValue =
+        select.value;
+
+
+    select.innerHTML =
+        `<option value="">${escapeHTML(
+            placeholder
+        )}</option>`;
+
+
+    students.forEach(
+        student => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                student.id;
+
+            option.textContent =
+                getStudentName(student) +
+                (
+                    getStudentAdmissionNo(
+                        student
+                    )
+                        ? " — " +
+                          getStudentAdmissionNo(
+                              student
+                          )
                         : ""
                 );
 
-
-            let rpcName = "";
-
-
-            if (
-                type === "student" &&
-                decision === "approve"
-            ) {
-
-                rpcName =
-                    "admin_approve_student_application";
-
-            } else if (
-                type === "student" &&
-                decision === "reject"
-            ) {
-
-                rpcName =
-                    "admin_reject_student_application";
-
-            } else if (
-                type === "teacher" &&
-                decision === "approve"
-            ) {
-
-                rpcName =
-                    "admin_approve_teacher_application";
-
-            } else if (
-                type === "teacher" &&
-                decision === "reject"
-            ) {
-
-                rpcName =
-                    "admin_reject_teacher_application";
-            }
-
-
-            if (!rpcName) {
-                return;
-            }
-
-
-            App.setButtonBusy(
-                el.confirmApplicationDecision,
-                true,
-                decision === "approve"
-                    ? "منظور ہو رہی ہے"
-                    : "مسترد ہو رہی ہے"
+            select.appendChild(
+                option
             );
-
-
-            try {
-
-                await App.rpc(
-                    rpcName,
-                    {
-                        p_token:
-                            session.token,
-
-                        p_application_id:
-                            Number(id),
-
-                        p_admin_note:
-                            note ||
-                            null
-                    }
-                );
-
-
-                App.hide(
-                    el.approvalConfirmationOverlay
-                );
-
-
-                App.hide(
-                    el.applicationDetailsOverlay
-                );
-
-
-                App.selectedApplicationType =
-                    null;
-
-                App.selectedApplicationId =
-                    null;
-
-                App.pendingApplicationDecision =
-                    null;
-
-
-                await App.loadApplications();
-
-
-                if (
-                    type === "student"
-                ) {
-
-                    App.showMessage(
-                        el.studentApplicationsMessage,
-                        decision === "approve"
-                            ? "طالبہ کی درخواست کامیابی سے منظور ہوگئی۔"
-                            : "طالبہ کی درخواست مسترد کردی گئی۔",
-                        "success"
-                    );
-
-                } else {
-
-                    App.showMessage(
-                        el.teacherApplicationsMessage,
-                        decision === "approve"
-                            ? "استاد کی درخواست کامیابی سے منظور ہوگئی۔"
-                            : "استاد کی درخواست مسترد کردی گئی۔",
-                        "success"
-                    );
-                }
-
-            } catch (error) {
-
-                const message =
-                    App.translateSystemError(
-                        error &&
-                        error.message
-                            ? error.message
-                            : "",
-                        "درخواست پر کارروائی نہیں ہوسکی۔"
-                    );
-
-
-                if (
-                    el.approvalConfirmationContent
-                ) {
-
-                    el.approvalConfirmationContent.innerHTML = `
-                        <p class="error-message">
-                            ${App.escapeHTML(
-                                message
-                            )}
-                        </p>
-                    `;
-                }
-
-            } finally {
-
-                App.setButtonBusy(
-                    el.confirmApplicationDecision,
-                    false
-                );
-            }
-        };
-
-
-    /* =====================================================
-       DISABLE MULTIPLE FAST SUBMITS
-       ===================================================== */
-
-    App.preventDoubleClick =
-        function (
-            button
-        ) {
-
-            if (!button) {
-                return;
-            }
-
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    if (
-                        this.dataset.locked ===
-                        "true"
-                    ) {
-
-                        return;
-                    }
-
-
-                    this.dataset.locked =
-                        "true";
-
-
-                    window.setTimeout(
-                        () => {
-
-                            this.dataset.locked =
-                                "false";
-                        },
-                        500
-                    );
-                }
-            );
-        };
-
-
-    /* =====================================================
-       FINAL PAGE INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            document.addEventListener(
-                "visibilitychange",
-                App.handleVisibilityChange
-            );
-
-
-            window.addEventListener(
-                "pageshow",
-                function () {
-
-                    App.checkInactivity();
-                }
-            );
-
-
-            /*
-             * Protected session کو load ہوتے ہی
-             * ایک دفعہ دوبارہ چیک کریں۔
-             */
-
-            if (
-                !App.isPublicPage()
-            ) {
-
-                App.checkInactivity();
-            }
         }
     );
 
-})();
 
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 12 / FINAL COMPATIBILITY + BINDING CHECK
-   ===================================================== */
+    if (currentValue) {
 
-(function () {
-    "use strict";
+        select.value =
+            currentValue;
+    }
+}
 
-    const App =
-        window.MadrassaApp;
 
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
-        );
+function fillTeacherSelect(
+    select,
+    teachers = App.teachers,
+    placeholder = "استاد منتخب کریں"
+) {
 
+    if (!select) {
+        return;
+    }
+
+    const currentValue =
+        select.value;
+
+
+    select.innerHTML =
+        `<option value="">${escapeHTML(
+            placeholder
+        )}</option>`;
+
+
+    teachers.forEach(
+        teacher => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                teacher.id;
+
+            option.textContent =
+                getTeacherName(
+                    teacher
+                );
+
+            select.appendChild(
+                option
+            );
+        }
+    );
+
+
+    if (currentValue) {
+
+        select.value =
+            currentValue;
+    }
+}
+
+
+/* =========================================================
+   ATTENDANCE
+   ========================================================= */
+
+async function loadAdminAttendance() {
+
+    if (
+        App.currentPage !==
+        "admin-attendance.html"
+    ) {
         return;
     }
 
 
-    /* =====================================================
-       SAFE FIND ATTENDANCE STUDENT ROW
-       CSS.escape dependency removed
-       ===================================================== */
-
-    App.findAttendanceStudentRow =
-        function (
-            studentId
-        ) {
-
-            const el =
-                typeof App.getAttendanceElements ===
-                "function"
-                    ? App.getAttendanceElements()
-                    : null;
+    const message =
+        byId(
+            "adminAttendanceMessage"
+        );
 
 
-            if (
-                !el ||
-                !el.attendanceStudentsList
-            ) {
-                return null;
-            }
+    if (
+        !checkSupabase(message)
+    ) {
+        return;
+    }
 
 
-            const rows =
-                el.attendanceStudentsList
-                    .querySelectorAll(
-                        ".attendance-student-row"
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.ATTENDANCE
+                )
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        App.attendance =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        renderAdminAttendance();
+
+        updateAttendanceSummary();
+
+
+    } catch (error) {
+
+        console.error(
+            "Attendance load error:",
+            error
+        );
+
+        showPortalMessage(
+            message,
+            "حاضری کا ریکارڈ لوڈ نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function getFilteredAttendance() {
+
+    let records =
+        [...App.attendance];
+
+
+    const date =
+        byId(
+            "adminAttendanceDate"
+        )?.value || "";
+
+
+    const className =
+        byId(
+            "adminAttendanceClassFilter"
+        )?.value || "";
+
+
+    const teacherId =
+        byId(
+            "adminAttendanceTeacherFilter"
+        )?.value || "";
+
+
+    const period =
+        byId(
+            "adminAttendancePeriodFilter"
+        )?.value || "";
+
+
+    const status =
+        byId(
+            "adminAttendanceStatusFilter"
+        )?.value || "";
+
+
+    if (date) {
+
+        records =
+            records.filter(
+                record => {
+
+                    const recordDate =
+                        safeString(
+                            firstValue(
+                                record,
+                                [
+                                    "attendance_date",
+                                    "date"
+                                ]
+                            )
+                        );
+
+                    return (
+                        recordDate.slice(
+                            0,
+                            10
+                        ) === date
                     );
+                }
+            );
+    }
 
 
-            for (
-                const row
-                of rows
-            ) {
+    if (className) {
 
-                if (
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "student_class",
+                                "class_name",
+                                "class"
+                            ]
+                        )
+                    ) === className
+            );
+    }
+
+
+    if (teacherId) {
+
+        records =
+            records.filter(
+                record =>
                     String(
-                        row.dataset.studentId
+                        firstValue(
+                            record,
+                            [
+                                "teacher_id",
+                                "teacherId"
+                            ]
+                        )
                     ) ===
                     String(
-                        studentId
+                        teacherId
                     )
-                ) {
-
-                    return row;
-                }
-            }
-
-
-            return null;
-        };
-
-
-    /* =====================================================
-       SAFE EXISTING ATTENDANCE LOADER
-       ===================================================== */
-
-    App.loadExistingAttendanceIntoForm =
-        async function (
-            session,
-            attendanceDate,
-            period,
-            studentClass,
-            teacherId
-        ) {
-
-            if (
-                !session ||
-                !session.token
-            ) {
-                return;
-            }
-
-
-            try {
-
-                const records =
-                    await App.rpc(
-                        "attendance_get_records",
-                        {
-                            p_token:
-                                session.token,
-
-                            p_date:
-                                attendanceDate,
-
-                            p_period:
-                                Number(
-                                    period
-                                ),
-
-                            p_class:
-                                studentClass,
-
-                            p_teacher_id:
-                                Number(
-                                    teacherId
-                                )
-                        }
-                    );
-
-
-                if (
-                    !Array.isArray(
-                        records
-                    ) ||
-                    records.length === 0
-                ) {
-
-                    return;
-                }
-
-
-                records.forEach(
-                    function (record) {
-
-                        const row =
-                            App.findAttendanceStudentRow(
-                                record.student_id
-                            );
-
-
-                        if (!row) {
-                            return;
-                        }
-
-
-                        const status =
-                            App.cleanText(
-                                record.status
-                            ).toLowerCase();
-
-
-                        const radios =
-                            row.querySelectorAll(
-                                'input[type="radio"]'
-                            );
-
-
-                        radios.forEach(
-                            function (radio) {
-
-                                radio.checked =
-                                    String(
-                                        radio.value
-                                    ).toLowerCase() ===
-                                    status;
-                            }
-                        );
-
-
-                        const noteInput =
-                            row.querySelector(
-                                ".attendance-note-input"
-                            );
-
-
-                        if (noteInput) {
-
-                            noteInput.value =
-                                record.note ||
-                                "";
-                        }
-                    }
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Existing attendance load error:",
-                    error
-                );
-            }
-        };
-
-
-    /* =====================================================
-       MAHRAM DRAFT REMOVE FIX
-       ===================================================== */
-
-    App.bindStudentMahramDraftEvents =
-        function () {
-
-            if (
-                App.currentPage !==
-                "students.html"
-            ) {
-                return;
-            }
-
-
-            if (
-                typeof App.getStudentElements !==
-                "function"
-            ) {
-                return;
-            }
-
-
-            const el =
-                App.getStudentElements();
-
-
-            if (!el.mahramList) {
-                return;
-            }
-
-
-            el.mahramList
-                .addEventListener(
-                    "click",
-                    function (event) {
-
-                        const button =
-                            event.target.closest(
-                                ".remove-mahram"
-                            );
-
-
-                        if (!button) {
-                            return;
-                        }
-
-
-                        window.setTimeout(
-                            function () {
-
-                                if (
-                                    typeof App.scheduleStudentDraft ===
-                                    "function"
-                                ) {
-
-                                    App.scheduleStudentDraft();
-                                }
-                            },
-                            0
-                        );
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       APPROVAL CONFIRM BUTTON
-       FORCE FINAL FUNCTION BINDING
-       ===================================================== */
-
-    App.rebindApprovalConfirmationButton =
-        function () {
-
-            if (
-                App.currentPage !==
-                "approvals.html"
-            ) {
-                return;
-            }
-
-
-            const oldButton =
-                App.byId(
-                    "confirmApplicationDecision"
-                );
-
-
-            if (
-                !oldButton ||
-                !oldButton.parentNode
-            ) {
-                return;
-            }
-
-
-            /*
-             * Clone removes any older event listener
-             * and guarantees that the final version of
-             * executeApplicationDecision is used.
-             */
-
-            const newButton =
-                oldButton.cloneNode(
-                    true
-                );
-
-
-            oldButton.parentNode
-                .replaceChild(
-                    newButton,
-                    oldButton
-                );
-
-
-            newButton
-                .addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        if (
-                            typeof App.executeApplicationDecision ===
-                            "function"
-                        ) {
-
-                            App.executeApplicationDecision();
-                        }
-                    }
-                );
-        };
-
-
-    /* =====================================================
-       FORM ENTER SAFETY
-       ===================================================== */
-
-    App.preventAccidentalModalSubmit =
-        function () {
-
-            if (
-                App.currentPage !==
-                "approvals.html"
-            ) {
-                return;
-            }
-
-
-            const note =
-                App.byId(
-                    "applicationAdminNote"
-                );
-
-
-            if (!note) {
-                return;
-            }
-
-
-            note.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key ===
-                        "Enter" &&
-                        !event.shiftKey
-                    ) {
-
-                        event.preventDefault();
-                    }
-                }
             );
-        };
+    }
 
 
-    /* =====================================================
-       FINAL SESSION PAGE CHECK
-       ===================================================== */
+    if (period) {
 
-    App.finalSessionPageCheck =
-        function () {
-
-            const page =
-                App.currentPage;
-
-
-            if (
-                page ===
-                "dashboard.html"
-            ) {
-
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher",
-                        "student"
-                    ]
-                );
-
-                return;
-            }
-
-
-            if (
-                [
-                    "students.html",
-                    "teachers.html",
-                    "approvals.html"
-                ].includes(
-                    page
-                )
-            ) {
-
-                App.requireSession(
-                    ["admin"]
-                );
-
-                return;
-            }
-
-
-            if (
-                page ===
-                "attendance.html"
-            ) {
-
-                App.requireSession(
-                    [
-                        "admin",
-                        "teacher"
-                    ]
-                );
-            }
-        };
-
-
-    /* =====================================================
-       REQUIRED FUNCTION SELF CHECK
-       ===================================================== */
-
-    App.runSystemSelfCheck =
-        function () {
-
-            const requiredCore = [
-                "initSupabase",
-                "rpc",
-                "getStoredSession",
-                "saveSession",
-                "clearStoredSession",
-                "requireSession",
-                "logout",
-                "escapeHTML",
-                "cleanText"
-            ];
-
-
-            const missing = [];
-
-
-            requiredCore.forEach(
-                function (name) {
-
-                    if (
-                        typeof App[name] !==
-                        "function"
-                    ) {
-
-                        missing.push(
-                            name
-                        );
-                    }
-                }
+        records =
+            records.filter(
+                record =>
+                    String(
+                        firstValue(
+                            record,
+                            [
+                                "period",
+                                "class_period",
+                                "lesson_no"
+                            ]
+                        )
+                    ) ===
+                    String(period)
             );
+    }
 
 
-            if (
-                missing.length > 0
-            ) {
+    if (status) {
 
-                console.error(
-                    "Missing core functions:",
-                    missing
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       FINAL INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            if (
-                !App.runSystemSelfCheck()
-            ) {
-                return;
-            }
+        records =
+            records.filter(
+                record =>
+                    normalizeStatus(
+                        firstValue(
+                            record,
+                            [
+                                "status",
+                                "attendance_status"
+                            ]
+                        )
+                    ) ===
+                    normalizeStatus(
+                        status
+                    )
+            );
+    }
 
 
-            App.finalSessionPageCheck();
+    return records;
+}
 
 
-            App.bindStudentMahramDraftEvents();
+function renderAdminAttendance() {
 
-
-            App.rebindApprovalConfirmationButton();
-
-
-            App.preventAccidentalModalSubmit();
-
-
-            /*
-             * Ensure current active session timestamp
-             * is checked once more after all modules.
-             */
-
-            if (
-                App.isAuthenticated()
-            ) {
-
-                App.checkInactivity();
-            }
-        }
-    );
-
-})();
-
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 13 / FINAL COMPATIBILITY PATCHES
-   ===================================================== */
-
-(function () {
-    "use strict";
-
-    const App =
-        window.MadrassaApp;
-
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
+    const body =
+        byId(
+            "adminAttendanceBody"
         );
+
+    if (!body) {
+        return;
+    }
+
+
+    const records =
+        getFilteredAttendance();
+
+
+    if (!records.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="9"
+                    class="table-empty">
+                    کوئی حاضری ریکارڈ نہیں ملا۔
+                </td>
+            </tr>
+        `;
 
         return;
     }
 
 
-    /* =====================================================
-       FINAL TRANSFER ADMISSION DETECTION
-       ===================================================== */
+    body.innerHTML =
+        records.map(
+            record => {
 
-    App.isTransferAdmission =
-        function (value) {
-
-            const text =
-                App.cleanText(
-                    value
-                ).toLowerCase();
-
-
-            return (
-                text.includes("منتقل") ||
-                text.includes("منتقلی") ||
-                text.includes("تبادلہ") ||
-                text.includes("transfer")
-            );
-        };
+                const student =
+                    findStudentById(
+                        firstValue(
+                            record,
+                            [
+                                "student_id",
+                                "studentId"
+                            ]
+                        )
+                    );
 
 
-    /* =====================================================
-       FINAL STUDENT MAHRAM VALIDATION
-       ===================================================== */
+                const teacher =
+                    findTeacherById(
+                        firstValue(
+                            record,
+                            [
+                                "teacher_id",
+                                "teacherId"
+                            ]
+                        )
+                    );
 
-    App.validateStudentMahrams =
-        function (
-            mahrams,
-            residenceType
-        ) {
 
-            if (
-                !App.isHostelResidence(
-                    residenceType
-                )
-            ) {
+                const date =
+                    firstValue(
+                        record,
+                        [
+                            "attendance_date",
+                            "date",
+                            "created_at"
+                        ]
+                    );
 
-                return true;
+
+                const period =
+                    firstValue(
+                        record,
+                        [
+                            "period",
+                            "class_period",
+                            "lesson_no"
+                        ],
+                        "—"
+                    );
+
+
+                const className =
+                    firstValue(
+                        record,
+                        [
+                            "student_class",
+                            "class_name",
+                            "class"
+                        ],
+                        getStudentClass(
+                            student
+                        )
+                    );
+
+
+                const status =
+                    urduAttendanceStatus(
+                        firstValue(
+                            record,
+                            [
+                                "status",
+                                "attendance_status"
+                            ]
+                        )
+                    );
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(
+                                formatDate(
+                                    date
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                String(
+                                    period
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                student
+                                    ? getStudentName(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "student_name"
+                                          ],
+                                          "—"
+                                      )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                student
+                                    ? getStudentAdmissionNo(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "admission_no"
+                                          ],
+                                          "—"
+                                      )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                className ||
+                                "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                teacher
+                                    ? getTeacherName(
+                                          teacher
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "teacher_name"
+                                          ],
+                                          "—"
+                                      )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                status
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "note",
+                                        "remarks"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="small-action-button secondary admin-edit-attendance"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}">
+                                ترمیم
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
             }
+        ).join("");
 
 
-            if (
-                !Array.isArray(
-                    mahrams
-                ) ||
-                mahrams.length < 1 ||
-                mahrams.length >
-                    App.MAX_MAHRAMS
-            ) {
+    body
+        .querySelectorAll(
+            ".admin-edit-attendance"
+        )
+        .forEach(
+            button => {
 
-                return false;
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        openAttendanceEdit(
+                            this.dataset.id
+                        );
+                    }
+                );
             }
+        );
+}
 
 
-            for (
-                const mahram
-                of mahrams
-            ) {
+function updateAttendanceSummary() {
 
-                if (
-                    !App.cleanText(
-                        mahram.name
-                    ) ||
-                    !App.isUrduText(
-                        mahram.name
-                    ) ||
-                    !App.cleanText(
-                        mahram.relation
-                    ) ||
-                    !App.isUrduText(
-                        mahram.relation
-                    ) ||
-                    !App.isValidPhone(
-                        mahram.phone
-                    ) ||
-                    !App.isValidCNIC(
-                        mahram.cnic
+    const records =
+        getFilteredAttendance();
+
+
+    const present =
+        records.filter(
+            record =>
+                urduAttendanceStatus(
+                    firstValue(
+                        record,
+                        [
+                            "status",
+                            "attendance_status"
+                        ]
                     )
-                ) {
-
-                    return false;
-                }
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       FINAL STUDENT VALIDATION
-       INCLUDING MAHRAM CONFIRMATION
-       ===================================================== */
-
-    App.validateStudentData =
-        function (data) {
-
-            const el =
-                App.getStudentElements();
-
-
-            if (!data.admissionNo) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "داخلہ نمبر درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.admissionType) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "داخلہ کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.name ||
-                !App.isUrduText(
-                    data.name
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "طالبہ کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.fatherName ||
-                !App.isUrduText(
-                    data.fatherName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "والد کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !data.guardianName ||
-                !App.isUrduText(
-                    data.guardianName
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "سرپرست کا نام اردو میں درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidCNIC(
-                    data.cnic
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "شناختی کارڈ نمبر 13 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                !App.isValidPhone(
-                    data.phone
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "فون نمبر 11 ہندسوں کا ہونا چاہیے۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.dateOfBirth) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "تاریخ پیدائش درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.studentClass) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "درجہ منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.admissionDate) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "تاریخ داخلہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.address) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "پتہ درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!data.residenceType) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "رہائش کی قسم منتخب کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                App.isTransferAdmission(
-                    data.admissionType
-                )
-            ) {
-
-                if (
-                    !data.previousMadrassa
-                ) {
-
-                    App.showMessage(
-                        el.studentFormMessage,
-                        "سابقہ مدرسہ درج کریں۔",
-                        "error"
-                    );
-
-                    return false;
-                }
-
-
-                if (
-                    !data.transferDate
-                ) {
-
-                    App.showMessage(
-                        el.studentFormMessage,
-                        "منتقلی کی تاریخ درج کریں۔",
-                        "error"
-                    );
-
-                    return false;
-                }
-
-            } else {
-
-                data.previousMadrassa =
-                    "";
-
-                data.transferDate =
-                    "";
-            }
-
-
-            if (
-                !App.validateStudentMahrams(
-                    data.mahrams,
-                    data.residenceType
-                )
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "ہاسٹل طالبہ کے لیے ایک سے پانچ مکمل محرم درج کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (
-                App.isHostelResidence(
-                    data.residenceType
-                ) &&
-                el.mahramConfirmation &&
-                !el.mahramConfirmation.checked
-            ) {
-
-                App.showMessage(
-                    el.studentFormMessage,
-                    "محرم کی معلومات کی تصدیق کریں۔",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            return true;
-        };
-
-
-    /* =====================================================
-       STUDENT APPLICATION TRANSFER VALIDATION FIX
-       ===================================================== */
-
-    if (
-        typeof App.validateStudentApplication ===
-        "function"
-    ) {
-
-        const originalStudentApplicationValidation =
-            App.validateStudentApplication;
-
-
-        App.validateStudentApplication =
-            function (data) {
-
-                const valid =
-                    originalStudentApplicationValidation(
-                        data
-                    );
-
-
-                if (!valid) {
-                    return false;
-                }
-
-
-                const el =
-                    App.getStudentApplicationElements();
-
-
-                if (
-                    App.isTransferAdmission(
-                        data.admissionType
-                    ) &&
-                    !data.transferDate
-                ) {
-
-                    App.showMessage(
-                        el.studentApplyMessage,
-                        "منتقلی کی تاریخ درج کریں۔",
-                        "error"
-                    );
-
-                    return false;
-                }
-
-
-                return true;
-            };
+                ) === "حاضر"
+        ).length;
+
+
+    const absent =
+        records.filter(
+            record =>
+                urduAttendanceStatus(
+                    firstValue(
+                        record,
+                        [
+                            "status",
+                            "attendance_status"
+                        ]
+                    )
+                ) === "غیر حاضر"
+        ).length;
+
+
+    const leave =
+        records.filter(
+            record =>
+                urduAttendanceStatus(
+                    firstValue(
+                        record,
+                        [
+                            "status",
+                            "attendance_status"
+                        ]
+                    )
+                ) === "چھٹی"
+        ).length;
+
+
+    const late =
+        records.filter(
+            record =>
+                urduAttendanceStatus(
+                    firstValue(
+                        record,
+                        [
+                            "status",
+                            "attendance_status"
+                        ]
+                    )
+                ) === "تاخیر"
+        ).length;
+
+
+    [
+        "adminAttendanceTotal",
+        "attendanceTotal"
+    ].forEach(
+        id =>
+            setText(
+                id,
+                records.length
+            )
+    );
+
+
+    [
+        "adminAttendancePresent",
+        "attendancePresent"
+    ].forEach(
+        id =>
+            setText(
+                id,
+                present
+            )
+    );
+
+
+    [
+        "adminAttendanceAbsent",
+        "attendanceAbsent"
+    ].forEach(
+        id =>
+            setText(
+                id,
+                absent
+            )
+    );
+
+
+    [
+        "adminAttendanceLeave",
+        "attendanceLeave"
+    ].forEach(
+        id =>
+            setText(
+                id,
+                leave
+            )
+    );
+
+
+    [
+        "adminAttendanceLate",
+        "attendanceLate"
+    ].forEach(
+        id =>
+            setText(
+                id,
+                late
+            )
+    );
+
+
+    setText(
+        "adminAttendancePercentage",
+        records.length
+            ? calculatePercentage(
+                  present,
+                  records.length
+              ) + "%"
+            : "0%"
+    );
+}
+
+
+function openAttendanceEdit(id) {
+
+    const record =
+        App.attendance.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+
+    if (!record) {
+        return;
     }
 
 
-    /* =====================================================
-       RESET STUDENT MAHRAM CONFIRMATION
-       ===================================================== */
+    const idInput =
+        byId(
+            "adminAttendanceEditId"
+        );
+
+    const statusInput =
+        byId(
+            "adminAttendanceEditStatus"
+        );
+
+    const noteInput =
+        byId(
+            "adminAttendanceEditNote"
+        );
+
+
+    if (idInput) {
+        idInput.value =
+            record.id;
+    }
+
+
+    if (statusInput) {
+
+        statusInput.value =
+            normalizeStatus(
+                firstValue(
+                    record,
+                    [
+                        "status",
+                        "attendance_status"
+                    ]
+                )
+            );
+    }
+
+
+    if (noteInput) {
+
+        noteInput.value =
+            firstValue(
+                record,
+                [
+                    "note",
+                    "remarks"
+                ]
+            );
+    }
+
+
+    openPortalModal(
+        "adminAttendanceEditModal"
+    );
+}
+
+
+async function saveAttendanceEdit(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const id =
+        byId(
+            "adminAttendanceEditId"
+        )?.value;
+
+
+    const status =
+        byId(
+            "adminAttendanceEditStatus"
+        )?.value;
+
+
+    const note =
+        byId(
+            "adminAttendanceEditNote"
+        )?.value || "";
+
 
     if (
-        typeof App.resetStudentForm ===
-        "function"
+        !id ||
+        !status
     ) {
+        return;
+    }
 
-        const originalResetStudentForm =
-            App.resetStudentForm;
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.ATTENDANCE
+                )
+                .update({
+                    status: status,
+                    note: note,
+                    updated_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    id
+                );
 
 
-        App.resetStudentForm =
+        if (error) {
+            throw error;
+        }
+
+
+        closePortalModal(
+            "adminAttendanceEditModal"
+        );
+
+
+        showPortalMessage(
+            "adminAttendanceMessage",
+            "حاضری کامیابی سے تبدیل ہوگئی۔",
+            "success"
+        );
+
+
+        await loadAdminAttendance();
+
+
+    } catch (error) {
+
+        console.error(
+            "Attendance update:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminAttendanceMessage",
+            "حاضری تبدیل نہیں ہوسکی۔",
+            "error"
+        );
+    }
+}
+
+
+function initializeAttendancePage() {
+
+    if (
+        App.currentPage !==
+        "admin-attendance.html"
+    ) {
+        return;
+    }
+
+
+    const form =
+        byId(
+            "adminAttendanceFilterForm"
+        );
+
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                renderAdminAttendance();
+
+                updateAttendanceSummary();
+            }
+        );
+    }
+
+
+    [
+        "adminAttendanceDate",
+        "adminAttendanceClassFilter",
+        "adminAttendanceTeacherFilter",
+        "adminAttendancePeriodFilter",
+        "adminAttendanceStatusFilter"
+    ].forEach(
+        id => {
+
+            const element =
+                byId(id);
+
+            if (element) {
+
+                element.addEventListener(
+                    "change",
+                    function () {
+
+                        renderAdminAttendance();
+
+                        updateAttendanceSummary();
+                    }
+                );
+            }
+        }
+    );
+
+
+    const clearButton =
+        byId(
+            "clearAdminAttendanceFilters"
+        );
+
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            "click",
             function () {
 
-                originalResetStudentForm();
-
-
-                const el =
-                    App.getStudentElements();
-
-
-                if (
-                    el.mahramConfirmation
-                ) {
-
-                    el.mahramConfirmation.checked =
-                        false;
-                }
-            };
-    }
-
-
-    /* =====================================================
-       EDIT STUDENT MAHRAM CONFIRMATION
-       ===================================================== */
-
-    if (
-        typeof App.openStudentForm ===
-        "function"
-    ) {
-
-        const previousOpenStudentForm =
-            App.openStudentForm;
-
-
-        App.openStudentForm =
-            function (
-                student = null
-            ) {
-
-                previousOpenStudentForm(
-                    student
-                );
-
-
-                if (!student) {
-                    return;
+                if (form) {
+                    form.reset();
                 }
 
+                renderAdminAttendance();
 
-                const el =
-                    App.getStudentElements();
-
-
-                if (
-                    el.mahramConfirmation &&
-                    App.isHostelResidence(
-                        student.residence_type
-                    )
-                ) {
-
-                    el.mahramConfirmation.checked =
-                        true;
-                }
-            };
-    }
-
-
-    /* =====================================================
-       CLEAR DRAFT ONLY AFTER SUCCESSFUL SAVE
-       ===================================================== */
-
-    if (
-        typeof App.saveStudent ===
-        "function"
-    ) {
-
-        const originalSaveStudent =
-            App.saveStudent;
-
-
-        App.saveStudent =
-            async function (
-                event
-            ) {
-
-                const before =
-                    App.studentsCache.length;
-
-
-                await originalSaveStudent(
-                    event
-                );
-
-
-                const after =
-                    App.studentsCache.length;
-
-
-                if (
-                    after !== before ||
-                    App.editingStudentId ===
-                        null
-                ) {
-
-                    /*
-                     * Successful closeStudentForm also
-                     * clears draft. This is only a final
-                     * safety cleanup.
-                     */
-
-                    if (
-                        typeof App.clearStudentDraft ===
-                        "function"
-                    ) {
-
-                        const message =
-                            App.getStudentElements()
-                                .studentFormMessage;
-
-
-                        if (
-                            message &&
-                            message.dataset.messageType ===
-                                "success"
-                        ) {
-
-                            App.clearStudentDraft();
-                        }
-                    }
-                }
-            };
-    }
-
-
-    if (
-        typeof App.saveTeacher ===
-        "function"
-    ) {
-
-        const originalSaveTeacher =
-            App.saveTeacher;
-
-
-        App.saveTeacher =
-            async function (
-                event
-            ) {
-
-                await originalSaveTeacher(
-                    event
-                );
-
-
-                if (
-                    typeof App.clearTeacherDraft ===
-                    "function"
-                ) {
-
-                    const message =
-                        App.getTeacherElements()
-                            .teacherFormMessage;
-
-
-                    if (
-                        message &&
-                        message.dataset.messageType ===
-                            "success"
-                    ) {
-
-                        App.clearTeacherDraft();
-                    }
-                }
-            };
-    }
-
-
-    /* =====================================================
-       FINAL PASSWORD AUTOCOMPLETE SETTINGS
-       ===================================================== */
-
-    App.applyPasswordSafety =
-        function () {
-
-            const loginPassword =
-                App.byId(
-                    "password"
-                );
-
-
-            if (loginPassword) {
-
-                loginPassword.setAttribute(
-                    "autocomplete",
-                    "current-password"
-                );
+                updateAttendanceSummary();
             }
+        );
+    }
 
 
-            const newPasswords = [
+    const editForm =
+        byId(
+            "adminAttendanceEditForm"
+        );
 
-                App.byId(
-                    "applyPassword"
-                ),
 
-                App.byId(
-                    "applyConfirmPassword"
-                ),
+    if (editForm) {
 
-                App.byId(
-                    "applyTeacherPassword"
-                ),
+        editForm.addEventListener(
+            "submit",
+            saveAttendanceEdit
+        );
+    }
+}
 
-                App.byId(
-                    "applyTeacherConfirmPassword"
+
+/* =========================================================
+   MARKS
+   ========================================================= */
+
+async function loadAdminMarks() {
+
+    if (
+        App.currentPage !==
+        "admin-marks.html"
+    ) {
+        return;
+    }
+
+
+    if (
+        !checkSupabase(
+            byId(
+                "adminMarksMessage"
+            )
+        )
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.MARKS
                 )
-            ];
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
 
 
-            newPasswords
-                .filter(Boolean)
-                .forEach(
-                    function (input) {
+        if (error) {
+            throw error;
+        }
 
-                        input.setAttribute(
-                            "autocomplete",
-                            "new-password"
+
+        App.marks =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        renderAdminMarks();
+
+        updateMarksSummary();
+
+
+    } catch (error) {
+
+        console.error(
+            "Marks load error:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر کا ریکارڈ لوڈ نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function getFilteredMarks() {
+
+    let records =
+        [...App.marks];
+
+
+    const studentSearch =
+        safeString(
+            byId(
+                "adminMarksStudentSearch"
+            )?.value
+        ).toLowerCase();
+
+
+    const className =
+        byId(
+            "adminMarksClassFilter"
+        )?.value || "";
+
+
+    const subject =
+        safeString(
+            byId(
+                "adminMarksSubjectFilter"
+            )?.value
+        ).toLowerCase();
+
+
+    const examType =
+        safeString(
+            byId(
+                "adminMarksExamTypeFilter"
+            )?.value
+        ).toLowerCase();
+
+
+    if (studentSearch) {
+
+        records =
+            records.filter(
+                record => {
+
+                    const student =
+                        findStudentById(
+                            firstValue(
+                                record,
+                                [
+                                    "student_id",
+                                    "studentId"
+                                ]
+                            )
+                        );
+
+
+                    const text =
+                        (
+                            (
+                                student
+                                    ? getStudentName(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "student_name"
+                                          ]
+                                      )
+                            ) +
+                            " " +
+                            (
+                                student
+                                    ? getStudentAdmissionNo(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "admission_no"
+                                          ]
+                                      )
+                            )
+                        ).toLowerCase();
+
+
+                    return text.includes(
+                        studentSearch
+                    );
+                }
+            );
+    }
+
+
+    if (className) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "student_class",
+                                "class_name",
+                                "class"
+                            ]
+                        )
+                    ) === className
+            );
+    }
+
+
+    if (subject) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "subject",
+                                "subject_name"
+                            ]
+                        )
+                    )
+                        .toLowerCase()
+                        .includes(
+                            subject
+                        )
+            );
+    }
+
+
+    if (examType) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "exam_type",
+                                "test_type"
+                            ]
+                        )
+                    )
+                        .toLowerCase()
+                        .includes(
+                            examType
+                        )
+            );
+    }
+
+
+    return records;
+}
+
+
+function renderAdminMarks() {
+
+    const body =
+        byId(
+            "adminMarksBody"
+        );
+
+
+    if (!body) {
+        return;
+    }
+
+
+    const records =
+        getFilteredMarks();
+
+
+    if (!records.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="10"
+                    class="table-empty">
+                    نمبر کا کوئی ریکارڈ نہیں ملا۔
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        records.map(
+            record => {
+
+                const student =
+                    findStudentById(
+                        firstValue(
+                            record,
+                            [
+                                "student_id",
+                                "studentId"
+                            ]
+                        )
+                    );
+
+
+                const obtained =
+                    safeNumber(
+                        firstValue(
+                            record,
+                            [
+                                "obtained_marks",
+                                "marks_obtained",
+                                "obtained"
+                            ]
+                        )
+                    );
+
+
+                const total =
+                    safeNumber(
+                        firstValue(
+                            record,
+                            [
+                                "total_marks",
+                                "maximum_marks",
+                                "total"
+                            ]
+                        )
+                    );
+
+
+                const percent =
+                    calculatePercentage(
+                        obtained,
+                        total
+                    );
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(
+                                formatDate(
+                                    firstValue(
+                                        record,
+                                        [
+                                            "exam_date",
+                                            "date",
+                                            "created_at"
+                                        ]
+                                    )
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                student
+                                    ? getStudentName(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "student_name"
+                                          ],
+                                          "—"
+                                      )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                student
+                                    ? getStudentAdmissionNo(
+                                          student
+                                      )
+                                    : firstValue(
+                                          record,
+                                          [
+                                              "admission_no"
+                                          ],
+                                          "—"
+                                      )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "student_class",
+                                        "class_name",
+                                        "class"
+                                    ],
+                                    student
+                                        ? getStudentClass(
+                                              student
+                                          )
+                                        : "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "subject",
+                                        "subject_name"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "exam_type",
+                                        "test_type"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${obtained}
+                        </td>
+
+                        <td>
+                            ${total}
+                        </td>
+
+                        <td>
+                            ${percent}%
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="small-action-button secondary admin-edit-mark"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}">
+                                ترمیم
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+            }
+        ).join("");
+
+
+    body
+        .querySelectorAll(
+            ".admin-edit-mark"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        openAdminMarkEdit(
+                            this.dataset.id
                         );
                     }
                 );
-        };
+            }
+        );
+}
 
 
-    /* =====================================================
-       FINAL FORM SUBMIT SAFETY
-       ===================================================== */
+function updateMarksSummary() {
 
-    App.disableNativeInvalidNavigation =
-        function () {
+    const records =
+        getFilteredMarks();
 
-            const forms =
-                document.querySelectorAll(
-                    "form"
+
+    let obtainedTotal = 0;
+
+    let maximumTotal = 0;
+
+
+    records.forEach(
+        record => {
+
+            obtainedTotal +=
+                safeNumber(
+                    firstValue(
+                        record,
+                        [
+                            "obtained_marks",
+                            "marks_obtained",
+                            "obtained"
+                        ]
+                    )
                 );
 
 
-            forms.forEach(
-                function (form) {
-
-                    form.addEventListener(
-                        "invalid",
-                        function (
-                            event
-                        ) {
-
-                            const target =
-                                event.target;
-
-
-                            if (
-                                target &&
-                                typeof target.scrollIntoView ===
-                                    "function"
-                            ) {
-
-                                target.scrollIntoView({
-                                    behavior:
-                                        "smooth",
-
-                                    block:
-                                        "center"
-                                });
-                            }
-
-                        },
-                        true
-                    );
-                }
-            );
-        };
-
-
-    /* =====================================================
-       FINAL ONLINE / OFFLINE MESSAGE
-       ===================================================== */
-
-    App.showOfflineWarning =
-        function () {
-
-            const pageMessageIds = [
-
-                "loginMessage",
-
-                "studentFormMessage",
-
-                "teacherFormMessage",
-
-                "studentApplyMessage",
-
-                "teacherApplyMessage",
-
-                "studentApplicationsMessage",
-
-                "teacherApplicationsMessage",
-
-                "attendanceMessage"
-            ];
-
-
-            let target = null;
-
-
-            for (
-                const id
-                of pageMessageIds
-            ) {
-
-                const element =
-                    App.byId(
-                        id
-                    );
-
-
-                if (element) {
-
-                    target =
-                        element;
-
-                    break;
-                }
-            }
-
-
-            if (target) {
-
-                App.showMessage(
-                    target,
-                    "انٹرنیٹ کنکشن دستیاب نہیں ہے۔",
-                    "error"
+            maximumTotal +=
+                safeNumber(
+                    firstValue(
+                        record,
+                        [
+                            "total_marks",
+                            "maximum_marks",
+                            "total"
+                        ]
+                    )
                 );
-            }
-        };
+        }
+    );
 
 
-    /* =====================================================
-       FINAL INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.applyPasswordSafety();
+    setText(
+        "adminMarksTotalRecords",
+        records.length
+    );
 
 
-            App.disableNativeInvalidNavigation();
+    setText(
+        "adminMarksAverage",
+        maximumTotal > 0
+            ? calculatePercentage(
+                  obtainedTotal,
+                  maximumTotal
+              ) + "%"
+            : "0%"
+    );
+}
 
 
-            window.addEventListener(
-                "offline",
-                App.showOfflineWarning
-            );
+function openAdminMarkEdit(id) {
+
+    const record =
+        App.marks.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
 
 
-            window.addEventListener(
-                "online",
-                function () {
-
-                    /*
-                     * Page is online again.
-                     * Current data remains untouched.
-                     */
-
-                    console.log(
-                        "Internet connection restored."
-                    );
-                }
-            );
+    if (!record) {
+        return;
+    }
 
 
-            if (
-                navigator.onLine ===
-                false
-            ) {
+    const fields = {
 
-                App.showOfflineWarning();
+        adminEditMarkId:
+            record.id,
+
+        adminEditMarkObtained:
+            firstValue(
+                record,
+                [
+                    "obtained_marks",
+                    "marks_obtained",
+                    "obtained"
+                ]
+            ),
+
+        adminEditMarkTotal:
+            firstValue(
+                record,
+                [
+                    "total_marks",
+                    "maximum_marks",
+                    "total"
+                ]
+            ),
+
+        adminEditMarkNote:
+            firstValue(
+                record,
+                [
+                    "note",
+                    "remarks"
+                ]
+            )
+
+    };
+
+
+    Object.entries(
+        fields
+    ).forEach(
+        ([idName, value]) => {
+
+            const input =
+                byId(idName);
+
+            if (input) {
+
+                input.value =
+                    value ?? "";
             }
         }
     );
 
-})();
+
+    openPortalModal(
+        "adminEditMarkModal"
+    );
+}
 
 
-/* =====================================================
-   MADRASSA MANAGEMENT SYSTEM
-   SCRIPT.JS
-   PART 14 / 14
-   FINAL BUTTON + FORM COMPATIBILITY
-   ===================================================== */
+async function saveAdminMarkEdit(
+    event
+) {
 
-(function () {
-    "use strict";
+    event.preventDefault();
 
-    const App =
-        window.MadrassaApp;
 
-    if (!App) {
-        console.error(
-            "MadrassaApp core is not loaded."
+    const id =
+        byId(
+            "adminEditMarkId"
+        )?.value;
+
+
+    const obtained =
+        safeNumber(
+            byId(
+                "adminEditMarkObtained"
+            )?.value
+        );
+
+
+    const total =
+        safeNumber(
+            byId(
+                "adminEditMarkTotal"
+            )?.value
+        );
+
+
+    const note =
+        byId(
+            "adminEditMarkNote"
+        )?.value || "";
+
+
+    if (!id) {
+        return;
+    }
+
+
+    if (
+        total <= 0 ||
+        obtained < 0 ||
+        obtained > total
+    ) {
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر درست درج کریں۔ حاصل کردہ نمبر کل نمبر سے زیادہ نہیں ہوسکتے۔",
+            "error"
         );
 
         return;
     }
 
 
-    /* =====================================================
-       BUTTON TYPE HELPER
-       ===================================================== */
+    try {
 
-    App.setButtonType =
-        function (
-            id,
-            type
-        ) {
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.MARKS
+                )
+                .update({
+                    obtained_marks:
+                        obtained,
 
-            const button =
-                App.byId(id);
+                    total_marks:
+                        total,
+
+                    note: note,
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    id
+                );
 
 
-            if (
-                button &&
-                button.tagName ===
-                    "BUTTON"
-            ) {
+        if (error) {
+            throw error;
+        }
 
-                button.type =
-                    type;
+
+        closePortalModal(
+            "adminEditMarkModal"
+        );
+
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر کامیابی سے تبدیل ہوگئے۔",
+            "success"
+        );
+
+
+        await loadAdminMarks();
+
+
+    } catch (error) {
+
+        console.error(
+            "Marks update:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر تبدیل نہیں ہوسکے۔",
+            "error"
+        );
+    }
+}
+
+
+async function addAdminMarks(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const studentId =
+        byId(
+            "adminAddMarksStudent"
+        )?.value;
+
+
+    const subject =
+        safeString(
+            byId(
+                "adminAddMarksSubject"
+            )?.value
+        );
+
+
+    const examType =
+        safeString(
+            byId(
+                "adminAddMarksExamType"
+            )?.value
+        );
+
+
+    const date =
+        byId(
+            "adminAddMarksDate"
+        )?.value;
+
+
+    const obtained =
+        safeNumber(
+            byId(
+                "adminAddMarksObtained"
+            )?.value
+        );
+
+
+    const total =
+        safeNumber(
+            byId(
+                "adminAddMarksTotal"
+            )?.value
+        );
+
+
+    const note =
+        safeString(
+            byId(
+                "adminAddMarksNote"
+            )?.value
+        );
+
+
+    if (
+        !studentId ||
+        !subject ||
+        !examType ||
+        !date ||
+        total <= 0 ||
+        obtained < 0 ||
+        obtained > total
+    ) {
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "تمام ضروری معلومات اور نمبر درست درج کریں۔",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const student =
+        findStudentById(
+            studentId
+        );
+
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.MARKS
+                )
+                .insert({
+                    student_id:
+                        studentId,
+
+                    student_class:
+                        student
+                            ? getStudentClass(
+                                  student
+                              )
+                            : "",
+
+                    subject:
+                        subject,
+
+                    exam_type:
+                        examType,
+
+                    exam_date:
+                        date,
+
+                    obtained_marks:
+                        obtained,
+
+                    total_marks:
+                        total,
+
+                    note:
+                        note,
+
+                    created_at:
+                        new Date()
+                            .toISOString()
+                });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        closePortalModal(
+            "adminAddMarksModal"
+        );
+
+
+        const form =
+            byId(
+                "adminAddMarksForm"
+            );
+
+
+        if (form) {
+            form.reset();
+        }
+
+
+        const dateInput =
+            byId(
+                "adminAddMarksDate"
+            );
+
+
+        if (dateInput) {
+            dateInput.value =
+                getTodayISO();
+        }
+
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر کامیابی سے محفوظ ہوگئے۔",
+            "success"
+        );
+
+
+        await loadAdminMarks();
+
+
+    } catch (error) {
+
+        console.error(
+            "Add marks:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminMarksMessage",
+            "نمبر محفوظ نہیں ہوسکے۔",
+            "error"
+        );
+    }
+}
+
+
+function initializeMarksPage() {
+
+    if (
+        App.currentPage !==
+        "admin-marks.html"
+    ) {
+        return;
+    }
+
+
+    const openButton =
+        byId(
+            "openAdminAddMarksButton"
+        );
+
+
+    if (openButton) {
+
+        openButton.addEventListener(
+            "click",
+            function () {
+
+                openPortalModal(
+                    "adminAddMarksModal"
+                );
             }
-        };
+        );
+    }
 
 
-    /* =====================================================
-       CORRECT ALL BUTTON TYPES
-       ===================================================== */
-
-    App.applyFinalButtonTypes =
-        function () {
-
-            /* LOGIN */
-
-            App.setButtonType(
-                "loginButton",
-                "submit"
-            );
+    const addForm =
+        byId(
+            "adminAddMarksForm"
+        );
 
-            App.setButtonType(
-                "togglePassword",
-                "button"
-            );
-
-            App.setButtonType(
-                "backButton",
-                "button"
-            );
 
+    if (addForm) {
 
-            /* HOME */
-
-            [
-                "adminLoginButton",
-                "teacherLoginButton",
-                "studentLoginButton",
-                "studentApplyButton",
-                "teacherApplyButton"
-            ].forEach(
-                function (id) {
-
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
-
+        addForm.addEventListener(
+            "submit",
+            addAdminMarks
+        );
+    }
 
-            /* DASHBOARD */
 
-            [
-                "studentsButton",
-                "teachersButton",
-                "attendanceButton",
-                "approvalsButton",
-                "announcementsButton",
-                "reportsButton",
-                "logoutButton"
-            ].forEach(
-                function (id) {
-
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
+    const editForm =
+        byId(
+            "adminEditMarkForm"
+        );
 
 
-            /* STUDENTS */
-
-            App.setButtonType(
-                "saveStudentButton",
-                "submit"
-            );
-
-
-            [
-                "backToDashboard",
-                "showStudentForm",
-                "cancelStudentForm",
-                "addMahram",
-                "closeStudentDetails"
-            ].forEach(
-                function (id) {
+    if (editForm) {
 
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
-
-
-            /* TEACHERS */
-
-            App.setButtonType(
-                "saveTeacherButton",
-                "submit"
-            );
-
-
-            [
-                "showTeacherForm",
-                "cancelTeacherButton",
-                "closeTeacherDetails"
-            ].forEach(
-                function (id) {
-
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
-
-
-            /* STUDENT APPLICATION */
-
-            App.setButtonType(
-                "submitStudentApplication",
-                "submit"
-            );
-
-
-            [
-                "cancelStudentApplication",
-                "addApplyMahram",
-                "checkStudentApplicationStatus"
-            ].forEach(
-                function (id) {
-
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
-
-
-            /* TEACHER APPLICATION */
+        editForm.addEventListener(
+            "submit",
+            saveAdminMarkEdit
+        );
+    }
 
-            App.setButtonType(
-                "submitTeacherApplication",
-                "submit"
-            );
-
 
-            [
-                "cancelTeacherApplication",
-                "checkTeacherApplicationStatus"
-            ].forEach(
-                function (id) {
+    const filterForm =
+        byId(
+            "adminMarksFilterForm"
+        );
 
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
 
+    if (filterForm) {
 
-            /* APPROVALS */
+        filterForm.addEventListener(
+            "submit",
+            function (event) {
 
-            [
-                "approveApplicationButton",
-                "rejectApplicationButton",
-                "closeApplicationDetails",
-                "closeApprovalConfirmation",
-                "confirmApplicationDecision",
-                "cancelApplicationDecision"
-            ].forEach(
-                function (id) {
+                event.preventDefault();
 
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
+                renderAdminMarks();
 
-
-            /* ATTENDANCE */
-
-            [
-                "loadAttendanceStudents",
-                "markAllPresent",
-                "clearAttendance",
-                "saveAttendance",
-                "loadAttendanceRecords"
-            ].forEach(
-                function (id) {
-
-                    App.setButtonType(
-                        id,
-                        "button"
-                    );
-                }
-            );
-        };
-
-
-    /* =====================================================
-       DATE LIMITS
-       ===================================================== */
-
-    App.applyDateLimits =
-        function () {
-
-            const today =
-                App.todayISO();
-
-
-            /*
-             * Birth dates cannot be
-             * in the future.
-             */
-
-            [
-                "dateOfBirth",
-                "teacherDateOfBirth",
-                "applyDateOfBirth",
-                "applyTeacherDateOfBirth"
-            ].forEach(
-                function (id) {
-
-                    const input =
-                        App.byId(id);
-
-
-                    if (input) {
-
-                        input.max =
-                            today;
-                    }
-                }
-            );
-        };
-
-
-    /* =====================================================
-       PREVENT ENTER ON SEARCH FIELDS
-       ===================================================== */
-
-    App.preventSearchSubmit =
-        function () {
-
-            [
-                "studentSearch",
-                "teacherSearch"
-            ].forEach(
-                function (id) {
-
-                    const input =
-                        App.byId(id);
-
-
-                    if (!input) {
-                        return;
-                    }
-
-
-                    input.addEventListener(
-                        "keydown",
-                        function (event) {
-
-                            if (
-                                event.key ===
-                                "Enter"
-                            ) {
-
-                                event.preventDefault();
-                            }
-                        }
-                    );
-                }
-            );
-        };
-
-
-    /* =====================================================
-       FINAL SESSION VALIDITY CHECK
-       ===================================================== */
-
-    App.finalSessionValidation =
-        function () {
-
-            if (
-                App.isPublicPage()
-            ) {
-                return;
+                updateMarksSummary();
             }
+        );
+    }
 
 
-            const session =
-                App.getStoredSession();
+    const clearButton =
+        byId(
+            "clearAdminMarksFilters"
+        );
 
 
-            if (
-                !session ||
-                !session.token ||
-                !session.role
-            ) {
+    if (clearButton) {
 
-                App.clearStoredSession();
+        clearButton.addEventListener(
+            "click",
+            function () {
+
+                if (filterForm) {
+                    filterForm.reset();
+                }
+
+                renderAdminMarks();
+
+                updateMarksSummary();
+            }
+        );
+    }
+}
 
 
-                window.location.replace(
-                    "login.html?reason=" +
-                    encodeURIComponent(
-                        "login-required"
+/* =========================================================
+   HOMEWORK
+   ========================================================= */
+
+async function loadAdminHomework() {
+
+    if (
+        App.currentPage !==
+        "admin-homework.html"
+    ) {
+        return;
+    }
+
+
+    if (
+        !checkSupabase(
+            byId(
+                "adminHomeworkMessage"
+            )
+        )
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.HOMEWORK
+                )
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        App.homework =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        renderAdminHomework();
+
+        updateHomeworkSummary();
+
+
+    } catch (error) {
+
+        console.error(
+            "Homework load:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminHomeworkMessage",
+            "ہوم ورک لوڈ نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function getFilteredHomework() {
+
+    let records =
+        [...App.homework];
+
+
+    const className =
+        byId(
+            "adminHomeworkClassFilter"
+        )?.value || "";
+
+
+    const teacherId =
+        byId(
+            "adminHomeworkTeacherFilter"
+        )?.value || "";
+
+
+    const subject =
+        safeString(
+            byId(
+                "adminHomeworkSubjectFilter"
+            )?.value
+        ).toLowerCase();
+
+
+    const search =
+        safeString(
+            byId(
+                "adminHomeworkSearch"
+            )?.value
+        ).toLowerCase();
+
+
+    if (className) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "student_class",
+                                "class_name",
+                                "class"
+                            ]
+                        )
+                    ) === className
+            );
+    }
+
+
+    if (teacherId) {
+
+        records =
+            records.filter(
+                record =>
+                    String(
+                        firstValue(
+                            record,
+                            [
+                                "teacher_id",
+                                "teacherId"
+                            ]
+                        )
+                    ) ===
+                    String(
+                        teacherId
                     )
+            );
+    }
+
+
+    if (subject) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "subject",
+                                "subject_name"
+                            ]
+                        )
+                    )
+                        .toLowerCase()
+                        .includes(
+                            subject
+                        )
+            );
+    }
+
+
+    if (search) {
+
+        records =
+            records.filter(
+                record => {
+
+                    const text =
+                        (
+                            safeString(
+                                firstValue(
+                                    record,
+                                    [
+                                        "title"
+                                    ]
+                                )
+                            ) +
+                            " " +
+                            safeString(
+                                firstValue(
+                                    record,
+                                    [
+                                        "description",
+                                        "homework_text",
+                                        "details"
+                                    ]
+                                )
+                            )
+                        ).toLowerCase();
+
+
+                    return text.includes(
+                        search
+                    );
+                }
+            );
+    }
+
+
+    return records;
+}
+
+
+function renderAdminHomework() {
+
+    const list =
+        byId(
+            "adminHomeworkList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const records =
+        getFilteredHomework();
+
+
+    setText(
+        "adminHomeworkRecordCount",
+        records.length +
+        " ہوم ورک"
+    );
+
+
+    if (!records.length) {
+
+        list.innerHTML = `
+            <div class="portal-empty-state">
+                کوئی ہوم ورک ریکارڈ نہیں ملا۔
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        records.map(
+            record => {
+
+                const teacher =
+                    findTeacherById(
+                        firstValue(
+                            record,
+                            [
+                                "teacher_id",
+                                "teacherId"
+                            ]
+                        )
+                    );
+
+
+                return `
+                    <article class="homework-card">
+
+                        <span class="profile-label">
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "subject",
+                                        "subject_name"
+                                    ],
+                                    "ہوم ورک"
+                                )
+                            )}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "title"
+                                    ],
+                                    "ہوم ورک"
+                                )
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "description",
+                                        "homework_text",
+                                        "details"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </p>
+
+                        <div class="student-profile-details">
+
+                            <div class="profile-detail-item">
+                                <span>جماعت</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        firstValue(
+                                            record,
+                                            [
+                                                "student_class",
+                                                "class_name",
+                                                "class"
+                                            ],
+                                            "—"
+                                        )
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div class="profile-detail-item">
+                                <span>استاد</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        teacher
+                                            ? getTeacherName(
+                                                  teacher
+                                              )
+                                            : firstValue(
+                                                  record,
+                                                  [
+                                                      "teacher_name"
+                                                  ],
+                                                  "—"
+                                              )
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div class="profile-detail-item">
+                                <span>جاری کرنے کی تاریخ</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        formatDate(
+                                            firstValue(
+                                                record,
+                                                [
+                                                    "assigned_date",
+                                                    "created_at"
+                                                ]
+                                            )
+                                        )
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div class="profile-detail-item">
+                                <span>آخری تاریخ</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        formatDate(
+                                            firstValue(
+                                                record,
+                                                [
+                                                    "due_date"
+                                                ]
+                                            )
+                                        )
+                                    )}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="portal-form-actions">
+
+                            <button
+                                type="button"
+                                class="small-action-button admin-homework-details"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}">
+                                تفصیل
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+            }
+        ).join("");
+
+
+    list
+        .querySelectorAll(
+            ".admin-homework-details"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        showAdminHomeworkDetails(
+                            this.dataset.id
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+function updateHomeworkSummary() {
+
+    const records =
+        getFilteredHomework();
+
+
+    const today =
+        getTodayISO();
+
+
+    const active =
+        records.filter(
+            record => {
+
+                const due =
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "due_date"
+                            ]
+                        )
+                    ).slice(
+                        0,
+                        10
+                    );
+
+
+                return (
+                    !due ||
+                    due >= today
+                );
+            }
+        ).length;
+
+
+    const expired =
+        records.length -
+        active;
+
+
+    setText(
+        "adminHomeworkTotal",
+        records.length
+    );
+
+
+    setText(
+        "adminHomeworkActive",
+        active
+    );
+
+
+    setText(
+        "adminHomeworkExpired",
+        expired
+    );
+}
+
+
+async function showAdminHomeworkDetails(
+    id
+) {
+
+    const record =
+        App.homework.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+
+    if (!record) {
+        return;
+    }
+
+
+    const teacher =
+        findTeacherById(
+            firstValue(
+                record,
+                [
+                    "teacher_id",
+                    "teacherId"
+                ]
+            )
+        );
+
+
+    setText(
+        "adminHomeworkDetailsTitle",
+        firstValue(
+            record,
+            [
+                "title"
+            ],
+            "ہوم ورک"
+        )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsClass",
+        firstValue(
+            record,
+            [
+                "student_class",
+                "class_name",
+                "class"
+            ],
+            "—"
+        )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsSubject",
+        firstValue(
+            record,
+            [
+                "subject",
+                "subject_name"
+            ],
+            "—"
+        )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsTeacher",
+        teacher
+            ? getTeacherName(
+                  teacher
+              )
+            : firstValue(
+                  record,
+                  [
+                      "teacher_name"
+                  ],
+                  "—"
+              )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsAssignedDate",
+        formatDate(
+            firstValue(
+                record,
+                [
+                    "assigned_date",
+                    "created_at"
+                ]
+            )
+        )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsDueDate",
+        formatDate(
+            firstValue(
+                record,
+                [
+                    "due_date"
+                ]
+            )
+        )
+    );
+
+
+    setText(
+        "adminHomeworkDetailsText",
+        firstValue(
+            record,
+            [
+                "description",
+                "homework_text",
+                "details"
+            ],
+            "—"
+        )
+    );
+
+
+    await loadHomeworkSubmissions(
+        record.id
+    );
+
+
+    openPortalModal(
+        "adminHomeworkDetailsModal"
+    );
+}
+
+
+async function loadHomeworkSubmissions(
+    homeworkId
+) {
+
+    const body =
+        byId(
+            "adminHomeworkSubmissionsBody"
+        );
+
+
+    if (!body) {
+        return;
+    }
+
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="7"
+                class="table-empty">
+                ریکارڈ لوڈ کیا جا رہا ہے...
+            </td>
+        </tr>
+    `;
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES
+                        .HOMEWORK_SUBMISSIONS
+                )
+                .select("*")
+                .eq(
+                    "homework_id",
+                    homeworkId
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
                 );
 
+
+        if (error) {
+            throw error;
+        }
+
+
+        const submissions =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        setText(
+            "adminHomeworkDetailsSubmitted",
+            submissions.length
+        );
+
+
+        if (!submissions.length) {
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="7"
+                        class="table-empty">
+                        ابھی کوئی ہوم ورک جمع نہیں ہوا۔
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        body.innerHTML =
+            submissions.map(
+                submission => {
+
+                    const student =
+                        findStudentById(
+                            firstValue(
+                                submission,
+                                [
+                                    "student_id"
+                                ]
+                            )
+                        );
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeHTML(
+                                    student
+                                        ? getStudentAdmissionNo(
+                                              student
+                                          )
+                                        : "—"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    student
+                                        ? getStudentName(
+                                              student
+                                          )
+                                        : firstValue(
+                                              submission,
+                                              [
+                                                  "student_name"
+                                              ],
+                                              "—"
+                                          )
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    student
+                                        ? getStudentClass(
+                                              student
+                                          )
+                                        : "—"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    formatDate(
+                                        firstValue(
+                                            submission,
+                                            [
+                                                "submitted_at",
+                                                "created_at"
+                                            ]
+                                        )
+                                    )
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    formatTime(
+                                        firstValue(
+                                            submission,
+                                            [
+                                                "submitted_at",
+                                                "created_at"
+                                            ]
+                                        )
+                                    )
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    firstValue(
+                                        submission,
+                                        [
+                                            "status"
+                                        ],
+                                        "جمع شدہ"
+                                    )
+                                )}
+                            </td>
+
+                            <td>
+                                <button
+                                    type="button"
+                                    class="small-action-button secondary admin-review-homework"
+                                    data-id="${escapeHTML(
+                                        submission.id
+                                    )}">
+                                    جائزہ
+                                </button>
+                            </td>
+
+                        </tr>
+                    `;
+                }
+            ).join("");
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Homework submissions:",
+            error
+        );
+
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="table-empty">
+                    ریکارڈ لوڈ نہیں ہوسکا۔
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+async function createAdminHomework(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const className =
+        byId(
+            "adminHomeworkTargetClass"
+        )?.value;
+
+
+    const subject =
+        safeString(
+            byId(
+                "adminHomeworkSubject"
+            )?.value
+        );
+
+
+    const title =
+        safeString(
+            byId(
+                "adminHomeworkTitle"
+            )?.value
+        );
+
+
+    const text =
+        safeString(
+            byId(
+                "adminHomeworkText"
+            )?.value
+        );
+
+
+    const assignedDate =
+        byId(
+            "adminHomeworkAssignedDate"
+        )?.value ||
+        getTodayISO();
+
+
+    const dueDate =
+        byId(
+            "adminHomeworkDueDate"
+        )?.value;
+
+
+    if (
+        !className ||
+        !subject ||
+        !title ||
+        !text ||
+        !dueDate
+    ) {
+
+        showPortalMessage(
+            "adminHomeworkMessage",
+            "تمام ضروری معلومات درج کریں۔",
+            "error"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.HOMEWORK
+                )
+                .insert({
+                    student_class:
+                        className,
+
+                    subject:
+                        subject,
+
+                    title:
+                        title,
+
+                    description:
+                        text,
+
+                    assigned_date:
+                        assignedDate,
+
+                    due_date:
+                        dueDate,
+
+                    created_by:
+                        getCurrentUserId(),
+
+                    created_by_role:
+                        "admin",
+
+                    created_at:
+                        new Date()
+                            .toISOString()
+                });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        closePortalModal(
+            "adminCreateHomeworkModal"
+        );
+
+
+        const form =
+            byId(
+                "adminCreateHomeworkForm"
+            );
+
+
+        if (form) {
+            form.reset();
+        }
+
+
+        const assignedInput =
+            byId(
+                "adminHomeworkAssignedDate"
+            );
+
+
+        if (assignedInput) {
+
+            assignedInput.value =
+                getTodayISO();
+        }
+
+
+        showPortalMessage(
+            "adminHomeworkMessage",
+            "ہوم ورک کامیابی سے جاری ہوگیا۔",
+            "success"
+        );
+
+
+        await loadAdminHomework();
+
+
+    } catch (error) {
+
+        console.error(
+            "Create homework:",
+            error
+        );
+
+
+        showPortalMessage(
+            "adminHomeworkMessage",
+            "ہوم ورک جاری نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function initializeHomeworkPage() {
+
+    if (
+        App.currentPage !==
+        "admin-homework.html"
+    ) {
+        return;
+    }
+
+
+    const openButton =
+        byId(
+            "openAdminCreateHomeworkButton"
+        );
+
+
+    if (openButton) {
+
+        openButton.addEventListener(
+            "click",
+            function () {
+
+                openPortalModal(
+                    "adminCreateHomeworkModal"
+                );
+            }
+        );
+    }
+
+
+    const createForm =
+        byId(
+            "adminCreateHomeworkForm"
+        );
+
+
+    if (createForm) {
+
+        createForm.addEventListener(
+            "submit",
+            createAdminHomework
+        );
+    }
+
+
+    const filterForm =
+        byId(
+            "adminHomeworkFilterForm"
+        );
+
+
+    if (filterForm) {
+
+        filterForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                renderAdminHomework();
+
+                updateHomeworkSummary();
+            }
+        );
+    }
+
+
+    const clearButton =
+        byId(
+            "clearAdminHomeworkFilters"
+        );
+
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            "click",
+            function () {
+
+                if (filterForm) {
+                    filterForm.reset();
+                }
+
+                renderAdminHomework();
+
+                updateHomeworkSummary();
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   PART 2 PAGE DATA INITIALIZATION
+   ========================================================= */
+
+async function initializePart2Pages() {
+
+    if (
+        !isAdmin()
+    ) {
+        return;
+    }
+
+
+    if (
+        App.currentPage ===
+        "admin-attendance.html" ||
+        App.currentPage ===
+        "admin-marks.html" ||
+        App.currentPage ===
+        "admin-homework.html"
+    ) {
+
+        await Promise.all([
+            loadStudentsForAdmin(),
+            loadTeachersForAdmin()
+        ]);
+    }
+
+
+    if (
+        App.currentPage ===
+        "admin-attendance.html"
+    ) {
+
+        fillTeacherSelect(
+            byId(
+                "adminAttendanceTeacherFilter"
+            ),
+            App.teachers,
+            "تمام اساتذہ"
+        );
+
+
+        initializeAttendancePage();
+
+        await loadAdminAttendance();
+    }
+
+
+    if (
+        App.currentPage ===
+        "admin-marks.html"
+    ) {
+
+        fillStudentSelect(
+            byId(
+                "adminAddMarksStudent"
+            ),
+            App.students
+        );
+
+
+        initializeMarksPage();
+
+        await loadAdminMarks();
+    }
+
+
+    if (
+        App.currentPage ===
+        "admin-homework.html"
+    ) {
+
+        fillTeacherSelect(
+            byId(
+                "adminHomeworkTeacherFilter"
+            ),
+            App.teachers,
+            "تمام اساتذہ"
+        );
+
+
+        initializeHomeworkPage();
+
+        await loadAdminHomework();
+    }
+}
+
+
+/* =========================================================
+   RUN PART 2
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        initializePart2Pages()
+            .catch(
+                error => {
+
+                    console.error(
+                        "Part 2 initialization error:",
+                        error
+                    );
+                }
+            );
+    }
+);
+
+
+/* =========================================================
+   END PART 2 / 3
+
+   PART 3 MUST BE PASTED DIRECTLY BELOW THIS LINE.
+   ========================================================= */
+
+
+/* =========================================================
+   مدرسہ شہناز اختر للبنات
+   SCRIPT.JS
+   PART 3 / 3
+
+   ANNOUNCEMENTS
+   ACCOUNTS / APPLICATIONS
+   SETTINGS
+   FINAL INITIALIZATION
+   ========================================================= */
+
+
+/* =========================================================
+   ANNOUNCEMENTS
+   ========================================================= */
+
+async function loadAdminAnnouncements() {
+
+    if (
+        App.currentPage !==
+        "admin-announcements.html"
+    ) {
+        return;
+    }
+
+    if (
+        !checkSupabase(
+            byId("adminAnnouncementMessage")
+        )
+    ) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.ANNOUNCEMENTS
+                )
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        App.announcements =
+            Array.isArray(data)
+                ? data
+                : [];
+
+        renderAdminAnnouncements();
+
+        updateAnnouncementSummary();
+
+    } catch (error) {
+
+        console.error(
+            "Announcements load error:",
+            error
+        );
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "اعلانات لوڈ نہیں ہوسکے۔",
+            "error"
+        );
+    }
+}
+
+
+function getFilteredAnnouncements() {
+
+    let records =
+        [...App.announcements];
+
+    const search =
+        safeString(
+            byId(
+                "adminAnnouncementSearch"
+            )?.value
+        ).toLowerCase();
+
+    const target =
+        safeString(
+            byId(
+                "adminAnnouncementTargetFilter"
+            )?.value
+        ).toLowerCase();
+
+    if (search) {
+
+        records =
+            records.filter(
+                record => {
+
+                    const text =
+                        (
+                            safeString(
+                                firstValue(
+                                    record,
+                                    [
+                                        "title"
+                                    ]
+                                )
+                            ) +
+                            " " +
+                            safeString(
+                                firstValue(
+                                    record,
+                                    [
+                                        "message",
+                                        "description",
+                                        "announcement_text"
+                                    ]
+                                )
+                            )
+                        ).toLowerCase();
+
+                    return text.includes(
+                        search
+                    );
+                }
+            );
+    }
+
+    if (target) {
+
+        records =
+            records.filter(
+                record =>
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "target",
+                                "target_type",
+                                "audience"
+                            ]
+                        )
+                    ).toLowerCase() ===
+                    target
+            );
+    }
+
+    return records;
+}
+
+
+function getAnnouncementTargetUrdu(
+    value
+) {
+
+    const target =
+        safeString(value)
+            .toLowerCase();
+
+    if (
+        target === "all" ||
+        target === "everyone"
+    ) {
+        return "سب";
+    }
+
+    if (
+        target === "students" ||
+        target === "student"
+    ) {
+        return "طالبات";
+    }
+
+    if (
+        target === "teachers" ||
+        target === "teacher"
+    ) {
+        return "اساتذہ";
+    }
+
+    if (
+        target === "class"
+    ) {
+        return "جماعت";
+    }
+
+    return safeString(value) || "سب";
+}
+
+
+function renderAdminAnnouncements() {
+
+    const list =
+        byId(
+            "adminAnnouncementList"
+        );
+
+    if (!list) {
+        return;
+    }
+
+    const records =
+        getFilteredAnnouncements();
+
+    if (!records.length) {
+
+        list.innerHTML = `
+            <div class="portal-empty-state">
+                کوئی اعلان موجود نہیں۔
+            </div>
+        `;
+
+        return;
+    }
+
+    list.innerHTML =
+        records.map(
+            record => {
+
+                const target =
+                    firstValue(
+                        record,
+                        [
+                            "target",
+                            "target_type",
+                            "audience"
+                        ],
+                        "all"
+                    );
+
+                return `
+                    <article class="announcement-card">
+
+                        <span class="profile-label">
+                            ${escapeHTML(
+                                getAnnouncementTargetUrdu(
+                                    target
+                                )
+                            )}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "title"
+                                    ],
+                                    "اعلان"
+                                )
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "message",
+                                        "description",
+                                        "announcement_text"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </p>
+
+                        <div class="student-profile-details">
+
+                            <div class="profile-detail-item">
+                                <span>تاریخ</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        formatDate(
+                                            firstValue(
+                                                record,
+                                                [
+                                                    "created_at",
+                                                    "announcement_date"
+                                                ]
+                                            )
+                                        )
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div class="profile-detail-item">
+                                <span>جماعت</span>
+                                <strong>
+                                    ${escapeHTML(
+                                        firstValue(
+                                            record,
+                                            [
+                                                "student_class",
+                                                "class_name"
+                                            ],
+                                            "سب"
+                                        )
+                                    )}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="portal-form-actions">
+
+                            <button
+                                type="button"
+                                class="small-action-button admin-announcement-details"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}">
+                                تفصیل
+                            </button>
+
+                            <button
+                                type="button"
+                                class="small-action-button danger admin-announcement-delete"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}">
+                                حذف کریں
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+            }
+        ).join("");
+
+    list
+        .querySelectorAll(
+            ".admin-announcement-details"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        showAdminAnnouncementDetails(
+                            this.dataset.id
+                        );
+                    }
+                );
+            }
+        );
+
+    list
+        .querySelectorAll(
+            ".admin-announcement-delete"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        prepareAnnouncementDelete(
+                            this.dataset.id
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+function updateAnnouncementSummary() {
+
+    const records =
+        getFilteredAnnouncements();
+
+    setText(
+        "adminAnnouncementTotal",
+        records.length
+    );
+
+    const studentCount =
+        records.filter(
+            record => {
+
+                const target =
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "target",
+                                "target_type",
+                                "audience"
+                            ]
+                        )
+                    ).toLowerCase();
+
+                return (
+                    target === "students" ||
+                    target === "student"
+                );
+            }
+        ).length;
+
+    const teacherCount =
+        records.filter(
+            record => {
+
+                const target =
+                    safeString(
+                        firstValue(
+                            record,
+                            [
+                                "target",
+                                "target_type",
+                                "audience"
+                            ]
+                        )
+                    ).toLowerCase();
+
+                return (
+                    target === "teachers" ||
+                    target === "teacher"
+                );
+            }
+        ).length;
+
+    setText(
+        "adminAnnouncementStudentTotal",
+        studentCount
+    );
+
+    setText(
+        "adminAnnouncementTeacherTotal",
+        teacherCount
+    );
+}
+
+
+function showAdminAnnouncementDetails(
+    id
+) {
+
+    const record =
+        App.announcements.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+    if (!record) {
+        return;
+    }
+
+    setText(
+        "adminAnnouncementDetailsTitle",
+        firstValue(
+            record,
+            ["title"],
+            "اعلان"
+        )
+    );
+
+    setText(
+        "adminAnnouncementDetailsTarget",
+        getAnnouncementTargetUrdu(
+            firstValue(
+                record,
+                [
+                    "target",
+                    "target_type",
+                    "audience"
+                ],
+                "all"
+            )
+        )
+    );
+
+    setText(
+        "adminAnnouncementDetailsClass",
+        firstValue(
+            record,
+            [
+                "student_class",
+                "class_name"
+            ],
+            "سب"
+        )
+    );
+
+    setText(
+        "adminAnnouncementDetailsDate",
+        formatDateTime(
+            firstValue(
+                record,
+                [
+                    "created_at",
+                    "announcement_date"
+                ]
+            )
+        )
+    );
+
+    setText(
+        "adminAnnouncementDetailsMessage",
+        firstValue(
+            record,
+            [
+                "message",
+                "description",
+                "announcement_text"
+            ],
+            "—"
+        )
+    );
+
+    openPortalModal(
+        "adminAnnouncementDetailsModal"
+    );
+}
+
+
+async function createAdminAnnouncement(
+    event
+) {
+
+    event.preventDefault();
+
+    const title =
+        safeString(
+            byId(
+                "adminAnnouncementTitle"
+            )?.value
+        );
+
+    const message =
+        safeString(
+            byId(
+                "adminAnnouncementText"
+            )?.value
+        );
+
+    const target =
+        safeString(
+            byId(
+                "adminAnnouncementTarget"
+            )?.value
+        );
+
+    const className =
+        safeString(
+            byId(
+                "adminAnnouncementClass"
+            )?.value
+        );
+
+    if (
+        !title ||
+        !message ||
+        !target
+    ) {
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "تمام ضروری معلومات درج کریں۔",
+            "error"
+        );
+
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.ANNOUNCEMENTS
+                )
+                .insert({
+                    title: title,
+
+                    message: message,
+
+                    target: target,
+
+                    student_class:
+                        className || null,
+
+                    created_by:
+                        getCurrentUserId(),
+
+                    created_by_role:
+                        "admin",
+
+                    created_at:
+                        new Date()
+                            .toISOString()
+                });
+
+        if (error) {
+            throw error;
+        }
+
+        closePortalModal(
+            "adminCreateAnnouncementModal"
+        );
+
+        const form =
+            byId(
+                "adminCreateAnnouncementForm"
+            );
+
+        if (form) {
+            form.reset();
+        }
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "اعلان کامیابی سے جاری ہوگیا۔",
+            "success"
+        );
+
+        await loadAdminAnnouncements();
+
+    } catch (error) {
+
+        console.error(
+            "Create announcement:",
+            error
+        );
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "اعلان جاری نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function prepareAnnouncementDelete(
+    id
+) {
+
+    const input =
+        byId(
+            "adminDeleteAnnouncementId"
+        );
+
+    if (input) {
+        input.value = id;
+    }
+
+    openPortalModal(
+        "adminDeleteAnnouncementModal"
+    );
+}
+
+
+async function confirmAnnouncementDelete() {
+
+    const id =
+        byId(
+            "adminDeleteAnnouncementId"
+        )?.value;
+
+    if (!id) {
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES.ANNOUNCEMENTS
+                )
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        closePortalModal(
+            "adminDeleteAnnouncementModal"
+        );
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "اعلان حذف ہوگیا۔",
+            "success"
+        );
+
+        await loadAdminAnnouncements();
+
+    } catch (error) {
+
+        console.error(
+            "Delete announcement:",
+            error
+        );
+
+        showPortalMessage(
+            "adminAnnouncementMessage",
+            "اعلان حذف نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+function initializeAnnouncementPage() {
+
+    if (
+        App.currentPage !==
+        "admin-announcements.html"
+    ) {
+        return;
+    }
+
+    const openButton =
+        byId(
+            "openAdminCreateAnnouncementButton"
+        );
+
+    if (openButton) {
+
+        openButton.addEventListener(
+            "click",
+            function () {
+
+                openPortalModal(
+                    "adminCreateAnnouncementModal"
+                );
+            }
+        );
+    }
+
+    const form =
+        byId(
+            "adminCreateAnnouncementForm"
+        );
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            createAdminAnnouncement
+        );
+    }
+
+    const deleteButton =
+        byId(
+            "confirmAdminDeleteAnnouncement"
+        );
+
+    if (deleteButton) {
+
+        deleteButton.addEventListener(
+            "click",
+            confirmAnnouncementDelete
+        );
+    }
+
+    const filterForm =
+        byId(
+            "adminAnnouncementFilterForm"
+        );
+
+    if (filterForm) {
+
+        filterForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                renderAdminAnnouncements();
+
+                updateAnnouncementSummary();
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   APPLICATIONS
+   ========================================================= */
+
+async function loadApplicationsFromTable(
+    table,
+    type
+) {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(table)
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        return (
+            Array.isArray(data)
+                ? data
+                : []
+        ).map(
+            item => ({
+                ...item,
+                application_type:
+                    type,
+                source_table:
+                    table
+            })
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Application table error:",
+            table,
+            error
+        );
+
+        return [];
+    }
+}
+
+
+async function loadAdminApplications() {
+
+    if (
+        App.currentPage !==
+        "admin-accounts.html"
+    ) {
+        return;
+    }
+
+    const [
+        students,
+        teachers
+    ] =
+        await Promise.all([
+
+            loadApplicationsFromTable(
+                App.TABLES
+                    .STUDENT_APPLICATIONS,
+                "student"
+            ),
+
+            loadApplicationsFromTable(
+                App.TABLES
+                    .TEACHER_APPLICATIONS,
+                "teacher"
+            )
+
+        ]);
+
+    App.applications = [
+        ...students,
+        ...teachers
+    ];
+
+    renderAdminApplications();
+}
+
+
+function renderAdminApplications() {
+
+    const body =
+        byId(
+            "adminApplicationsBody"
+        );
+
+    if (!body) {
+        return;
+    }
+
+    const records =
+        App.applications.filter(
+            record =>
+                safeString(
+                    firstValue(
+                        record,
+                        ["status"],
+                        "pending"
+                    )
+                ).toLowerCase() ===
+                "pending"
+        );
+
+    setText(
+        "adminPendingApplicationTotal",
+        records.length
+    );
+
+    if (!records.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="table-empty">
+                    کوئی زیرِ التواء درخواست نہیں۔
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    body.innerHTML =
+        records.map(
+            record => `
+                <tr>
+
+                    <td>
+                        ${escapeHTML(
+                            record.id
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            firstValue(
+                                record,
+                                [
+                                    "name",
+                                    "student_name",
+                                    "teacher_name"
+                                ],
+                                "—"
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            record.application_type ===
+                            "student"
+                                ? "طالبہ"
+                                : "استاد"
+                        }
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            firstValue(
+                                record,
+                                ["phone"],
+                                "—"
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            formatDate(
+                                firstValue(
+                                    record,
+                                    [
+                                        "created_at",
+                                        "application_date"
+                                    ]
+                                )
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        زیرِ التواء
+                    </td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="small-action-button admin-application-details"
+                            data-id="${escapeHTML(
+                                record.id
+                            )}"
+                            data-table="${escapeHTML(
+                                record.source_table
+                            )}">
+                            تفصیل
+                        </button>
+                    </td>
+
+                </tr>
+            `
+        ).join("");
+
+    body
+        .querySelectorAll(
+            ".admin-application-details"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        showApplicationDetails(
+                            this.dataset.id,
+                            this.dataset.table
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+function findApplication(
+    id,
+    table
+) {
+
+    return App.applications.find(
+        item =>
+            String(item.id) ===
+                String(id) &&
+            item.source_table ===
+                table
+    ) || null;
+}
+
+
+function showApplicationDetails(
+    id,
+    table
+) {
+
+    const record =
+        findApplication(
+            id,
+            table
+        );
+
+    if (!record) {
+        return;
+    }
+
+    setText(
+        "adminApplicationDetailsName",
+        firstValue(
+            record,
+            [
+                "name",
+                "student_name",
+                "teacher_name"
+            ],
+            "—"
+        )
+    );
+
+    setText(
+        "adminApplicationDetailsType",
+        record.application_type ===
+            "student"
+            ? "طالبہ"
+            : "استاد"
+    );
+
+    setText(
+        "adminApplicationDetailsPhone",
+        firstValue(
+            record,
+            ["phone"],
+            "—"
+        )
+    );
+
+    setText(
+        "adminApplicationDetailsCNIC",
+        firstValue(
+            record,
+            ["cnic"],
+            "—"
+        )
+    );
+
+    setText(
+        "adminApplicationDetailsDate",
+        formatDateTime(
+            firstValue(
+                record,
+                [
+                    "created_at",
+                    "application_date"
+                ]
+            )
+        )
+    );
+
+    const idInput =
+        byId(
+            "adminApplicationDecisionId"
+        );
+
+    const tableInput =
+        byId(
+            "adminApplicationDecisionTable"
+        );
+
+    if (idInput) {
+        idInput.value = id;
+    }
+
+    if (tableInput) {
+        tableInput.value = table;
+    }
+
+    openPortalModal(
+        "adminApplicationDetailsModal"
+    );
+}
+
+
+async function updateApplicationStatus(
+    status
+) {
+
+    const id =
+        byId(
+            "adminApplicationDecisionId"
+        )?.value;
+
+    const table =
+        byId(
+            "adminApplicationDecisionTable"
+        )?.value;
+
+    if (
+        !id ||
+        !table
+    ) {
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(table)
+                .update({
+                    status: status,
+
+                    reviewed_by:
+                        getCurrentUserId(),
+
+                    reviewed_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        closePortalModal(
+            "adminApplicationDetailsModal"
+        );
+
+        closePortalModal(
+            "adminApplicationDecisionModal"
+        );
+
+        showPortalMessage(
+            "adminAccountsMessage",
+            status === "approved"
+                ? "درخواست منظور ہوگئی۔"
+                : "درخواست مسترد ہوگئی۔",
+            "success"
+        );
+
+        await loadAdminApplications();
+
+    } catch (error) {
+
+        console.error(
+            "Application decision:",
+            error
+        );
+
+        showPortalMessage(
+            "adminAccountsMessage",
+            "درخواست پر کارروائی نہیں ہوسکی۔",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   ACCOUNTS
+   ========================================================= */
+
+async function loadAccountTable(
+    table,
+    type
+) {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(table)
+                .select("*")
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        return (
+            Array.isArray(data)
+                ? data
+                : []
+        ).map(
+            item => ({
+                ...item,
+                account_type: type,
+                source_table: table
+            })
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Account load:",
+            table,
+            error
+        );
+
+        return [];
+    }
+}
+
+
+async function loadAdminAccounts() {
+
+    if (
+        App.currentPage !==
+        "admin-accounts.html"
+    ) {
+        return;
+    }
+
+    const [
+        studentAccounts,
+        teacherAccounts
+    ] =
+        await Promise.all([
+
+            loadAccountTable(
+                App.TABLES
+                    .STUDENT_ACCOUNTS,
+                "student"
+            ),
+
+            loadAccountTable(
+                App.TABLES
+                    .TEACHER_ACCOUNTS,
+                "teacher"
+            )
+
+        ]);
+
+    App.studentAccounts =
+        studentAccounts;
+
+    App.teacherAccounts =
+        teacherAccounts;
+
+    renderAdminAccounts();
+}
+
+
+function renderAdminAccounts() {
+
+    const body =
+        byId(
+            "adminAccountsBody"
+        );
+
+    if (!body) {
+        return;
+    }
+
+    const records = [
+        ...App.studentAccounts,
+        ...App.teacherAccounts
+    ];
+
+    if (!records.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="table-empty">
+                    کوئی اکاؤنٹ موجود نہیں۔
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    body.innerHTML =
+        records.map(
+            record => {
+
+                const active =
+                    firstValue(
+                        record,
+                        [
+                            "is_active",
+                            "active"
+                        ],
+                        true
+                    );
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(
+                                record.id
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "name",
+                                        "username",
+                                        "account_name"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${
+                                record.account_type ===
+                                "student"
+                                    ? "طالبہ"
+                                    : "استاد"
+                            }
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                firstValue(
+                                    record,
+                                    [
+                                        "username",
+                                        "phone"
+                                    ],
+                                    "—"
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${
+                                active === false
+                                    ? "غیر فعال"
+                                    : "فعال"
+                            }
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                formatDate(
+                                    firstValue(
+                                        record,
+                                        [
+                                            "created_at"
+                                        ]
+                                    )
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="small-action-button secondary admin-account-toggle"
+                                data-id="${escapeHTML(
+                                    record.id
+                                )}"
+                                data-table="${escapeHTML(
+                                    record.source_table
+                                )}"
+                                data-active="${
+                                    active === false
+                                        ? "false"
+                                        : "true"
+                                }">
+                                ${
+                                    active === false
+                                        ? "فعال کریں"
+                                        : "غیر فعال کریں"
+                                }
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+            }
+        ).join("");
+
+    body
+        .querySelectorAll(
+            ".admin-account-toggle"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        changeAccountStatus(
+                            this.dataset.id,
+                            this.dataset.table,
+                            this.dataset.active !==
+                                "true"
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+async function changeAccountStatus(
+    id,
+    table,
+    newStatus
+) {
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(table)
+                .update({
+                    is_active:
+                        newStatus,
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    id
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        showPortalMessage(
+            "adminAccountsMessage",
+            newStatus
+                ? "اکاؤنٹ فعال ہوگیا۔"
+                : "اکاؤنٹ غیر فعال ہوگیا۔",
+            "success"
+        );
+
+        await loadAdminAccounts();
+
+    } catch (error) {
+
+        console.error(
+            "Account status:",
+            error
+        );
+
+        showPortalMessage(
+            "adminAccountsMessage",
+            "اکاؤنٹ کی حالت تبدیل نہیں ہوسکی۔",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   ACCOUNT PAGE EVENTS
+   ========================================================= */
+
+function initializeAccountsPage() {
+
+    if (
+        App.currentPage !==
+        "admin-accounts.html"
+    ) {
+        return;
+    }
+
+    const approveButton =
+        byId(
+            "approveAdminApplication"
+        );
+
+    const rejectButton =
+        byId(
+            "rejectAdminApplication"
+        );
+
+    if (approveButton) {
+
+        approveButton.addEventListener(
+            "click",
+            function () {
+
+                updateApplicationStatus(
+                    "approved"
+                );
+            }
+        );
+    }
+
+    if (rejectButton) {
+
+        rejectButton.addEventListener(
+            "click",
+            function () {
+
+                updateApplicationStatus(
+                    "rejected"
+                );
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+async function loadAdminSettings() {
+
+    if (
+        App.currentPage !==
+        "admin-settings.html"
+    ) {
+        return;
+    }
+
+    setText(
+        "settingsAdminName",
+        getCurrentUserName() ||
+        "منتظم"
+    );
+
+    setText(
+        "settingsAdminRole",
+        "منتظم"
+    );
+
+    updateVisibleSessionInformation();
+
+    if (
+        !checkSupabase()
+    ) {
+        return;
+    }
+
+    const userId =
+        getCurrentUserId();
+
+    if (!userId) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES
+                        .ADMIN_ACCOUNTS
+                )
+                .select("*")
+                .eq(
+                    "id",
+                    userId
+                )
+                .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            return;
+        }
+
+        setText(
+            "settingsAdminName",
+            firstValue(
+                data,
+                [
+                    "name",
+                    "username"
+                ],
+                "منتظم"
+            )
+        );
+
+        setText(
+            "settingsAdminUsername",
+            firstValue(
+                data,
+                [
+                    "username",
+                    "phone"
+                ],
+                "—"
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Admin settings load:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   PASSWORD VALIDATION
+   ========================================================= */
+
+function validateNewPassword(
+    password
+) {
+
+    const value =
+        safeString(password);
+
+    return {
+        length:
+            value.length >= 8,
+
+        letter:
+            /[A-Za-z]/.test(
+                value
+            ),
+
+        number:
+            /[0-9]/.test(
+                value
+            )
+    };
+}
+
+
+function updatePasswordRequirements() {
+
+    const password =
+        byId(
+            "settingsAdminNewPassword"
+        )?.value || "";
+
+    const result =
+        validateNewPassword(
+            password
+        );
+
+    const mapping = {
+        settingsPasswordLength:
+            result.length,
+
+        settingsPasswordLetter:
+            result.letter,
+
+        settingsPasswordNumber:
+            result.number
+    };
+
+    Object.entries(
+        mapping
+    ).forEach(
+        ([id, valid]) => {
+
+            const element =
+                byId(id);
+
+            if (!element) {
                 return;
             }
 
-
-            const lastActivity =
-                Number(
-                    session.lastActivity ||
-                    0
-                );
-
-
-            if (
-                !lastActivity ||
-                Date.now() -
-                    lastActivity >
-                    App.INACTIVITY_LIMIT
-            ) {
-
-                App.logout(
-                    "timeout"
-                );
-            }
-        };
-
-
-    /* =====================================================
-       PREVENT DUPLICATE PAGE INITIALIZATION
-       ===================================================== */
-
-    App.markSystemReady =
-        function () {
-
-            document.documentElement
-                .setAttribute(
-                    "data-madrassa-system",
-                    "ready"
-                );
-        };
-
-
-    /* =====================================================
-       GLOBAL ERROR LOGGING
-       ===================================================== */
-
-    App.initializeGlobalErrorLogging =
-        function () {
-
-            window.addEventListener(
-                "error",
-                function (event) {
-
-                    console.error(
-                        "Application error:",
-                        event.error ||
-                        event.message
-                    );
-                }
+            element.classList.toggle(
+                "valid",
+                valid
             );
-
-
-            window.addEventListener(
-                "unhandledrejection",
-                function (event) {
-
-                    console.error(
-                        "Unhandled request error:",
-                        event.reason
-                    );
-                }
-            );
-        };
-
-
-    /* =====================================================
-       FINAL INITIALIZATION
-       ===================================================== */
-
-    App.ready(
-        function () {
-
-            App.applyFinalButtonTypes();
-
-
-            App.applyDateLimits();
-
-
-            App.preventSearchSubmit();
-
-
-            App.finalSessionValidation();
-
-
-            App.initializeGlobalErrorLogging();
-
-
-            App.markSystemReady();
         }
     );
 
-})();
+    return (
+        result.length &&
+        result.letter &&
+        result.number
+    );
+}
 
+
+/* =========================================================
+   CHANGE ADMIN PASSWORD
+   ========================================================= */
+
+async function changeAdminPassword(
+    event
+) {
+
+    event.preventDefault();
+
+    const newPassword =
+        byId(
+            "settingsAdminNewPassword"
+        )?.value || "";
+
+    const confirmPassword =
+        byId(
+            "settingsAdminConfirmPassword"
+        )?.value || "";
+
+    if (
+        !updatePasswordRequirements()
+    ) {
+
+        showPortalMessage(
+            "settingsAdminMessage",
+            "نیا پاس ورڈ کم از کم 8 حروف کا ہو اور اس میں حرف اور نمبر شامل ہوں۔",
+            "error"
+        );
+
+        return;
+    }
+
+    if (
+        newPassword !==
+        confirmPassword
+    ) {
+
+        showPortalMessage(
+            "settingsAdminMessage",
+            "دونوں نئے پاس ورڈ ایک جیسے نہیں ہیں۔",
+            "error"
+        );
+
+        return;
+    }
+
+    const userId =
+        getCurrentUserId();
+
+    if (!userId) {
+
+        showPortalMessage(
+            "settingsAdminMessage",
+            "منتظم کا اکاؤنٹ شناخت نہیں ہوسکا۔",
+            "error"
+        );
+
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } =
+            await App.supabase
+                .from(
+                    App.TABLES
+                        .ADMIN_ACCOUNTS
+                )
+                .update({
+                    password:
+                        newPassword,
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+                })
+                .eq(
+                    "id",
+                    userId
+                );
+
+        if (error) {
+            throw error;
+        }
+
+        const form =
+            byId(
+                "settingsAdminPasswordForm"
+            );
+
+        if (form) {
+            form.reset();
+        }
+
+        updatePasswordRequirements();
+
+        showPortalMessage(
+            "settingsAdminMessage",
+            "پاس ورڈ کامیابی سے تبدیل ہوگیا۔",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Password change:",
+            error
+        );
+
+        showPortalMessage(
+            "settingsAdminMessage",
+            "پاس ورڈ تبدیل نہیں ہوسکا۔",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   SETTINGS EVENTS
+   ========================================================= */
+
+function initializeSettingsPage() {
+
+    if (
+        App.currentPage !==
+        "admin-settings.html"
+    ) {
+        return;
+    }
+
+    const password =
+        byId(
+            "settingsAdminNewPassword"
+        );
+
+    if (password) {
+
+        password.addEventListener(
+            "input",
+            updatePasswordRequirements
+        );
+    }
+
+    const form =
+        byId(
+            "settingsAdminPasswordForm"
+        );
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            changeAdminPassword
+        );
+    }
+}
+
+
+/* =========================================================
+   LOGIN TIMEOUT MESSAGE
+   ========================================================= */
+
+function showStoredLogoutMessage() {
+
+    const message =
+        sessionStorage.getItem(
+            "logoutMessage"
+        );
+
+    if (!message) {
+        return;
+    }
+
+    const target =
+        byId(
+            "loginMessage"
+        );
+
+    if (target) {
+
+        showPortalMessage(
+            target,
+            message,
+            "warning"
+        );
+    }
+
+    sessionStorage.removeItem(
+        "logoutMessage"
+    );
+}
+
+
+/* =========================================================
+   RESPONSIVE SIDEBAR SAFETY
+   ========================================================= */
+
+function initializeResponsiveSafety() {
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            const sidebar =
+                byId(
+                    "adminSidebar"
+                );
+
+            const menu =
+                byId(
+                    "adminMenuButton"
+                );
+
+            const overlay =
+                byId(
+                    "adminSidebarOverlay"
+                );
+
+            if (
+                !sidebar ||
+                window.innerWidth > 850 ||
+                !sidebar.classList.contains(
+                    "open"
+                )
+            ) {
+                return;
+            }
+
+            if (
+                sidebar.contains(
+                    event.target
+                ) ||
+                (
+                    menu &&
+                    menu.contains(
+                        event.target
+                    )
+                )
+            ) {
+                return;
+            }
+
+            sidebar.classList.remove(
+                "open"
+            );
+
+            if (overlay) {
+
+                overlay.classList.remove(
+                    "active"
+                );
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   FINAL PAGE INITIALIZATION
+   ========================================================= */
+
+async function initializePart3Pages() {
+
+    if (
+        App.currentPage ===
+        "login.html"
+    ) {
+
+        showStoredLogoutMessage();
+
+        return;
+    }
+
+    if (
+        !isAdmin()
+    ) {
+        return;
+    }
+
+    if (
+        App.currentPage ===
+        "admin-announcements.html"
+    ) {
+
+        initializeAnnouncementPage();
+
+        await loadAdminAnnouncements();
+    }
+
+    if (
+        App.currentPage ===
+        "admin-accounts.html"
+    ) {
+
+        initializeAccountsPage();
+
+        await Promise.all([
+            loadAdminApplications(),
+            loadAdminAccounts()
+        ]);
+    }
+
+    if (
+        App.currentPage ===
+        "admin-settings.html"
+    ) {
+
+        initializeSettingsPage();
+
+        await loadAdminSettings();
+    }
+}
+
+
+/* =========================================================
+   GLOBAL ERROR SAFETY
+   ========================================================= */
+
+window.addEventListener(
+    "error",
+    function (event) {
+
+        console.error(
+            "Global script error:",
+            event.error ||
+            event.message
+        );
+    }
+);
+
+
+window.addEventListener(
+    "unhandledrejection",
+    function (event) {
+
+        console.error(
+            "Unhandled promise error:",
+            event.reason
+        );
+    }
+);
+
+
+/* =========================================================
+   FINAL RUN
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        initializeResponsiveSafety();
+
+        initializePart3Pages()
+            .catch(
+                error => {
+
+                    console.error(
+                        "Part 3 initialization error:",
+                        error
+                    );
+                }
+            );
+    }
+);
+
+
+/* =========================================================
+   SCRIPT.JS COMPLETE
+   PART 3 / 3
+   ========================================================= */
 
