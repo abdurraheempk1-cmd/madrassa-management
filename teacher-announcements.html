@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اعلانات | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="teacher-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="teacherMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            اعلانات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="teacherSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    استاد پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="teacher.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="teacher.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+
+                <a href="attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+
+                <a href="teacher-students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+
+                <a href="teacher-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+
+                <a href="teacher-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+
+                <a href="teacher-announcements.html"
+                   class="portal-nav-link active">
+
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+
+                </a>
+
+
+                <a href="teacher-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+
+                <a href="teacher-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="teacherLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="teacherSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        اعلانات
+                    </h1>
+
+                    <p>
+                        طالبات کے لیے اعلانات جاری کریں اور پڑھنے کی حالت دیکھیں
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        id="openCreateAnnouncementButton"
+                        class="small-action-button">
+                    نیا اعلان
+                </button>
+
+            </section>
+
+
+            <div id="teacherAnnouncementMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلانات کا خلاصہ
+                        </h2>
+
+                        <p>
+                            آپ کے جاری کردہ اعلانات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            🔔
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل اعلانات
+                            </span>
+
+                            <strong id="teacherAnnouncementTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <span>
+                                کل پڑھے گئے
+                            </span>
+
+                            <strong id="teacherAnnouncementReadTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ●
+                        </span>
+
+                        <div>
+
+                            <span>
+                                نہیں پڑھے گئے
+                            </span>
+
+                            <strong id="teacherAnnouncementUnreadTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلان تلاش کریں
+                        </h2>
+
+                        <p>
+                            جماعت یا تاریخ کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="teacherAnnouncementFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherAnnouncementClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="teacherAnnouncementClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherAnnouncementDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="teacherAnnouncementDateFilter">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherAnnouncementSearch">
+                            تلاش
+                        </label>
+
+                        <input type="search"
+                               id="teacherAnnouncementSearch"
+                               placeholder="عنوان تلاش کریں">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearTeacherAnnouncementFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- ANNOUNCEMENT LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            میرے اعلانات
+                        </h2>
+
+                        <p id="teacherAnnouncementRecordCount">
+                            اعلانات لوڈ کیے جا رہے ہیں...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="teacherAnnouncementList"
+                     class="announcement-card-list">
+
+                    <div class="portal-empty-state">
+                        اعلانات لوڈ کیے جا رہے ہیں...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CREATE ANNOUNCEMENT MODAL -->
+
+            <div class="portal-modal"
+                 id="createTeacherAnnouncementModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="createTeacherAnnouncementOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نیا اعلان
+                            </span>
+
+                            <h2>
+                                اعلان جاری کریں
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeCreateTeacherAnnouncement"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="createTeacherAnnouncementForm">
+
+
+                        <!-- CLASS -->
+
+                        <div class="portal-field">
+
+                            <label for="announcementTargetClass">
+                                جماعت
+                            </label>
+
+                            <select id="announcementTargetClass"
+                                    required>
+
+                                <option value="">
+                                    جماعت منتخب کریں
+                                </option>
+
+                                <option value="ثانویہ عامہ">
+                                    ثانویہ عامہ
+                                </option>
+
+                                <option value="ثانویہ خاصہ">
+                                    ثانویہ خاصہ
+                                </option>
+
+                                <option value="عالیہ اول">
+                                    عالیہ اول
+                                </option>
+
+                                <option value="عالیہ دوم">
+                                    عالیہ دوم
+                                </option>
+
+                                <option value="عالمیہ اول">
+                                    عالمیہ اول
+                                </option>
+
+                                <option value="عالمیہ دوم / دورۂ حدیث">
+                                    عالمیہ دوم / دورۂ حدیث
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- TITLE -->
+
+                        <div class="portal-field">
+
+                            <label for="teacherAnnouncementTitle">
+                                عنوان
+                            </label>
+
+                            <input type="text"
+                                   id="teacherAnnouncementTitle"
+                                   maxlength="200"
+                                   placeholder="اعلان کا عنوان"
+                                   required>
+
+                        </div>
+
+
+                        <!-- MESSAGE -->
+
+                        <div class="portal-field">
+
+                            <label for="teacherAnnouncementText">
+                                اعلان
+                            </label>
+
+                            <textarea id="teacherAnnouncementText"
+                                      rows="7"
+                                      maxlength="3000"
+                                      placeholder="اعلان کی مکمل تفصیل لکھیں"
+                                      required></textarea>
+
+                        </div>
+
+
+                        <div class="profile-readonly-note">
+                            تاریخ اور وقت اعلان جاری کرتے وقت خود محفوظ ہوں گے۔
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveTeacherAnnouncementButton"
+                                    class="small-action-button">
+                                اعلان جاری کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelCreateTeacherAnnouncement"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- ANNOUNCEMENT DETAILS MODAL -->
+
+            <div class="portal-modal"
+                 id="teacherAnnouncementDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="teacherAnnouncementDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اعلان کی تفصیل
+                            </span>
+
+                            <h2 id="teacherAnnouncementDetailsTitle">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeTeacherAnnouncementDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="teacherAnnouncementDetailsClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong id="teacherAnnouncementDetailsDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                وقت
+                            </span>
+
+                            <strong id="teacherAnnouncementDetailsTime">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جاری کنندہ
+                            </span>
+
+                            <strong id="teacherAnnouncementDetailsSender">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div class="announcement-message-box">
+
+                        <span>
+                            اعلان
+                        </span>
+
+                        <p id="teacherAnnouncementDetailsMessage">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <!-- READ SUMMARY -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            پڑھنے کی حالت
+                        </h3>
+
+
+                        <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        کل طالبات
+                                    </span>
+
+                                    <strong id="announcementDetailsTotalStudents">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        پڑھ لیا
+                                    </span>
+
+                                    <strong id="announcementDetailsReadStudents">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        نہیں پڑھا
+                                    </span>
+
+                                    <strong id="announcementDetailsUnreadStudents">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- STUDENT READ LIST -->
+
+                    <section class="profile-modal-section">
+
+                        <div class="portal-section-heading">
+
+                            <div>
+
+                                <h3>
+                                    طالبات کی تفصیل
+                                </h3>
+
+                                <p>
+                                    کس طالبہ نے اعلان پڑھا یا نہیں پڑھا
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="responsive-table-wrapper">
+
+                            <table class="portal-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>داخلہ نمبر</th>
+                                        <th>طالبہ</th>
+                                        <th>حالت</th>
+                                        <th>پڑھنے کی تاریخ</th>
+                                        <th>وقت</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="teacherAnnouncementReadersBody">
+
+                                    <tr>
+
+                                        <td colspan="5"
+                                            class="table-empty">
+                                            ریکارڈ لوڈ کیا جا رہا ہے...
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="closeTeacherAnnouncementDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
