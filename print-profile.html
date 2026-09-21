@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        مکمل پروفائل
+    </title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body class="admin-portal-page profile-print-page">
+
+<div class="print-toolbar no-print">
+
+    <button id="profileBackButton"
+            type="button">
+        واپس جائیں
+    </button>
+
+    <button id="profilePrintButton"
+            type="button">
+        براہِ راست پرنٹ
+    </button>
+
+    <button id="profilePdfButton"
+            type="button">
+        پی ڈی ایف محفوظ کریں
+    </button>
+
+</div>
+
+
+<main id="printProfileDocument"
+      class="print-profile-document">
+
+
+    <!-- =====================================
+         HEADER
+         ===================================== -->
+
+    <header class="print-profile-header">
+
+        <div class="print-logo">
+            🕌
+        </div>
+
+        <div>
+
+            <h1>
+                مدرسہ شہناز اختر للبنات
+            </h1>
+
+            <p>
+                گاؤں ہل غورغشتوں، ضلع بونیر
+            </p>
+
+            <h2 id="printProfileTitle">
+                مکمل پروفائل
+            </h2>
+
+        </div>
+
+    </header>
+
+
+    <div id="printProfileLoading"
+         class="print-status">
+        مکمل ریکارڈ تیار کیا جا رہا ہے...
+    </div>
+
+
+    <div id="printProfileError"
+         class="print-error"
+         hidden>
+    </div>
+
+
+    <div id="printProfileContent"
+         hidden>
+
+
+        <!-- =====================================
+             BASIC INFORMATION
+             ===================================== -->
+
+        <section class="print-section">
+
+            <h3>
+                ذاتی معلومات
+            </h3>
+
+            <div id="printPersonalData"
+                 class="print-info-grid">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ACCOUNT
+             ===================================== -->
+
+        <section id="printAccountSection"
+                 class="print-section">
+
+            <h3>
+                اکاؤنٹ کی معلومات
+            </h3>
+
+            <div id="printAccountData"
+                 class="print-info-grid">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             MAHRAMS
+             STUDENT ONLY
+             ===================================== -->
+
+        <section id="printMahramSection"
+                 class="print-section">
+
+            <h3>
+                محرم کی تفصیلات
+            </h3>
+
+            <div id="printMahrams">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ATTENDANCE
+             ===================================== -->
+
+        <section id="printAttendanceSection"
+                 class="print-section">
+
+            <h3>
+                مکمل حاضری
+            </h3>
+
+            <div id="printAttendanceSummary">
+            </div>
+
+            <div id="printAttendanceHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             CLASSES / PERIODS
+             TEACHER
+             ===================================== -->
+
+        <section id="printAssignmentsSection"
+                 class="print-section">
+
+            <h3>
+                کلاس، مضمون اور پیریڈ کی تاریخ
+            </h3>
+
+            <div id="printAssignmentsHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             EXAMS / RESULTS / DMC
+             ===================================== -->
+
+        <section id="printResultsSection"
+                 class="print-section">
+
+            <h3>
+                امتحانات اور نتائج
+            </h3>
+
+            <div id="printResultSummary">
+            </div>
+
+            <div id="printResultsHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             RATINGS
+             ===================================== -->
+
+        <section id="printRatingsSection"
+                 class="print-section">
+
+            <h3>
+                ریٹنگ
+            </h3>
+
+            <div id="printRatingsHistory">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             FEEDBACK
+             ===================================== -->
+
+        <section id="printFeedbackSection"
+                 class="print-section">
+
+            <h3>
+                فیڈ بیک اور نوٹس
+            </h3>
+
+            <div id="printFeedbackHistory">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             STUDENT FEES
+             ===================================== -->
+
+        <section id="printFeesSection"
+                 class="print-section">
+
+            <h3>
+                فیس کی مکمل تفصیل
+            </h3>
+
+            <div id="printFeeSummary">
+            </div>
+
+            <div id="printFeeHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             FEE SLIPS
+             ===================================== -->
+
+        <section id="printFeeSlipsSection"
+                 class="print-section">
+
+            <h3>
+                تمام فیس رسیدیں
+            </h3>
+
+            <div id="printFeeSlips">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             TEACHER SALARY
+             ===================================== -->
+
+        <section id="printSalarySection"
+                 class="print-section">
+
+            <h3>
+                تنخواہ کی مکمل تفصیل
+            </h3>
+
+            <div id="printSalarySummary">
+            </div>
+
+            <div id="printSalaryHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             SALARY SLIPS
+             ===================================== -->
+
+        <section id="printSalarySlipsSection"
+                 class="print-section">
+
+            <h3>
+                تمام تنخواہ کی رسیدیں
+            </h3>
+
+            <div id="printSalarySlips">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             HOMEWORK
+             ===================================== -->
+
+        <section id="printHomeworkSection"
+                 class="print-section">
+
+            <h3>
+                ہوم ورک کی تاریخ
+            </h3>
+
+            <div id="printHomeworkHistory">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ANNOUNCEMENTS
+             ===================================== -->
+
+        <section id="printAnnouncementsSection"
+                 class="print-section">
+
+            <h3>
+                اعلانات کی تاریخ
+            </h3>
+
+            <div id="printAnnouncementsHistory">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             HOSTEL
+             ===================================== -->
+
+        <section id="printHostelSection"
+                 class="print-section">
+
+            <h3>
+                ہاسٹل آمد و رفت کی مکمل تاریخ
+            </h3>
+
+            <div id="printHostelHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             PROMOTIONS
+             ===================================== -->
+
+        <section id="printPromotionSection"
+                 class="print-section">
+
+            <h3>
+                کلاس اور ترقی کی تاریخ
+            </h3>
+
+            <div id="printPromotionHistory"
+                 class="print-table-wrap">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             UPLOADED DOCUMENTS
+             ===================================== -->
+
+        <section id="printUploadedDocumentsSection"
+                 class="print-section">
+
+            <h3>
+                جمع شدہ دستاویزات
+            </h3>
+
+            <div id="printUploadedDocuments">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             MADRASSA ISSUED DOCUMENTS
+             ===================================== -->
+
+        <section id="printIssuedDocumentsSection"
+                 class="print-section">
+
+            <h3>
+                مدرسہ کی طرف سے جاری کردہ دستاویزات
+            </h3>
+
+            <div id="printIssuedDocuments">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ACCOUNT / SYSTEM ACTIVITY
+             ===================================== -->
+
+        <section id="printActivitySection"
+                 class="print-section">
+
+            <h3>
+                ریکارڈ اور سرگرمی کی تاریخ
+            </h3>
+
+            <div id="printActivityHistory">
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             FOOTER
+             ===================================== -->
+
+        <footer class="print-profile-footer">
+
+            <div>
+                ریکارڈ تیار کرنے کی تاریخ:
+                <span id="printGeneratedDate"></span>
+            </div>
+
+            <div class="signature-area">
+
+                <div>
+                    ____________________
+                    <br>
+                    ایڈمن دستخط
+                </div>
+
+                <div>
+                    ____________________
+                    <br>
+                    مدرسہ مہر
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
