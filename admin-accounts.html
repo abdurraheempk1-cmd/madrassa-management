@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اکاؤنٹس اور منظوری | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="admin-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="adminMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            اکاؤنٹس اور منظوری
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="adminSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    ایڈمن پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="admin.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a href="teachers.html"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>اساتذہ</strong>
+                </a>
+
+                <a href="admin-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+                <a href="admin-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+                <a href="admin-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a href="admin-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a href="admin-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>اساتذہ کے نوٹس</strong>
+                </a>
+
+                <a href="admin-accounts.html"
+                   class="portal-nav-link active">
+
+                    <span>🔐</span>
+
+                    <strong>
+                        اکاؤنٹس اور منظوری
+                    </strong>
+
+                    <span class="nav-count"
+                          id="adminPendingApprovalCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+                <a href="admin-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="adminLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        اکاؤنٹس اور منظوری
+                    </h1>
+
+                    <p>
+                        طالبات اور اساتذہ کے اکاؤنٹس کا مرکزی انتظام
+                    </p>
+
+                </div>
+
+                <a href="admin.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="adminAccountsMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اکاؤنٹس کا خلاصہ
+                        </h2>
+
+                        <p>
+                            موجودہ اکاؤنٹس اور درخواستوں کی حالت
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                طالبات کے اکاؤنٹس
+                            </span>
+
+                            <strong id="adminStudentAccountsTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                اساتذہ کے اکاؤنٹس
+                            </span>
+
+                            <strong id="adminTeacherAccountsTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                فعال اکاؤنٹس
+                            </span>
+
+                            <strong id="adminActiveAccountsTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                غیر فعال
+                            </span>
+
+                            <strong id="adminInactiveAccountsTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                زیرِ التواء درخواستیں
+                            </span>
+
+                            <strong id="adminPendingApplicationsTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- TABS -->
+
+            <section class="portal-section">
+
+                <div class="account-tabs">
+
+                    <button type="button"
+                            class="account-tab-button active"
+                            data-account-tab="applications">
+                        زیرِ التواء درخواستیں
+                    </button>
+
+                    <button type="button"
+                            class="account-tab-button"
+                            data-account-tab="students">
+                        طالبات کے اکاؤنٹس
+                    </button>
+
+                    <button type="button"
+                            class="account-tab-button"
+                            data-account-tab="teachers">
+                        اساتذہ کے اکاؤنٹس
+                    </button>
+
+                    <button type="button"
+                            class="account-tab-button"
+                            data-account-tab="history">
+                        تبدیلیوں کا ریکارڈ
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 APPLICATIONS
+                 ================================================== -->
+
+            <section class="portal-section account-tab-panel"
+                     id="adminApplicationsPanel">
+
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            زیرِ التواء درخواستیں
+                        </h2>
+
+                        <p>
+                            طالبات اور اساتذہ کی اکاؤنٹ درخواستیں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminApplicationsFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="adminApplicationTypeFilter">
+                            اکاؤنٹ کی قسم
+                        </label>
+
+                        <select id="adminApplicationTypeFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="student">
+                                طالبہ
+                            </option>
+
+                            <option value="teacher">
+                                استاد
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminApplicationStatusFilter">
+                            حالت
+                        </label>
+
+                        <select id="adminApplicationStatusFilter">
+
+                            <option value="pending">
+                                زیرِ التواء
+                            </option>
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="approved">
+                                منظور شدہ
+                            </option>
+
+                            <option value="rejected">
+                                مسترد شدہ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminApplicationSearch">
+                            تلاش
+                        </label>
+
+                        <input type="search"
+                               id="adminApplicationSearch"
+                               placeholder="نام، فون یا نمبر">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAdminApplicationFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>قسم</th>
+                                <th>نام</th>
+                                <th>نمبر</th>
+                                <th>فون</th>
+                                <th>حالت</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminApplicationsBody">
+
+                            <tr>
+
+                                <td colspan="7"
+                                    class="table-empty">
+                                    درخواستیں لوڈ کی جا رہی ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 STUDENT ACCOUNTS
+                 ================================================== -->
+
+            <section class="portal-section account-tab-panel"
+                     id="adminStudentAccountsPanel"
+                     hidden>
+
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            طالبات کے اکاؤنٹس
+                        </h2>
+
+                        <p>
+                            تمام طالبات کے Login اکاؤنٹس
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminStudentAccountsFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="adminStudentAccountSearch">
+                            طالبہ
+                        </label>
+
+                        <input type="search"
+                               id="adminStudentAccountSearch"
+                               placeholder="نام یا داخلہ نمبر">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminStudentAccountClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="adminStudentAccountClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminStudentAccountStatusFilter">
+                            حالت
+                        </label>
+
+                        <select id="adminStudentAccountStatusFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="active">
+                                فعال
+                            </option>
+
+                            <option value="inactive">
+                                غیر فعال
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAdminStudentAccountFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>طالبہ</th>
+                                <th>داخلہ نمبر</th>
+                                <th>جماعت</th>
+                                <th>فون</th>
+                                <th>حالت</th>
+                                <th>آخری Login</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminStudentAccountsBody">
+
+                            <tr>
+
+                                <td colspan="7"
+                                    class="table-empty">
+                                    اکاؤنٹس لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 TEACHER ACCOUNTS
+                 ================================================== -->
+
+            <section class="portal-section account-tab-panel"
+                     id="adminTeacherAccountsPanel"
+                     hidden>
+
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اساتذہ کے اکاؤنٹس
+                        </h2>
+
+                        <p>
+                            تمام اساتذہ کے Login اکاؤنٹس
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminTeacherAccountsFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="adminTeacherAccountSearch">
+                            استاد
+                        </label>
+
+                        <input type="search"
+                               id="adminTeacherAccountSearch"
+                               placeholder="نام یا استاد نمبر">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="adminTeacherAccountStatusFilter">
+                            حالت
+                        </label>
+
+                        <select id="adminTeacherAccountStatusFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="active">
+                                فعال
+                            </option>
+
+                            <option value="inactive">
+                                غیر فعال
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAdminTeacherAccountFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>استاد</th>
+                                <th>استاد نمبر</th>
+                                <th>فون</th>
+                                <th>حالت</th>
+                                <th>آخری Login</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminTeacherAccountsBody">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="table-empty">
+                                    اکاؤنٹس لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 CHANGE HISTORY
+                 ================================================== -->
+
+            <section class="portal-section account-tab-panel"
+                     id="adminAccountHistoryPanel"
+                     hidden>
+
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اکاؤنٹ تبدیلیوں کا ریکارڈ
+                        </h2>
+
+                        <p>
+                            اکاؤنٹس پر کی گئی اہم کارروائیوں کی تفصیل
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>وقت</th>
+                                <th>اکاؤنٹ</th>
+                                <th>قسم</th>
+                                <th>کارروائی</th>
+                                <th>ایڈمن</th>
+                                <th>تفصیل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="adminAccountHistoryBody">
+
+                            <tr>
+
+                                <td colspan="7"
+                                    class="table-empty">
+                                    ریکارڈ لوڈ کیا جا رہا ہے...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+                 APPLICATION DETAILS MODAL
+                 ================================================== -->
+
+            <div class="portal-modal"
+                 id="adminApplicationDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminApplicationDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اکاؤنٹ درخواست
+                            </span>
+
+                            <h2 id="adminApplicationDetailsName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminApplicationDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <input type="hidden"
+                           id="adminApplicationDetailsId">
+
+                    <input type="hidden"
+                           id="adminApplicationDetailsType">
+
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ کی قسم
+                            </span>
+
+                            <strong id="adminApplicationDetailsAccountType">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                نام
+                            </span>
+
+                            <strong id="adminApplicationDetailsFullName">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                نمبر
+                            </span>
+
+                            <strong id="adminApplicationDetailsNumber">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                فون
+                            </span>
+
+                            <strong id="adminApplicationDetailsPhone">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="adminApplicationDetailsClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                درخواست کی تاریخ
+                            </span>
+
+                            <strong id="adminApplicationDetailsDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                حالت
+                            </span>
+
+                            <strong id="adminApplicationDetailsStatus">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-readonly-note">
+                        اکاؤنٹ صرف ایڈمن کی منظوری کے بعد فعال ہوگا۔
+                    </div>
+
+
+                    <div class="portal-form-actions"
+                         id="adminApplicationDecisionActions">
+
+                        <button type="button"
+                                id="approveAdminApplication"
+                                class="small-action-button">
+                            منظور کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="rejectAdminApplication"
+                                class="small-action-button danger">
+                            مسترد کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="closeAdminApplicationDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 APPROVAL / REJECTION MODAL
+                 ================================================== -->
+
+            <div class="portal-modal"
+                 id="adminApplicationDecisionModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminApplicationDecisionOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                درخواست کی کارروائی
+                            </span>
+
+                            <h2 id="adminApplicationDecisionTitle">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminApplicationDecision"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="adminApplicationDecisionForm">
+
+
+                        <input type="hidden"
+                               id="adminDecisionApplicationId">
+
+                        <input type="hidden"
+                               id="adminDecisionApplicationType">
+
+                        <input type="hidden"
+                               id="adminDecisionAction">
+
+
+                        <div class="portal-field">
+
+                            <label for="adminApplicationDecisionNote">
+                                ایڈمن نوٹ
+                            </label>
+
+                            <textarea id="adminApplicationDecisionNote"
+                                      rows="5"
+                                      maxlength="1000"
+                                      placeholder="ضرورت ہو تو وجہ یا نوٹ لکھیں"></textarea>
+
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="confirmAdminApplicationDecision"
+                                    class="small-action-button">
+                                تصدیق کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelAdminApplicationDecision"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ACCOUNT DETAILS / STATUS
+                 ================================================== -->
+
+            <div class="portal-modal"
+                 id="adminAccountDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminAccountDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اکاؤنٹ کی تفصیل
+                            </span>
+
+                            <h2 id="adminAccountDetailsName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminAccountDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <input type="hidden"
+                           id="adminAccountDetailsId">
+
+                    <input type="hidden"
+                           id="adminAccountDetailsType">
+
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                نمبر
+                            </span>
+
+                            <strong id="adminAccountDetailsNumber">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ کی قسم
+                            </span>
+
+                            <strong id="adminAccountDetailsRole">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                فون
+                            </span>
+
+                            <strong id="adminAccountDetailsPhone">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                حالت
+                            </span>
+
+                            <strong id="adminAccountDetailsStatus">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اکاؤنٹ بنانے کی تاریخ
+                            </span>
+
+                            <strong id="adminAccountDetailsCreated">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                آخری Login
+                            </span>
+
+                            <strong id="adminAccountDetailsLastLogin">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="adminToggleAccountStatus"
+                                class="small-action-button">
+                            حالت تبدیل کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="closeAdminAccountDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 CHANGE ACCOUNT STATUS
+                 ================================================== -->
+
+            <div class="portal-modal"
+                 id="adminAccountStatusModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminAccountStatusOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اکاؤنٹ کی حالت
+                            </span>
+
+                            <h2>
+                                حالت تبدیل کریں
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminAccountStatus"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="adminAccountStatusForm">
+
+
+                        <input type="hidden"
+                               id="adminStatusAccountId">
+
+                        <input type="hidden"
+                               id="adminStatusAccountType">
+
+
+                        <div class="portal-field">
+
+                            <label for="adminNewAccountStatus">
+                                نئی حالت
+                            </label>
+
+                            <select id="adminNewAccountStatus"
+                                    required>
+
+                                <option value="">
+                                    منتخب کریں
+                                </option>
+
+                                <option value="active">
+                                    فعال
+                                </option>
+
+                                <option value="inactive">
+                                    غیر فعال
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="adminAccountStatusReason">
+                                تبدیلی کی وجہ
+                            </label>
+
+                            <textarea id="adminAccountStatusReason"
+                                      rows="5"
+                                      maxlength="1000"
+                                      required
+                                      placeholder="اکاؤنٹ کی حالت تبدیل کرنے کی وجہ لکھیں"></textarea>
+
+                        </div>
+
+
+                        <div class="profile-readonly-note">
+                            یہ تبدیلی اکاؤنٹ کے ریکارڈ میں محفوظ کی جائے گی۔
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveAdminAccountStatus"
+                                    class="small-action-button">
+                                تبدیلی محفوظ کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelAdminAccountStatus"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
