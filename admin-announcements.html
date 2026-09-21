@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>اعلانات | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+
+<body class="admin-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="adminMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            اعلانات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="adminSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    ایڈمن پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="admin.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+
+                <a href="students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+
+                <a href="teachers.html"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>اساتذہ</strong>
+                </a>
+
+
+                <a href="admin-attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+
+                <a href="admin-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+
+                <a href="admin-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+
+                <a href="admin-announcements.html"
+                   class="portal-nav-link active">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+
+                <a href="admin-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>اساتذہ کے نوٹس</strong>
+                </a>
+
+
+                <a href="admin-accounts.html"
+                   class="portal-nav-link">
+                    <span>🔐</span>
+                    <strong>اکاؤنٹس اور منظوری</strong>
+                </a>
+
+
+                <a href="admin-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="adminLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        اعلانات
+                    </h1>
+
+                    <p>
+                        مدرسہ اور جماعتوں کے اعلانات کا مکمل انتظام
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        id="openAdminCreateAnnouncementButton"
+                        class="small-action-button">
+                    نیا اعلان
+                </button>
+
+            </section>
+
+
+            <div id="adminAnnouncementMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلانات کا خلاصہ
+                        </h2>
+
+                        <p>
+                            تمام محفوظ اعلانات کی موجودہ حالت
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                کل اعلانات
+                            </span>
+
+                            <strong id="adminAnnouncementTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                تمام مدرسہ
+                            </span>
+
+                            <strong id="adminAnnouncementAllSchool">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                جماعتی اعلانات
+                            </span>
+
+                            <strong id="adminAnnouncementClassTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                پڑھے گئے
+                            </span>
+
+                            <strong id="adminAnnouncementReadTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <div>
+
+                            <span>
+                                نہیں پڑھے گئے
+                            </span>
+
+                            <strong id="adminAnnouncementUnreadTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- FILTERS -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            اعلان تلاش کریں
+                        </h2>
+
+                        <p>
+                            جماعت، جاری کنندہ، تاریخ یا عنوان کے مطابق
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="adminAnnouncementFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <!-- TARGET -->
+
+                    <div class="portal-field">
+
+                        <label for="adminAnnouncementTargetFilter">
+                            اعلان کی قسم
+                        </label>
+
+                        <select id="adminAnnouncementTargetFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="all">
+                                تمام مدرسہ
+                            </option>
+
+                            <option value="class">
+                                مخصوص جماعت
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CLASS -->
+
+                    <div class="portal-field">
+
+                        <label for="adminAnnouncementClassFilter">
+                            جماعت
+                        </label>
+
+                        <select id="adminAnnouncementClassFilter">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CREATOR -->
+
+                    <div class="portal-field">
+
+                        <label for="adminAnnouncementCreatorFilter">
+                            جاری کنندہ
+                        </label>
+
+                        <select id="adminAnnouncementCreatorFilter">
+
+                            <option value="">
+                                تمام
+                            </option>
+
+                            <option value="admin">
+                                ایڈمن
+                            </option>
+
+                            <option value="teacher">
+                                استاد
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="portal-field">
+
+                        <label for="adminAnnouncementDateFilter">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="adminAnnouncementDateFilter">
+
+                    </div>
+
+
+                    <!-- SEARCH -->
+
+                    <div class="portal-field">
+
+                        <label for="adminAnnouncementSearch">
+                            تلاش
+                        </label>
+
+                        <input type="search"
+                               id="adminAnnouncementSearch"
+                               placeholder="عنوان یا اعلان تلاش کریں">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearAdminAnnouncementFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- ANNOUNCEMENT LIST -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            تمام اعلانات
+                        </h2>
+
+                        <p id="adminAnnouncementRecordCount">
+                            اعلانات لوڈ کیے جا رہے ہیں...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="adminAnnouncementList"
+                     class="announcement-card-list">
+
+                    <div class="portal-empty-state">
+                        اعلانات لوڈ کیے جا رہے ہیں...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CREATE ANNOUNCEMENT -->
+
+            <div class="portal-modal"
+                 id="adminCreateAnnouncementModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminCreateAnnouncementOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نیا اعلان
+                            </span>
+
+                            <h2>
+                                اعلان جاری کریں
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminCreateAnnouncement"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="adminCreateAnnouncementForm">
+
+
+                        <!-- TARGET TYPE -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAnnouncementTargetType">
+                                اعلان کس کے لیے ہے؟
+                            </label>
+
+                            <select id="adminAnnouncementTargetType"
+                                    required>
+
+                                <option value="">
+                                    منتخب کریں
+                                </option>
+
+                                <option value="all">
+                                    تمام مدرسہ
+                                </option>
+
+                                <option value="class">
+                                    مخصوص جماعت
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- CLASS -->
+
+                        <div class="portal-field"
+                             id="adminAnnouncementClassField"
+                             hidden>
+
+                            <label for="adminAnnouncementTargetClass">
+                                جماعت
+                            </label>
+
+                            <select id="adminAnnouncementTargetClass">
+
+                                <option value="">
+                                    جماعت منتخب کریں
+                                </option>
+
+                                <option value="ثانویہ عامہ">
+                                    ثانویہ عامہ
+                                </option>
+
+                                <option value="ثانویہ خاصہ">
+                                    ثانویہ خاصہ
+                                </option>
+
+                                <option value="عالیہ اول">
+                                    عالیہ اول
+                                </option>
+
+                                <option value="عالیہ دوم">
+                                    عالیہ دوم
+                                </option>
+
+                                <option value="عالمیہ اول">
+                                    عالمیہ اول
+                                </option>
+
+                                <option value="عالمیہ دوم / دورۂ حدیث">
+                                    عالمیہ دوم / دورۂ حدیث
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- TITLE -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAnnouncementTitle">
+                                عنوان
+                            </label>
+
+                            <input type="text"
+                                   id="adminAnnouncementTitle"
+                                   maxlength="200"
+                                   placeholder="اعلان کا عنوان"
+                                   required>
+
+                        </div>
+
+
+                        <!-- MESSAGE -->
+
+                        <div class="portal-field">
+
+                            <label for="adminAnnouncementText">
+                                اعلان
+                            </label>
+
+                            <textarea id="adminAnnouncementText"
+                                      rows="7"
+                                      maxlength="3000"
+                                      placeholder="اعلان کی مکمل تفصیل لکھیں"
+                                      required></textarea>
+
+                        </div>
+
+
+                        <div class="profile-readonly-note">
+                            اعلان جاری کرتے وقت تاریخ، وقت اور ایڈمن کی معلومات خود محفوظ ہوں گی۔
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    id="saveAdminAnnouncementButton"
+                                    class="small-action-button">
+                                اعلان جاری کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelAdminCreateAnnouncement"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- ANNOUNCEMENT DETAILS -->
+
+            <div class="portal-modal"
+                 id="adminAnnouncementDetailsModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminAnnouncementDetailsOverlay">
+                </div>
+
+
+                <div class="portal-modal-card student-record-modal">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اعلان کی تفصیل
+                            </span>
+
+                            <h2 id="adminAnnouncementDetailsTitle">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminAnnouncementDetails"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="student-profile-details">
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                اعلان کی قسم
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsTarget">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جماعت
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsClass">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                جاری کنندہ
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsCreator">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                کردار
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsCreatorRole">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsDate">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-detail-item">
+
+                            <span>
+                                وقت
+                            </span>
+
+                            <strong id="adminAnnouncementDetailsTime">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div class="announcement-message-box">
+
+                        <span>
+                            اعلان
+                        </span>
+
+                        <p id="adminAnnouncementDetailsMessage">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <!-- READ SUMMARY -->
+
+                    <section class="profile-modal-section">
+
+                        <h3>
+                            پڑھنے کی حالت
+                        </h3>
+
+
+                        <div class="dashboard-stat-grid compact-stat-grid">
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        کل طالبات
+                                    </span>
+
+                                    <strong id="adminAnnouncementDetailsTotalStudents">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        پڑھ لیا
+                                    </span>
+
+                                    <strong id="adminAnnouncementDetailsRead">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        نہیں پڑھا
+                                    </span>
+
+                                    <strong id="adminAnnouncementDetailsUnread">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+
+                            <article class="dashboard-stat-card">
+
+                                <div>
+
+                                    <span>
+                                        پڑھنے کا فیصد
+                                    </span>
+
+                                    <strong id="adminAnnouncementDetailsReadPercentage">
+                                        0%
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- STUDENT READ STATUS -->
+
+                    <section class="profile-modal-section">
+
+                        <div class="portal-section-heading">
+
+                            <div>
+
+                                <h3>
+                                    طالبات کی پڑھنے کی تفصیل
+                                </h3>
+
+                                <p>
+                                    ہر طالبہ کی پڑھی یا نہ پڑھی حالت
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="responsive-table-wrapper">
+
+                            <table class="portal-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>داخلہ نمبر</th>
+                                        <th>طالبہ</th>
+                                        <th>جماعت</th>
+                                        <th>حالت</th>
+                                        <th>پڑھنے کی تاریخ</th>
+                                        <th>وقت</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="adminAnnouncementReadersBody">
+
+                                    <tr>
+
+                                        <td colspan="6"
+                                            class="table-empty">
+                                            ریکارڈ لوڈ کیا جا رہا ہے...
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="closeAdminAnnouncementDetailsBottom"
+                                class="small-action-button secondary">
+                            بند کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELETE CONFIRMATION -->
+
+            <div class="portal-modal"
+                 id="adminDeleteAnnouncementModal"
+                 hidden>
+
+
+                <div class="portal-modal-overlay"
+                     id="adminDeleteAnnouncementOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                اعلان حذف کریں
+                            </span>
+
+                            <h2>
+                                تصدیق
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeAdminDeleteAnnouncement"
+                                class="portal-close-button">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <p class="portal-confirmation-text">
+                        کیا آپ واقعی یہ اعلان حذف کرنا چاہتے ہیں؟
+                    </p>
+
+
+                    <input type="hidden"
+                           id="adminDeleteAnnouncementId">
+
+
+                    <div class="portal-form-actions">
+
+                        <button type="button"
+                                id="confirmAdminDeleteAnnouncement"
+                                class="small-action-button danger">
+                            حذف کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="cancelAdminDeleteAnnouncement"
+                                class="small-action-button secondary">
+                            منسوخ کریں
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
