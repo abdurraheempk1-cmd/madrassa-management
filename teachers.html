@@ -2,534 +2,890 @@
 <html lang="ur" dir="rtl">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>
-        اساتذہ - مدرسہ شہناز اختر للبنات
-    </title>
+    <title>استاد ڈیش بورڈ | مدرسہ شہناز اختر للبنات</title>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet"
+          href="style.css">
 </head>
 
-<body>
 
+<body class="teacher-portal-page">
 
-    <main class="teacher-page">
+    <!-- =========================================
+         MOBILE HEADER
+    ========================================== -->
 
+    <header class="portal-mobile-header">
 
-        <!-- =========================
-             HEADER
-        ========================== -->
+        <button type="button"
+                class="portal-menu-button"
+                id="teacherMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
 
-        <div class="teacher-header">
-
-            <div class="teacher-header-buttons">
-
-                <button
-                    type="button"
-                    id="backToDashboard"
-                    class="back-button"
-                >
-                    ↩️ ڈیش بورڈ
-                </button>
-
-                <button
-                    type="button"
-                    id="logoutButton"
-                    class="logout-button"
-                >
-                    🚪 لاگ آؤٹ
-                </button>
-
-            </div>
-
-
-            <div>
-
-                <h1>
-                    👩‍🏫 اساتذہ
-                </h1>
-
-                <p class="address">
-                    مدرسہ شہناز اختر للبنات
-                </p>
-
-            </div>
-
+        <div class="portal-mobile-title">
+            استاد پورٹل
         </div>
 
-
-        <!-- =========================
-             STATISTICS
-        ========================== -->
-
-        <div class="teacher-stats">
+    </header>
 
 
-            <div class="teacher-stat-card">
+    <div class="portal-layout">
 
-                <div class="teacher-stat-icon">
-                    👩‍🏫
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="portal-sidebar"
+               id="teacherSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
                 </div>
-
-                <div class="teacher-stat-title">
-                    کل اساتذہ
-                </div>
-
-                <div
-                    id="teacherTotal"
-                    class="teacher-stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="teacher-stat-card">
-
-                <div class="teacher-stat-icon">
-                    ✅
-                </div>
-
-                <div class="teacher-stat-title">
-                    فعال اساتذہ
-                </div>
-
-                <div
-                    id="activeTeacherTotal"
-                    class="teacher-stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="teacher-stat-card">
-
-                <div class="teacher-stat-icon">
-                    ⏳
-                </div>
-
-                <div class="teacher-stat-title">
-                    زیرِ منظوری درخواستیں
-                </div>
-
-                <div
-                    id="pendingTeacherTotal"
-                    class="teacher-stat-number"
-                >
-                    0
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             ADMIN ACTION
-        ========================== -->
-
-        <div
-            id="teacherAdminActions"
-            class="teacher-section admin-only"
-        >
-
-            <button
-                type="button"
-                id="showTeacherForm"
-                class="teacher-add-button"
-            >
-                ➕ نیا استاد شامل کریں
-            </button>
-
-        </div>
-
-
-        <!-- =========================
-             TEACHER FORM
-        ========================== -->
-
-        <div
-            id="teacherFormContainer"
-            class="teacher-section hidden admin-only"
-        >
-
-            <h2 id="teacherFormTitle">
-                👩‍🏫 نئے استاد کی معلومات
-            </h2>
-
-
-            <div
-                id="teacherFormMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
-
-
-            <form id="teacherForm">
-
-
-                <input
-                    type="hidden"
-                    id="editTeacherId"
-                >
-
-
-                <div class="teacher-form-grid">
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherCode">
-                            استاد کا کوڈ
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teacherCode"
-                            placeholder="مثلاً T-001"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherName">
-                            استاد کا نام
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teacherName"
-                            placeholder="استاد کا نام"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherFatherName">
-                            والد کا نام
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teacherFatherName"
-                            placeholder="والد کا نام"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherPhone">
-                            موبائل نمبر
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="teacherPhone"
-                            inputmode="numeric"
-                            maxlength="11"
-                            placeholder="03XXXXXXXXX"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherCNIC">
-                            شناختی کارڈ نمبر
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teacherCNIC"
-                            inputmode="numeric"
-                            maxlength="15"
-                            placeholder="00000-0000000-0"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherDateOfBirth">
-                            تاریخ پیدائش
-                        </label>
-
-                        <input
-                            type="date"
-                            id="teacherDateOfBirth"
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherQualification">
-                            تعلیمی قابلیت
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teacherQualification"
-                            placeholder="مثلاً عالمہ، ایم اے، بی اے"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherJoiningDate">
-                            تقرری کی تاریخ
-                        </label>
-
-                        <input
-                            type="date"
-                            id="teacherJoiningDate"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="teacher-field">
-
-                        <label for="teacherStatus">
-                            استاد کی حیثیت
-                        </label>
-
-                        <select
-                            id="teacherStatus"
-                            required
-                        >
-
-                            <option value="active">
-                                فعال
-                            </option>
-
-                            <option value="inactive">
-                                غیر فعال
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="teacher-field full-width">
-
-                        <label for="teacherAddress">
-                            مکمل پتہ
-                        </label>
-
-                        <textarea
-                            id="teacherAddress"
-                            rows="3"
-                            placeholder="استاد کا مکمل پتہ"
-                            required
-                        ></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =========================
-                     BUTTONS
-                ========================== -->
-
-                <div class="teacher-form-buttons">
-
-                    <button
-                        type="submit"
-                        id="saveTeacherButton"
-                        class="save-button"
-                    >
-                        💾 محفوظ کریں
-                    </button>
-
-                    <button
-                        type="button"
-                        id="cancelTeacherButton"
-                        class="cancel-button"
-                    >
-                        ❌ منسوخ کریں
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-
-        <!-- =========================
-             SEARCH
-        ========================== -->
-
-        <div class="teacher-section">
-
-            <h2>
-                🔍 استاد تلاش کریں
-            </h2>
-
-            <input
-                type="search"
-                id="teacherSearch"
-                class="teacher-search-input"
-                placeholder="نام، کوڈ، شناختی کارڈ یا موبائل نمبر سے تلاش کریں"
-            >
-
-        </div>
-
-
-        <!-- =========================
-             TEACHER LIST
-        ========================== -->
-
-        <div class="teacher-section">
-
-            <div class="teacher-list-header">
 
                 <h2>
-                    👩‍🏫 اساتذہ کی فہرست
+                    مدرسہ شہناز اختر للبنات
                 </h2>
 
-                <span
-                    id="teacherListCount"
-                    class="teacher-list-count"
-                >
-                    0
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    استاد پورٹل
                 </span>
 
             </div>
 
 
-            <div
-                id="teacherListMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
+            <nav class="portal-navigation">
+
+                <a href="teacher.html"
+                   class="portal-nav-link active">
+
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+
+                </a>
 
 
-            <div
-                id="teacherList"
-                class="teacher-list"
-            >
+                <a href="teacher.html#profile"
+                   class="portal-nav-link">
 
-                <div class="teacher-empty">
-                    اساتذہ کا ریکارڈ لوڈ ہو رہا ہے۔
-                </div>
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
 
-            </div>
-
-        </div>
+                </a>
 
 
-    </main>
+                <a href="attendance.html"
+                   class="portal-nav-link">
+
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+
+                </a>
 
 
-    <!-- =========================
-         TEACHER DETAILS
-    ========================== -->
+                <a href="teacher-students.html"
+                   class="portal-nav-link">
 
-    <div
-        id="teacherDetailsOverlay"
-        class="teacher-details-overlay hidden"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="teacherDetailsTitle"
-    >
+                    <span>👥</span>
+                    <strong>طالبات</strong>
 
-        <div
-            id="teacherDetailsBox"
-            class="teacher-details-box"
-        >
+                </a>
 
-            <div class="teacher-details-header">
 
-                <h2 id="teacherDetailsTitle">
-                    استاد کی تفصیلات
-                </h2>
+                <a href="teacher-marks.html"
+                   class="portal-nav-link">
 
-                <button
-                    type="button"
-                    id="closeTeacherDetails"
-                    class="close-details-button"
-                    aria-label="تفصیلات بند کریں"
-                >
-                    ✖
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+
+                </a>
+
+
+                <a href="teacher-homework.html"
+                   class="portal-nav-link">
+
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+
+                    <span class="nav-count"
+                          id="teacherHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+
+                <a href="teacher-announcements.html"
+                   class="portal-nav-link">
+
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+
+                </a>
+
+
+                <a href="teacher-feedback.html"
+                   class="portal-nav-link">
+
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+
+                </a>
+
+
+                <a href="teacher-settings.html"
+                   class="portal-nav-link">
+
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="teacherLogoutButton"
+                        class="portal-logout-button">
+                    خروج
                 </button>
 
             </div>
 
+        </aside>
 
-            <div id="teacherDetailsContent"></div>
 
+        <!-- MOBILE OVERLAY -->
+
+        <div class="portal-sidebar-overlay"
+             id="teacherSidebarOverlay">
         </div>
+
+
+        <!-- =====================================
+             MAIN CONTENT
+        ====================================== -->
+
+        <main class="portal-main">
+
+
+            <!-- TOP BAR -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        السلام علیکم،
+                        <span id="teacherWelcomeName">
+                            استاد
+                        </span>
+                    </h1>
+
+                    <p>
+                        آج کی تدریسی سرگرمیاں اور ضروری معلومات
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <div id="teacherDashboardMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- =================================
+                 TEACHER PROFILE
+            ================================== -->
+
+            <section class="teacher-profile-card"
+                     id="profile">
+
+                <div class="student-profile-header">
+
+                    <div class="student-profile-avatar">
+                        👤
+                    </div>
+
+
+                    <div class="student-profile-heading">
+
+                        <span class="profile-label">
+                            استاد کا پروفائل
+                        </span>
+
+                        <h2 id="profileTeacherName">
+                            —
+                        </h2>
+
+                        <p>
+                            استاد نمبر:
+                            <strong id="profileTeacherId">
+                                —
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <span class="student-status-badge"
+                          id="profileTeacherStatus">
+                        فعال
+                    </span>
+
+                </div>
+
+
+                <div class="student-profile-details">
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            والد کا نام
+                        </span>
+
+                        <strong id="profileTeacherFatherName">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            فون نمبر
+                        </span>
+
+                        <strong id="profileTeacherPhone">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            تاریخ پیدائش
+                        </span>
+
+                        <strong id="profileTeacherDateOfBirth">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            تجربہ
+                        </span>
+
+                        <strong id="profileTeacherExperience">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            تدریسی جماعت
+                        </span>
+
+                        <strong id="profileTeacherClass">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item">
+
+                        <span>
+                            مضمون
+                        </span>
+
+                        <strong id="profileTeacherSubject">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail-item profile-detail-wide">
+
+                        <span>
+                            پتہ
+                        </span>
+
+                        <strong id="profileTeacherAddress">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-readonly-note">
+                    🔒 یہ معلومات صرف دیکھنے کے لیے ہیں۔
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 TODAY'S 6 PERIODS
+            ================================== -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            آج کے 6 پیریڈ
+                        </h2>
+
+                        <p id="teacherTodayDate">
+                            آج کا تدریسی شیڈول
+                        </p>
+
+                    </div>
+
+
+                    <a href="attendance.html"
+                       class="small-action-button">
+                        حاضری لگائیں
+                    </a>
+
+                </div>
+
+
+                <div class="teacher-period-grid">
+
+
+                    <article class="teacher-period-card"
+                             data-period="1">
+
+                        <span class="period-number">
+                            1
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                پہلا پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod1Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod1Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <article class="teacher-period-card"
+                             data-period="2">
+
+                        <span class="period-number">
+                            2
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                دوسرا پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod2Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod2Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <article class="teacher-period-card"
+                             data-period="3">
+
+                        <span class="period-number">
+                            3
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                تیسرا پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod3Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod3Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <article class="teacher-period-card"
+                             data-period="4">
+
+                        <span class="period-number">
+                            4
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                چوتھا پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod4Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod4Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <article class="teacher-period-card"
+                             data-period="5">
+
+                        <span class="period-number">
+                            5
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                پانچواں پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod5Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod5Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+
+                    <article class="teacher-period-card"
+                             data-period="6">
+
+                        <span class="period-number">
+                            6
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                چھٹا پیریڈ
+                            </strong>
+
+                            <p id="teacherPeriod6Details">
+                                —
+                            </p>
+
+                        </div>
+
+                        <span id="teacherPeriod6Status"
+                              class="period-status">
+                            —
+                        </span>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 MY WORK SUMMARY
+            ================================== -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            میری تدریسی سرگرمیاں
+                        </h2>
+
+                        <p>
+                            صرف آپ سے متعلق ریکارڈ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-grid">
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <span>
+                                آج مکمل حاضری
+                            </span>
+
+                            <strong id="teacherTodayAttendanceCompleted">
+                                0 / 6
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ▤
+                        </span>
+
+                        <div>
+
+                            <span>
+                                نمبر درج کرنا باقی
+                            </span>
+
+                            <strong id="teacherPendingMarks">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            📚
+                        </span>
+
+                        <div>
+
+                            <span>
+                                فعال ہوم ورک
+                            </span>
+
+                            <strong id="teacherActiveHomework">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ↑
+                        </span>
+
+                        <div>
+
+                            <span>
+                                جانچ کے منتظر ہوم ورک
+                            </span>
+
+                            <strong id="teacherPendingHomeworkReview">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 QUICK ACTIONS
+            ================================== -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            فوری کام
+                        </h2>
+
+                        <p>
+                            روزانہ استعمال ہونے والے اختیارات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="student-quick-links">
+
+
+                    <a href="attendance.html"
+                       class="student-quick-link">
+
+                        <span>✓</span>
+
+                        <strong>
+                            حاضری لگائیں
+                        </strong>
+
+                    </a>
+
+
+                    <a href="teacher-students.html"
+                       class="student-quick-link">
+
+                        <span>👥</span>
+
+                        <strong>
+                            طالبات دیکھیں
+                        </strong>
+
+                    </a>
+
+
+                    <a href="teacher-marks.html"
+                       class="student-quick-link">
+
+                        <span>▤</span>
+
+                        <strong>
+                            نمبر درج کریں
+                        </strong>
+
+                    </a>
+
+
+                    <a href="teacher-homework.html"
+                       class="student-quick-link">
+
+                        <span>📚</span>
+
+                        <strong>
+                            ہوم ورک
+                        </strong>
+
+                    </a>
+
+
+                    <a href="teacher-announcements.html"
+                       class="student-quick-link">
+
+                        <span>🔔</span>
+
+                        <strong>
+                            اعلان جاری کریں
+                        </strong>
+
+                    </a>
+
+
+                    <a href="teacher-feedback.html"
+                       class="student-quick-link">
+
+                        <span>✎</span>
+
+                        <strong>
+                            طالبہ پر نوٹ
+                        </strong>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 RECENT HOMEWORK
+            ================================== -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            حالیہ ہوم ورک
+                        </h2>
+
+                        <p>
+                            آپ کی طرف سے جاری کردہ ہوم ورک
+                        </p>
+
+                    </div>
+
+
+                    <a href="teacher-homework.html"
+                       class="small-action-button">
+                        تمام دیکھیں
+                    </a>
+
+                </div>
+
+
+                <div id="teacherRecentHomework"
+                     class="homework-card-list">
+
+                    <div class="portal-empty-state">
+                        ریکارڈ لوڈ کیا جا رہا ہے...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 RECENT ANNOUNCEMENTS
+            ================================== -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            حالیہ اعلانات
+                        </h2>
+
+                        <p>
+                            آپ کی طرف سے جاری کیے گئے اعلانات
+                        </p>
+
+                    </div>
+
+
+                    <a href="teacher-announcements.html"
+                       class="small-action-button">
+                        تمام دیکھیں
+                    </a>
+
+                </div>
+
+
+                <div id="teacherRecentAnnouncements"
+                     class="announcement-card-list">
+
+                    <div class="portal-empty-state">
+                        اعلانات لوڈ کیے جا رہے ہیں...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
 
     </div>
 
 
-    <!-- =========================
-         SUPABASE
-    ========================== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
-
-
-    <!-- =========================
-         MAIN SCRIPT
-    ========================== -->
-
-    <script src="script.js?v=21"></script>
-
+    <script src="script.js"></script>
 
 </body>
 
