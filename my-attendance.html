@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>میری حاضری | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body class="student-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="studentMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            میری حاضری
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="studentSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    طالبہ پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="student.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="student.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+                <a href="my-attendance.html"
+                   class="portal-nav-link active">
+                    <span>✓</span>
+                    <strong>میری حاضری</strong>
+                </a>
+
+                <a href="my-marks.html"
+                   class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>میرے نمبر</strong>
+                </a>
+
+                <a href="homework.html"
+                   class="portal-nav-link">
+
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+
+                    <span class="nav-count"
+                          id="studentHomeworkCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+                <a href="announcements.html"
+                   class="portal-nav-link">
+
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+
+                    <span class="nav-count"
+                          id="studentAnnouncementCount"
+                          hidden>
+                        0
+                    </span>
+
+                </a>
+
+                <a href="settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="studentLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="studentSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        میری حاضری
+                    </h1>
+
+                    <p>
+                        اپنی روزانہ، ہفتہ وار اور سالانہ حاضری دیکھیں
+                    </p>
+
+                </div>
+
+                <a href="student.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="studentAttendanceMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- SUMMARY SELECTOR -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+                        <h2>حاضری کا خلاصہ</h2>
+                        <p>مطلوبہ مدت منتخب کریں</p>
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-range-buttons">
+
+                    <button type="button"
+                            class="small-action-button attendance-range-button"
+                            data-range="day">
+                        آج
+                    </button>
+
+                    <button type="button"
+                            class="small-action-button attendance-range-button"
+                            data-range="week">
+                        یہ ہفتہ
+                    </button>
+
+                    <button type="button"
+                            class="small-action-button attendance-range-button active"
+                            data-range="year">
+                        پورا سال
+                    </button>
+
+                </div>
+
+
+                <!-- SUMMARY CARDS -->
+
+                <div class="dashboard-stat-grid attendance-grid">
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            📅
+                        </span>
+
+                        <div>
+                            <span>کل حاضری</span>
+
+                            <strong id="attendanceSummaryTotal">
+                                0
+                            </strong>
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+                            <span>حاضر</span>
+
+                            <strong id="attendanceSummaryPresent">
+                                0
+                            </strong>
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ✕
+                        </span>
+
+                        <div>
+                            <span>غیر حاضر</span>
+
+                            <strong id="attendanceSummaryAbsent">
+                                0
+                            </strong>
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            ◷
+                        </span>
+
+                        <div>
+                            <span>رخصت</span>
+
+                            <strong id="attendanceSummaryLeave">
+                                0
+                            </strong>
+                        </div>
+
+                    </article>
+
+
+                    <article class="dashboard-stat-card">
+
+                        <span class="dashboard-stat-icon">
+                            %
+                        </span>
+
+                        <div>
+                            <span>حاضری فیصد</span>
+
+                            <strong id="attendanceSummaryPercentage">
+                                0%
+                            </strong>
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- SEARCH / FILTER -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+                        <h2>حاضری تلاش کریں</h2>
+
+                        <p>
+                            تاریخ اور پیریڈ کے مطابق ریکارڈ دیکھیں
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <form id="studentAttendanceFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="attendanceSearchDate">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="attendanceSearchDate">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="attendanceSearchPeriod">
+                            پیریڈ
+                        </label>
+
+                        <select id="attendanceSearchPeriod">
+
+                            <option value="">
+                                تمام پیریڈ
+                            </option>
+
+                            <option value="1">
+                                پہلا پیریڈ
+                            </option>
+
+                            <option value="2">
+                                دوسرا پیریڈ
+                            </option>
+
+                            <option value="3">
+                                تیسرا پیریڈ
+                            </option>
+
+                            <option value="4">
+                                چوتھا پیریڈ
+                            </option>
+
+                            <option value="5">
+                                پانچواں پیریڈ
+                            </option>
+
+                            <option value="6">
+                                چھٹا پیریڈ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+                        <button type="button"
+                                id="clearAttendanceFilters"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- PERIOD / SUBJECT SUMMARY -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            پیریڈ کے مطابق سالانہ حاضری
+                        </h2>
+
+                        <p>
+                            ہر پیریڈ کی الگ حاضری
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="studentPeriodAttendanceSummary"
+                     class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>پیریڈ</th>
+                                <th>کل</th>
+                                <th>حاضر</th>
+                                <th>غیر حاضر</th>
+                                <th>رخصت</th>
+                                <th>فیصد</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="studentPeriodAttendanceBody">
+
+                            <tr>
+                                <td colspan="6"
+                                    class="table-empty">
+                                    ریکارڈ لوڈ کیا جا رہا ہے...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- COMPLETE RECORD -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            مکمل حاضری ریکارڈ
+                        </h2>
+
+                        <p id="attendanceRecordCount">
+                            تمام دستیاب ریکارڈ
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>پیریڈ</th>
+                                <th>جماعت / مضمون</th>
+                                <th>استاد</th>
+                                <th>حالت</th>
+                                <th>نوٹ</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="studentAttendanceRecordsBody">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="table-empty">
+                                    حاضری لوڈ کی جا رہی ہے...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
