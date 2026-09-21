@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>نمبر | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body class="teacher-portal-page">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="portal-mobile-header">
+
+        <button type="button"
+                class="portal-menu-button"
+                id="teacherMenuButton"
+                aria-label="مینو">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            نمبر
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="portal-sidebar"
+               id="teacherSidebar">
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    استاد پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="teacher.html"
+                   class="portal-nav-link">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="teacher.html#profile"
+                   class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+                <a href="attendance.html"
+                   class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+                <a href="teacher-students.html"
+                   class="portal-nav-link">
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a href="teacher-marks.html"
+                   class="portal-nav-link active">
+                    <span>▤</span>
+                    <strong>نمبر</strong>
+                </a>
+
+                <a href="teacher-homework.html"
+                   class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a href="teacher-announcements.html"
+                   class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a href="teacher-feedback.html"
+                   class="portal-nav-link">
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+                <a href="teacher-settings.html"
+                   class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button type="button"
+                        id="teacherLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay"
+             id="teacherSidebarOverlay">
+        </div>
+
+
+        <!-- MAIN -->
+
+        <main class="portal-main">
+
+            <!-- HEADER -->
+
+            <section class="portal-topbar">
+
+                <div>
+
+                    <h1>
+                        طالبات کے نمبر
+                    </h1>
+
+                    <p>
+                        امتحانات کے نمبر درج کریں اور سابقہ نتائج دیکھیں
+                    </p>
+
+                </div>
+
+
+                <a href="teacher.html"
+                   class="small-action-button">
+                    ڈیش بورڈ
+                </a>
+
+            </section>
+
+
+            <div id="teacherMarksMessage"
+                 class="portal-message"
+                 hidden>
+            </div>
+
+
+            <!-- EXAM SELECTION -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            امتحان منتخب کریں
+                        </h2>
+
+                        <p>
+                            جماعت، مضمون اور امتحان کی معلومات درج کریں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="teacherMarksSelectionForm"
+                      class="portal-filter-grid">
+
+
+                    <!-- CLASS -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksClass">
+                            جماعت
+                        </label>
+
+                        <select id="teacherMarksClass"
+                                required>
+
+                            <option value="">
+                                جماعت منتخب کریں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SUBJECT -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksSubject">
+                            مضمون
+                        </label>
+
+                        <input type="text"
+                               id="teacherMarksSubject"
+                               maxlength="100"
+                               placeholder="مضمون کا نام"
+                               required>
+
+                    </div>
+
+
+                    <!-- EXAM -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksExam">
+                            امتحان
+                        </label>
+
+                        <input type="text"
+                               id="teacherMarksExam"
+                               maxlength="100"
+                               placeholder="مثلاً ماہانہ امتحان"
+                               required>
+
+                    </div>
+
+
+                    <!-- PAPER -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksPaper">
+                            پرچہ
+                        </label>
+
+                        <input type="text"
+                               id="teacherMarksPaper"
+                               maxlength="100"
+                               placeholder="پرچے کا نام">
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksDate">
+                            امتحان کی تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="teacherMarksDate"
+                               required>
+
+                    </div>
+
+
+                    <!-- TOTAL MARKS -->
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksTotal">
+                            کل نمبر
+                        </label>
+
+                        <input type="number"
+                               id="teacherMarksTotal"
+                               min="1"
+                               step="1"
+                               inputmode="numeric"
+                               required>
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                id="loadMarksStudentsButton"
+                                class="small-action-button">
+                            طالبات دکھائیں
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- SELECTED EXAM SUMMARY -->
+
+            <section class="portal-section"
+                     id="teacherMarksExamSummary"
+                     hidden>
+
+                <div class="attendance-session-summary">
+
+                    <div>
+
+                        <span>
+                            جماعت
+                        </span>
+
+                        <strong id="selectedMarksClass">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            مضمون
+                        </span>
+
+                        <strong id="selectedMarksSubject">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            امتحان
+                        </span>
+
+                        <strong id="selectedMarksExam">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            کل نمبر
+                        </span>
+
+                        <strong id="selectedMarksTotal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- STUDENT MARK ENTRY -->
+
+            <section class="portal-section"
+                     id="teacherMarksStudentsSection"
+                     hidden>
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            طالبات کے نمبر درج کریں
+                        </h2>
+
+                        <p id="teacherMarksStudentCount">
+                            0 طالبات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table marks-entry-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>داخلہ نمبر</th>
+                                <th>طالبہ</th>
+                                <th>کل نمبر</th>
+                                <th>حاصل کردہ نمبر</th>
+                                <th>فیصد</th>
+                                <th>نوٹ</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="teacherMarksStudentsBody">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="table-empty">
+                                    طالبات لوڈ کی جا رہی ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div class="portal-form-actions">
+
+                    <button type="button"
+                            id="saveTeacherMarksButton"
+                            class="small-action-button">
+                        تمام نمبر محفوظ کریں
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- SAVED MARKS SEARCH -->
+
+            <section class="portal-section">
+
+                <div class="portal-section-heading">
+
+                    <div>
+
+                        <h2>
+                            سابقہ نتائج
+                        </h2>
+
+                        <p>
+                            پہلے درج کیے گئے نمبر تلاش کریں
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="teacherMarksHistoryFilterForm"
+                      class="portal-filter-grid">
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksHistoryClass">
+                            جماعت
+                        </label>
+
+                        <select id="teacherMarksHistoryClass">
+
+                            <option value="">
+                                تمام جماعتیں
+                            </option>
+
+                            <option value="ثانویہ عامہ">
+                                ثانویہ عامہ
+                            </option>
+
+                            <option value="ثانویہ خاصہ">
+                                ثانویہ خاصہ
+                            </option>
+
+                            <option value="عالیہ اول">
+                                عالیہ اول
+                            </option>
+
+                            <option value="عالیہ دوم">
+                                عالیہ دوم
+                            </option>
+
+                            <option value="عالمیہ اول">
+                                عالمیہ اول
+                            </option>
+
+                            <option value="عالمیہ دوم / دورۂ حدیث">
+                                عالمیہ دوم / دورۂ حدیث
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksHistorySubject">
+                            مضمون
+                        </label>
+
+                        <input type="text"
+                               id="teacherMarksHistorySubject"
+                               placeholder="مضمون">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksHistoryExam">
+                            امتحان
+                        </label>
+
+                        <input type="text"
+                               id="teacherMarksHistoryExam"
+                               placeholder="امتحان">
+
+                    </div>
+
+
+                    <div class="portal-field">
+
+                        <label for="teacherMarksHistoryDate">
+                            تاریخ
+                        </label>
+
+                        <input type="date"
+                               id="teacherMarksHistoryDate">
+
+                    </div>
+
+
+                    <div class="portal-filter-actions">
+
+                        <button type="submit"
+                                class="small-action-button">
+                            تلاش کریں
+                        </button>
+
+
+                        <button type="button"
+                                id="clearTeacherMarksHistory"
+                                class="small-action-button secondary">
+                            صاف کریں
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="responsive-table-wrapper">
+
+                    <table class="portal-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>طالبہ</th>
+                                <th>جماعت</th>
+                                <th>مضمون</th>
+                                <th>امتحان</th>
+                                <th>پرچہ</th>
+                                <th>کل نمبر</th>
+                                <th>حاصل کردہ</th>
+                                <th>فیصد</th>
+                                <th>عمل</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="teacherMarksHistoryBody">
+
+                            <tr>
+
+                                <td colspan="10"
+                                    class="table-empty">
+                                    سابقہ نتائج لوڈ کیے جا رہے ہیں...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- EDIT MARK MODAL -->
+
+            <div class="portal-modal"
+                 id="teacherMarkEditModal"
+                 hidden>
+
+                <div class="portal-modal-overlay"
+                     id="teacherMarkEditOverlay">
+                </div>
+
+
+                <div class="portal-modal-card">
+
+                    <div class="portal-modal-header">
+
+                        <div>
+
+                            <span class="profile-label">
+                                نمبر میں ترمیم
+                            </span>
+
+                            <h2 id="editMarkStudentName">
+                                —
+                            </h2>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="closeTeacherMarkEditModal"
+                                class="portal-close-button"
+                                aria-label="بند کریں">
+                            ✕
+                        </button>
+
+                    </div>
+
+
+                    <form id="teacherMarkEditForm">
+
+                        <input type="hidden"
+                               id="editTeacherMarkId">
+
+
+                        <div class="portal-field">
+
+                            <label for="editTeacherMarkTotal">
+                                کل نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="editTeacherMarkTotal"
+                                   min="1"
+                                   step="1"
+                                   required>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="editTeacherMarkObtained">
+                                حاصل کردہ نمبر
+                            </label>
+
+                            <input type="number"
+                                   id="editTeacherMarkObtained"
+                                   min="0"
+                                   step="0.01"
+                                   required>
+
+                        </div>
+
+
+                        <div class="portal-field">
+
+                            <label for="editTeacherMarkNote">
+                                نوٹ
+                            </label>
+
+                            <textarea id="editTeacherMarkNote"
+                                      rows="4"
+                                      maxlength="500"></textarea>
+
+                        </div>
+
+
+                        <div class="portal-form-actions">
+
+                            <button type="submit"
+                                    class="small-action-button">
+                                تبدیلی محفوظ کریں
+                            </button>
+
+
+                            <button type="button"
+                                    id="cancelTeacherMarkEdit"
+                                    class="small-action-button secondary">
+                                منسوخ کریں
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="portal-footer">
+
+                <strong>
+                    مدرسہ شہناز اختر للبنات
+                </strong>
+
+                <span>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
