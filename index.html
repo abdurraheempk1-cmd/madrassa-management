@@ -2,6 +2,7 @@
 <html lang="ur" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -33,9 +34,136 @@
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- ==================================================
+         LANGUAGE DIRECTION FIX
+         English = LTR + LEFT
+         Urdu / Arabic / Pashto = RTL + RIGHT
+    =================================================== -->
+
+    <style>
+
+        html[dir="ltr"] body.intro-page {
+            direction: ltr !important;
+        }
+
+        html[dir="rtl"] body.intro-page {
+            direction: rtl !important;
+        }
+
+
+        /* English */
+
+        html[dir="ltr"] .intro-section-heading,
+        html[dir="ltr"] .intro-content-card,
+        html[dir="ltr"] .intro-highlight-card,
+        html[dir="ltr"] .intro-safety-card,
+        html[dir="ltr"] .intro-admin-message-card,
+        html[dir="ltr"] .intro-admin-identity,
+        html[dir="ltr"] .intro-contact-item {
+            direction: ltr !important;
+            text-align: left !important;
+        }
+
+        html[dir="ltr"] .intro-content-card p,
+        html[dir="ltr"] .intro-highlight-card p,
+        html[dir="ltr"] .intro-safety-card p,
+        html[dir="ltr"] .intro-admin-message-card blockquote,
+        html[dir="ltr"] .intro-admin-identity h3,
+        html[dir="ltr"] .intro-admin-identity p {
+            direction: ltr !important;
+            text-align: left !important;
+        }
+
+        html[dir="ltr"] .intro-topbar-inner {
+            direction: ltr !important;
+        }
+
+
+        /* Urdu / Arabic / Pashto */
+
+        html[dir="rtl"] .intro-section-heading,
+        html[dir="rtl"] .intro-content-card,
+        html[dir="rtl"] .intro-highlight-card,
+        html[dir="rtl"] .intro-safety-card,
+        html[dir="rtl"] .intro-admin-message-card,
+        html[dir="rtl"] .intro-admin-identity,
+        html[dir="rtl"] .intro-contact-item {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+
+        html[dir="rtl"] .intro-content-card p,
+        html[dir="rtl"] .intro-highlight-card p,
+        html[dir="rtl"] .intro-safety-card p,
+        html[dir="rtl"] .intro-admin-message-card blockquote,
+        html[dir="rtl"] .intro-admin-identity h3,
+        html[dir="rtl"] .intro-admin-identity p {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+
+        html[dir="rtl"] .intro-topbar-inner {
+            direction: rtl !important;
+        }
+
+
+        /* These sections always remain centered */
+
+        .intro-hero,
+        .intro-quran-card,
+        .intro-stat-card,
+        .intro-footer,
+        .intro-options-card {
+            text-align: center !important;
+        }
+
+
+        /* Quran Arabic must always be RTL */
+
+        .intro-arabic-quote,
+        .intro-kalma,
+        .intro-bismillah {
+            direction: rtl !important;
+            text-align: center !important;
+        }
+
+
+        /* English normal font */
+
+        html[lang="en"] body.intro-page {
+            font-family:
+                Arial,
+                "Segoe UI",
+                sans-serif !important;
+        }
+
+
+        /* Urdu / Arabic / Pashto font */
+
+        html:not([lang="en"]) body.intro-page {
+            font-family:
+                "Noto Nastaliq Urdu",
+                serif !important;
+        }
+
+
+        /* Prevent strange reversed punctuation */
+
+        html[dir="ltr"] .intro-content-card p,
+        html[dir="ltr"] blockquote {
+            unicode-bidi: plaintext;
+        }
+
+    </style>
 
 </head>
+
 
 
 <body class="home-page intro-page">
@@ -110,7 +238,6 @@
 
         </div>
 
-
     </div>
 
 </header>
@@ -118,7 +245,7 @@
 
 
 <!-- =====================================================
-     LOGIN MODAL
+     LOGIN WINDOW
 ===================================================== -->
 
 <section
@@ -182,7 +309,7 @@
 
 
 <!-- =====================================================
-     SIGNUP MODAL
+     NEW ADMISSION WINDOW
 ===================================================== -->
 
 <section
@@ -261,8 +388,10 @@
 
 
     <div class="intro-kalma">
+
         لَا إِلٰهَ إِلَّا اللّٰهُ
         مُحَمَّدٌ رَسُولُ اللّٰهِ 
+
     </div>
 
 
@@ -296,11 +425,12 @@
 
 <section class="intro-section">
 
-    <div class="intro-highlight-card wifaq-card">
+    <div class="intro-highlight-card">
 
         <div class="intro-highlight-icon">
             ✓
         </div>
+
 
         <div>
 
@@ -308,10 +438,11 @@
                 وفاق المدارس سے رجسٹرڈ
             </h2>
 
+
             <p data-i18n="wifaqText">
-                مدرسہ وفاق المدارس کے ساتھ باقاعدہ رجسٹرڈ ہے اور
-                درسِ نظامی و متعلقہ دینی تعلیم مقررہ نصاب کے مطابق
-                فراہم کی جاتی ہے۔
+                مدرسہ وفاق المدارس کے ساتھ باقاعدہ رجسٹرڈ ہے
+                اور درسِ نظامی و متعلقہ دینی تعلیم مقررہ نصاب
+                کے مطابق فراہم کی جاتی ہے۔
             </p>
 
         </div>
@@ -345,8 +476,8 @@
 
         <p data-i18n="introText1">
             مدرسہ شہناز اختر للبنات طالبات کی دینی، علمی،
-            اخلاقی اور عملی تربیت کے لیے قائم ایک منظم دینی
-            تعلیمی ادارہ ہے۔
+            اخلاقی اور عملی تربیت کے لیے قائم ایک منظم
+            دینی تعلیمی ادارہ ہے۔
         </p>
 
 
@@ -358,9 +489,9 @@
 
 
         <p data-i18n="introText3">
-            ہمارا مقصد ایسی طالبات کی تربیت کرنا ہے جو علم
-            کے ساتھ عمل، اچھے اخلاق، دینی شعور، حیا اور
-            ذمہ داری کو اپنی زندگی کا حصہ بنائیں۔
+            ہمارا مقصد ایسی طالبات کی تربیت کرنا ہے جو
+            علم کے ساتھ عمل، اچھے اخلاق، دینی شعور،
+            حیا اور ذمہ داری کو اپنی زندگی کا حصہ بنائیں۔
         </p>
 
     </div>
@@ -388,10 +519,13 @@
     </div>
 
 
-
     <div class="intro-quran-card">
 
-        <div class="intro-arabic-quote">
+        <div
+            class="intro-arabic-quote"
+            lang="ar"
+            dir="rtl"
+        >
             وَقُلْ رَبِّ زِدْنِي عِلْمًا
         </div>
 
@@ -414,7 +548,6 @@
     </div>
 
 
-
     <div class="intro-content-card">
 
         <p data-i18n="femaleEducation1">
@@ -426,14 +559,17 @@
 
 
         <p data-i18n="femaleEducation2">
-            ایک دینی تعلیم یافتہ خاتون نہ صرف اپنی ذات کی
-            اصلاح کرتی ہے بلکہ اپنی اولاد، خاندان اور آنے
-            والی نسلوں کی دینی و اخلاقی تربیت میں بھی
-            بنیادی کردار ادا کرتی ہے۔
+            ایک دینی تعلیم یافتہ خاتون نہ صرف اپنی ذات
+            کی اصلاح کرتی ہے بلکہ اپنی اولاد، خاندان
+            اور آنے والی نسلوں کی دینی و اخلاقی تربیت
+            میں بھی بنیادی کردار ادا کرتی ہے۔
         </p>
 
 
-        <p class="intro-reference">
+        <p
+            class="intro-reference"
+            data-i18n="bukhariReference"
+        >
             صحیح بخاری
         </p>
 
@@ -474,18 +610,19 @@
 
 
         <p data-i18n="environment2">
-            خواہ کوئی طالبہ پہلے سے تعلیم یافتہ ہو یا اس کی
-            سابقہ رسمی تعلیم محدود رہی ہو، مدرسہ اسے اس کی
-            استعداد کے مطابق دینی علوم سیکھنے اور اپنی
-            علمی و اخلاقی بنیاد مضبوط کرنے کا موقع فراہم کرتا ہے۔
+            خواہ کوئی طالبہ پہلے سے تعلیم یافتہ ہو یا
+            اس کی سابقہ رسمی تعلیم محدود رہی ہو، مدرسہ
+            اسے اس کی استعداد کے مطابق دینی علوم سیکھنے
+            اور اپنی علمی و اخلاقی بنیاد مضبوط کرنے کا
+            موقع فراہم کرتا ہے۔
         </p>
 
 
         <p data-i18n="environment3">
             ہماری کوشش ہے کہ طالبات موجودہ دور کے فکری،
-            اخلاقی اور معاشرتی چیلنجز کو سمجھتے ہوئے قرآن
-            و سنت کی روشنی میں باوقار اور ذمہ دار زندگی
-            گزار سکیں۔
+            اخلاقی اور معاشرتی چیلنجز کو سمجھتے ہوئے
+            قرآن و سنت کی روشنی میں باوقار اور ذمہ دار
+            زندگی گزار سکیں۔
         </p>
 
     </div>
@@ -522,9 +659,9 @@
 
 
         <p data-i18n="darsi2">
-            قرآن، حدیث، فقہ، اصول، عربی زبان اور دیگر دینی
-            علوم پڑھائے جاتے ہیں تاکہ طالبات دین کو علم،
-            فہم اور ذمہ داری کے ساتھ سیکھ سکیں۔
+            قرآن، حدیث، فقہ، اصول، عربی زبان اور دیگر
+            دینی علوم پڑھائے جاتے ہیں تاکہ طالبات دین
+            کو علم، فہم اور ذمہ داری کے ساتھ سیکھ سکیں۔
         </p>
 
     </div>
@@ -554,77 +691,52 @@
 
     <div class="intro-classes-grid">
 
-
         <article class="intro-class-card">
-
             <span>01</span>
-
             <strong data-i18n="class1">
                 ثانویہ عامہ
             </strong>
-
         </article>
 
 
-
         <article class="intro-class-card">
-
             <span>02</span>
-
             <strong data-i18n="class2">
                 ثانویہ خاصہ
             </strong>
-
         </article>
 
 
-
         <article class="intro-class-card">
-
             <span>03</span>
-
             <strong data-i18n="class3">
                 عالیہ اول
             </strong>
-
         </article>
 
 
-
         <article class="intro-class-card">
-
             <span>04</span>
-
             <strong data-i18n="class4">
                 عالیہ دوم
             </strong>
-
         </article>
 
 
-
         <article class="intro-class-card">
-
             <span>05</span>
-
             <strong data-i18n="class5">
                 عالمیہ اول
             </strong>
-
         </article>
-
 
 
         <article class="intro-class-card">
-
             <span>06</span>
-
             <strong data-i18n="class6">
                 عالمیہ دوم / دورۂ حدیث
             </strong>
-
         </article>
-
 
     </div>
 
@@ -633,7 +745,7 @@
 
 
 <!-- =====================================================
-     MADRASSA LIVING
+     LIVING IN MADRASSA
 ===================================================== -->
 
 <section class="intro-section">
@@ -666,1676 +778,4 @@
 
 
         <p data-i18n="living2">
-            مدرسہ سے عارضی خروج، واپسی اور ملاقات کے لیے
-            باقاعدہ قواعد موجود ہیں۔ طالبہ منظور شدہ محرم
-            یا سرپرست اور مدرسہ انتظامیہ کی اجازت کے مطابق
-            مدرسہ سے باہر جا سکتی ہے۔
-        </p>
-
-
-        <p data-i18n="living3">
-            آمد و رفت کا وقت، منظور شدہ محرم اور متعلقہ
-            تفصیلات باقاعدہ ریکارڈ کی جاتی ہیں تاکہ نظم،
-            تحفظ اور والدین کے اعتماد کو برقرار رکھا جا سکے۔
-        </p>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     STATISTICS
-===================================================== -->
-
-<section class="intro-section">
-
-    <div class="intro-section-heading">
-
-        <span class="intro-section-icon">
-            📊
-        </span>
-
-        <h2 data-i18n="communityTitle">
-            ہماری تعلیمی برادری
-        </h2>
-
-    </div>
-
-
-    <div class="intro-stats-grid">
-
-
-        <article class="intro-stat-card">
-
-            <div class="intro-stat-icon">
-                👩‍🎓
-            </div>
-
-            <strong
-                id="publicStudentCount"
-                class="intro-stat-number"
-            >
-                --
-            </strong>
-
-            <span data-i18n="registeredStudents">
-                کل رجسٹرڈ طالبات
-            </span>
-
-        </article>
-
-
-
-        <article class="intro-stat-card">
-
-            <div class="intro-stat-icon">
-                👩‍🏫
-            </div>
-
-            <strong
-                id="publicTeacherCount"
-                class="intro-stat-number"
-            >
-                --
-            </strong>
-
-            <span data-i18n="registeredTeachers">
-                کل رجسٹرڈ اساتذہ
-            </span>
-
-        </article>
-
-
-    </div>
-
-
-    <p
-        class="intro-stats-note"
-        data-i18n="statsNote"
-    >
-        اعداد و شمار مدرسہ کے موجودہ ریکارڈ کے مطابق
-        خودکار طور پر اپ ڈیٹ کیے جاتے ہیں۔
-    </p>
-
-</section>
-
-
-
-<!-- =====================================================
-     TEACHERS
-===================================================== -->
-
-<section class="intro-section">
-
-    <div class="intro-section-heading">
-
-        <span class="intro-section-icon">
-            👩‍🏫
-        </span>
-
-        <h2 data-i18n="teachersTitle">
-            ہمارے اساتذہ
-        </h2>
-
-    </div>
-
-
-    <div class="intro-content-card">
-
-        <p data-i18n="teachersText1">
-            مدرسہ کے تمام اساتذہ وفاق المدارس کے تحت اپنی
-            باقاعدہ دینی تعلیم مکمل کر چکے ہیں اور دینی
-            علوم کی تدریس کے لیے علمی و عملی تیاری رکھتے ہیں۔
-        </p>
-
-
-        <p data-i18n="teachersText2">
-            تدریس میں علم کے ساتھ ادب، اخلاق، تربیت اور
-            طالبات کی انفرادی رہنمائی کو بھی بنیادی اہمیت
-            دی جاتی ہے۔
-        </p>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     ADMIN MESSAGE
-===================================================== -->
-
-<section class="intro-section">
-
-    <div class="intro-section-heading">
-
-        <span class="intro-section-icon">
-            ✉️
-        </span>
-
-        <h2 data-i18n="adminMessageTitle">
-            منتظم کا پیغام
-        </h2>
-
-    </div>
-
-
-    <article class="intro-admin-message-card">
-
-
-        <div class="intro-admin-profile">
-
-
-            <div class="intro-admin-photo-wrapper">
-
-                <img
-                    id="introAdminPhoto"
-                    class="intro-admin-photo"
-                    src="assets/admin-jameel-khan.jpg"
-                    alt="Molv Jameel Khan Haqani"
-                    onerror="
-                        this.style.display='none';
-                        document.getElementById(
-                            'introAdminPhotoFallback'
-                        ).style.zIndex='1';
-                    "
-                >
-
-
-                <div
-                    id="introAdminPhotoFallback"
-                    class="intro-admin-photo-fallback"
-                >
-                    ج
-                </div>
-
-            </div>
-
-
-
-            <div class="intro-admin-identity">
-
-                <h3 data-i18n="adminName">
-                    مولوی جمیل خان حقانی
-                </h3>
-
-                <p data-i18n="adminDesignation">
-                    منتظم، مدرسہ شہناز اختر للبنات
-                </p>
-
-            </div>
-
-
-        </div>
-
-
-
-        <blockquote data-i18n="adminMessage1">
-            ہماری ذمہ داری صرف طالبات کو کتابی تعلیم دینا
-            نہیں، بلکہ ایسی باعلم، باعمل، بااخلاق اور مضبوط
-            دینی شعور رکھنے والی خواتین تیار کرنا ہے جو اپنے
-            دین کو سمجھیں، اس پر عمل کریں اور اپنے خاندان و
-            معاشرے میں خیر اور صحیح اسلامی رہنمائی کا ذریعہ بنیں۔
-        </blockquote>
-
-
-        <blockquote data-i18n="adminMessage2">
-            موجودہ دور کے فکری، اخلاقی اور معاشرتی چیلنجز
-            کے پیش نظر ہم طالبات کی تعلیم، تربیت، نظم و ضبط
-            اور محفوظ ماحول پر خصوصی توجہ دیتے ہیں۔ مدرسہ
-            میں رہائش پذیر طالبات کی 24 گھنٹے منظم نگرانی
-            ذمہ دار انتظامیہ کے تحت کی جاتی ہے۔
-        </blockquote>
-
-
-        <blockquote data-i18n="adminMessage3">
-            ہماری خواہش ہے کہ ہر طالبہ یہاں سے صرف سند لے
-            کر نہ جائے بلکہ قرآن و سنت سے مضبوط تعلق، اعلیٰ
-            اخلاق، دینی بصیرت اور پوری زندگی کام آنے والی
-            تربیت اپنے ساتھ لے کر جائے۔ والدین کا اعتماد،
-            اساتذہ کی محنت اور اہلِ خیر کا تعاون اس دینی
-            خدمت کو مضبوط بناتا ہے۔
-        </blockquote>
-
-
-    </article>
-
-</section>
-
-
-
-<!-- =====================================================
-     SUPPORT / DONATION
-===================================================== -->
-
-<section class="intro-section">
-
-    <div class="intro-section-heading">
-
-        <span class="intro-section-icon">
-            🤲
-        </span>
-
-        <h2 data-i18n="supportTitle">
-            خدمتِ دین اور علم میں حصہ
-        </h2>
-
-    </div>
-
-
-    <div class="intro-quran-card">
-
-        <div class="intro-arabic-quote">
-
-            مَثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ
-            فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ
-            أَنبَتَتْ سَبْعَ سَنَابِلَ
-
-        </div>
-
-
-        <div
-            class="intro-reference"
-            data-i18n="baqarahReference"
-        >
-            سورۃ البقرۃ: 261
-        </div>
-
-    </div>
-
-
-
-    <div class="intro-content-card">
-
-        <p data-i18n="support1">
-            طالبات کو قرآن و حدیث کی تعلیم دینا اور دینی
-            علم کے فروغ میں حصہ لینا ایک عظیم خدمت ہے۔
-            رسول اللہ ﷺ نے صدقۂ جاریہ اور ایسے علم کو جس
-            سے فائدہ اٹھایا جائے، جاری رہنے والی نیکیوں
-            میں شمار فرمایا ہے۔
-        </p>
-
-
-        <p data-i18n="support2">
-            طالبات کی دینی تعلیم، قرآن و حدیث کی تدریس،
-            کتابوں، تعلیمی ضروریات، مدرسہ میں رہائش اور
-            ادارے کی دیگر دینی و تعلیمی ضروریات میں اہلِ
-            خیر کا تعاون اس علمی سفر کو جاری رکھنے میں
-            مددگار بنتا ہے۔
-        </p>
-
-
-        <p
-            class="intro-support-highlight"
-            data-i18n="support3"
-        >
-            علمِ دین کی خدمت میں کیا گیا چھوٹا یا بڑا حصہ
-            کسی طالبہ کی تعلیم اور آنے والی نسلوں کی دینی
-            تربیت کا ذریعہ بن سکتا ہے۔
-        </p>
-
-
-        <p class="intro-reference">
-            صحیح مسلم
-        </p>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     CONTACT
-===================================================== -->
-
-<section class="intro-section">
-
-    <div class="intro-contact-card">
-
-
-        <div class="intro-section-heading">
-
-            <span class="intro-section-icon">
-                ☎
-            </span>
-
-            <h2 data-i18n="contactTitle">
-                رابطہ
-            </h2>
-
-        </div>
-
-
-
-        <div class="intro-contact-grid">
-
-
-            <a
-                href="tel:+923436387621"
-                class="intro-contact-item"
-            >
-
-                <span class="intro-contact-icon">
-                    ☎
-                </span>
-
-                <div>
-
-                    <strong data-i18n="phone">
-                        فون
-                    </strong>
-
-                    <span dir="ltr">
-                        +92 343 6387621
-                    </span>
-
-                </div>
-
-            </a>
-
-
-
-            <a
-                href="mailto:abdurraheempk1@gmail.com"
-                class="intro-contact-item"
-            >
-
-                <span class="intro-contact-icon">
-                    ✉
-                </span>
-
-                <div>
-
-                    <strong data-i18n="email">
-                        ای میل
-                    </strong>
-
-                    <span dir="ltr">
-                        abdurraheempk1@gmail.com
-                    </span>
-
-                </div>
-
-            </a>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-</main>
-
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
-<footer class="intro-footer">
-
-    <div
-        class="intro-footer-name"
-        data-i18n="madrassaName"
-    >
-        مدرسہ شہناز اختر للبنات
-    </div>
-
-
-    <div
-        class="intro-footer-address"
-        data-i18n="address"
-    >
-        گاؤں ہل غورغشتوں، ضلع بونیر
-    </div>
-
-
-    <div
-        class="intro-footer-system"
-        data-i18n="managementSystem"
-    >
-        مدرسہ مینجمنٹ سسٹم
-    </div>
-
-
-    <div class="intro-footer-contact">
-
-        <span dir="ltr">
-            +92 343 6387621
-        </span>
-
-        <span>|</span>
-
-        <span dir="ltr">
-            abdurraheempk1@gmail.com
-        </span>
-
-    </div>
-
-</footer>
-
-
-
-<!-- =====================================================
-     SUPABASE
-===================================================== -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
-
-
-
-<!-- =====================================================
-     COMPLETE MULTI LANGUAGE SYSTEM
-===================================================== -->
-
-<script>
-
-(function () {
-
-    "use strict";
-
-
-    const translations = {
-
-
-        /* =================================================
-           URDU
-        ================================================= */
-
-        ur: {
-
-            language: "زبان",
-
-            login: "لاگ اِن",
-
-            admission: "نیا داخلہ",
-
-            chooseAccount:
-                "اپنے اکاؤنٹ کی قسم منتخب کریں",
-
-            adminLogin:
-                "ایڈمن لاگ اِن",
-
-            teacherLogin:
-                "استاد لاگ اِن",
-
-            studentLogin:
-                "طالبہ لاگ اِن",
-
-            registration:
-                "رجسٹریشن / نیا داخلہ",
-
-            chooseApplication:
-                "درخواست کی قسم منتخب کریں",
-
-            studentApplication:
-                "طالبہ کے داخلے کی درخواست",
-
-            teacherApplication:
-                "استاد کی درخواست",
-
-            adminSignupNote:
-                "ایڈمن اکاؤنٹ عوامی رجسٹریشن کے ذریعے نہیں بنایا جا سکتا۔",
-
-            madrassaName:
-                "مدرسہ شہناز اختر للبنات",
-
-            tagline:
-                "قرآن و سنت کی روشنی میں علم، تربیت اور کردار سازی",
-
-            address:
-                "گاؤں ہل غورغشتوں، ضلع بونیر",
-
-            wifaqTitle:
-                "وفاق المدارس سے رجسٹرڈ",
-
-            wifaqText:
-                "مدرسہ وفاق المدارس کے ساتھ باقاعدہ رجسٹرڈ ہے اور درسِ نظامی و متعلقہ دینی تعلیم مقررہ نصاب کے مطابق فراہم کی جاتی ہے۔",
-
-            introTitle:
-                "مدرسہ کا تعارف",
-
-            introText1:
-                "مدرسہ شہناز اختر للبنات طالبات کی دینی، علمی، اخلاقی اور عملی تربیت کے لیے قائم ایک منظم دینی تعلیمی ادارہ ہے۔",
-
-            introText2:
-                "یہاں قرآنِ کریم، حدیثِ نبوی ﷺ، فقہ، عقائد، عربی زبان، اسلامی اخلاق و آداب اور درسِ نظامی کی باقاعدہ تعلیم فراہم کی جاتی ہے۔",
-
-            introText3:
-                "ہمارا مقصد ایسی طالبات کی تربیت کرنا ہے جو علم کے ساتھ عمل، اچھے اخلاق، دینی شعور، حیا اور ذمہ داری کو اپنی زندگی کا حصہ بنائیں۔",
-
-            femaleEducationTitle:
-                "طالبات کی دینی تعلیم کی اہمیت",
-
-            knowledgeTranslation:
-                "اور کہیے: اے میرے رب! میرے علم میں اضافہ فرما۔",
-
-            tahaReference:
-                "سورۃ طٰہٰ: 114",
-
-            femaleEducation1:
-                "اسلام نے علم حاصل کرنے کو بڑی اہمیت دی ہے۔ نبی کریم ﷺ کے زمانے میں خواتین نے دینی علم حاصل کرنے کے لیے خصوصی وقت کی درخواست کی، اور آپ ﷺ نے ان کی تعلیم کا اہتمام فرمایا۔",
-
-            femaleEducation2:
-                "ایک دینی تعلیم یافتہ خاتون نہ صرف اپنی ذات کی اصلاح کرتی ہے بلکہ اپنی اولاد، خاندان اور آنے والی نسلوں کی دینی و اخلاقی تربیت میں بھی بنیادی کردار ادا کرتی ہے۔",
-
-            environmentTitle:
-                "موجودہ دور میں دینی تعلیم کی ضرورت",
-
-            environment1:
-                "موجودہ دور میں معاشرتی، اخلاقی اور فکری ماحول تیزی سے بدل رہا ہے۔ اس لیے بچیوں کے لیے رسمی تعلیم کے ساتھ مضبوط دینی شعور، اچھے اخلاق، حیا، صحیح و غلط کی پہچان اور اسلامی زندگی کی سمجھ نہایت اہم ہے۔",
-
-            environment2:
-                "خواہ کوئی طالبہ پہلے سے تعلیم یافتہ ہو یا اس کی سابقہ رسمی تعلیم محدود رہی ہو، مدرسہ اسے اس کی استعداد کے مطابق دینی علوم سیکھنے اور اپنی علمی و اخلاقی بنیاد مضبوط کرنے کا موقع فراہم کرتا ہے۔",
-
-            environment3:
-                "ہماری کوشش ہے کہ طالبات موجودہ دور کے فکری، اخلاقی اور معاشرتی چیلنجز کو سمجھتے ہوئے قرآن و سنت کی روشنی میں باوقار اور ذمہ دار زندگی گزار سکیں۔",
-
-            darsiTitle:
-                "درسِ نظامی",
-
-            darsi1:
-                "درسِ نظامی طالبات کو اسلامی علوم کی مضبوط، منظم اور مرحلہ وار بنیاد فراہم کرتا ہے۔",
-
-            darsi2:
-                "قرآن، حدیث، فقہ، اصول، عربی زبان اور دیگر دینی علوم پڑھائے جاتے ہیں تاکہ طالبات دین کو علم، فہم اور ذمہ داری کے ساتھ سیکھ سکیں۔",
-
-            classesTitle:
-                "دستیاب کلاسیں",
-
-            class1:
-                "ثانویہ عامہ",
-
-            class2:
-                "ثانویہ خاصہ",
-
-            class3:
-                "عالیہ اول",
-
-            class4:
-                "عالیہ دوم",
-
-            class5:
-                "عالمیہ اول",
-
-            class6:
-                "عالمیہ دوم / دورۂ حدیث",
-
-            livingTitle:
-                "مدرسہ میں رہائش",
-
-            livingSubtitle:
-                "24 گھنٹے منظم نگرانی اور محفوظ ماحول",
-
-            living1:
-                "مدرسہ میں رہائش پذیر طالبات کی تعلیم، تربیت، نظم و ضبط، روزمرہ سرگرمیوں اور حفاظت پر مسلسل توجہ دی جاتی ہے۔",
-
-            living2:
-                "مدرسہ سے عارضی خروج، واپسی اور ملاقات کے لیے باقاعدہ قواعد موجود ہیں۔ طالبہ منظور شدہ محرم یا سرپرست اور مدرسہ انتظامیہ کی اجازت کے مطابق مدرسہ سے باہر جا سکتی ہے۔",
-
-            living3:
-                "آمد و رفت کا وقت، منظور شدہ محرم اور متعلقہ تفصیلات باقاعدہ ریکارڈ کی جاتی ہیں تاکہ نظم، تحفظ اور والدین کے اعتماد کو برقرار رکھا جا سکے۔",
-
-            communityTitle:
-                "ہماری تعلیمی برادری",
-
-            registeredStudents:
-                "کل رجسٹرڈ طالبات",
-
-            registeredTeachers:
-                "کل رجسٹرڈ اساتذہ",
-
-            statsNote:
-                "اعداد و شمار مدرسہ کے موجودہ ریکارڈ کے مطابق خودکار طور پر اپ ڈیٹ کیے جاتے ہیں۔",
-
-            teachersTitle:
-                "ہمارے اساتذہ",
-
-            teachersText1:
-                "مدرسہ کے تمام اساتذہ وفاق المدارس کے تحت اپنی باقاعدہ دینی تعلیم مکمل کر چکے ہیں اور دینی علوم کی تدریس کے لیے علمی و عملی تیاری رکھتے ہیں۔",
-
-            teachersText2:
-                "تدریس میں علم کے ساتھ ادب، اخلاق، تربیت اور طالبات کی انفرادی رہنمائی کو بھی بنیادی اہمیت دی جاتی ہے۔",
-
-            adminMessageTitle:
-                "منتظم کا پیغام",
-
-            adminName:
-                "مولوی جمیل خان حقانی",
-
-            adminDesignation:
-                "منتظم، مدرسہ شہناز اختر للبنات",
-
-            adminMessage1:
-                "ہماری ذمہ داری صرف طالبات کو کتابی تعلیم دینا نہیں، بلکہ ایسی باعلم، باعمل، بااخلاق اور مضبوط دینی شعور رکھنے والی خواتین تیار کرنا ہے جو اپنے دین کو سمجھیں، اس پر عمل کریں اور اپنے خاندان و معاشرے میں خیر اور صحیح اسلامی رہنمائی کا ذریعہ بنیں۔",
-
-            adminMessage2:
-                "موجودہ دور کے فکری، اخلاقی اور معاشرتی چیلنجز کے پیش نظر ہم طالبات کی تعلیم، تربیت، نظم و ضبط اور محفوظ ماحول پر خصوصی توجہ دیتے ہیں۔ مدرسہ میں رہائش پذیر طالبات کی 24 گھنٹے منظم نگرانی ذمہ دار انتظامیہ کے تحت کی جاتی ہے۔",
-
-            adminMessage3:
-                "ہماری خواہش ہے کہ ہر طالبہ یہاں سے صرف سند لے کر نہ جائے بلکہ قرآن و سنت سے مضبوط تعلق، اعلیٰ اخلاق، دینی بصیرت اور پوری زندگی کام آنے والی تربیت اپنے ساتھ لے کر جائے۔ والدین کا اعتماد، اساتذہ کی محنت اور اہلِ خیر کا تعاون اس دینی خدمت کو مضبوط بناتا ہے۔",
-
-            supportTitle:
-                "خدمتِ دین اور علم میں حصہ",
-
-            baqarahReference:
-                "سورۃ البقرۃ: 261",
-
-            support1:
-                "طالبات کو قرآن و حدیث کی تعلیم دینا اور دینی علم کے فروغ میں حصہ لینا ایک عظیم خدمت ہے۔ رسول اللہ ﷺ نے صدقۂ جاریہ اور ایسے علم کو جس سے فائدہ اٹھایا جائے، جاری رہنے والی نیکیوں میں شمار فرمایا ہے۔",
-
-            support2:
-                "طالبات کی دینی تعلیم، قرآن و حدیث کی تدریس، کتابوں، تعلیمی ضروریات، مدرسہ میں رہائش اور ادارے کی دیگر دینی و تعلیمی ضروریات میں اہلِ خیر کا تعاون اس علمی سفر کو جاری رکھنے میں مددگار بنتا ہے۔",
-
-            support3:
-                "علمِ دین کی خدمت میں کیا گیا چھوٹا یا بڑا حصہ کسی طالبہ کی تعلیم اور آنے والی نسلوں کی دینی تربیت کا ذریعہ بن سکتا ہے۔",
-
-            contactTitle:
-                "رابطہ",
-
-            phone:
-                "فون",
-
-            email:
-                "ای میل",
-
-            managementSystem:
-                "مدرسہ مینجمنٹ سسٹم"
-        },
-
-
-
-        /* =================================================
-           ENGLISH
-        ================================================= */
-
-        en: {
-
-            language: "Language",
-
-            login: "Login",
-
-            admission: "New Admission",
-
-            chooseAccount:
-                "Choose your account type",
-
-            adminLogin:
-                "Admin Login",
-
-            teacherLogin:
-                "Teacher Login",
-
-            studentLogin:
-                "Student Login",
-
-            registration:
-                "Registration / New Admission",
-
-            chooseApplication:
-                "Choose application type",
-
-            studentApplication:
-                "Student Admission Application",
-
-            teacherApplication:
-                "Teacher Application",
-
-            adminSignupNote:
-                "Admin accounts cannot be created through public registration.",
-
-            madrassaName:
-                "Madrassa Shahnaz Akhtar Lil-Banat",
-
-            tagline:
-                "Knowledge, Tarbiyah and Character Building in the Light of the Quran and Sunnah",
-
-            address:
-                "Village Hal Ghorghashto, District Buner",
-
-            wifaqTitle:
-                "Registered with Wifaq-ul-Madaris",
-
-            wifaqText:
-                "The Madrassa is formally registered with Wifaq-ul-Madaris, and Dars-e-Nizami and related Islamic education are provided according to the prescribed curriculum.",
-
-            introTitle:
-                "About the Madrassa",
-
-            introText1:
-                "Madrassa Shahnaz Akhtar Lil-Banat is an organized Islamic educational institution established for the religious, academic, moral and practical development of female students.",
-
-            introText2:
-                "Students receive structured education in the Holy Quran, Hadith of the Prophet ﷺ, Fiqh, Islamic beliefs, Arabic language, Islamic manners and Dars-e-Nizami.",
-
-            introText3:
-                "Our aim is to develop students who combine knowledge with practice, good character, religious awareness, modesty and responsibility.",
-
-            femaleEducationTitle:
-                "Importance of Islamic Education for Girls",
-
-            knowledgeTranslation:
-                "And say: My Lord, increase me in knowledge.",
-
-            tahaReference:
-                "Surah Taha: 114",
-
-            femaleEducation1:
-                "Islam gives great importance to seeking knowledge. During the time of the Prophet Muhammad ﷺ, women requested dedicated time for religious learning, and the Prophet ﷺ arranged teaching for them.",
-
-            femaleEducation2:
-                "A woman with sound Islamic education can improve her own life and also play an important role in the religious and moral upbringing of her children, family and future generations.",
-
-            environmentTitle:
-                "The Need for Islamic Education Today",
-
-            environment1:
-                "Today's social, moral and intellectual environment is changing rapidly. Alongside formal education, girls need strong religious awareness, good character, modesty, the ability to distinguish right from wrong, and an understanding of Islamic life.",
-
-            environment2:
-                "Whether a student already has formal education or has had limited educational opportunities, the Madrassa provides an opportunity to learn Islamic knowledge according to her ability and strengthen her academic and moral foundation.",
-
-            environment3:
-                "We aim to prepare students to understand modern intellectual, moral and social challenges and to live responsible and dignified lives in the light of the Quran and Sunnah.",
-
-            darsiTitle:
-                "Dars-e-Nizami",
-
-            darsi1:
-                "Dars-e-Nizami provides students with a strong, structured and progressive foundation in Islamic sciences.",
-
-            darsi2:
-                "The Quran, Hadith, Fiqh, Usool, Arabic language and other Islamic sciences are taught so that students can understand their religion with knowledge, comprehension and responsibility.",
-
-            classesTitle:
-                "Available Classes",
-
-            class1:
-                "Sanvia Aamma",
-
-            class2:
-                "Sanvia Khasa",
-
-            class3:
-                "Alia First",
-
-            class4:
-                "Alia Second",
-
-            class5:
-                "Almia First",
-
-            class6:
-                "Almia Second / Dawra-e-Hadith",
-
-            livingTitle:
-                "Living in Madrassa",
-
-            livingSubtitle:
-                "24/7 Organized Supervision and a Safe Environment",
-
-            living1:
-                "The education, training, discipline, daily activities and safety of students living in the Madrassa are continuously supervised.",
-
-            living2:
-                "Clear rules apply to temporary departure, return and visits. A student may leave the Madrassa only according to the approved Mahram or guardian arrangements and permission of the Madrassa administration.",
-
-            living3:
-                "Departure and return times, approved Mahram details and related information are properly recorded to maintain discipline, safety and parental confidence.",
-
-            communityTitle:
-                "Our Educational Community",
-
-            registeredStudents:
-                "Total Registered Students",
-
-            registeredTeachers:
-                "Total Registered Teachers",
-
-            statsNote:
-                "Statistics are automatically updated according to the current Madrassa records.",
-
-            teachersTitle:
-                "Our Teachers",
-
-            teachersText1:
-                "All teachers of the Madrassa have completed their formal religious education through Wifaq-ul-Madaris and are academically and practically prepared for teaching Islamic sciences.",
-
-            teachersText2:
-                "Alongside academic teaching, special importance is given to manners, character, tarbiyah and individual guidance of students.",
-
-            adminMessageTitle:
-                "Message from the Administrator",
-
-            adminName:
-                "Molv Jameel Khan Haqani",
-
-            adminDesignation:
-                "Administrator, Madrassa Shahnaz Akhtar Lil-Banat",
-
-            adminMessage1:
-                "Our responsibility is not limited to teaching books. We aim to develop knowledgeable, practicing and well-mannered women with strong religious understanding who know their faith, live by it and become a source of goodness and sound Islamic guidance for their families and society.",
-
-            adminMessage2:
-                "In view of today's intellectual, moral and social challenges, we give special attention to education, tarbiyah, discipline and a safe environment. Students living in the Madrassa remain under organized 24-hour supervision of responsible administration.",
-
-            adminMessage3:
-                "Our goal is that every student leaves not merely with a certificate, but with a strong relationship with the Quran and Sunnah, excellent character, religious insight and training that benefits her throughout life. The trust of parents, dedication of teachers and support of well-wishers strengthen this religious mission.",
-
-            supportTitle:
-                "Supporting Religious Knowledge and Education",
-
-            baqarahReference:
-                "Surah Al-Baqarah: 261",
-
-            support1:
-                "Teaching the Quran and Hadith to female students and contributing to the spread of beneficial religious knowledge is a noble service. The Prophet ﷺ mentioned ongoing charity and beneficial knowledge among the deeds whose reward continues.",
-
-            support2:
-                "Support from well-wishers for students' religious education, Quran and Hadith teaching, books, educational needs, living in the Madrassa and other educational requirements helps this mission continue.",
-
-            support3:
-                "Every contribution, large or small, toward religious education can become a means of educating a student and strengthening the religious upbringing of future generations.",
-
-            contactTitle:
-                "Contact",
-
-            phone:
-                "Phone",
-
-            email:
-                "Email",
-
-            managementSystem:
-                "Madrassa Management System"
-        },
-
-
-
-        /* =================================================
-           ARABIC
-        ================================================= */
-
-        ar: {
-
-            language: "اللغة",
-
-            login: "تسجيل الدخول",
-
-            admission: "قبول جديد",
-
-            chooseAccount:
-                "اختر نوع الحساب",
-
-            adminLogin:
-                "دخول الإدارة",
-
-            teacherLogin:
-                "دخول المعلمة",
-
-            studentLogin:
-                "دخول الطالبة",
-
-            registration:
-                "التسجيل / القبول الجديد",
-
-            chooseApplication:
-                "اختر نوع الطلب",
-
-            studentApplication:
-                "طلب قبول طالبة",
-
-            teacherApplication:
-                "طلب معلمة",
-
-            adminSignupNote:
-                "لا يمكن إنشاء حساب الإدارة من خلال التسجيل العام.",
-
-            madrassaName:
-                "مدرسة شهناز أختر للبنات",
-
-            tagline:
-                "العلم والتربية وبناء الشخصية في ضوء القرآن والسنة",
-
-            address:
-                "قرية هَل غورغشتو، مديرية بونير",
-
-            wifaqTitle:
-                "مسجلة لدى وفاق المدارس",
-
-            wifaqText:
-                "المدرسة مسجلة رسمياً لدى وفاق المدارس، ويُقدَّم فيها منهج درس النظامي والعلوم الشرعية وفق المنهج المعتمد.",
-
-            introTitle:
-                "نبذة عن المدرسة",
-
-            introText1:
-                "مدرسة شهناز أختر للبنات مؤسسة تعليمية إسلامية منظمة تهدف إلى التربية الدينية والعلمية والأخلاقية والعملية للطالبات.",
-
-            introText2:
-                "تُدرَّس فيها علوم القرآن الكريم والحديث النبوي ﷺ والفقه والعقيدة واللغة العربية والآداب الإسلامية ومنهج درس النظامي بصورة منتظمة.",
-
-            introText3:
-                "هدفنا إعداد طالبات يجمعن بين العلم والعمل والأخلاق الحسنة والوعي الديني والحياء وتحمل المسؤولية.",
-
-            femaleEducationTitle:
-                "أهمية التعليم الديني للفتيات",
-
-            knowledgeTranslation:
-                "وقل رب زدني علماً.",
-
-            tahaReference:
-                "سورة طه: 114",
-
-            femaleEducation1:
-                "أولى الإسلام طلب العلم أهمية عظيمة. وفي عهد النبي ﷺ طلبت النساء وقتاً خاصاً للتعلم، فخصص لهن وقتاً للتعليم والإرشاد.",
-
-            femaleEducation2:
-                "المرأة المتعلمة دينياً تستطيع إصلاح نفسها، كما تؤدي دوراً مهماً في التربية الدينية والأخلاقية لأبنائها وأسرتها والأجيال القادمة.",
-
-            environmentTitle:
-                "الحاجة إلى التعليم الديني في العصر الحاضر",
-
-            environment1:
-                "يشهد المجتمع اليوم تغيرات سريعة في الجوانب الفكرية والأخلاقية والاجتماعية، ولذلك تحتاج الفتيات إلى جانب التعليم النظامي إلى الوعي الديني والأخلاق والحياء والقدرة على التمييز بين الصواب والخطأ.",
-
-            environment2:
-                "سواء كانت الطالبة قد حصلت على تعليم سابق أو كانت فرصها التعليمية محدودة، توفر المدرسة لها فرصة تعلم العلوم الشرعية وفق قدراتها وتقوية أساسها العلمي والأخلاقي.",
-
-            environment3:
-                "نسعى إلى إعداد الطالبات لفهم التحديات الفكرية والأخلاقية والاجتماعية المعاصرة والعيش بكرامة ومسؤولية في ضوء القرآن والسنة.",
-
-            darsiTitle:
-                "درس النظامي",
-
-            darsi1:
-                "يوفر درس النظامي أساساً قوياً ومنظماً ومتدرجاً في العلوم الإسلامية.",
-
-            darsi2:
-                "تُدرَّس علوم القرآن والحديث والفقه والأصول واللغة العربية وغيرها من العلوم الشرعية لتتعلم الطالبة دينها بعلم وفهم ومسؤولية.",
-
-            classesTitle:
-                "الفصول المتاحة",
-
-            class1:
-                "الثانوية العامة",
-
-            class2:
-                "الثانوية الخاصة",
-
-            class3:
-                "العالية الأولى",
-
-            class4:
-                "العالية الثانية",
-
-            class5:
-                "العالمية الأولى",
-
-            class6:
-                "العالمية الثانية / دورة الحديث",
-
-            livingTitle:
-                "الإقامة في المدرسة",
-
-            livingSubtitle:
-                "إشراف منظم على مدار 24 ساعة وبيئة آمنة",
-
-            living1:
-                "تُتابع بصورة مستمرة دراسة الطالبات المقيمات في المدرسة وتربيتهن وانضباطهن وأنشطتهن اليومية وسلامتهن.",
-
-            living2:
-                "توجد قواعد واضحة للخروج المؤقت والعودة والزيارات، ولا تخرج الطالبة إلا وفق ترتيبات المحرم أو ولي الأمر المعتمد وبإذن إدارة المدرسة.",
-
-            living3:
-                "يتم تسجيل أوقات الخروج والعودة وبيانات المحرم المعتمد والتفاصيل ذات الصلة لضمان النظام والأمان وثقة أولياء الأمور.",
-
-            communityTitle:
-                "مجتمعنا التعليمي",
-
-            registeredStudents:
-                "إجمالي الطالبات المسجلات",
-
-            registeredTeachers:
-                "إجمالي المعلمات المسجلات",
-
-            statsNote:
-                "يتم تحديث الإحصاءات تلقائياً وفق سجلات المدرسة الحالية.",
-
-            teachersTitle:
-                "هيئتنا التعليمية",
-
-            teachersText1:
-                "جميع معلمات المدرسة أتممن تعليمهن الديني الرسمي من خلال وفاق المدارس، ولديهن التأهيل العلمي والعملي لتدريس العلوم الشرعية.",
-
-            teachersText2:
-                "إلى جانب التعليم العلمي، نولي اهتماماً خاصاً بالأدب والأخلاق والتربية والإرشاد الفردي للطالبات.",
-
-            adminMessageTitle:
-                "رسالة المسؤول",
-
-            adminName:
-                "مولوي جميل خان حقاني",
-
-            adminDesignation:
-                "مسؤول مدرسة شهناز أختر للبنات",
-
-            adminMessage1:
-                "مسؤوليتنا لا تقتصر على تدريس الكتب، بل نهدف إلى إعداد نساء عالمات عاملات حسنات الأخلاق وواعيات بدينهن، يفهمن الإسلام ويعملن به ويصبحن مصدر خير وإرشاد صحيح لأسرهن ومجتمعهن.",
-
-            adminMessage2:
-                "نظراً للتحديات الفكرية والأخلاقية والاجتماعية المعاصرة، نولي اهتماماً خاصاً بالتعليم والتربية والانضباط والبيئة الآمنة. وتخضع الطالبات المقيمات في المدرسة لإشراف منظم على مدار الساعة من إدارة مسؤولة.",
-
-            adminMessage3:
-                "نريد أن تغادر كل طالبة المدرسة ليس ومعها شهادة فقط، بل ومعها صلة قوية بالقرآن والسنة وأخلاق حسنة وبصيرة دينية وتربية نافعة مدى الحياة. وثقة أولياء الأمور وجهود المعلمات ودعم أهل الخير تعزز هذه الرسالة الدينية.",
-
-            supportTitle:
-                "المساهمة في خدمة الدين والعلم",
-
-            baqarahReference:
-                "سورة البقرة: 261",
-
-            support1:
-                "تعليم الطالبات القرآن والحديث والمساهمة في نشر العلم الديني النافع من الأعمال الجليلة. وقد ذكر النبي ﷺ الصدقة الجارية والعلم النافع ضمن الأعمال التي يستمر أجرها.",
-
-            support2:
-                "يسهم دعم أهل الخير في تعليم الطالبات والقرآن والحديث والكتب والاحتياجات التعليمية والإقامة في المدرسة وغيرها من الاحتياجات التعليمية والدينية في استمرار هذه الرسالة.",
-
-            support3:
-                "كل مساهمة، صغيرة كانت أو كبيرة، في خدمة العلم الديني قد تكون سبباً في تعليم طالبة وتربية أجيال قادمة على الدين.",
-
-            contactTitle:
-                "اتصل بنا",
-
-            phone:
-                "الهاتف",
-
-            email:
-                "البريد الإلكتروني",
-
-            managementSystem:
-                "نظام إدارة المدرسة"
-        },
-
-
-
-        /* =================================================
-           PASHTO
-        ================================================= */
-
-        ps: {
-
-            language: "ژبه",
-
-            login: "ننوتل",
-
-            admission: "نوی داخله",
-
-            chooseAccount:
-                "د خپل حساب ډول وټاکئ",
-
-            adminLogin:
-                "د اېډمن ننوتل",
-
-            teacherLogin:
-                "د ښوونکي ننوتل",
-
-            studentLogin:
-                "د طالبې ننوتل",
-
-            registration:
-                "رجسټریشن / نوی داخله",
-
-            chooseApplication:
-                "د غوښتنلیک ډول وټاکئ",
-
-            studentApplication:
-                "د طالبې د داخلې غوښتنلیک",
-
-            teacherApplication:
-                "د ښوونکي غوښتنلیک",
-
-            adminSignupNote:
-                "د اېډمن حساب د عامه رجسټریشن له لارې نه شي جوړېدای.",
-
-            madrassaName:
-                "مدرسه شهناز اختر للبنات",
-
-            tagline:
-                "د قرآن او سنت په رڼا کې علم، روزنه او د شخصیت جوړونه",
-
-            address:
-                "کلی هل غورغشتو، ضلع بونیر",
-
-            wifaqTitle:
-                "له وفاق المدارس سره راجستر شوې",
-
-            wifaqText:
-                "مدرسه له وفاق المدارس سره په رسمي ډول راجستر ده او درس نظامي او نور دیني علوم د ټاکل شوي نصاب له مخې تدریسېږي.",
-
-            introTitle:
-                "د مدرسې پېژندنه",
-
-            introText1:
-                "مدرسه شهناز اختر للبنات د طالباتو د دیني، علمي، اخلاقي او عملي روزنې لپاره یوه منظمه دیني تعلیمي اداره ده.",
-
-            introText2:
-                "دلته قرآن کریم، حدیث نبوي ﷺ، فقه، عقاید، عربي ژبه، اسلامي اخلاق او آداب او درس نظامي په منظم ډول تدریسېږي.",
-
-            introText3:
-                "زموږ موخه دا ده چې طالبات د علم تر څنګ عمل، ښه اخلاق، دیني شعور، حیا او مسؤلیت د خپل ژوند برخه وګرځوي.",
-
-            femaleEducationTitle:
-                "د نجونو د دیني زده کړو اهمیت",
-
-            knowledgeTranslation:
-                "او ووایه: اې زما ربه! زما علم زیات کړه.",
-
-            tahaReference:
-                "سورة طه: 114",
-
-            femaleEducation1:
-                "اسلام علم زده کولو ته ډېر اهمیت ورکړی دی. د رسول الله ﷺ په زمانه کې ښځو د دیني زده کړو لپاره ځانګړی وخت وغوښت، او رسول الله ﷺ د هغوی د تعلیم لپاره وخت وټاکه.",
-
-            femaleEducation2:
-                "دیني تعلیم لرونکې ښځه نه یوازې خپل ژوند سمولی شي، بلکې د خپلو اولادونو، کورنۍ او راتلونکو نسلونو په دیني او اخلاقي روزنه کې هم مهم رول لري.",
-
-            environmentTitle:
-                "په اوسني وخت کې د دیني تعلیم اړتیا",
-
-            environment1:
-                "د نن ورځې ټولنیز، اخلاقي او فکري چاپېریال په چټکۍ بدلېږي. له همدې امله نجونو ته د رسمي تعلیم تر څنګ قوي دیني شعور، ښه اخلاق، حیا، د سم او ناسم پېژندنه او د اسلامي ژوند پوهه ډېره مهمه ده.",
-
-            environment2:
-                "که یوه طالبه مخکې تعلیم کړی وي او که یې د رسمي تعلیم موقعې محدودې وې، مدرسه هغې ته د خپل استعداد مطابق د دیني علومو د زده کړې او د علمي او اخلاقي بنسټ د پیاوړتیا فرصت ورکوي.",
-
-            environment3:
-                "زموږ هڅه دا ده چې طالبات د اوسني وخت فکري، اخلاقي او ټولنیزې ننګونې وپېژني او د قرآن او سنت په رڼا کې باعزته او مسؤلانه ژوند وکړي.",
-
-            darsiTitle:
-                "درس نظامي",
-
-            darsi1:
-                "درس نظامي طالباتو ته د اسلامي علومو قوي، منظم او پړاو په پړاو بنسټ برابروي.",
-
-            darsi2:
-                "قرآن، حدیث، فقه، اصول، عربي ژبه او نور دیني علوم تدریسېږي، څو طالبات خپل دین په علم، پوهه او مسؤلیت سره زده کړي.",
-
-            classesTitle:
-                "شته ټولګي",
-
-            class1:
-                "ثانویہ عامہ",
-
-            class2:
-                "ثانویہ خاصہ",
-
-            class3:
-                "عالیہ اول",
-
-            class4:
-                "عالیہ دوم",
-
-            class5:
-                "عالمیہ اول",
-
-            class6:
-                "عالمیہ دوم / دوره حدیث",
-
-            livingTitle:
-                "په مدرسه کې استوګنه",
-
-            livingSubtitle:
-                "۲۴ ساعته منظم څارنه او خوندي چاپېریال",
-
-            living1:
-                "په مدرسه کې د اوسېدونکو طالباتو تعلیم، روزنه، نظم، ورځني فعالیتونه او خوندیتوب په دوامداره توګه څارل کېږي.",
-
-            living2:
-                "د لنډمهاله وتلو، بېرته راتګ او ملاقات لپاره روښانه اصول شته. طالبه یوازې د منظور شوي محرم یا سرپرست او د مدرسې د انتظامیې په اجازه له مدرسې بهر تللی شي.",
-
-            living3:
-                "د وتلو او راتګ وخت، د منظور شوي محرم معلومات او اړوند جزئیات ثبتېږي، څو نظم، امنیت او د والدینو باور وساتل شي.",
-
-            communityTitle:
-                "زموږ تعلیمي ټولنه",
-
-            registeredStudents:
-                "ټولې راجستر شوې طالبات",
-
-            registeredTeachers:
-                "ټول راجستر شوي ښوونکي",
-
-            statsNote:
-                "شمېرې د مدرسې د اوسني ریکارډ له مخې په اوتومات ډول تازه کېږي.",
-
-            teachersTitle:
-                "زموږ ښوونکي",
-
-            teachersText1:
-                "د مدرسې ټول ښوونکي د وفاق المدارس له لارې خپله باقاعده دیني زده کړه بشپړه کړې ده او د دیني علومو د تدریس لپاره علمي او عملي چمتووالی لري.",
-
-            teachersText2:
-                "د تدریس تر څنګ ادب، اخلاق، روزنه او د طالباتو انفرادي لارښوونه هم ځانګړی اهمیت لري.",
-
-            adminMessageTitle:
-                "د منتظم پیغام",
-
-            adminName:
-                "مولوي جمیل خان حقاني",
-
-            adminDesignation:
-                "منتظم، مدرسه شهناز اختر للبنات",
-
-            adminMessage1:
-                "زموږ مسؤلیت یوازې د کتابونو تدریس نه دی، بلکې زموږ موخه دا ده چې باعلمه، باعمله، بااخلاقه او قوي دیني شعور لرونکې ښځې وروزو، چې خپل دین وپېژني، عمل پرې وکړي او د خپلې کورنۍ او ټولنې لپاره د خیر او سمې اسلامي لارښوونې وسیله وګرځي.",
-
-            adminMessage2:
-                "د اوسني وخت فکري، اخلاقي او ټولنیزو ننګونو ته په کتو موږ د طالباتو تعلیم، روزنې، نظم او خوندي چاپېریال ته ځانګړې پاملرنه کوو. په مدرسه کې اوسېدونکې طالبات د مسؤلې انتظامیې تر ۲۴ ساعته منظمې څارنې لاندې وي.",
-
-            adminMessage3:
-                "زموږ هیله دا ده چې هره طالبه له مدرسې څخه یوازې سند وانه خلي، بلکې له قرآن او سنت سره قوي اړیکه، ښه اخلاق، دیني بصیرت او د ټول ژوند لپاره ګټوره روزنه هم له ځان سره یوسي. د والدینو باور، د ښوونکو هڅې او د خیر غوښتونکو ملاتړ دا دیني خدمت پیاوړی کوي.",
-
-            supportTitle:
-                "د دین او علم په خدمت کې ونډه",
-
-            baqarahReference:
-                "سورة البقرة: 261",
-
-            support1:
-                "طالباتو ته د قرآن او حدیث تعلیم ورکول او د ګټور دیني علم په خپرولو کې برخه اخیستل یوه لویه دینی خدمت دی. رسول الله ﷺ صدقه جاریه او ګټور علم له هغو اعمالو څخه یاد کړي چې اجر یې دوام کوي.",
-
-            support2:
-                "د طالباتو د دیني تعلیم، قرآن او حدیث تدریس، کتابونو، تعلیمي اړتیاوو، په مدرسه کې استوګنې او نورو دیني او تعلیمي اړتیاوو کې د خیر غوښتونکو مرسته د دې علمي سفر په دوام کې مرسته کوي.",
-
-            support3:
-                "د دیني علم په خدمت کې هره کوچنۍ یا لویه ونډه د یوې طالبې د تعلیم او د راتلونکو نسلونو د دیني روزنې وسیله کېدای شي.",
-
-            contactTitle:
-                "اړیکه",
-
-            phone:
-                "تلیفون",
-
-            email:
-                "برېښنالیک",
-
-            managementSystem:
-                "د مدرسې د مدیریت سیستم"
-        }
-
-    };
-
-
-
-    /* =====================================================
-       LANGUAGE SETTINGS
-    ===================================================== */
-
-    const LANGUAGE_KEY =
-        "appLanguage";
-
-
-    const rtlLanguages = [
-        "ur",
-        "ar",
-        "ps"
-    ];
-
-
-
-    function getSavedLanguage() {
-
-        const saved =
-            localStorage.getItem(
-                LANGUAGE_KEY
-            );
-
-
-        if (
-            saved &&
-            translations[saved]
-        ) {
-
-            return saved;
-        }
-
-
-        return "ur";
-    }
-
-
-
-    function applyLanguage(language) {
-
-        if (!translations[language]) {
-
-            language = "ur";
-        }
-
-
-        const dictionary =
-            translations[language];
-
-
-        document.documentElement.lang =
-            language;
-
-
-        document.documentElement.dir =
-            rtlLanguages.includes(language)
-                ? "rtl"
-                : "ltr";
-
-
-        document.body.dir =
-            document.documentElement.dir;
-
-
-        document
-            .querySelectorAll(
-                "[data-i18n]"
-            )
-            .forEach(function (element) {
-
-                const key =
-                    element.getAttribute(
-                        "data-i18n"
-                    );
-
-
-                if (
-                    Object.prototype
-                        .hasOwnProperty
-                        .call(
-                            dictionary,
-                            key
-                        )
-                ) {
-
-                    element.textContent =
-                        dictionary[key];
-                }
-
-            });
-
-
-        const selector =
-            document.getElementById(
-                "languageSelector"
-            );
-
-
-        if (selector) {
-
-            selector.value =
-                language;
-        }
-
-
-        localStorage.setItem(
-            LANGUAGE_KEY,
-            language
-        );
-
-    }
-
-
-
-    /* =====================================================
-       LOGIN / SIGNUP MODALS
-    ===================================================== */
-
-    function openPanel(id) {
-
-        const panel =
-            document.getElementById(id);
-
-
-        if (!panel) {
-            return;
-        }
-
-
-        panel.hidden =
-            false;
-
-
-        document.body.style.overflow =
-            "hidden";
-    }
-
-
-
-    function closePanel(id) {
-
-        const panel =
-            document.getElementById(id);
-
-
-        if (!panel) {
-            return;
-        }
-
-
-        panel.hidden =
-            true;
-
-
-        document.body.style.overflow =
-            "";
-    }
-
-
-
-    /* =====================================================
-       START PAGE
-    ===================================================== */
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-
-
-            const languageSelector =
-                document.getElementById(
-                    "languageSelector"
-                );
-
-
-            applyLanguage(
-                getSavedLanguage()
-            );
-
-
-
-            if (languageSelector) {
-
-                languageSelector
-                    .addEventListener(
-                        "change",
-                        function () {
-
-                            applyLanguage(
-                                this.value
-                            );
-
-                        }
-                    );
-
-            }
-
-
-
-            const loginButton =
-                document.getElementById(
-                    "openLoginOptions"
-                );
-
-
-            if (loginButton) {
-
-                loginButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            openPanel(
-                                "loginOptionsPanel"
-                            );
-
-                        }
-                    );
-
-            }
-
-
-
-            const signupButton =
-                document.getElementById(
-                    "openSignupOptions"
-                );
-
-
-            if (signupButton) {
-
-                signupButton
-                    .addEventListener(
-                        "click",
-                        function () {
-
-                            openPanel(
-                                "signupOptionsPanel"
-                            );
-
-                        }
-                    );
-
-            }
-
-
-
-            document
-                .querySelectorAll(
-                    "[data-close-panel]"
-                )
-                .forEach(
-                    function (button) {
-
-                        button.addEventListener(
-                            "click",
-                            function () {
-
-                                closePanel(
-                                    this.getAttribute(
-                                        "data-close-panel"
-                                    )
-                                );
-
-                            }
-                        );
-
-                    }
-                );
-
-
-
-            document
-                .querySelectorAll(
-                    ".intro-options-panel"
-                )
-                .forEach(
-                    function (panel) {
-
-                        panel.addEventListener(
-                            "click",
-                            function (event) {
-
-                                if (
-                                    event.target ===
-                                    panel
-                                ) {
-
-                                    closePanel(
-                                        panel.id
-                                    );
-
-                                }
-
-                            }
-                        );
-
-                    }
-                );
-
-
-
-            document.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key !==
-                        "Escape"
-                    ) {
-                        return;
-                    }
-
-
-                    closePanel(
-                        "loginOptionsPanel"
-                    );
-
-
-                    closePanel(
-                        "signupOptionsPanel"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-
-    /* =====================================================
-       ALLOW OTHER PAGES / SCRIPT.JS TO CHANGE LANGUAGE
-    ===================================================== */
-
-    window.MadrassaLanguage = {
-
-        apply:
-            applyLanguage,
-
-        get:
-            getSavedLanguage,
-
-        translations:
-            translations
-
-    };
-
-
-})();
-
-</script>
-
-
-
-<!-- =====================================================
-     MAIN WEBSITE SCRIPT
-===================================================== -->
-
-<script src="script.js"></script>
-
-
-</body>
-    </html>
+           
