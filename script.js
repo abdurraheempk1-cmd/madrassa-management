@@ -1,13 +1,17 @@
 /* =========================================================
    مدرسہ شہناز اختر للبنات
    COMPLETE FRONTEND SCRIPT
-   Secure session + Admin + Teacher + Student + Print/PDF
+   Secure session + Admin + Teacher + Student + Reports
+   Print / PDF
    ========================================================= */
 
 (function () {
     "use strict";
 
-    const App = window.App = window.App || {};
+    const App =
+        window.App =
+        window.App || {};
+
 
     /* =====================================================
        CONFIGURATION
@@ -40,11 +44,13 @@
     App.lastInteraction =
         Date.now();
 
-    App.heartbeatTimer = null;
+    App.heartbeatTimer =
+        null;
 
     App.currentFile =
         String(
-            window.location.pathname || ""
+            window.location.pathname ||
+            ""
         )
             .split("/")
             .pop()
@@ -55,46 +61,48 @@
        BASIC HELPERS
        ===================================================== */
 
-    App.safe = function (value) {
+    App.safe =
+        function (value) {
 
-        return (
-            value === null ||
-            value === undefined
-        )
-            ? ""
-            : String(value);
-    };
-
-
-    App.escape = function (value) {
-
-        return App.safe(value)
-
-            .replace(
-                /&/g,
-                "&amp;"
+            return (
+                value === null ||
+                value === undefined
             )
+                ? ""
+                : String(value);
+        };
 
-            .replace(
-                /</g,
-                "&lt;"
-            )
 
-            .replace(
-                />/g,
-                "&gt;"
-            )
+    App.escape =
+        function (value) {
 
-            .replace(
-                /"/g,
-                "&quot;"
-            )
+            return App.safe(value)
 
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-    };
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        };
 
 
     App.normalizeDigits =
@@ -107,7 +115,9 @@
                     digit =>
                         String(
                             "٠١٢٣٤٥٦٧٨٩"
-                                .indexOf(digit)
+                                .indexOf(
+                                    digit
+                                )
                         )
                 )
 
@@ -116,7 +126,9 @@
                     digit =>
                         String(
                             "۰۱۲۳۴۵۶۷۸۹"
-                                .indexOf(digit)
+                                .indexOf(
+                                    digit
+                                )
                         )
                 )
 
@@ -139,11 +151,13 @@
                         13
                     );
 
+
             if (
                 digits.length <= 5
             ) {
                 return digits;
             }
+
 
             if (
                 digits.length <= 12
@@ -158,6 +172,7 @@
                     digits.slice(5)
                 );
             }
+
 
             return (
                 digits.slice(
@@ -197,22 +212,25 @@
                     value
                 ).trim();
 
+
             if (!text) {
                 return false;
             }
+
 
             return /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s]+$/
                 .test(text);
         };
 
 
-    App.el = function (id) {
+    App.el =
+        function (id) {
 
-        return document
-            .getElementById(
-                id
-            );
-    };
+            return document
+                .getElementById(
+                    id
+                );
+        };
 
 
     App.first =
@@ -225,26 +243,30 @@
                 const node =
                     App.el(id);
 
+
                 if (node) {
                     return node;
                 }
             }
 
+
             return null;
         };
 
 
-    App.val = function (id) {
+    App.val =
+        function (id) {
 
-        const node =
-            App.el(id);
+            const node =
+                App.el(id);
 
-        return node
-            ? App.safe(
-                node.value
-            ).trim()
-            : "";
-    };
+
+            return node
+                ? App.safe(
+                    node.value
+                ).trim()
+                : "";
+        };
 
 
     App.setText =
@@ -257,16 +279,18 @@
             const node =
                 App.el(id);
 
+
             if (!node) {
                 return;
             }
+
 
             node.textContent =
                 value === null ||
                 value === undefined ||
                 value === ""
                     ? fallback
-                    : value;
+                    : String(value);
         };
 
 
@@ -278,6 +302,7 @@
 
             const node =
                 App.el(id);
+
 
             if (node) {
 
@@ -299,9 +324,11 @@
                     ? App.el(nodeOrId)
                     : nodeOrId;
 
+
             if (node) {
 
-                node.hidden = false;
+                node.hidden =
+                    false;
 
                 node.style.display =
                     display;
@@ -318,9 +345,11 @@
                     ? App.el(nodeOrId)
                     : nodeOrId;
 
+
             if (node) {
 
-                node.hidden = true;
+                node.hidden =
+                    true;
 
                 node.style.display =
                     "none";
@@ -341,12 +370,15 @@
                     ? App.el(target)
                     : target;
 
+
             if (!node) {
                 return;
             }
 
+
             node.textContent =
                 text || "";
+
 
             node.classList.remove(
                 "success",
@@ -354,6 +386,7 @@
                 "warning",
                 "info"
             );
+
 
             node.classList.add(
                 type
@@ -372,15 +405,17 @@
                     value || 0
                 );
 
+
             return (
                 number.toLocaleString(
                     "en-PK",
                     {
-                        maximumFractionDigits: 2
+                        maximumFractionDigits:
+                            2
                     }
                 ) +
                 " " +
-                App.escape(currency)
+                currency
             );
         };
 
@@ -392,8 +427,10 @@
                 return "—";
             }
 
+
             const date =
                 new Date(value);
+
 
             if (
                 Number.isNaN(
@@ -406,14 +443,21 @@
                 );
             }
 
-            return new Intl.DateTimeFormat(
-                "ur-PK",
-                {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit"
-                }
-            )
+
+            return new Intl
+                .DateTimeFormat(
+                    "ur-PK",
+                    {
+                        year:
+                            "numeric",
+
+                        month:
+                            "2-digit",
+
+                        day:
+                            "2-digit"
+                    }
+                )
                 .format(date);
         };
 
@@ -425,8 +469,10 @@
                 return "—";
             }
 
+
             const date =
                 new Date(value);
+
 
             if (
                 Number.isNaN(
@@ -439,16 +485,27 @@
                 );
             }
 
-            return new Intl.DateTimeFormat(
-                "ur-PK",
-                {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }
-            )
+
+            return new Intl
+                .DateTimeFormat(
+                    "ur-PK",
+                    {
+                        year:
+                            "numeric",
+
+                        month:
+                            "2-digit",
+
+                        day:
+                            "2-digit",
+
+                        hour:
+                            "2-digit",
+
+                        minute:
+                            "2-digit"
+                    }
+                )
                 .format(date);
         };
 
@@ -460,6 +517,7 @@
                 App.safe(value)
                     .trim()
                     .toLowerCase();
+
 
             const map = {
 
@@ -536,6 +594,7 @@
                     "منتقل"
             };
 
+
             return (
                 map[key] ||
                 App.safe(value) ||
@@ -550,11 +609,11 @@
                 "کوئی ریکارڈ موجود نہیں۔"
         ) {
 
-            return (
-                `<div class="print-empty">` +
-                App.escape(text) +
-                `</div>`
-            );
+            return `
+                <div class="print-empty">
+                    ${App.escape(text)}
+                </div>
+            `;
         };
 
 
@@ -572,15 +631,17 @@
                 return App.empty();
             }
 
+
             const head =
                 headers
                     .map(
-                        heading =>
-                            `<th>${
-                                App.escape(
-                                    heading
-                                )
-                            }</th>`
+                        heading => `
+                        <th>
+                            ${App.escape(
+                                heading
+                            )}
+                        </th>
+                    `
                     )
                     .join("");
 
@@ -588,83 +649,92 @@
             const body =
                 rows
                     .map(
-                        row =>
-                            `<tr>${
+                        row => `
+                        <tr>
+                            ${
                                 row
                                     .map(
-                                        cell =>
-                                            `<td>${
+                                        cell => `
+                                        <td>
+                                            ${
                                                 cell === null ||
                                                 cell === undefined ||
                                                 cell === ""
                                                     ? "—"
                                                     : cell
-                                            }</td>`
+                                            }
+                                        </td>
+                                    `
                                     )
                                     .join("")
-                            }</tr>`
+                            }
+                        </tr>
+                    `
                     )
                     .join("");
 
 
-            return (
-                `<table>` +
-                `<thead>` +
-                `<tr>` +
-                head +
-                `</tr>` +
-                `</thead>` +
-                `<tbody>` +
-                body +
-                `</tbody>` +
-                `</table>`
-            );
+            return `
+                <table>
+
+                    <thead>
+                        <tr>
+                            ${head}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${body}
+                    </tbody>
+
+                </table>
+            `;
         };
 
 
     App.infoGrid =
         function (items) {
 
-            return (
-                `<div class="print-info-grid">` +
+            return `
+                <div class="print-info-grid">
 
-                items
-                    .filter(
-                        item =>
-                            item &&
-                            item[0]
-                    )
+                    ${
+                        items
+                            .filter(
+                                item =>
+                                    item &&
+                                    item[0]
+                            )
+                            .map(
+                                ([label, value]) => `
+                                <div class="print-info-item">
 
-                    .map(
-                        ([label, value]) =>
+                                    <span class="print-info-label">
+                                        ${App.escape(
+                                            label
+                                        )}
+                                    </span>
 
-                            `<div class="print-info-item">` +
+                                    <span class="print-info-value">
+                                        ${
+                                            value === null ||
+                                            value === undefined ||
+                                            value === ""
+                                                ? "—"
+                                                : App.escape(
+                                                    value
+                                                )
+                                        }
+                                    </span>
 
-                            `<span class="print-info-label">` +
-                            App.escape(label) +
-                            `</span>` +
+                                </div>
+                            `
+                            )
+                            .join("")
+                    }
 
-                            `<span class="print-info-value">` +
-
-                            (
-                                value === null ||
-                                value === undefined ||
-                                value === ""
-                                    ? "—"
-                                    : App.escape(
-                                        value
-                                    )
-                            ) +
-
-                            `</span>` +
-
-                            `</div>`
-                    )
-
-                    .join("") +
-
-                `</div>`
-            );
+                </div>
+            `;
         };
 
 
@@ -684,6 +754,7 @@
 
                     .trim() ||
                 "profile";
+
 
             return (
                 prefix +
@@ -891,10 +962,9 @@
 
             return (
                 Number(
-                    localStorage
-                        .getItem(
-                            "accountId"
-                        ) || 0
+                    localStorage.getItem(
+                        "accountId"
+                    ) || 0
                 ) ||
                 null
             );
@@ -906,10 +976,9 @@
 
             return (
                 Number(
-                    localStorage
-                        .getItem(
-                            "studentId"
-                        ) || 0
+                    localStorage.getItem(
+                        "studentId"
+                    ) || 0
                 ) ||
                 null
             );
@@ -921,10 +990,9 @@
 
             return (
                 Number(
-                    localStorage
-                        .getItem(
-                            "teacherId"
-                        ) || 0
+                    localStorage.getItem(
+                        "teacherId"
+                    ) || 0
                 ) ||
                 null
             );
@@ -953,6 +1021,7 @@
                 return "admin.html";
             }
 
+
             if (
                 role === "teacher"
             ) {
@@ -960,12 +1029,14 @@
                 return "teacher.html";
             }
 
+
             if (
                 role === "student"
             ) {
 
                 return "student.html";
             }
+
 
             return "index.html";
         };
@@ -993,7 +1064,8 @@
                 );
 
 
-            App.session = null;
+            App.session =
+                null;
         };
 
 
@@ -1270,10 +1342,9 @@
         ) {
 
             const session =
-                await App
-                    .validateSession(
-                        true
-                    );
+                await App.validateSession(
+                    true
+                );
 
 
             if (!session) {
@@ -1346,7 +1417,8 @@
                             eventName,
                             activity,
                             {
-                                passive: true
+                                passive:
+                                    true
                             }
                         );
                     }
@@ -1416,10 +1488,15 @@
 
     App.publicPages =
         new Set([
+
             "",
+
             "index.html",
+
             "login.html",
+
             "student-apply.html",
+
             "teacher-apply.html"
         ]);
 
@@ -1559,7 +1636,152 @@
 
 
     /* =====================================================
-       COMMON UI / SIDEBARS
+       REPORTS OPTION
+       Adds reports link automatically if HTML missed it
+       ===================================================== */
+
+    App.ensureAdminReportsLinks =
+        function () {
+
+            const sidebar =
+                App.el(
+                    "adminSidebar"
+                );
+
+
+            if (
+                sidebar &&
+                !sidebar.querySelector(
+                    'a[href="admin-reports.html"]'
+                )
+            ) {
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                link.href =
+                    "admin-reports.html";
+
+
+                link.className =
+                    "sidebar-link admin-reports-link";
+
+
+                link.innerHTML = `
+                    <span aria-hidden="true">
+                        📊
+                    </span>
+
+                    <span>
+                        رپورٹس
+                    </span>
+                `;
+
+
+                const settingsLink =
+                    sidebar.querySelector(
+                        'a[href="admin-settings.html"]'
+                    );
+
+
+                if (
+                    settingsLink &&
+                    settingsLink.parentNode
+                ) {
+
+                    settingsLink
+                        .parentNode
+                        .insertBefore(
+                            link,
+                            settingsLink
+                        );
+
+                } else {
+
+                    sidebar.appendChild(
+                        link
+                    );
+                }
+            }
+
+
+            if (
+                App.currentFile !==
+                "admin.html"
+            ) {
+
+                return;
+            }
+
+
+            const quickContainer =
+                App.first(
+                    "adminQuickAccess",
+                    "adminQuickAccessGrid",
+                    "quickAccessGrid",
+                    "adminQuickLinks",
+                    "quickLinks"
+                ) ||
+                document.querySelector(
+                    ".quick-access-grid, .quick-links-grid, .admin-quick-grid"
+                );
+
+
+            if (
+                quickContainer &&
+                !quickContainer.querySelector(
+                    'a[href="admin-reports.html"]'
+                )
+            ) {
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                const existingLink =
+                    quickContainer
+                        .querySelector(
+                            "a"
+                        );
+
+
+                link.href =
+                    "admin-reports.html";
+
+
+                link.className =
+                    existingLink
+                        ? existingLink
+                            .className
+                        : "quick-link-card";
+
+
+                link.innerHTML = `
+                    <span class="quick-link-icon">
+                        📊
+                    </span>
+
+                    <span>
+                        رپورٹس
+                    </span>
+                `;
+
+
+                quickContainer
+                    .appendChild(
+                        link
+                    );
+            }
+        };
+
+
+    /* =====================================================
+       SIDEBARS / COMMON UI
        ===================================================== */
 
     App.bindSidebar =
@@ -1574,10 +1796,12 @@
                     buttonId
                 );
 
+
             const sidebar =
                 App.el(
                     sidebarId
                 );
+
 
             const overlay =
                 App.el(
@@ -1706,6 +1930,9 @@
     App.bindCommonUI =
         function () {
 
+            App.ensureAdminReportsLinks();
+
+
             App.bindSidebar(
                 "adminMenuButton",
                 "adminSidebar",
@@ -1744,11 +1971,10 @@
 
                         if (button) {
 
-                            button
-                                .addEventListener(
-                                    "click",
-                                    App.logout
-                                );
+                            button.addEventListener(
+                                "click",
+                                App.logout
+                            );
                         }
                     }
                 );
@@ -1785,15 +2011,14 @@
 
                         if (button) {
 
-                            button
-                                .addEventListener(
-                                    "click",
-                                    function () {
+                            button.addEventListener(
+                                "click",
+                                function () {
 
-                                        window.location.href =
-                                            url;
-                                    }
-                                );
+                                    window.location.href =
+                                        url;
+                                }
+                            );
                         }
                     }
                 );
@@ -1806,17 +2031,16 @@
                 .forEach(
                     input => {
 
-                        input
-                            .addEventListener(
-                                "input",
-                                function () {
+                        input.addEventListener(
+                            "input",
+                            function () {
 
-                                    input.value =
-                                        App.formatCNIC(
-                                            input.value
-                                        );
-                                }
-                            );
+                                input.value =
+                                    App.formatCNIC(
+                                        input.value
+                                    );
+                            }
+                        );
                     }
                 );
 
@@ -1828,17 +2052,16 @@
                 .forEach(
                     input => {
 
-                        input
-                            .addEventListener(
-                                "input",
-                                function () {
+                        input.addEventListener(
+                            "input",
+                            function () {
 
-                                    input.value =
-                                        App.normalizePhone(
-                                            input.value
-                                        );
-                                }
-                            );
+                                input.value =
+                                    App.normalizePhone(
+                                        input.value
+                                    );
+                            }
+                        );
                     }
                 );
         };
@@ -1867,30 +2090,36 @@
                     "username"
                 );
 
+
             const passwordInput =
                 App.el(
                     "password"
                 );
+
 
             const roleInput =
                 App.el(
                     "loginRole"
                 );
 
+
             const roleText =
                 App.el(
                     "selectedRoleText"
                 );
+
 
             const messageBox =
                 App.el(
                     "loginMessage"
                 );
 
+
             const toggleButton =
                 App.el(
                     "togglePassword"
                 );
+
 
             const backButton =
                 App.el(
@@ -2128,553 +2357,1346 @@
             );
         };
 
- /* =====================================================
-   PART 2 / 4
-   DASHBOARDS + STUDENTS + TEACHERS + ATTENDANCE
-   ===================================================== */
 
+    /* =====================================================
+       GENERIC DATABASE HELPERS
+       ===================================================== */
 
-/* =====================================================
-   GENERIC DATABASE HELPERS
-   ===================================================== */
-
-App.countTable =
-    async function (
-        table,
-        filterBuilder = null
-    ) {
-
-        let query =
-            App.client
-                .from(table)
-                .select(
-                    "id",
-                    {
-                        count: "exact",
-                        head: true
-                    }
-                );
-
-
-        if (
-            typeof filterBuilder ===
-            "function"
+    App.countTable =
+        async function (
+            table,
+            filterBuilder = null
         ) {
 
-            query =
-                filterBuilder(
-                    query
-                );
-        }
+            let query =
+                App.client
+                    .from(table)
+                    .select(
+                        "id",
+                        {
+                            count:
+                                "exact",
+
+                            head:
+                                true
+                        }
+                    );
 
 
-        const {
-            count,
-            error
-        } =
-            await query;
+            if (
+                typeof filterBuilder ===
+                "function"
+            ) {
+
+                query =
+                    filterBuilder(
+                        query
+                    );
+            }
 
 
-        if (error) {
-            throw error;
-        }
+            const {
+                count,
+                error
+            } =
+                await query;
 
 
-        return Number(
-            count || 0
-        );
-    };
+            if (error) {
+                throw error;
+            }
 
 
-App.selectTable =
-    async function (
-        table,
-        columns = "*",
-        builder = null
-    ) {
-
-        let query =
-            App.client
-                .from(table)
-                .select(columns);
+            return Number(
+                count || 0
+            );
+        };
 
 
-        if (
-            typeof builder ===
-            "function"
+    App.selectTable =
+        async function (
+            table,
+            columns = "*",
+            builder = null
         ) {
 
-            query =
-                builder(query);
-        }
+            let query =
+                App.client
+                    .from(table)
+                    .select(columns);
 
 
-        const {
-            data,
-            error
-        } =
-            await query;
+            if (
+                typeof builder ===
+                "function"
+            ) {
+
+                query =
+                    builder(query);
+            }
 
 
-        if (error) {
-            throw error;
-        }
+            const {
+                data,
+                error
+            } =
+                await query;
 
 
-        return data || [];
-    };
+            if (error) {
+                throw error;
+            }
 
 
-App.one =
-    async function (
-        table,
-        id,
-        columns = "*"
-    ) {
+            return data || [];
+        };
 
-        const {
-            data,
-            error
-        } =
-            await App.client
-                .from(table)
-                .select(columns)
-                .eq(
-                    "id",
+
+    App.one =
+        async function (
+            table,
+            id,
+            columns = "*"
+        ) {
+
+            const {
+                data,
+                error
+            } =
+                await App.client
+                    .from(table)
+                    .select(columns)
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .maybeSingle();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            return data || null;
+        };
+
+
+    /* =====================================================
+       PROFILE PRINT LINK
+       ===================================================== */
+
+    App.openPrintProfile =
+        function (
+            type,
+            id
+        ) {
+
+            if (
+                !type ||
+                !id
+            ) {
+                return;
+            }
+
+
+            window.location.href =
+                "print-profile.html" +
+                "?type=" +
+                encodeURIComponent(
+                    type
+                ) +
+                "&id=" +
+                encodeURIComponent(
                     id
-                )
-                .maybeSingle();
+                );
+        };
 
 
-        if (error) {
-            throw error;
-        }
+    window.openPrintProfile =
+        App.openPrintProfile;
 
 
-        return data || null;
-    };
+    /* =====================================================
+       ADMIN DASHBOARD HELPERS
+       ===================================================== */
 
-
-/* =====================================================
-   PROFILE PRINT LINK
-   ===================================================== */
-
-App.openPrintProfile =
-    function (
-        type,
-        id
-    ) {
-
-        if (
-            !type ||
-            !id
+    App.dashboardSetText =
+        function (
+            ids,
+            value,
+            fallback = "0"
         ) {
-            return;
-        }
+
+            const list =
+                Array.isArray(ids)
+                    ? ids
+                    : [ids];
 
 
-        window.location.href =
-            "print-profile.html" +
-            "?type=" +
-            encodeURIComponent(
-                type
-            ) +
-            "&id=" +
-            encodeURIComponent(
-                id
-            );
-    };
+            for (
+                const id of list
+            ) {
+
+                const element =
+                    App.el(id);
 
 
-window.openPrintProfile =
-    App.openPrintProfile;
+                if (element) {
+
+                    element.textContent =
+                        value === null ||
+                        value === undefined ||
+                        value === ""
+                            ? fallback
+                            : String(value);
 
 
-/* =====================================================
-   ADMIN DASHBOARD
-   ===================================================== */
+                    return;
+                }
+            }
+        };
 
-App.initAdminDashboard =
-    async function () {
 
-        if (
-            App.currentFile !==
-            "admin.html"
+    App.dashboardSetHTML =
+        function (
+            ids,
+            html
         ) {
-            return;
-        }
+
+            const list =
+                Array.isArray(ids)
+                    ? ids
+                    : [ids];
 
 
-        const session =
-            await App.requireRole(
-                "admin"
-            );
+            for (
+                const id of list
+            ) {
+
+                const element =
+                    App.el(id);
 
 
-        if (!session) {
-            return;
-        }
+                if (element) {
+
+                    element.innerHTML =
+                        html || "";
+
+                    return;
+                }
+            }
+        };
 
 
-        try {
+    App.dashboardEmpty =
+        function (text) {
 
-            const [
-                studentTotal,
-                teacherTotal,
-                finance
-            ] =
-                await Promise.all([
-
-                    App.countTable(
-                        "Students"
-                    )
-                        .catch(
-                            () => 0
-                        ),
-
-                    App.countTable(
-                        "Teachers"
-                    )
-                        .catch(
-                            () => 0
-                        ),
-
-                    App.authedRpc(
-                        "admin_finance_dashboard"
-                    )
-                        .catch(
-                            () => null
-                        )
-                ]);
+            return `
+                <div class="dashboard-empty">
+                    ${App.escape(text)}
+                </div>
+            `;
+        };
 
 
-            App.setText(
-                "studentTotal",
-                studentTotal
-            );
+    App.dashboardStatusCount =
+        function (
+            statuses,
+            names
+        ) {
+
+            if (
+                !statuses ||
+                typeof statuses !==
+                "object"
+            ) {
+
+                return 0;
+            }
 
 
-            App.setText(
-                "teacherTotal",
-                teacherTotal
-            );
+            let total = 0;
 
 
-            const balanceNodes = [
+            names.forEach(
+                function (name) {
 
-                "adminCurrentBalance",
+                    const value =
+                        Number(
+                            statuses[name] ||
+                            0
+                        );
 
-                "adminMadrassaBalance",
-
-                "currentBalance",
-
-                "madrassaBalance"
-            ];
-
-
-            balanceNodes.forEach(
-                id => {
 
                     if (
-                        App.el(id) &&
-                        finance
+                        Number.isFinite(
+                            value
+                        )
                     ) {
 
-                        App.setText(
-                            id,
-                            App.money(
-                                finance
-                                    .current_balance ||
-                                0
-                            )
-                        );
+                        total +=
+                            value;
                     }
                 }
             );
 
 
-            App.setText(
-                "adminFinanceReceived",
-                finance
-                    ? App.money(
-                        finance
-                            .total_received ||
-                        0
-                    )
-                    : "0 PKR"
-            );
-
-
-            App.setText(
-                "adminFinancePaid",
-                finance
-                    ? App.money(
-                        finance
-                            .total_paid ||
-                        0
-                    )
-                    : "0 PKR"
-            );
-
-
-            App.setText(
-                "adminRestrictedBalance",
-                finance
-                    ? App.money(
-                        finance
-                            .restricted_balance ||
-                        0
-                    )
-                    : "0 PKR"
-            );
-
-
-            App.setText(
-                "adminUnrestrictedBalance",
-                finance
-                    ? App.money(
-                        finance
-                            .unrestricted_donation_balance ||
-                        0
-                    )
-                    : "0 PKR"
-            );
-
-
-            await App
-                .loadAdminDashboardAttendance();
-
-
-            await App
-                .loadAdminDashboardClassCounts();
-
-
-        } catch (error) {
-
-            console.error(
-                "Admin dashboard error:",
-                error
-            );
-        }
-    };
-
-
-App.loadAdminDashboardAttendance =
-    async function () {
-
-        try {
-
-            const today =
-                new Date()
-                    .toISOString()
-                    .slice(
-                        0,
-                        10
-                    );
-
-
-            const records =
-                await App.selectTable(
-                    "Attendance",
-                    "id,status,attendance_date",
-                    query =>
-                        query.eq(
-                            "attendance_date",
-                            today
-                        )
-                );
-
-
-            const total =
-                records.length;
-
-
-            const present =
-                records.filter(
-                    row =>
-                        App.safe(
-                            row.status
-                        )
-                            .toLowerCase() ===
-                        "present"
-                ).length;
-
-
-            const absent =
-                records.filter(
-                    row =>
-                        App.safe(
-                            row.status
-                        )
-                            .toLowerCase() ===
-                        "absent"
-                ).length;
-
-
-            const leave =
-                records.filter(
-                    row =>
-                        App.safe(
-                            row.status
-                        )
-                            .toLowerCase() ===
-                        "leave"
-                ).length;
-
-
-            const percentage =
-                total
-                    ? Math.round(
-                        (
-                            present /
-                            total
-                        ) *
-                        100
-                    )
-                    : 0;
-
-
-            App.setText(
-                "adminAttendanceTotal",
-                total
-            );
-
-
-            App.setText(
-                "adminAttendancePresent",
-                present
-            );
-
-
-            App.setText(
-                "adminAttendanceAbsent",
-                absent
-            );
-
-
-            App.setText(
-                "adminAttendanceLeave",
-                leave
-            );
-
-
-            App.setText(
-                "adminTodayAttendancePercentage",
-                percentage + "%"
-            );
-
-
-        } catch (error) {
-
-            console.warn(
-                "Dashboard attendance:",
-                error
-            );
-        }
-    };
-
-
-App.loadAdminDashboardClassCounts =
-    async function () {
-
-        const map = {
-
-            "ثانویہ عامہ":
-                "adminClassThanviaAmma",
-
-            "ثانویہ خاصہ":
-                "adminClassThanviaKhasa",
-
-            "عالیہ اول":
-                "adminClassAliaFirst",
-
-            "عالیہ دوم":
-                "adminClassAliaSecond",
-
-            "عالمیہ اول":
-                "adminClassAlmiaFirst",
-
-            "عالمیہ دوم":
-                "adminClassAlmiaSecond"
+            return total;
         };
 
 
-        try {
+    App.dashboardClassId =
+        function (className) {
 
-            const students =
-                await App.selectTable(
-                    "Students",
-                    "id,student_class"
-                );
-
-
-            Object.entries(
-                map
-            )
-                .forEach(
-                    ([className, id]) => {
-
-                        const count =
-                            students
-                                .filter(
-                                    student =>
-                                        App.safe(
-                                            student
-                                                .student_class
-                                        )
-                                            .trim() ===
-                                        className
-                                )
-                                .length;
+            const value =
+                App.safe(
+                    className
+                )
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    );
 
 
-                        App.setText(
-                            id,
-                            count
+            const lower =
+                value.toLowerCase();
+
+
+            if (
+                value.includes(
+                    "ثانویہ عامہ"
+                ) ||
+                lower.includes(
+                    "sanvia aamma"
+                )
+            ) {
+
+                return "adminClassThanviaAmma";
+            }
+
+
+            if (
+                value.includes(
+                    "ثانویہ خاصہ"
+                ) ||
+                lower.includes(
+                    "sanvia khasa"
+                )
+            ) {
+
+                return "adminClassThanviaKhasa";
+            }
+
+
+            if (
+                value.includes(
+                    "عالیہ اول"
+                ) ||
+                lower.includes(
+                    "alia first"
+                )
+            ) {
+
+                return "adminClassAliaFirst";
+            }
+
+
+            if (
+                value.includes(
+                    "عالیہ دوم"
+                ) ||
+                lower.includes(
+                    "alia second"
+                )
+            ) {
+
+                return "adminClassAliaSecond";
+            }
+
+
+            if (
+                value.includes(
+                    "عالمیہ اول"
+                ) ||
+                lower.includes(
+                    "almia first"
+                )
+            ) {
+
+                return "adminClassAlmiaFirst";
+            }
+
+
+            if (
+                value.includes(
+                    "عالمیہ دوم"
+                ) ||
+                value.includes(
+                    "دورہ"
+                ) ||
+                lower.includes(
+                    "almia second"
+                ) ||
+                lower.includes(
+                    "dawra"
+                )
+            ) {
+
+                return "adminClassAlmiaSecond";
+            }
+
+
+            return null;
+        };
+
+
+    App.renderDashboardClasses =
+        function (classes) {
+
+            const ids = [
+
+                "adminClassThanviaAmma",
+
+                "adminClassThanviaKhasa",
+
+                "adminClassAliaFirst",
+
+                "adminClassAliaSecond",
+
+                "adminClassAlmiaFirst",
+
+                "adminClassAlmiaSecond"
+            ];
+
+
+            ids.forEach(
+                function (id) {
+
+                    App.dashboardSetText(
+                        id,
+                        0
+                    );
+                }
+            );
+
+
+            if (
+                !Array.isArray(
+                    classes
+                )
+            ) {
+
+                return;
+            }
+
+
+            classes.forEach(
+                function (item) {
+
+                    const id =
+                        App.dashboardClassId(
+                            item?.class
                         );
+
+
+                    if (!id) {
+                        return;
                     }
+
+
+                    App.dashboardSetText(
+                        id,
+                        Number(
+                            item?.students ||
+                            0
+                        )
+                    );
+                }
+            );
+        };
+
+
+    App.renderDashboardApplications =
+        function (applications) {
+
+            const container =
+                App.first(
+                    "adminRecentApplications",
+                    "recentApplicationsList",
+                    "adminApplicationsList"
                 );
 
 
-            const hostel =
-                students
-                    .filter(
-                        student => {
-
-                            const residence =
-                                App.safe(
-                                    student
-                                        .residence_type
-                                )
-                                    .trim()
-                                    .toLowerCase();
+            if (!container) {
+                return;
+            }
 
 
-                            return (
-                                residence ===
-                                "ہاسٹل" ||
-                                residence ===
-                                "hostel"
-                            );
+            if (
+                !Array.isArray(
+                    applications
+                ) ||
+                !applications.length
+            ) {
+
+                container.innerHTML =
+                    App.dashboardEmpty(
+                        "کوئی نئی درخواست موجود نہیں۔"
+                    );
+
+                return;
+            }
+
+
+            container.innerHTML =
+                applications
+                    .map(
+                        function (item) {
+
+                            const type =
+                                item.application_type ===
+                                "teacher"
+                                    ? "استاد"
+                                    : "طالبہ";
+
+
+                            return `
+                                <div class="dashboard-list-item">
+
+                                    <div class="dashboard-list-main">
+
+                                        <strong>
+                                            ${App.escape(
+                                                item.name ||
+                                                "—"
+                                            )}
+                                        </strong>
+
+                                        <span>
+                                            ${App.escape(
+                                                type
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="dashboard-list-meta">
+
+                                        <span>
+                                            ${App.escape(
+                                                item.application_no ||
+                                                "—"
+                                            )}
+                                        </span>
+
+                                        <span>
+                                            ${App.escape(
+                                                App.statusUrdu(
+                                                    item.status
+                                                )
+                                            )}
+                                        </span>
+
+                                        <small>
+                                            ${App.escape(
+                                                App.dateTime(
+                                                    item.submitted_at
+                                                )
+                                            )}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            `;
                         }
                     )
-                    .length;
+                    .join("");
+        };
 
 
-            App.setText(
-                "adminHostelStudentCount",
-                hostel
-            );
+    App.renderDashboardHomework =
+        function (homework) {
+
+            const container =
+                App.first(
+                    "adminRecentHomework",
+                    "recentHomeworkList",
+                    "adminHomeworkList"
+                );
 
 
-        } catch (error) {
+            if (!container) {
+                return;
+            }
 
-            console.warn(
-                "Class counts:",
-                error
-            );
-        }
-    };
+
+            if (
+                !Array.isArray(
+                    homework
+                ) ||
+                !homework.length
+            ) {
+
+                container.innerHTML =
+                    App.dashboardEmpty(
+                        "کوئی ہوم ورک موجود نہیں۔"
+                    );
+
+                return;
+            }
+
+
+            container.innerHTML =
+                homework
+                    .map(
+                        function (item) {
+
+                            return `
+                                <div class="dashboard-list-item">
+
+                                    <div class="dashboard-list-main">
+
+                                        <strong>
+                                            ${App.escape(
+                                                item.title ||
+                                                "—"
+                                            )}
+                                        </strong>
+
+                                        <span>
+                                            ${App.escape(
+                                                item.student_class ||
+                                                "تمام کلاسیں"
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="dashboard-list-meta">
+
+                                        <span>
+                                            آخری تاریخ:
+                                            ${App.escape(
+                                                App.date(
+                                                    item.due_date
+                                                )
+                                            )}
+                                        </span>
+
+                                        <span>
+                                            ${App.escape(
+                                                App.statusUrdu(
+                                                    item.status
+                                                )
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            `;
+                        }
+                    )
+                    .join("");
+        };
+
+
+    App.renderDashboardAnnouncements =
+        function (announcements) {
+
+            const container =
+                App.first(
+                    "adminRecentAnnouncements",
+                    "recentAnnouncementsList",
+                    "adminAnnouncementsList"
+                );
+
+
+            if (!container) {
+                return;
+            }
+
+
+            if (
+                !Array.isArray(
+                    announcements
+                ) ||
+                !announcements.length
+            ) {
+
+                container.innerHTML =
+                    App.dashboardEmpty(
+                        "کوئی اعلان موجود نہیں۔"
+                    );
+
+                return;
+            }
+
+
+            container.innerHTML =
+                announcements
+                    .map(
+                        function (item) {
+
+                            return `
+                                <div class="dashboard-list-item">
+
+                                    <strong>
+                                        ${App.escape(
+                                            item.title ||
+                                            "—"
+                                        )}
+                                    </strong>
+
+                                    <p>
+                                        ${App.escape(
+                                            item.message ||
+                                            ""
+                                        )}
+                                    </p>
+
+                                    <small>
+                                        ${App.escape(
+                                            App.dateTime(
+                                                item.created_at
+                                            )
+                                        )}
+                                    </small>
+
+                                </div>
+                            `;
+                        }
+                    )
+                    .join("");
+        };
+
+
+    App.renderDashboardFeedback =
+        function (feedback) {
+
+            const container =
+                App.first(
+                    "adminRecentFeedback",
+                    "recentFeedbackList",
+                    "adminFeedbackList"
+                );
+
+
+            if (!container) {
+                return;
+            }
+
+
+            if (
+                !Array.isArray(
+                    feedback
+                ) ||
+                !feedback.length
+            ) {
+
+                container.innerHTML =
+                    App.dashboardEmpty(
+                        "کوئی حالیہ فیڈبیک موجود نہیں۔"
+                    );
+
+                return;
+            }
+
+
+            container.innerHTML =
+                feedback
+                    .map(
+                        function (item) {
+
+                            const rating =
+                                Number(
+                                    item.rating ||
+                                    0
+                                );
+
+
+                            return `
+                                <div class="dashboard-list-item">
+
+                                    <div class="dashboard-list-main">
+
+                                        <strong>
+                                            طالبہ #${App.escape(
+                                                item.student_id ||
+                                                "—"
+                                            )}
+                                        </strong>
+
+                                        <span>
+                                            ریٹنگ:
+                                            ${
+                                                Number.isFinite(
+                                                    rating
+                                                )
+                                                    ? rating
+                                                    : 0
+                                            }/5
+                                        </span>
+
+                                    </div>
+
+                                    <p>
+                                        ${App.escape(
+                                            item.feedback_text ||
+                                            ""
+                                        )}
+                                    </p>
+
+                                    <small>
+                                        ${App.escape(
+                                            App.date(
+                                                item.feedback_date ||
+                                                item.created_at
+                                            )
+                                        )}
+                                    </small>
+
+                                </div>
+                            `;
+                        }
+                    )
+                    .join("");
+        };
+
+
+    /* =====================================================
+       SECURE ADMIN DASHBOARD
+       Uses admin_dashboard_overview RPC
+       ===================================================== */
+
+    App.initAdminDashboard =
+        async function () {
+
+            if (
+                App.currentFile !==
+                "admin.html"
+            ) {
+
+                return;
+            }
+
+
+            const session =
+                await App.requireRole(
+                    "admin"
+                );
+
+
+            if (!session) {
+                return;
+            }
+
+
+            try {
+
+                const data =
+                    await App.authedRpc(
+                        "admin_dashboard_overview"
+                    );
+
+
+                if (
+                    !data ||
+                    typeof data !==
+                    "object"
+                ) {
+
+                    throw new Error(
+                        "Dashboard data unavailable"
+                    );
+                }
+
+
+                /* ==========================================
+                   TOTAL STUDENTS / TEACHERS
+                   ========================================== */
+
+                App.dashboardSetText(
+                    "studentTotal",
+                    Number(
+                        data.students_total ||
+                        0
+                    )
+                );
+
+
+                App.dashboardSetText(
+                    "teacherTotal",
+                    Number(
+                        data.teachers_total ||
+                        0
+                    )
+                );
+
+
+                /* ==========================================
+                   APPLICATIONS
+                   ========================================== */
+
+                App.dashboardSetText(
+                    [
+                        "adminPendingApplications",
+                        "pendingApplicationsCount"
+                    ],
+                    Number(
+                        data
+                            .pending_applications_total ||
+                        (
+                            Number(
+                                data
+                                    .pending_student_applications ||
+                                0
+                            ) +
+                            Number(
+                                data
+                                    .pending_teacher_applications ||
+                                0
+                            )
+                        )
+                    )
+                );
+
+
+                /* ==========================================
+                   HOMEWORK
+                   ========================================== */
+
+                App.dashboardSetText(
+                    [
+                        "adminActiveHomeworkCount",
+                        "adminHomeworkCount"
+                    ],
+                    Number(
+                        data.homework_total ||
+                        0
+                    )
+                );
+
+
+                /* ==========================================
+                   ANNOUNCEMENTS
+                   ========================================== */
+
+                App.dashboardSetText(
+                    [
+                        "adminAnnouncementCount",
+                        "adminAnnouncementsCount"
+                    ],
+                    Number(
+                        data
+                            .announcements_total ||
+                        0
+                    )
+                );
+
+
+                /* ==========================================
+                   TODAY ATTENDANCE
+                   ========================================== */
+
+                const statuses =
+                    data
+                        .attendance_today_by_status ||
+                    {};
+
+
+                const present =
+                    App.dashboardStatusCount(
+                        statuses,
+                        [
+                            "present",
+                            "حاضر"
+                        ]
+                    );
+
+
+                const absent =
+                    App.dashboardStatusCount(
+                        statuses,
+                        [
+                            "absent",
+                            "غیر حاضر",
+                            "غیرحاضر"
+                        ]
+                    );
+
+
+                const leave =
+                    App.dashboardStatusCount(
+                        statuses,
+                        [
+                            "leave",
+                            "رخصت"
+                        ]
+                    );
+
+
+                const late =
+                    App.dashboardStatusCount(
+                        statuses,
+                        [
+                            "late",
+                            "تاخیر"
+                        ]
+                    );
+
+
+                const attendanceTotal =
+                    Number(
+                        data
+                            .attendance_today_total ||
+                        0
+                    );
+
+
+                App.dashboardSetText(
+                    [
+                        "adminAttendanceTotal",
+                        "adminTodayAttendanceTotal"
+                    ],
+                    attendanceTotal
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendancePresent",
+                    present
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendanceAbsent",
+                    absent
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendanceLeave",
+                    leave
+                );
+
+
+                App.dashboardSetText(
+                    [
+                        "adminAttendanceLate",
+                        "adminTodayAttendanceLate"
+                    ],
+                    late
+                );
+
+
+                const percentage =
+                    attendanceTotal > 0
+                        ? (
+                            present /
+                            attendanceTotal *
+                            100
+                        ).toFixed(1)
+                        : "0.0";
+
+
+                App.dashboardSetText(
+                    [
+                        "adminTodayAttendancePercentage",
+                        "adminAttendancePercentage"
+                    ],
+                    percentage +
+                    "%"
+                );
+
+
+                /* ==========================================
+                   CLASS COUNTS
+                   ========================================== */
+
+                App.renderDashboardClasses(
+                    data.classes ||
+                    []
+                );
+
+
+                /* ==========================================
+                   HOSTEL COUNT
+                   Only shown if backend provides it
+                   ========================================== */
+
+                if (
+                    data.hostel_students_total !==
+                    undefined
+                ) {
+
+                    App.dashboardSetText(
+                        "adminHostelStudentCount",
+                        Number(
+                            data
+                                .hostel_students_total ||
+                            0
+                        )
+                    );
+                }
+
+
+                /* ==========================================
+                   RECENT CONTENT
+                   ========================================== */
+
+                App.renderDashboardApplications(
+                    data
+                        .recent_applications ||
+                    []
+                );
+
+
+                App.renderDashboardHomework(
+                    data
+                        .latest_homework ||
+                    []
+                );
+
+
+                App.renderDashboardAnnouncements(
+                    data
+                        .latest_announcements ||
+                    []
+                );
+
+
+                App.renderDashboardFeedback(
+                    data
+                        .recent_feedback ||
+                    []
+                );
+
+
+                /* ==========================================
+                   FINANCE
+                   ========================================== */
+
+                try {
+
+                    const finance =
+                        await App.authedRpc(
+                            "admin_finance_dashboard"
+                        );
+
+
+                    const balanceNodes = [
+
+                        "adminCurrentBalance",
+
+                        "adminMadrassaBalance",
+
+                        "currentBalance",
+
+                        "madrassaBalance"
+                    ];
+
+
+                    balanceNodes
+                        .forEach(
+                            id => {
+
+                                if (
+                                    App.el(id)
+                                ) {
+
+                                    App.setText(
+                                        id,
+                                        App.money(
+                                            finance
+                                                ?.current_balance ||
+                                            0
+                                        )
+                                    );
+                                }
+                            }
+                        );
+
+
+                    App.dashboardSetText(
+                        [
+                            "adminFinanceReceived",
+                            "adminTotalReceived"
+                        ],
+                        App.money(
+                            finance
+                                ?.total_received ||
+                            0
+                        )
+                    );
+
+
+                    App.dashboardSetText(
+                        [
+                            "adminFinancePaid",
+                            "adminTotalPaid"
+                        ],
+                        App.money(
+                            finance
+                                ?.total_paid ||
+                            0
+                        )
+                    );
+
+
+                    App.dashboardSetText(
+                        "adminRestrictedBalance",
+                        App.money(
+                            finance
+                                ?.restricted_balance ||
+                            0
+                        )
+                    );
+
+
+                    App.dashboardSetText(
+                        [
+                            "adminUnrestrictedBalance",
+                            "adminDonationBalance"
+                        ],
+                        App.money(
+                            finance
+                                ?.unrestricted_donation_balance ||
+                            0
+                        )
+                    );
+
+
+                } catch (
+                    financeError
+                ) {
+
+                    console.warn(
+                        "Finance dashboard unavailable:",
+                        financeError
+                    );
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Admin dashboard error:",
+                    error
+                );
+
+
+                App.dashboardSetText(
+                    "studentTotal",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "teacherTotal",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendanceTotal",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendancePresent",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendanceAbsent",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminAttendanceLeave",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminPendingApplications",
+                    "—"
+                );
+
+
+                App.dashboardSetText(
+                    "adminActiveHomeworkCount",
+                    "—"
+                );
+
+
+                App.dashboardSetHTML(
+                    [
+                        "adminRecentApplications",
+                        "recentApplicationsList",
+                        "adminApplicationsList"
+                    ],
+                    App.dashboardEmpty(
+                        "درخواستیں لوڈ نہیں ہو سکیں۔"
+                    )
+                );
+
+
+                App.dashboardSetHTML(
+                    [
+                        "adminRecentHomework",
+                        "recentHomeworkList",
+                        "adminHomeworkList"
+                    ],
+                    App.dashboardEmpty(
+                        "ہوم ورک لوڈ نہیں ہو سکا۔"
+                    )
+                );
+
+
+                App.dashboardSetHTML(
+                    [
+                        "adminRecentAnnouncements",
+                        "recentAnnouncementsList",
+                        "adminAnnouncementsList"
+                    ],
+                    App.dashboardEmpty(
+                        "اعلانات لوڈ نہیں ہو سکے۔"
+                    )
+                );
+
+
+                App.dashboardSetHTML(
+                    [
+                        "adminRecentFeedback",
+                        "recentFeedbackList",
+                        "adminFeedbackList"
+                    ],
+                    App.dashboardEmpty(
+                        "فیڈبیک لوڈ نہیں ہو سکا۔"
+                    )
+                );
+            }
+        };
+
+
+    /* =====================================================
+       END PART 1 / 4
+       PART 2 CONTINUES DIRECTLY BELOW
+       ===================================================== */
+
+ /* =====================================================
+   PART 2 / 4
+   STUDENTS + TEACHERS + TEACHER/STUDENT DASHBOARDS
+   ATTENDANCE + MY ATTENDANCE + MY MARKS
+   ===================================================== */
 
 
 /* =====================================================
@@ -2699,14 +3721,13 @@ App.loadStudents =
                 "Students",
                 "*",
                 query =>
-                    query
-                        .order(
-                            "id",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
+                    query.order(
+                        "id",
+                        {
+                            ascending:
+                                false
+                        }
+                    )
             );
 
 
@@ -2738,6 +3759,7 @@ App.renderStudentList =
 
 
         if (
+            !Array.isArray(records) ||
             !records.length
         ) {
 
@@ -2762,72 +3784,75 @@ App.renderStudentList =
 
 
                         return `
-                        <article class="record-card student-record-card">
+                            <article class="record-card student-record-card">
 
-                            <div class="record-card-main">
+                                <div class="record-card-main">
 
-                                <h3>
-                                    ${App.escape(
-                                        student.name
-                                    )}
-                                </h3>
+                                    <h3>
+                                        ${App.escape(
+                                            student.name
+                                        )}
+                                    </h3>
 
-                                <p>
-                                    داخلہ نمبر:
-                                    <strong>
+                                    <p>
+                                        داخلہ نمبر:
+                                        <strong>
+                                            ${App.escape(
+                                                student
+                                                    .admission_no ||
+                                                "—"
+                                            )}
+                                        </strong>
+                                    </p>
+
+                                    <p>
+                                        کلاس:
                                         ${App.escape(
                                             student
-                                                .admission_no
+                                                .student_class ||
+                                            "—"
                                         )}
-                                    </strong>
-                                </p>
+                                    </p>
 
-                                <p>
-                                    کلاس:
-                                    ${App.escape(
-                                        student
-                                            .student_class ||
-                                        "—"
-                                    )}
-                                </p>
+                                    <p>
+                                        والد:
+                                        ${App.escape(
+                                            student
+                                                .father_name ||
+                                            "—"
+                                        )}
+                                    </p>
 
-                                <p>
-                                    والد:
-                                    ${App.escape(
-                                        student
-                                            .father_name ||
-                                        "—"
-                                    )}
-                                </p>
+                                    <p>
+                                        رہائش:
+                                        ${App.escape(
+                                            student
+                                                .residence_type ||
+                                            "—"
+                                        )}
+                                    </p>
 
-                                <p>
-                                    رہائش:
-                                    ${App.escape(
-                                        student
-                                            .residence_type ||
-                                        "—"
-                                    )}
-                                </p>
+                                </div>
 
-                            </div>
+                                <div class="record-card-actions">
 
-                            <div class="record-card-actions">
+                                    <button
+                                        type="button"
+                                        data-student-details="${id}"
+                                    >
+                                        مکمل پروفائل
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    data-student-details="${id}">
-                                    مکمل پروفائل
-                                </button>
+                                    <button
+                                        type="button"
+                                        data-student-print="${id}"
+                                    >
+                                        پرنٹ / پی ڈی ایف
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    data-student-print="${id}">
-                                    پرنٹ / پی ڈی ایف
-                                </button>
+                                </div>
 
-                            </div>
-
-                        </article>
+                            </article>
                         `;
                     }
                 )
@@ -2841,19 +3866,18 @@ App.renderStudentList =
             .forEach(
                 button => {
 
-                    button
-                        .addEventListener(
-                            "click",
-                            function () {
+                    button.addEventListener(
+                        "click",
+                        function () {
 
-                                App.showStudentDetails(
-                                    Number(
-                                        button.dataset
-                                            .studentDetails
-                                    )
-                                );
-                            }
-                        );
+                            App.showStudentDetails(
+                                Number(
+                                    button.dataset
+                                        .studentDetails
+                                )
+                            );
+                        }
+                    );
                 }
             );
 
@@ -2865,20 +3889,19 @@ App.renderStudentList =
             .forEach(
                 button => {
 
-                    button
-                        .addEventListener(
-                            "click",
-                            function () {
+                    button.addEventListener(
+                        "click",
+                        function () {
 
-                                App.openPrintProfile(
-                                    "student",
-                                    Number(
-                                        button.dataset
-                                            .studentPrint
-                                    )
-                                );
-                            }
-                        );
+                            App.openPrintProfile(
+                                "student",
+                                Number(
+                                    button.dataset
+                                        .studentPrint
+                                )
+                            );
+                        }
+                    );
                 }
             );
     };
@@ -3001,7 +4024,7 @@ App.filterStudents =
 
 
 /* =====================================================
-   STUDENT DETAIL MODAL / PANEL
+   STUDENT DETAILS
    ===================================================== */
 
 App.showStudentDetails =
@@ -3156,36 +4179,33 @@ App.showStudentDetails =
         );
 
 
-        const printButtons =
-            [
-                "studentDetailsPrint",
-                "studentPrintProfileButton",
-                "printStudentProfile"
-            ];
+        [
+            "studentDetailsPrint",
+            "studentPrintProfileButton",
+            "printStudentProfile"
+        ]
+            .forEach(
+                buttonId => {
+
+                    const button =
+                        App.el(
+                            buttonId
+                        );
 
 
-        printButtons.forEach(
-            buttonId => {
+                    if (button) {
 
-                const button =
-                    App.el(
-                        buttonId
-                    );
+                        button.onclick =
+                            function () {
 
-
-                if (button) {
-
-                    button.onclick =
-                        function () {
-
-                            App.openPrintProfile(
-                                "student",
-                                student.id
-                            );
-                        };
+                                App.openPrintProfile(
+                                    "student",
+                                    student.id
+                                );
+                            };
+                    }
                 }
-            }
-        );
+            );
 
 
         const modal =
@@ -3204,13 +4224,13 @@ App.showStudentDetails =
             modal.style.display =
                 "flex";
 
+
         } else {
 
             const existing =
-                document
-                    .getElementById(
-                        "generatedStudentDetails"
-                    );
+                App.el(
+                    "generatedStudentDetails"
+                );
 
 
             if (existing) {
@@ -3219,10 +4239,9 @@ App.showStudentDetails =
 
 
             const wrapper =
-                document
-                    .createElement(
-                        "div"
-                    );
+                document.createElement(
+                    "div"
+                );
 
 
             wrapper.id =
@@ -3238,7 +4257,8 @@ App.showStudentDetails =
 
                     <button
                         type="button"
-                        id="generatedStudentClose">
+                        id="generatedStudentClose"
+                    >
                         بند کریں
                     </button>
 
@@ -3252,7 +4272,8 @@ App.showStudentDetails =
 
                     <button
                         type="button"
-                        id="generatedStudentPrint">
+                        id="generatedStudentPrint"
+                    >
                         مکمل پروفائل پرنٹ / پی ڈی ایف
                     </button>
 
@@ -3260,10 +4281,9 @@ App.showStudentDetails =
             `;
 
 
-            document.body
-                .appendChild(
-                    wrapper
-                );
+            document.body.appendChild(
+                wrapper
+            );
 
 
             App.el(
@@ -3300,6 +4320,7 @@ App.initStudentsPage =
             App.currentFile !==
             "students.html"
         ) {
+
             return;
         }
 
@@ -3335,6 +4356,7 @@ App.initStudentsPage =
         try {
 
             await App.loadStudents();
+
 
             App.renderStudentList();
 
@@ -3402,7 +4424,9 @@ App.initStudentsPage =
 
 
                                     if (node) {
-                                        node.value = "";
+
+                                        node.value =
+                                            "";
                                     }
                                 }
                             );
@@ -3490,6 +4514,7 @@ App.renderTeacherList =
 
 
         if (
+            !Array.isArray(records) ||
             !records.length
         ) {
 
@@ -3514,72 +4539,74 @@ App.renderTeacherList =
 
 
                         return `
-                        <article class="record-card teacher-record-card">
+                            <article class="record-card teacher-record-card">
 
-                            <div class="record-card-main">
+                                <div class="record-card-main">
 
-                                <h3>
-                                    ${App.escape(
-                                        teacher.name
-                                    )}
-                                </h3>
-
-                                <p>
-                                    استاد کوڈ:
-                                    <strong>
+                                    <h3>
                                         ${App.escape(
-                                            teacher
-                                                .teacher_code ||
+                                            teacher.name
+                                        )}
+                                    </h3>
+
+                                    <p>
+                                        استاد کوڈ:
+                                        <strong>
+                                            ${App.escape(
+                                                teacher
+                                                    .teacher_code ||
+                                                "—"
+                                            )}
+                                        </strong>
+                                    </p>
+
+                                    <p>
+                                        فون:
+                                        ${App.escape(
+                                            teacher.phone ||
                                             "—"
                                         )}
-                                    </strong>
-                                </p>
+                                    </p>
 
-                                <p>
-                                    فون:
-                                    ${App.escape(
-                                        teacher.phone ||
-                                        "—"
-                                    )}
-                                </p>
+                                    <p>
+                                        تعلیم:
+                                        ${App.escape(
+                                            teacher
+                                                .qualification ||
+                                            "—"
+                                        )}
+                                    </p>
 
-                                <p>
-                                    تعلیم:
-                                    ${App.escape(
-                                        teacher
-                                            .qualification ||
-                                        "—"
-                                    )}
-                                </p>
+                                    <p>
+                                        حالت:
+                                        ${App.escape(
+                                            App.statusUrdu(
+                                                teacher.status
+                                            )
+                                        )}
+                                    </p>
 
-                                <p>
-                                    حالت:
-                                    ${App.escape(
-                                        App.statusUrdu(
-                                            teacher.status
-                                        )
-                                    )}
-                                </p>
+                                </div>
 
-                            </div>
+                                <div class="record-card-actions">
 
-                            <div class="record-card-actions">
+                                    <button
+                                        type="button"
+                                        data-teacher-details="${id}"
+                                    >
+                                        مکمل پروفائل
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    data-teacher-details="${id}">
-                                    مکمل پروفائل
-                                </button>
+                                    <button
+                                        type="button"
+                                        data-teacher-print="${id}"
+                                    >
+                                        پرنٹ / پی ڈی ایف
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    data-teacher-print="${id}">
-                                    پرنٹ / پی ڈی ایف
-                                </button>
+                                </div>
 
-                            </div>
-
-                        </article>
+                            </article>
                         `;
                     }
                 )
@@ -3845,6 +4872,35 @@ App.showTeacherDetails =
         }
 
 
+        [
+            "teacherDetailsPrint",
+            "teacherPrintProfileButton",
+            "printTeacherProfile"
+        ]
+            .forEach(
+                buttonId => {
+
+                    const button =
+                        App.el(
+                            buttonId
+                        );
+
+
+                    if (button) {
+
+                        button.onclick =
+                            function () {
+
+                                App.openPrintProfile(
+                                    "teacher",
+                                    teacher.id
+                                );
+                            };
+                    }
+                }
+            );
+
+
         const modal =
             App.first(
                 "teacherDetailsModal",
@@ -3894,7 +4950,8 @@ App.showTeacherDetails =
 
                     <button
                         type="button"
-                        id="generatedTeacherClose">
+                        id="generatedTeacherClose"
+                    >
                         بند کریں
                     </button>
 
@@ -3908,7 +4965,8 @@ App.showTeacherDetails =
 
                     <button
                         type="button"
-                        id="generatedTeacherPrint">
+                        id="generatedTeacherPrint"
+                    >
                         مکمل پروفائل پرنٹ / پی ڈی ایف
                     </button>
 
@@ -3916,10 +4974,9 @@ App.showTeacherDetails =
             `;
 
 
-            document.body
-                .appendChild(
-                    wrapper
-                );
+            document.body.appendChild(
+                wrapper
+            );
 
 
             App.el(
@@ -3956,6 +5013,7 @@ App.initTeachersPage =
             App.currentFile !==
             "teachers.html"
         ) {
+
             return;
         }
 
@@ -3992,6 +5050,7 @@ App.initTeachersPage =
 
             await App.loadTeachers();
 
+
             App.renderTeacherList();
 
 
@@ -4018,6 +5077,44 @@ App.initTeachersPage =
                 );
 
 
+            const clear =
+                App.first(
+                    "clearTeacherFilters",
+                    "clearAdminTeacherFilters"
+                );
+
+
+            if (clear) {
+
+                clear.addEventListener(
+                    "click",
+                    function () {
+
+                        [
+                            "teacherSearch",
+                            "teacherListSearch",
+                            "adminTeacherSearch"
+                        ]
+                            .forEach(
+                                id => {
+
+                                    const input =
+                                        App.el(id);
+
+
+                                    if (input) {
+                                        input.value = "";
+                                    }
+                                }
+                            );
+
+
+                        App.renderTeacherList();
+                    }
+                );
+            }
+
+
         } catch (error) {
 
             console.error(
@@ -4038,7 +5135,7 @@ App.initTeachersPage =
 
 
 /* =====================================================
-   TEACHER DASHBOARD PROFILE
+   TEACHER DASHBOARD
    ===================================================== */
 
 App.initTeacherDashboard =
@@ -4048,6 +5145,7 @@ App.initTeacherDashboard =
             App.currentFile !==
             "teacher.html"
         ) {
+
             return;
         }
 
@@ -4132,11 +5230,13 @@ App.initTeacherDashboard =
                 mapping
             )
                 .forEach(
-                    ([id, value]) =>
+                    ([id, value]) => {
+
                         App.setText(
                             id,
                             value
-                        )
+                        );
+                    }
                 );
 
 
@@ -4151,7 +5251,7 @@ App.initTeacherDashboard =
 
 
 /* =====================================================
-   STUDENT DASHBOARD PROFILE
+   STUDENT DASHBOARD
    ===================================================== */
 
 App.initStudentDashboard =
@@ -4161,6 +5261,7 @@ App.initStudentDashboard =
             App.currentFile !==
             "student.html"
         ) {
+
             return;
         }
 
@@ -4249,11 +5350,13 @@ App.initStudentDashboard =
                 mapping
             )
                 .forEach(
-                    ([id, value]) =>
+                    ([id, value]) => {
+
                         App.setText(
                             id,
                             value
-                        )
+                        );
+                    }
                 );
 
 
@@ -4278,6 +5381,10 @@ App.initStudentDashboard =
         }
     };
 
+
+/* =====================================================
+   STUDENT DASHBOARD ATTENDANCE SUMMARY
+   ===================================================== */
 
 App.loadStudentDashboardAttendance =
     async function (
@@ -4343,6 +5450,17 @@ App.loadStudentDashboardAttendance =
                 ).length;
 
 
+            const late =
+                records.filter(
+                    row =>
+                        App.safe(
+                            row.status
+                        )
+                            .toLowerCase() ===
+                        "late"
+                ).length;
+
+
             const percentage =
                 total
                     ? Math.round(
@@ -4378,6 +5496,12 @@ App.loadStudentDashboardAttendance =
 
 
             App.setText(
+                "studentAttendanceLate",
+                late
+            );
+
+
+            App.setText(
                 "studentAttendancePercentage",
                 percentage + "%"
             );
@@ -4392,6 +5516,10 @@ App.loadStudentDashboardAttendance =
         }
     };
 
+
+/* =====================================================
+   STUDENT DASHBOARD MARKS SUMMARY
+   ===================================================== */
 
 App.loadStudentDashboardMarks =
     async function (
@@ -4489,8 +5617,7 @@ App.loadStudentDashboardMarks =
 
 
 /* =====================================================
-   TEACHER ATTENDANCE PAGE
-   Existing secure Attendance RPCs
+   TEACHER ATTENDANCE
    ===================================================== */
 
 App.attendanceStudents = [];
@@ -4499,6 +5626,10 @@ App.attendanceTeacherId =
     null;
 
 
+/* =====================================================
+   INITIALIZE TEACHER ATTENDANCE
+   ===================================================== */
+
 App.initTeacherAttendance =
     async function () {
 
@@ -4506,6 +5637,7 @@ App.initTeacherAttendance =
             App.currentFile !==
             "attendance.html"
         ) {
+
             return;
         }
 
@@ -4608,8 +5740,41 @@ App.initTeacherAttendance =
                 }
             );
         }
+
+
+        const markAbsent =
+            App.first(
+                "markAllAbsent",
+                "attendanceMarkAllAbsent"
+            );
+
+
+        if (markAbsent) {
+
+            markAbsent.addEventListener(
+                "click",
+                function () {
+
+                    document
+                        .querySelectorAll(
+                            "[data-attendance-status]"
+                        )
+                        .forEach(
+                            select => {
+
+                                select.value =
+                                    "absent";
+                            }
+                        );
+                }
+            );
+        }
     };
 
+
+/* =====================================================
+   LOAD ATTENDANCE STUDENTS
+   ===================================================== */
 
 App.loadAttendanceStudents =
     async function () {
@@ -4669,6 +5834,10 @@ App.loadAttendanceStudents =
     };
 
 
+/* =====================================================
+   RENDER ATTENDANCE STUDENTS
+   ===================================================== */
+
 App.renderAttendanceStudents =
     function () {
 
@@ -4710,33 +5879,116 @@ App.renderAttendanceStudents =
                 App.attendanceStudents
                     .map(
                         student => `
-                        <tr>
+                            <tr>
 
-                            <td>
-                                ${App.escape(
-                                    student
-                                        .admission_no ||
-                                    ""
-                                )}
-                            </td>
+                                <td>
+                                    ${App.escape(
+                                        student
+                                            .admission_no ||
+                                        ""
+                                    )}
+                                </td>
 
-                            <td>
-                                ${App.escape(
-                                    student
-                                        .student_name ||
-                                    ""
-                                )}
-                            </td>
+                                <td>
+                                    ${App.escape(
+                                        student
+                                            .student_name ||
+                                        student.name ||
+                                        ""
+                                    )}
+                                </td>
 
-                            <td>
+                                <td>
+                                    <select
+                                        data-attendance-status
+                                        data-student-id="${
+                                            Number(
+                                                student
+                                                    .student_id ||
+                                                student.id
+                                            )
+                                        }"
+                                    >
+
+                                        <option value="present">
+                                            حاضر
+                                        </option>
+
+                                        <option value="absent">
+                                            غیر حاضر
+                                        </option>
+
+                                        <option value="leave">
+                                            رخصت
+                                        </option>
+
+                                        <option value="late">
+                                            تاخیر
+                                        </option>
+
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <input
+                                        type="text"
+                                        data-attendance-note
+                                        data-student-id="${
+                                            Number(
+                                                student
+                                                    .student_id ||
+                                                student.id
+                                            )
+                                        }"
+                                        placeholder="نوٹ"
+                                    >
+                                </td>
+
+                            </tr>
+                        `
+                    )
+                    .join("");
+
+
+        } else {
+
+            container.innerHTML =
+                App.attendanceStudents
+                    .map(
+                        student => `
+                            <div class="attendance-student-row">
+
+                                <div>
+
+                                    <strong>
+                                        ${App.escape(
+                                            student
+                                                .student_name ||
+                                            student.name ||
+                                            ""
+                                        )}
+                                    </strong>
+
+                                    <small>
+                                        ${App.escape(
+                                            student
+                                                .admission_no ||
+                                            ""
+                                        )}
+                                    </small>
+
+                                </div>
+
                                 <select
                                     data-attendance-status
                                     data-student-id="${
                                         Number(
                                             student
-                                                .student_id
+                                                .student_id ||
+                                            student.id
                                         )
-                                    }">
+                                    }"
+                                >
 
                                     <option value="present">
                                         حاضر
@@ -4750,94 +6002,36 @@ App.renderAttendanceStudents =
                                         رخصت
                                     </option>
 
-                                </select>
-                            </td>
+                                    <option value="late">
+                                        تاخیر
+                                    </option>
 
-                            <td>
+                                </select>
+
                                 <input
                                     type="text"
                                     data-attendance-note
                                     data-student-id="${
                                         Number(
                                             student
-                                                .student_id
+                                                .student_id ||
+                                            student.id
                                         )
                                     }"
-                                    placeholder="نوٹ">
-                            </td>
+                                    placeholder="نوٹ"
+                                >
 
-                        </tr>
-                    `
-                    )
-                    .join("");
-
-        } else {
-
-            container.innerHTML =
-                App.attendanceStudents
-                    .map(
-                        student => `
-                        <div class="attendance-student-row">
-
-                            <div>
-                                <strong>
-                                    ${App.escape(
-                                        student
-                                            .student_name ||
-                                        ""
-                                    )}
-                                </strong>
-
-                                <small>
-                                    ${App.escape(
-                                        student
-                                            .admission_no ||
-                                        ""
-                                    )}
-                                </small>
                             </div>
-
-                            <select
-                                data-attendance-status
-                                data-student-id="${
-                                    Number(
-                                        student
-                                            .student_id
-                                    )
-                                }">
-
-                                <option value="present">
-                                    حاضر
-                                </option>
-
-                                <option value="absent">
-                                    غیر حاضر
-                                </option>
-
-                                <option value="leave">
-                                    رخصت
-                                </option>
-
-                            </select>
-
-                            <input
-                                type="text"
-                                data-attendance-note
-                                data-student-id="${
-                                    Number(
-                                        student
-                                            .student_id
-                                    )
-                                }"
-                                placeholder="نوٹ">
-
-                        </div>
-                    `
+                        `
                     )
                     .join("");
         }
     };
 
+
+/* =====================================================
+   SAVE ATTENDANCE
+   ===================================================== */
 
 App.saveAttendance =
     async function () {
@@ -4886,10 +6080,9 @@ App.saveAttendance =
 
         const statuses =
             Array.from(
-                document
-                    .querySelectorAll(
-                        "[data-attendance-status]"
-                    )
+                document.querySelectorAll(
+                    "[data-attendance-status]"
+                )
             );
 
 
@@ -4916,10 +6109,9 @@ App.saveAttendance =
 
 
                         const note =
-                            document
-                                .querySelector(
-                                    `[data-attendance-note][data-student-id="${studentId}"]`
-                                );
+                            document.querySelector(
+                                `[data-attendance-note][data-student-id="${studentId}"]`
+                            );
 
 
                         return {
@@ -4995,6 +6187,7 @@ App.initMyAttendance =
             App.currentFile !==
             "my-attendance.html"
         ) {
+
             return;
         }
 
@@ -5013,6 +6206,11 @@ App.initMyAttendance =
         const studentId =
             session.student_id ||
             App.getStudentId();
+
+
+        if (!studentId) {
+            return;
+        }
 
 
         try {
@@ -5059,8 +6257,18 @@ App.initMyAttendance =
     };
 
 
+/* =====================================================
+   RENDER MY ATTENDANCE
+   ===================================================== */
+
 App.renderMyAttendance =
     function (records) {
+
+        records =
+            Array.isArray(records)
+                ? records
+                : [];
+
 
         const total =
             records.length;
@@ -5099,6 +6307,17 @@ App.renderMyAttendance =
             ).length;
 
 
+        const late =
+            records.filter(
+                row =>
+                    App.safe(
+                        row.status
+                    )
+                        .toLowerCase() ===
+                    "late"
+            ).length;
+
+
         const percentage =
             total
                 ? Math.round(
@@ -5131,16 +6350,23 @@ App.renderMyAttendance =
             ],
 
             [
+                "myAttendanceLate",
+                late
+            ],
+
+            [
                 "myAttendancePercentage",
                 percentage + "%"
             ]
         ]
             .forEach(
-                ([id, value]) =>
+                ([id, value]) => {
+
                     App.setText(
                         id,
                         value
-                    )
+                    );
+                }
             );
 
 
@@ -5158,55 +6384,64 @@ App.renderMyAttendance =
 
 
         body.innerHTML =
-            records
-                .map(
-                    row => `
-                    <tr>
+            records.length
+                ? records
+                    .map(
+                        row => `
+                            <tr>
 
-                        <td>
-                            ${App.escape(
-                                App.date(
-                                    row
-                                        .attendance_date
-                                )
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        App.date(
+                                            row
+                                                .attendance_date
+                                        )
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row
-                                    .student_class ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row
+                                            .student_class ||
+                                        ""
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row
-                                    .period_number ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row
+                                            .period_number ||
+                                        ""
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                App.statusUrdu(
-                                    row.status
-                                )
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        App.statusUrdu(
+                                            row.status
+                                        )
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.note ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.note ||
+                                        ""
+                                    )}
+                                </td>
 
-                    </tr>
+                            </tr>
+                        `
+                    )
+                    .join("")
+                :
                 `
-                )
-                .join("");
+                    <tr>
+                        <td colspan="5">
+                            کوئی حاضری ریکارڈ موجود نہیں۔
+                        </td>
+                    </tr>
+                `;
     };
 
 
@@ -5221,6 +6456,7 @@ App.initMyMarks =
             App.currentFile !==
             "my-marks.html"
         ) {
+
             return;
         }
 
@@ -5239,6 +6475,11 @@ App.initMyMarks =
         const studentId =
             session.student_id ||
             App.getStudentId();
+
+
+        if (!studentId) {
+            return;
+        }
 
 
         try {
@@ -5278,8 +6519,18 @@ App.initMyMarks =
     };
 
 
+/* =====================================================
+   RENDER MY MARKS
+   ===================================================== */
+
 App.renderMyMarks =
     function (records) {
+
+        records =
+            Array.isArray(records)
+                ? records
+                : [];
+
 
         const total =
             records.reduce(
@@ -5343,11 +6594,13 @@ App.renderMyMarks =
             ]
         ]
             .forEach(
-                ([id, value]) =>
+                ([id, value]) => {
+
                     App.setText(
                         id,
                         value
-                    )
+                    );
+                }
             );
 
 
@@ -5365,65 +6618,80 @@ App.renderMyMarks =
 
 
         body.innerHTML =
-            records
-                .map(
-                    row => `
-                    <tr>
+            records.length
+                ? records
+                    .map(
+                        row => `
+                            <tr>
 
-                        <td>
-                            ${App.escape(
-                                App.date(
-                                    row.exam_date
-                                )
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        App.date(
+                                            row.exam_date
+                                        )
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.exam_name ||
-                                row.exam_type ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.exam_name ||
+                                        row.exam_type ||
+                                        ""
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.student_class ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.student_class ||
+                                        ""
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.obtained_marks
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.obtained_marks
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.total_marks
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.total_marks
+                                    )}
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.marks_percentage ||
-                                ""
-                            )}%
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.marks_percentage ||
+                                        ""
+                                    )}%
+                                </td>
 
-                        <td>
-                            ${App.escape(
-                                row.note ||
-                                ""
-                            )}
-                        </td>
+                                <td>
+                                    ${App.escape(
+                                        row.note ||
+                                        ""
+                                    )}
+                                </td>
 
-                    </tr>
+                            </tr>
+                        `
+                    )
+                    .join("")
+                :
                 `
-                )
-                .join("");
+                    <tr>
+                        <td colspan="7">
+                            کوئی نتیجہ موجود نہیں۔
+                        </td>
+                    </tr>
+                `;
     };
+
+
+/* =====================================================
+   END PART 2 / 4
+   PART 3 CONTINUES DIRECTLY BELOW
+   ===================================================== */
 
  /* =====================================================
    PART 3 / 4
@@ -5577,71 +6845,74 @@ App.loadAdminMarks =
                     ? records
                         .map(
                             row => `
-                            <tr>
+                                <tr>
 
-                                <td>
-                                    ${App.escape(
-                                        row.student_id
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.student_id
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.student_class
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.student_class
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.exam_name ||
-                                        row.exam_type
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.exam_name ||
+                                            row.exam_type ||
+                                            ""
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.obtained_marks
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.obtained_marks
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.total_marks
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.total_marks
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.marks_percentage ||
-                                        ""
-                                    )}%
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.marks_percentage ||
+                                            ""
+                                        )}%
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        App.date(
-                                            row.exam_date
-                                        )
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            App.date(
+                                                row.exam_date
+                                            )
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        row.note ||
-                                        ""
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            row.note ||
+                                            ""
+                                        )}
+                                    </td>
 
-                            </tr>
-                        `
+                                </tr>
+                            `
                         )
                         .join("")
                     :
-                    `<tr>
-                        <td colspan="8">
-                            کوئی ریکارڈ موجود نہیں۔
-                        </td>
-                    </tr>`;
+                    `
+                        <tr>
+                            <td colspan="8">
+                                کوئی ریکارڈ موجود نہیں۔
+                            </td>
+                        </tr>
+                    `;
 
 
             App.setText(
@@ -5659,12 +6930,13 @@ App.loadAdminMarks =
             );
 
 
-            body.innerHTML =
-                `<tr>
+            body.innerHTML = `
+                <tr>
                     <td colspan="8">
                         نتائج لوڈ نہیں ہو سکے۔
                     </td>
-                </tr>`;
+                </tr>
+            `;
         }
     };
 
@@ -5813,8 +7085,7 @@ App.loadStudentHomework =
                         query
                             .eq(
                                 "student_class",
-                                student
-                                    .student_class
+                                student.student_class
                             )
                             .order(
                                 "assigned_date",
@@ -5851,9 +7122,7 @@ App.loadStudentHomework =
                 );
 
 
-            if (
-                !homework.length
-            ) {
+            if (!homework.length) {
 
                 container.innerHTML =
                     App.empty(
@@ -5870,90 +7139,87 @@ App.loadStudentHomework =
                         item => {
 
                             const submission =
-                                submissionMap
-                                    .get(
-                                        String(
-                                            item.id
-                                        )
-                                    );
+                                submissionMap.get(
+                                    String(
+                                        item.id
+                                    )
+                                );
 
 
                             return `
-                            <article class="portal-card homework-card">
+                                <article class="portal-card homework-card">
 
-                                <h3>
-                                    ${App.escape(
-                                        item.title
-                                    )}
-                                </h3>
-
-                                <p>
-                                    ${App.escape(
-                                        item.description ||
-                                        ""
-                                    )}
-                                </p>
-
-                                <p>
-                                    مقررہ تاریخ:
-                                    ${App.escape(
-                                        App.date(
-                                            item
-                                                .assigned_date
-                                        )
-                                    )}
-                                </p>
-
-                                <p>
-                                    آخری تاریخ:
-                                    ${App.escape(
-                                        App.date(
-                                            item
-                                                .due_date
-                                        )
-                                    )}
-                                </p>
-
-                                <p>
-                                    حالت:
-                                    <strong>
+                                    <h3>
                                         ${App.escape(
-                                            App.statusUrdu(
-                                                submission
-                                                    ?.status ||
-                                                "pending"
+                                            item.title
+                                        )}
+                                    </h3>
+
+                                    <p>
+                                        ${App.escape(
+                                            item.description ||
+                                            ""
+                                        )}
+                                    </p>
+
+                                    <p>
+                                        مقررہ تاریخ:
+                                        ${App.escape(
+                                            App.date(
+                                                item.assigned_date
                                             )
                                         )}
-                                    </strong>
-                                </p>
+                                    </p>
 
-                                ${
-                                    submission
-                                        ?.teacher_note
-                                        ? `
-                                        <p>
-                                            استاد کا نوٹ:
+                                    <p>
+                                        آخری تاریخ:
+                                        ${App.escape(
+                                            App.date(
+                                                item.due_date
+                                            )
+                                        )}
+                                    </p>
+
+                                    <p>
+                                        حالت:
+                                        <strong>
                                             ${App.escape(
-                                                submission
-                                                    .teacher_note
+                                                App.statusUrdu(
+                                                    submission
+                                                        ?.status ||
+                                                    "pending"
+                                                )
                                             )}
-                                        </p>
-                                        `
-                                        : ""
-                                }
+                                        </strong>
+                                    </p>
 
-                                <button
-                                    type="button"
-                                    data-homework-submit="${
-                                        Number(
-                                            item.id
-                                        )
-                                    }">
-                                    ہوم ورک جمع کریں
-                                </button>
+                                    ${
+                                        submission
+                                            ?.teacher_note
+                                            ? `
+                                                <p>
+                                                    استاد کا نوٹ:
+                                                    ${App.escape(
+                                                        submission.teacher_note
+                                                    )}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
 
-                            </article>
-                        `;
+                                    <button
+                                        type="button"
+                                        data-homework-submit="${
+                                            Number(
+                                                item.id
+                                            )
+                                        }"
+                                    >
+                                        ہوم ورک جمع کریں
+                                    </button>
+
+                                </article>
+                            `;
                         }
                     )
                     .join("");
@@ -6037,9 +7303,7 @@ App.submitHomework =
                     .from(
                         "HomeworkSubmissions"
                     )
-                    .select(
-                        "id"
-                    )
+                    .select("id")
                     .eq(
                         "homework_id",
                         homeworkId
@@ -6238,46 +7502,43 @@ App.loadStudentAnnouncements =
                     ? records
                         .map(
                             announcement => `
-                            <article class="portal-card announcement-card">
+                                <article class="portal-card announcement-card">
 
-                                <h3>
-                                    ${App.escape(
-                                        announcement.title
-                                    )}
-                                </h3>
+                                    <h3>
+                                        ${App.escape(
+                                            announcement.title
+                                        )}
+                                    </h3>
 
-                                <p>
-                                    ${App.escape(
-                                        announcement.message
-                                    )}
-                                </p>
+                                    <p>
+                                        ${App.escape(
+                                            announcement.message
+                                        )}
+                                    </p>
 
-                                ${
-                                    announcement
-                                        .student_class
-                                        ? `
-                                        <p>
-                                            کلاس:
-                                            ${App.escape(
-                                                announcement
-                                                    .student_class
-                                            )}
-                                        </p>
-                                        `
-                                        : ""
-                                }
+                                    ${
+                                        announcement.student_class
+                                            ? `
+                                                <p>
+                                                    کلاس:
+                                                    ${App.escape(
+                                                        announcement.student_class
+                                                    )}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
 
-                                <small>
-                                    ${App.escape(
-                                        App.dateTime(
-                                            announcement
-                                                .created_at
-                                        )
-                                    )}
-                                </small>
+                                    <small>
+                                        ${App.escape(
+                                            App.dateTime(
+                                                announcement.created_at
+                                            )
+                                        )}
+                                    </small>
 
-                            </article>
-                        `
+                                </article>
+                            `
                         )
                         .join("")
                     :
@@ -6351,56 +7612,54 @@ App.loadAdminFeedback =
                     ? records
                         .map(
                             feedback => `
-                            <tr>
+                                <tr>
 
-                                <td>
-                                    ${App.escape(
-                                        feedback
-                                            .student_id
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            feedback.student_id
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        feedback
-                                            .teacher_id
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            feedback.teacher_id
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        feedback.rating ||
-                                        ""
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            feedback.rating ||
+                                            ""
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        feedback
-                                            .feedback_text ||
-                                        ""
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            feedback.feedback_text ||
+                                            ""
+                                        )}
+                                    </td>
 
-                                <td>
-                                    ${App.escape(
-                                        App.date(
-                                            feedback
-                                                .feedback_date
-                                        )
-                                    )}
-                                </td>
+                                    <td>
+                                        ${App.escape(
+                                            App.date(
+                                                feedback.feedback_date
+                                            )
+                                        )}
+                                    </td>
 
-                            </tr>
-                        `
+                                </tr>
+                            `
                         )
                         .join("")
                     :
-                    `<tr>
-                        <td colspan="5">
-                            کوئی ریکارڈ موجود نہیں۔
-                        </td>
-                    </tr>`;
+                    `
+                        <tr>
+                            <td colspan="5">
+                                کوئی ریکارڈ موجود نہیں۔
+                            </td>
+                        </tr>
+                    `;
 
 
             App.setText(
@@ -6525,74 +7784,75 @@ App.loadFinance =
                         ? history
                             .map(
                                 item => `
-                                <tr>
+                                    <tr>
 
-                                    <td>
-                                        ${App.escape(
-                                            item
-                                                .transaction_no ||
-                                            ""
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                item.transaction_no ||
+                                                ""
+                                            )}
+                                        </td>
 
-                                    <td>
-                                        ${
-                                            item.direction ===
-                                            "received"
-                                                ? "وصولی"
-                                                : "ادائیگی"
-                                        }
-                                    </td>
+                                        <td>
+                                            ${
+                                                item.direction ===
+                                                "received"
+                                                    ? "وصولی"
+                                                    : "ادائیگی"
+                                            }
+                                        </td>
 
-                                    <td>
-                                        ${App.escape(
-                                            item
-                                                .fund_type ||
-                                            ""
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                item.fund_type ||
+                                                ""
+                                            )}
+                                        </td>
 
-                                    <td>
-                                        ${App.escape(
-                                            item.purpose ||
-                                            ""
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                item.purpose ||
+                                                ""
+                                            )}
+                                        </td>
 
-                                    <td>
-                                        ${App.money(
-                                            item.amount ||
-                                            0
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                App.money(
+                                                    item.amount ||
+                                                    0
+                                                )
+                                            )}
+                                        </td>
 
-                                    <td>
-                                        ${App.escape(
-                                            App.dateTime(
-                                                item
-                                                    .transaction_at ||
-                                                item.date_time
-                                            )
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                App.dateTime(
+                                                    item.transaction_at ||
+                                                    item.date_time
+                                                )
+                                            )}
+                                        </td>
 
-                                    <td>
-                                        ${App.escape(
-                                            item.receipt_no ||
-                                            ""
-                                        )}
-                                    </td>
+                                        <td>
+                                            ${App.escape(
+                                                item.receipt_no ||
+                                                ""
+                                            )}
+                                        </td>
 
-                                </tr>
-                            `
+                                    </tr>
+                                `
                             )
                             .join("")
                         :
-                        `<tr>
-                            <td colspan="7">
-                                کوئی لین دین موجود نہیں۔
-                            </td>
-                        </tr>`;
+                        `
+                            <tr>
+                                <td colspan="7">
+                                    کوئی لین دین موجود نہیں۔
+                                </td>
+                            </tr>
+                        `;
             }
 
 
@@ -6722,11 +7982,9 @@ App.bindDonationForm =
                     alert(
                         "عطیہ محفوظ ہوگیا۔" +
                         (
-                            result
-                                ?.receipt_no
+                            result?.receipt_no
                                 ? "\nرسید نمبر: " +
-                                result
-                                    .receipt_no
+                                result.receipt_no
                                 : ""
                         )
                     );
@@ -6892,11 +8150,9 @@ App.bindExpenseForm =
                     alert(
                         "ادائیگی محفوظ ہوگئی۔" +
                         (
-                            result
-                                ?.receipt_no
+                            result?.receipt_no
                                 ? "\nرسید نمبر: " +
-                                result
-                                    .receipt_no
+                                result.receipt_no
                                 : ""
                         )
                     );
@@ -6966,7 +8222,7 @@ App.getStudentFeeHistory =
 
 
 /* =====================================================
-   ADD STUDENT FEE CHARGE
+   ADD STUDENT FEE
    ===================================================== */
 
 App.addStudentFee =
@@ -7095,11 +8351,8 @@ App.openStudentFee =
             const result =
                 await App
                     .receiveStudentFee(
-
                         studentId,
-
                         amount,
-
                         receivedFrom
                     );
 
@@ -7416,9 +8669,11 @@ App.initHostelPage =
 
 
                 studentSelect.innerHTML =
-                    `<option value="">
-                        طالبہ منتخب کریں
-                    </option>` +
+                    `
+                        <option value="">
+                            طالبہ منتخب کریں
+                        </option>
+                    ` +
 
                     students
                         .filter(
@@ -7442,21 +8697,20 @@ App.initHostelPage =
                         )
                         .map(
                             student => `
-                            <option value="${
-                                Number(
-                                    student.id
-                                )
-                            }">
-                                ${App.escape(
-                                    student
-                                        .admission_no
-                                )}
-                                -
-                                ${App.escape(
-                                    student.name
-                                )}
-                            </option>
-                        `
+                                <option value="${
+                                    Number(
+                                        student.id
+                                    )
+                                }">
+                                    ${App.escape(
+                                        student.admission_no
+                                    )}
+                                    -
+                                    ${App.escape(
+                                        student.name
+                                    )}
+                                </option>
+                            `
                         )
                         .join("");
 
@@ -7518,7 +8772,7 @@ App.initHostelPage =
 
 
                         alert(
-                            "طالبہ کا ہاسٹل سے خروج محفوظ ہوگیا۔"
+                            "طالبہ کا مدرسہ سے خروج محفوظ ہوگیا۔"
                         );
 
 
@@ -7653,10 +8907,8 @@ App.promoteStudent =
                     null,
 
                 p_result_percentage:
-                    percentage ===
-                        null ||
-                    percentage ===
-                        ""
+                    percentage === null ||
+                    percentage === ""
                         ? null
                         : Number(
                             percentage
@@ -7905,44 +9157,43 @@ App.initPromotionPage =
 
                     try {
 
-                        await App
-                            .promoteWholeClass(
+                        await App.promoteWholeClass(
 
-                                App.val(
-                                    "promotionFromClass"
-                                ),
+                            App.val(
+                                "promotionFromClass"
+                            ),
 
-                                App.val(
-                                    "promotionWholeToClass"
-                                ) ||
-                                App.val(
-                                    "promotionToClass"
-                                ),
+                            App.val(
+                                "promotionWholeToClass"
+                            ) ||
+                            App.val(
+                                "promotionToClass"
+                            ),
 
-                                App.val(
-                                    "promotionWholeAcademicYear"
-                                ) ||
-                                App.val(
-                                    "promotionAcademicYear"
-                                ),
+                            App.val(
+                                "promotionWholeAcademicYear"
+                            ) ||
+                            App.val(
+                                "promotionAcademicYear"
+                            ),
 
-                                App.val(
-                                    "promotionWholeExamName"
-                                ) ||
-                                App.val(
-                                    "promotionExamName"
-                                ),
+                            App.val(
+                                "promotionWholeExamName"
+                            ) ||
+                            App.val(
+                                "promotionExamName"
+                            ),
 
-                                App.val(
-                                    "promotionWholeDecision"
-                                ) ||
-                                "promoted",
+                            App.val(
+                                "promotionWholeDecision"
+                            ) ||
+                            "promoted",
 
-                                App.val(
-                                    "promotionWholeNotes"
-                                ) ||
-                                null
-                            );
+                            App.val(
+                                "promotionWholeNotes"
+                            ) ||
+                            null
+                        );
 
 
                         alert(
@@ -8168,18 +9419,16 @@ App.initIdCardPage =
 
 
                         const result =
-                            await App
-                                .registerIdCard(
-                                    type,
-                                    id
-                                );
+                            await App.registerIdCard(
+                                type,
+                                id
+                            );
 
 
                         alert(
                             "آئی ڈی کارڈ ریکارڈ تیار ہوگیا۔" +
                             (
-                                result
-                                    ?.card_no
+                                result?.card_no
                                     ? "\nکارڈ نمبر: " +
                                     result.card_no
                                     : ""
@@ -8325,9 +9574,7 @@ App.bindPasswordForm =
                     );
 
 
-                if (
-                    !currentPassword
-                ) {
+                if (!currentPassword) {
 
                     alert(
                         "موجودہ پاس ورڈ درج کریں۔"
@@ -8430,10 +9677,16 @@ App.initSettings =
         );
     };
 
+
+/* =====================================================
+   END PART 3 / 4
+   PART 4 CONTINUES DIRECTLY BELOW
+   ===================================================== */
+
  /* =====================================================
    PART 4 / 4
-   COMPLETE PROFILE PRINT / PDF
-   REPORT HELPERS + FINAL ROUTING + INITIALIZATION
+   REPORTS + COMPLETE PROFILE PRINT / PDF
+   FINAL ROUTING + BOOT
    ===================================================== */
 
 
@@ -8604,9 +9857,7 @@ App.formatBoolean =
 
 
 App.objectValue =
-    function (
-        value
-    ) {
+    function (value) {
 
         if (
             value === null ||
@@ -8652,6 +9903,10 @@ App.objectValue =
         );
     };
 
+
+/* =====================================================
+   FIELD LABELS
+   ===================================================== */
 
 App.fieldLabels = {
 
@@ -9200,6 +10455,7 @@ App.renderObjectGrid =
 
 
         if (!items.length) {
+
             return App.empty();
         }
 
@@ -9283,6 +10539,259 @@ App.renderRecordTable =
 
 
 /* =====================================================
+   ADMIN REPORTS PAGE
+   ===================================================== */
+
+App.initAdminReports =
+    async function () {
+
+        if (
+            App.currentFile !==
+            "admin-reports.html"
+        ) {
+
+            return;
+        }
+
+
+        const session =
+            await App.requireRole(
+                "admin"
+            );
+
+
+        if (!session) {
+            return;
+        }
+
+
+        try {
+
+            const [
+                overview,
+                finance
+            ] =
+                await Promise.all([
+
+                    App.authedRpc(
+                        "admin_dashboard_overview"
+                    ),
+
+                    App.authedRpc(
+                        "admin_finance_dashboard"
+                    )
+                        .catch(
+                            () => null
+                        )
+                ]);
+
+
+            App.setText(
+                "reportStudentsTotal",
+                Number(
+                    overview
+                        ?.students_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            App.setText(
+                "reportTeachersTotal",
+                Number(
+                    overview
+                        ?.teachers_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            App.setText(
+                "reportAttendanceToday",
+                Number(
+                    overview
+                        ?.attendance_today_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            App.setText(
+                "reportPendingApplications",
+                Number(
+                    overview
+                        ?.pending_applications_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            App.setText(
+                "reportHomeworkTotal",
+                Number(
+                    overview
+                        ?.homework_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            App.setText(
+                "reportAnnouncementsTotal",
+                Number(
+                    overview
+                        ?.announcements_total ||
+                    0
+                ),
+                "0"
+            );
+
+
+            if (finance) {
+
+                App.setText(
+                    "reportCurrentBalance",
+                    App.money(
+                        finance
+                            .current_balance ||
+                        0
+                    )
+                );
+
+
+                App.setText(
+                    "reportTotalReceived",
+                    App.money(
+                        finance
+                            .total_received ||
+                        0
+                    )
+                );
+
+
+                App.setText(
+                    "reportTotalPaid",
+                    App.money(
+                        finance
+                            .total_paid ||
+                        0
+                    )
+                );
+
+
+                App.setText(
+                    "reportRestrictedBalance",
+                    App.money(
+                        finance
+                            .restricted_balance ||
+                        0
+                    )
+                );
+            }
+
+
+            const classBody =
+                App.first(
+                    "reportClassBody",
+                    "reportsClassBody"
+                );
+
+
+            if (classBody) {
+
+                const classes =
+                    Array.isArray(
+                        overview?.classes
+                    )
+                        ? overview.classes
+                        : [];
+
+
+                classBody.innerHTML =
+                    classes.length
+                        ? classes
+                            .map(
+                                item => `
+                                    <tr>
+
+                                        <td>
+                                            ${App.escape(
+                                                item.class ||
+                                                "—"
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${App.escape(
+                                                item.students ||
+                                                0
+                                            )}
+                                        </td>
+
+                                    </tr>
+                                `
+                            )
+                            .join("")
+                        :
+                        `
+                            <tr>
+                                <td colspan="2">
+                                    کوئی کلاس ریکارڈ موجود نہیں۔
+                                </td>
+                            </tr>
+                        `;
+            }
+
+
+            const printButton =
+                App.first(
+                    "reportsPrintButton",
+                    "reportPrintButton"
+                );
+
+
+            if (
+                printButton &&
+                !printButton.dataset.bound
+            ) {
+
+                printButton.dataset.bound =
+                    "true";
+
+
+                printButton.addEventListener(
+                    "click",
+                    function () {
+
+                        window.print();
+                    }
+                );
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Admin reports:",
+                error
+            );
+
+
+            App.message(
+                "reportsMessage",
+                "رپورٹس لوڈ نہیں ہو سکیں۔",
+                "error"
+            );
+        }
+    };
+
+
+/* =====================================================
    PROFILE SECTION CONTROL
    ===================================================== */
 
@@ -9309,15 +10818,12 @@ App.setPrintSection =
             !section ||
             !target
         ) {
+
             return;
         }
 
 
-        if (
-            !html ||
-            html ===
-            App.empty()
-        ) {
+        if (!html) {
 
             section.hidden =
                 true;
@@ -9385,7 +10891,7 @@ App.hideAllPrintSections =
 
 
 /* =====================================================
-   PERSONAL PROFILE RENDERER
+   PERSONAL PROFILE
    ===================================================== */
 
 App.renderPrintPersonal =
@@ -9414,6 +10920,7 @@ App.renderPrintPersonal =
                     {}
                 );
 
+
         } else if (
             type === "teacher"
         ) {
@@ -9430,6 +10937,7 @@ App.renderPrintPersonal =
                     {}
                 );
 
+
         } else {
 
             record =
@@ -9445,7 +10953,8 @@ App.renderPrintPersonal =
 
 
         const fields =
-            type === "student"
+            type ===
+            "student"
                 ? [
                     "admission_no",
                     "admission_type",
@@ -9463,7 +10972,8 @@ App.renderPrintPersonal =
                     "transfer_date"
                 ]
                 :
-                type === "teacher"
+                type ===
+                "teacher"
                     ? [
                         "teacher_code",
                         "name",
@@ -9509,13 +11019,11 @@ App.renderPrintPersonal =
 
 
 /* =====================================================
-   ACCOUNT SECTION
+   ACCOUNT
    ===================================================== */
 
 App.renderPrintAccount =
-    function (
-        data
-    ) {
+    function (data) {
 
         const account =
             App.pick(
@@ -9557,9 +11065,7 @@ App.renderPrintAccount =
    ===================================================== */
 
 App.renderPrintMahrams =
-    function (
-        data
-    ) {
+    function (data) {
 
         const records =
             App.asArray(
@@ -9623,6 +11129,7 @@ App.renderPrintAttendance =
                         []
                     )
                 );
+
 
         } else {
 
@@ -9703,63 +11210,51 @@ App.renderPrintAttendance =
             "printAttendanceSummary",
 
             `
-            <div class="print-summary-grid">
+                <div class="print-summary-grid">
 
-                <div class="print-summary-card">
-                    کل
-                    <strong>
-                        ${records.length}
-                    </strong>
+                    <div class="print-summary-card">
+                        کل
+                        <strong>
+                            ${records.length}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        حاضر
+                        <strong>
+                            ${present}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        غیر حاضر
+                        <strong>
+                            ${absent}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        رخصت
+                        <strong>
+                            ${leave}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        تاخیر
+                        <strong>
+                            ${late}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        فیصد
+                        <strong>
+                            ${percentage}%
+                        </strong>
+                    </div>
+
                 </div>
-
-                <div class="print-summary-card">
-                    حاضر
-                    <strong>
-                        ${present}
-                    </strong>
-                </div>
-
-                <div class="print-summary-card">
-                    غیر حاضر
-                    <strong>
-                        ${absent}
-                    </strong>
-                </div>
-
-                <div class="print-summary-card">
-                    فیصد
-                    <strong>
-                        ${percentage}%
-                    </strong>
-                </div>
-
-                ${
-                    late
-                        ? `
-                        <div class="print-summary-card">
-                            تاخیر
-                            <strong>
-                                ${late}
-                            </strong>
-                        </div>
-                        `
-                        : ""
-                }
-
-                ${
-                    leave
-                        ? `
-                        <div class="print-summary-card">
-                            رخصت
-                            <strong>
-                                ${leave}
-                            </strong>
-                        </div>
-                        `
-                        : ""
-                }
-
-            </div>
             `
         );
 
@@ -9788,20 +11283,9 @@ App.renderPrintAttendance =
         );
 
 
-        const section =
-            App.el(
-                "printAttendanceSection"
-            );
-
-
-        if (section) {
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
-        }
+        App.show(
+            "printAttendanceSection"
+        );
     };
 
 
@@ -9810,9 +11294,7 @@ App.renderPrintAttendance =
    ===================================================== */
 
 App.renderPrintAssignments =
-    function (
-        data
-    ) {
+    function (data) {
 
         const assignments =
             App.asArray(
@@ -9861,6 +11343,7 @@ App.renderPrintResults =
 
         const source =
             type === "student"
+
                 ? App.pick(
                     data,
                     [
@@ -9870,8 +11353,8 @@ App.renderPrintResults =
                     ],
                     []
                 )
-                :
-                App.pick(
+
+                : App.pick(
                     data,
                     [
                         "marks_ratings.marks",
@@ -9937,37 +11420,37 @@ App.renderPrintResults =
             "printResultSummary",
 
             `
-            <div class="print-summary-grid">
+                <div class="print-summary-grid">
 
-                <div class="print-summary-card">
-                    اندراجات
-                    <strong>
-                        ${marks.length}
-                    </strong>
+                    <div class="print-summary-card">
+                        اندراجات
+                        <strong>
+                            ${marks.length}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        کل نمبر
+                        <strong>
+                            ${total}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        حاصل کردہ
+                        <strong>
+                            ${obtained}
+                        </strong>
+                    </div>
+
+                    <div class="print-summary-card">
+                        مجموعی فیصد
+                        <strong>
+                            ${percentage}%
+                        </strong>
+                    </div>
+
                 </div>
-
-                <div class="print-summary-card">
-                    کل نمبر
-                    <strong>
-                        ${total}
-                    </strong>
-                </div>
-
-                <div class="print-summary-card">
-                    حاصل کردہ
-                    <strong>
-                        ${obtained}
-                    </strong>
-                </div>
-
-                <div class="print-summary-card">
-                    مجموعی فیصد
-                    <strong>
-                        ${percentage}%
-                    </strong>
-                </div>
-
-            </div>
             `
         );
 
@@ -9992,20 +11475,9 @@ App.renderPrintResults =
         );
 
 
-        const section =
-            App.el(
-                "printResultsSection"
-            );
-
-
-        if (section) {
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
-        }
+        App.show(
+            "printResultsSection"
+        );
     };
 
 
@@ -10022,6 +11494,7 @@ App.renderPrintRatings =
         const ratings =
             App.asArray(
                 type === "student"
+
                     ? App.pick(
                         data,
                         [
@@ -10030,8 +11503,8 @@ App.renderPrintRatings =
                         ],
                         []
                     )
-                    :
-                    App.pick(
+
+                    : App.pick(
                         data,
                         [
                             "marks_ratings.ratings",
@@ -10080,6 +11553,7 @@ App.renderPrintFeedback =
         ) {
 
             records = [
+
                 ...App.asArray(
                     App.pick(
                         data,
@@ -10104,11 +11578,13 @@ App.renderPrintFeedback =
                 )
             ];
 
+
         } else if (
             type === "teacher"
         ) {
 
             records = [
+
                 ...App.asArray(
                     App.pick(
                         data,
@@ -10156,13 +11632,115 @@ App.renderPrintFeedback =
 
 
 /* =====================================================
+   RECEIPT CARDS
+   ===================================================== */
+
+App.renderReceiptCards =
+    function (
+        sectionId,
+        targetId,
+        records,
+        title
+    ) {
+
+        records =
+            App.asArray(
+                records
+            );
+
+
+        const withReceipt =
+            records.filter(
+                row =>
+                    row &&
+                    (
+                        row.receipt_no ||
+                        row.receipt ||
+                        row.receipt_snapshot
+                    )
+            );
+
+
+        if (
+            !withReceipt.length
+        ) {
+            return;
+        }
+
+
+        const html =
+            withReceipt
+                .map(
+                    row => {
+
+                        const receipt =
+                            (
+                                row.receipt &&
+                                typeof row.receipt ===
+                                "object"
+                            )
+                                ? row.receipt
+                                :
+                                (
+                                    row.receipt_snapshot &&
+                                    typeof row
+                                        .receipt_snapshot ===
+                                    "object"
+                                )
+                                    ? row
+                                        .receipt_snapshot
+                                    : row;
+
+
+                        return `
+                            <div class="print-receipt">
+
+                                <div class="print-receipt-header">
+
+                                    <strong>
+                                        ${App.escape(
+                                            title
+                                        )}
+                                    </strong>
+
+                                    <span class="print-receipt-number">
+                                        ${App.escape(
+                                            receipt
+                                                .receipt_no ||
+                                            row.receipt_no ||
+                                            "—"
+                                        )}
+                                    </span>
+
+                                </div>
+
+                                ${
+                                    App.renderObjectGrid(
+                                        receipt
+                                    )
+                                }
+
+                            </div>
+                        `;
+                    }
+                )
+                .join("");
+
+
+        App.setPrintSection(
+            sectionId,
+            targetId,
+            html
+        );
+    };
+
+
+/* =====================================================
    STUDENT FEES
    ===================================================== */
 
 App.renderPrintFees =
-    function (
-        data
-    ) {
+    function (data) {
 
         const fees =
             App.pick(
@@ -10226,7 +11804,6 @@ App.renderPrintFees =
 
         App.setHTML(
             "printFeeSummary",
-
             App.renderObjectGrid(
                 balance
             )
@@ -10237,60 +11814,49 @@ App.renderPrintFees =
             "printFeeHistory",
 
             `
-            <h4>
-                واجب الادا فیس / چارجز
-            </h4>
+                <h4>
+                    واجب الادا فیس / چارجز
+                </h4>
 
-            ${
-                App.renderRecordTable(
-                    charges,
-                    [
-                        "fee_period",
-                        "amount",
-                        "due_amount",
-                        "due_date",
-                        "status",
-                        "notes"
-                    ]
-                )
-            }
+                ${
+                    App.renderRecordTable(
+                        charges,
+                        [
+                            "fee_period",
+                            "amount",
+                            "due_amount",
+                            "due_date",
+                            "status",
+                            "notes"
+                        ]
+                    )
+                }
 
-            <h4>
-                وصول شدہ فیس
-            </h4>
+                <h4>
+                    وصول شدہ فیس
+                </h4>
 
-            ${
-                App.renderRecordTable(
-                    payments,
-                    [
-                        "payment_at",
-                        "amount",
-                        "received_from",
-                        "payment_method",
-                        "payment_reference",
-                        "status",
-                        "notes"
-                    ]
-                )
-            }
+                ${
+                    App.renderRecordTable(
+                        payments,
+                        [
+                            "payment_at",
+                            "amount",
+                            "received_from",
+                            "payment_method",
+                            "payment_reference",
+                            "status",
+                            "notes"
+                        ]
+                    )
+                }
             `
         );
 
 
-        const section =
-            App.el(
-                "printFeesSection"
-            );
-
-
-        if (section) {
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
-        }
+        App.show(
+            "printFeesSection"
+        );
 
 
         App.renderReceiptCards(
@@ -10303,13 +11869,11 @@ App.renderPrintFees =
 
 
 /* =====================================================
-   SALARY
+   TEACHER SALARY
    ===================================================== */
 
 App.renderPrintSalary =
-    function (
-        data
-    ) {
+    function (data) {
 
         const salary =
             App.pick(
@@ -10389,17 +11953,17 @@ App.renderPrintSalary =
             "printSalarySummary",
 
             `
-            ${
-                App.renderObjectGrid(
-                    settings
-                )
-            }
+                ${
+                    App.renderObjectGrid(
+                        settings
+                    )
+                }
 
-            ${
-                App.renderObjectGrid(
-                    balance
-                )
-            }
+                ${
+                    App.renderObjectGrid(
+                        balance
+                    )
+                }
             `
         );
 
@@ -10408,59 +11972,48 @@ App.renderPrintSalary =
             "printSalaryHistory",
 
             `
-            <h4>
-                تنخواہ واجبات
-            </h4>
+                <h4>
+                    تنخواہ واجبات
+                </h4>
 
-            ${
-                App.renderRecordTable(
-                    charges,
-                    [
-                        "salary_period",
-                        "amount",
-                        "due_amount",
-                        "due_date",
-                        "status",
-                        "notes"
-                    ]
-                )
-            }
+                ${
+                    App.renderRecordTable(
+                        charges,
+                        [
+                            "salary_period",
+                            "amount",
+                            "due_amount",
+                            "due_date",
+                            "status",
+                            "notes"
+                        ]
+                    )
+                }
 
-            <h4>
-                تنخواہ ادائیگیاں
-            </h4>
+                <h4>
+                    تنخواہ ادائیگیاں
+                </h4>
 
-            ${
-                App.renderRecordTable(
-                    payments,
-                    [
-                        "payment_at",
-                        "amount",
-                        "payment_method",
-                        "payment_reference",
-                        "status",
-                        "notes"
-                    ]
-                )
-            }
+                ${
+                    App.renderRecordTable(
+                        payments,
+                        [
+                            "payment_at",
+                            "amount",
+                            "payment_method",
+                            "payment_reference",
+                            "status",
+                            "notes"
+                        ]
+                    )
+                }
             `
         );
 
 
-        const section =
-            App.el(
-                "printSalarySection"
-            );
-
-
-        if (section) {
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
-        }
+        App.show(
+            "printSalarySection"
+        );
 
 
         App.renderReceiptCards(
@@ -10473,116 +12026,11 @@ App.renderPrintSalary =
 
 
 /* =====================================================
-   RECEIPT CARDS
-   ===================================================== */
-
-App.renderReceiptCards =
-    function (
-        sectionId,
-        targetId,
-        records,
-        title
-    ) {
-
-        records =
-            App.asArray(
-                records
-            );
-
-
-        const withReceipt =
-            records.filter(
-                row =>
-                    row &&
-                    (
-                        row.receipt_no ||
-                        row.receipt ||
-                        row.receipt_snapshot
-                    )
-            );
-
-
-        if (
-            !withReceipt.length
-        ) {
-            return;
-        }
-
-
-        const html =
-            withReceipt
-                .map(
-                    row => {
-
-                        const receipt =
-                            (
-                                row.receipt &&
-                                typeof row.receipt ===
-                                "object"
-                            )
-                                ? row.receipt
-                                : (
-                                    row.receipt_snapshot &&
-                                    typeof row
-                                        .receipt_snapshot ===
-                                    "object"
-                                        ? row
-                                            .receipt_snapshot
-                                        : row
-                                );
-
-
-                        return `
-                        <div class="print-receipt">
-
-                            <div class="print-receipt-header">
-
-                                <strong>
-                                    ${App.escape(
-                                        title
-                                    )}
-                                </strong>
-
-                                <span class="print-receipt-number">
-                                    ${App.escape(
-                                        receipt
-                                            .receipt_no ||
-                                        row.receipt_no ||
-                                        "—"
-                                    )}
-                                </span>
-
-                            </div>
-
-                            ${
-                                App.renderObjectGrid(
-                                    receipt
-                                )
-                            }
-
-                        </div>
-                    `;
-                    }
-                )
-                .join("");
-
-
-        App.setPrintSection(
-            sectionId,
-            targetId,
-            html
-        );
-    };
-
-
-/* =====================================================
    HOMEWORK HISTORY
    ===================================================== */
 
 App.renderPrintHomework =
-    function (
-        data
-    ) {
+    function (data) {
 
         const source =
             App.pick(
@@ -10611,6 +12059,7 @@ App.renderPrintHomework =
         ) {
 
             records = [
+
                 ...App.asArray(
                     source.homework
                 ),
@@ -10644,13 +12093,11 @@ App.renderPrintHomework =
 
 
 /* =====================================================
-   ANNOUNCEMENTS / ACTIVITY
+   ANNOUNCEMENTS
    ===================================================== */
 
 App.renderPrintAnnouncements =
-    function (
-        data
-    ) {
+    function (data) {
 
         const activity =
             App.pick(
@@ -10664,9 +12111,9 @@ App.renderPrintAnnouncements =
 
 
         const announcements = [
+
             ...App.asArray(
-                activity
-                    .announcements
+                activity.announcements
             ),
 
             ...App.asArray(
@@ -10707,9 +12154,7 @@ App.renderPrintAnnouncements =
    ===================================================== */
 
 App.renderPrintHostel =
-    function (
-        data
-    ) {
+    function (data) {
 
         const history =
             App.asArray(
@@ -10750,13 +12195,11 @@ App.renderPrintHostel =
 
 
 /* =====================================================
-   PROMOTION HISTORY
+   PROMOTIONS
    ===================================================== */
 
 App.renderPrintPromotions =
-    function (
-        data
-    ) {
+    function (data) {
 
         const history =
             App.asArray(
@@ -10797,9 +12240,7 @@ App.renderPrintPromotions =
    ===================================================== */
 
 App.renderPrintDocuments =
-    function (
-        data
-    ) {
+    function (data) {
 
         const documents =
             App.asArray(
@@ -10824,78 +12265,74 @@ App.renderPrintDocuments =
             documents
                 .map(
                     document => `
-                    <div class="print-document-item">
+                        <div class="print-document-item">
 
-                        <strong>
-                            ${App.escape(
-                                document.title ||
-                                document
-                                    .document_title ||
-                                App.fieldLabels[
+                            <strong>
+                                ${App.escape(
+                                    document.title ||
                                     document
-                                        .document_type
-                                ] ||
-                                document
-                                    .document_type ||
-                                "دستاویز"
-                            )}
-                        </strong>
+                                        .document_title ||
+                                    document
+                                        .document_type ||
+                                    "دستاویز"
+                                )}
+                            </strong>
 
-                        <div>
-                            فائل:
-                            ${App.escape(
-                                document
-                                    .original_file_name ||
-                                document
-                                    .file_path ||
-                                "—"
-                            )}
-                        </div>
+                            <div>
+                                فائل:
+                                ${App.escape(
+                                    document
+                                        .original_file_name ||
+                                    document
+                                        .file_path ||
+                                    "—"
+                                )}
+                            </div>
 
-                        <div>
-                            تصدیق:
+                            <div>
+                                تصدیق:
+                                ${
+                                    document
+                                        .is_verified
+                                        ? "تصدیق شدہ"
+                                        : "تصدیق باقی"
+                                }
+                            </div>
+
                             ${
                                 document
-                                    .is_verified
-                                    ? "تصدیق شدہ"
-                                    : "تصدیق باقی"
+                                    .verification_note
+                                    ? `
+                                        <div>
+                                            نوٹ:
+                                            ${App.escape(
+                                                document
+                                                    .verification_note
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
                             }
+
+                            ${
+                                document
+                                    .uploaded_at
+                                    ? `
+                                        <div>
+                                            جمع کرنے کی تاریخ:
+                                            ${App.escape(
+                                                App.dateTime(
+                                                    document
+                                                        .uploaded_at
+                                                )
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
                         </div>
-
-                        ${
-                            document
-                                .verification_note
-                                ? `
-                                <div>
-                                    نوٹ:
-                                    ${App.escape(
-                                        document
-                                            .verification_note
-                                    )}
-                                </div>
-                                `
-                                : ""
-                        }
-
-                        ${
-                            document
-                                .uploaded_at
-                                ? `
-                                <div>
-                                    جمع کرنے کی تاریخ:
-                                    ${App.escape(
-                                        App.dateTime(
-                                            document
-                                                .uploaded_at
-                                        )
-                                    )}
-                                </div>
-                                `
-                                : ""
-                        }
-
-                    </div>
-                `
+                    `
                 )
                 .join("");
 
@@ -10909,13 +12346,11 @@ App.renderPrintDocuments =
 
 
 /* =====================================================
-   MADRASSA ISSUED DOCUMENTS
+   ISSUED DOCUMENTS
    ===================================================== */
 
 App.renderPrintIssuedDocuments =
-    function (
-        data
-    ) {
+    function (data) {
 
         const documents =
             App.asArray(
@@ -10966,6 +12401,7 @@ App.renderPrintActivity =
         ) {
 
             records = [
+
                 ...App.asArray(
                     App.pick(
                         data,
@@ -10987,6 +12423,7 @@ App.renderPrintActivity =
                 )
             ];
 
+
         } else {
 
             const activity =
@@ -11001,6 +12438,7 @@ App.renderPrintActivity =
 
 
             records = [
+
                 ...App.asArray(
                     activity
                         .account_activity
@@ -11034,13 +12472,11 @@ App.renderPrintActivity =
 
 
 /* =====================================================
-   TEACHER CLASS ATTENDANCE ACTIVITY
+   TEACHER CLASS ATTENDANCE
    ===================================================== */
 
 App.renderTeacherClassAttendance =
-    function (
-        data
-    ) {
+    function (data) {
 
         const records =
             App.asArray(
@@ -11059,25 +12495,6 @@ App.renderTeacherClassAttendance =
         }
 
 
-        const html =
-            `
-            <h4>
-                استاد کی طرف سے لی گئی کلاس حاضری
-            </h4>
-            ` +
-            App.renderRecordTable(
-                records,
-                [
-                    "attendance_date",
-                    "student_class",
-                    "period_number",
-                    "student_id",
-                    "status",
-                    "note"
-                ]
-            );
-
-
         const target =
             App.el(
                 "printActivityHistory"
@@ -11091,33 +12508,51 @@ App.renderTeacherClassAttendance =
 
 
         if (
-            target &&
-            section
+            !target ||
+            !section
         ) {
 
-            target.insertAdjacentHTML(
-                "beforeend",
-                html
-            );
-
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
+            return;
         }
+
+
+        target.insertAdjacentHTML(
+            "beforeend",
+
+            `
+                <h4>
+                    استاد کی طرف سے لی گئی کلاس حاضری
+                </h4>
+
+                ${
+                    App.renderRecordTable(
+                        records,
+                        [
+                            "attendance_date",
+                            "student_class",
+                            "period_number",
+                            "student_id",
+                            "status",
+                            "note"
+                        ]
+                    )
+                }
+            `
+        );
+
+
+        App.show(
+            section
+        );
     };
 
 
 /* =====================================================
-   ADMIN FINANCE RELATED HISTORY
+   ADMIN FINANCE HISTORY
    ===================================================== */
 
 App.renderAdminFinanceHistory =
-    function (
-        data
-    ) {
+    function (data) {
 
         const records =
             App.asArray(
@@ -11138,28 +12573,6 @@ App.renderAdminFinanceHistory =
         }
 
 
-        const html =
-            `
-            <h4>
-                مالی ریکارڈ
-            </h4>
-            ` +
-            App.renderRecordTable(
-                records,
-                [
-                    "transaction_at",
-                    "transaction_no",
-                    "direction",
-                    "amount",
-                    "received_from",
-                    "paid_to",
-                    "purpose",
-                    "payment_method",
-                    "payment_reference"
-                ]
-            );
-
-
         const target =
             App.el(
                 "printActivityHistory"
@@ -11173,22 +12586,45 @@ App.renderAdminFinanceHistory =
 
 
         if (
-            target &&
-            section
+            !target ||
+            !section
         ) {
 
-            target.insertAdjacentHTML(
-                "beforeend",
-                html
-            );
-
-
-            section.hidden =
-                false;
-
-            section.style.display =
-                "block";
+            return;
         }
+
+
+        target.insertAdjacentHTML(
+            "beforeend",
+
+            `
+                <h4>
+                    مالی ریکارڈ
+                </h4>
+
+                ${
+                    App.renderRecordTable(
+                        records,
+                        [
+                            "transaction_at",
+                            "transaction_no",
+                            "direction",
+                            "amount",
+                            "received_from",
+                            "paid_to",
+                            "purpose",
+                            "payment_method",
+                            "payment_reference"
+                        ]
+                    )
+                }
+            `
+        );
+
+
+        App.show(
+            section
+        );
     };
 
 
@@ -11218,13 +12654,11 @@ App.loadPrintProfileData =
 
 
 /* =====================================================
-   PRINT PROFILE RENDERER
+   RENDER PRINT PROFILE
    ===================================================== */
 
 App.renderPrintProfile =
-    function (
-        response
-    ) {
+    function (response) {
 
         const type =
             App.safe(
@@ -11253,12 +12687,14 @@ App.renderPrintProfile =
             title =
                 "طالبہ کا مکمل تاریخی پروفائل";
 
+
         } else if (
             type === "teacher"
         ) {
 
             title =
                 "استاد کا مکمل تاریخی پروفائل";
+
 
         } else if (
             type === "admin"
@@ -11295,50 +12731,41 @@ App.renderPrintProfile =
                 data
             );
 
-
             App.renderPrintAttendance(
                 type,
                 data
             );
-
 
             App.renderPrintResults(
                 type,
                 data
             );
 
-
             App.renderPrintRatings(
                 type,
                 data
             );
-
 
             App.renderPrintFeedback(
                 type,
                 data
             );
 
-
             App.renderPrintFees(
                 data
             );
-
 
             App.renderPrintHomework(
                 data
             );
 
-
             App.renderPrintAnnouncements(
                 data
             );
 
-
             App.renderPrintHostel(
                 data
             );
-
 
             App.renderPrintPromotions(
                 data
@@ -11354,39 +12781,32 @@ App.renderPrintProfile =
                 data
             );
 
-
             App.renderPrintAssignments(
                 data
             );
-
 
             App.renderPrintResults(
                 type,
                 data
             );
 
-
             App.renderPrintRatings(
                 type,
                 data
             );
-
 
             App.renderPrintFeedback(
                 type,
                 data
             );
 
-
             App.renderPrintSalary(
                 data
             );
 
-
             App.renderPrintHomework(
                 data
             );
-
 
             App.renderPrintAnnouncements(
                 data
@@ -11471,7 +12891,7 @@ App.renderPrintProfile =
 
 
 /* =====================================================
-   PRINT / PDF PAGE
+   PRINT PROFILE PAGE
    ===================================================== */
 
 App.initPrintProfilePage =
@@ -11671,7 +13091,7 @@ App.initPrintProfilePage =
 
 
 /* =====================================================
-   GENERIC PRINT PROFILE BUTTONS
+   GENERIC PROFILE PRINT BUTTONS
    ===================================================== */
 
 App.bindProfilePrintButtons =
@@ -11706,7 +13126,7 @@ App.bindProfilePrintButtons =
 
 
 /* =====================================================
-   CLOSE MODALS / OVERLAYS
+   CLOSE STUDENT DETAILS
    ===================================================== */
 
 App.closeStudentDetails =
@@ -11737,10 +13157,15 @@ App.closeStudentDetails =
 
 
         if (generated) {
+
             generated.remove();
         }
     };
 
+
+/* =====================================================
+   CLOSE TEACHER DETAILS
+   ===================================================== */
 
 App.closeTeacherDetails =
     function () {
@@ -11770,6 +13195,7 @@ App.closeTeacherDetails =
 
 
         if (generated) {
+
             generated.remove();
         }
     };
@@ -11784,7 +13210,7 @@ window.closeTeacherDetails =
 
 
 /* =====================================================
-   GLOBAL ESCAPE KEY
+   ESCAPE KEY
    ===================================================== */
 
 App.bindEscapeKey =
@@ -11798,6 +13224,7 @@ App.bindEscapeKey =
                     event.key !==
                     "Escape"
                 ) {
+
                     return;
                 }
 
@@ -11843,10 +13270,9 @@ App.bindConnectionEvents =
             ) {
 
                 const node =
-                    document
-                        .querySelector(
-                            "[data-connection-message]"
-                        );
+                    document.querySelector(
+                        "[data-connection-message]"
+                    );
 
 
                 if (!node) {
@@ -12003,6 +13429,7 @@ App.initializeCurrentPage =
 
 
         App.bindCommonUI();
+
 
         App.bindProfilePrintButtons();
 
@@ -12162,6 +13589,14 @@ App.initializeCurrentPage =
                 break;
 
 
+            case "admin-reports.html":
+
+                await App
+                    .initAdminReports();
+
+                break;
+
+
             case "admin-settings.html":
             case "teacher-settings.html":
             case "settings.html":
@@ -12201,7 +13636,9 @@ document.addEventListener(
 
             App.bindEscapeKey();
 
+
             App.bindConnectionEvents();
+
 
             App.bindGlobalErrors();
 
@@ -12219,10 +13656,9 @@ document.addEventListener(
 
 
             const message =
-                document
-                    .createElement(
-                        "div"
-                    );
+                document.createElement(
+                    "div"
+                );
 
 
             message.className =
@@ -12242,7 +13678,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   END
+   END COMPLETE SCRIPT
    ===================================================== */
 
 })();
