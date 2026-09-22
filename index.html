@@ -9,7 +9,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>مدرسہ شہناز اختر للبنات</title>
+    <meta
+        name="description"
+        content="مدرسہ شہناز اختر للبنات، گاؤں ہل غورغشتوں، ضلع بونیر۔ طالبات کے لیے قرآن، حدیث، درس نظامی اور دینی تعلیم۔"
+    >
+
+    <title>
+        مدرسہ شہناز اختر للبنات
+    </title>
 
     <link
         rel="preconnect"
@@ -23,7 +30,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
@@ -33,79 +40,261 @@
     >
 </head>
 
-<body class="home-page">
 
-    <main class="container home-container">
+<body class="home-page intro-page">
 
-        <!-- =========================
-             HEADER
-        ========================== -->
+    <!-- =========================================
+         TOP LANGUAGE BAR
+    ========================================== -->
 
-        <header class="home-header">
+    <header class="intro-topbar">
+
+        <div class="intro-topbar-inner">
+
+            <div class="intro-language-wrapper">
+
+                <label
+                    for="languageSelector"
+                    data-i18n="language_label"
+                >
+                    زبان
+                </label>
+
+                <select
+                    id="languageSelector"
+                    class="language-selector"
+                    aria-label="زبان منتخب کریں"
+                >
+                    <option value="ur">
+                        اردو
+                    </option>
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="ar">
+                        العربية
+                    </option>
+
+                    <option value="ps">
+                        پښتو
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="intro-top-actions">
+
+                <button
+                    type="button"
+                    id="openLoginOptions"
+                    class="intro-login-btn"
+                    data-i18n="login"
+                >
+                    لاگ اِن
+                </button>
+
+                <button
+                    type="button"
+                    id="openSignupOptions"
+                    class="intro-signup-btn"
+                    data-i18n="signup"
+                >
+                    نیا داخلہ
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         LOGIN OPTIONS
+    ========================================== -->
+
+    <section
+        id="loginOptionsPanel"
+        class="intro-options-panel"
+        hidden
+    >
+
+        <div class="intro-options-card">
+
+            <button
+                type="button"
+                class="intro-panel-close"
+                data-close-panel="loginOptionsPanel"
+                aria-label="بند کریں"
+            >
+                ×
+            </button>
+
+            <h2 data-i18n="login_heading">
+                لاگ اِن
+            </h2>
+
+            <p data-i18n="login_choose_account">
+                اپنا اکاؤنٹ منتخب کریں
+            </p>
+
+            <div class="intro-option-buttons">
+
+                <a
+                    href="login.html?role=admin"
+                    data-i18n="admin_login"
+                >
+                    ایڈمن لاگ اِن
+                </a>
+
+                <a
+                    href="login.html?role=teacher"
+                    data-i18n="teacher_login"
+                >
+                    استاد لاگ اِن
+                </a>
+
+                <a
+                    href="login.html?role=student"
+                    data-i18n="student_login"
+                >
+                    طالبہ لاگ اِن
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+         SIGNUP OPTIONS
+    ========================================== -->
+
+    <section
+        id="signupOptionsPanel"
+        class="intro-options-panel"
+        hidden
+    >
+
+        <div class="intro-options-card">
+
+            <button
+                type="button"
+                class="intro-panel-close"
+                data-close-panel="signupOptionsPanel"
+                aria-label="بند کریں"
+            >
+                ×
+            </button>
+
+            <h2 data-i18n="signup_heading">
+                نیا داخلہ / رجسٹریشن
+            </h2>
+
+            <p data-i18n="signup_choose_type">
+                درخواست کی قسم منتخب کریں
+            </p>
+
+            <div class="intro-option-buttons">
+
+                <a
+                    href="student-apply.html"
+                    class="primary"
+                    data-i18n="student_application"
+                >
+                    طالبہ کے داخلے کی درخواست
+                </a>
+
+                <a
+                    href="teacher-apply.html"
+                    data-i18n="teacher_application"
+                >
+                    استاد کی درخواست
+                </a>
+
+            </div>
+
+            <p
+                class="intro-admin-signup-note"
+                data-i18n="admin_signup_note"
+            >
+                ایڈمن اکاؤنٹ عوامی رجسٹریشن کے ذریعے نہیں بنایا جا سکتا۔
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <main class="intro-main">
+
+
+        <!-- =========================================
+             HERO / KALMA
+        ========================================== -->
+
+        <section class="intro-hero">
+
+            <div class="intro-bismillah">
+                ﷽
+            </div>
 
             <div
-                class="logo"
-                aria-hidden="true"
+                class="intro-kalma"
+                data-i18n="kalma"
             >
+                لَا إِلٰهَ إِلَّا اللّٰهُ
+                مُحَمَّدٌ رَسُولُ اللّٰهِ ﷺ
+            </div>
+
+            <div class="intro-madrassa-icon">
                 🕌
             </div>
 
-            <h1>
+            <h1 data-i18n="madrassa_name">
                 مدرسہ شہناز اختر للبنات
             </h1>
 
-            <p class="address">
+            <p
+                class="intro-tagline"
+                data-i18n="main_tagline"
+            >
+                دینی علم، بہترین تربیت اور روشن مستقبل کی طرف ایک باوقار سفر
+            </p>
+
+            <p
+                class="intro-address"
+                data-i18n="madrassa_address"
+            >
                 گاؤں ہل غورغشتوں، ضلع بونیر
             </p>
 
-            <div class="system-title">
-                مدرسہ مینجمنٹ سسٹم
-            </div>
-
-            <p class="subtitle">
-                لاگ اِن یا نئی درخواست کے لیے مطلوبہ آپشن منتخب کریں
-            </p>
-
-        </header>
-
-
-        <!-- =========================
-             LOGIN
-        ========================== -->
-
-        <section class="home-section">
-
-            <h2 class="home-section-title">
-                🔐 لاگ اِن
-            </h2>
-
-            <div class="home-button-grid">
+            <div class="intro-hero-actions">
 
                 <button
                     type="button"
-                    id="adminLoginButton"
-                    class="home-action-button"
+                    id="heroAdmissionButton"
+                    class="hero-primary-button"
+                    data-i18n="apply_now"
                 >
-                    <span>👑</span>
-                    ایڈمن لاگ اِن
+                    داخلے کے لیے درخواست دیں
                 </button>
 
                 <button
                     type="button"
-                    id="teacherLoginButton"
-                    class="home-action-button"
+                    id="heroLoginButton"
+                    class="hero-secondary-button"
+                    data-i18n="already_registered"
                 >
-                    <span>👩‍🏫</span>
-                    استاد لاگ اِن
-                </button>
-
-                <button
-                    type="button"
-                    id="studentLoginButton"
-                    class="home-action-button"
-                >
-                    <span>👧</span>
-                    طالبہ لاگ اِن
+                    پہلے سے رجسٹرڈ ہیں؟ لاگ اِن کریں
                 </button>
 
             </div>
@@ -113,172 +302,836 @@
         </section>
 
 
-        <!-- =========================
-             APPLICATIONS
-        ========================== -->
 
-        <section class="home-section application-section">
+        <!-- =========================================
+             INTRODUCTION
+        ========================================== -->
 
-            <h2 class="home-section-title">
-                📝 نئی درخواست
-            </h2>
+        <section class="intro-section intro-welcome-section">
 
-            <p class="application-note">
-                نئی درخواست کے لیے مطلوبہ آپشن منتخب کریں۔
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    📖
+                </span>
+
+                <h2 data-i18n="welcome_heading">
+                    مدرسہ کا تعارف
+                </h2>
+
+            </div>
+
+            <div class="intro-content-card">
+
+                <p data-i18n="welcome_text_1">
+                    مدرسہ شہناز اختر للبنات طالبات کی دینی، علمی،
+                    اخلاقی اور عملی تربیت کے لیے قائم ایک باقاعدہ
+                    دینی تعلیمی ادارہ ہے۔ یہاں قرآنِ کریم، حدیثِ نبوی ﷺ،
+                    فقہ، عقائد، عربی زبان، اسلامی اخلاق و آداب اور
+                    درسِ نظامی کی منظم تعلیم فراہم کی جاتی ہے۔
+                </p>
+
+                <p data-i18n="welcome_text_2">
+                    ہماری کوشش ہے کہ ہر طالبہ صرف نصاب مکمل نہ کرے
+                    بلکہ دین کو سمجھے، اس پر عمل کرے، اچھا کردار اختیار
+                    کرے اور اپنے گھر، خاندان اور معاشرے میں خیر و
+                    رہنمائی کا ذریعہ بنے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             WIFAQ
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-highlight-card wifaq-card">
+
+                <div class="intro-highlight-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h2 data-i18n="wifaq_heading">
+                        وفاق المدارس سے رجسٹرڈ
+                    </h2>
+
+                    <p data-i18n="wifaq_text">
+                        مدرسہ وفاق المدارس کے ساتھ باقاعدہ رجسٹرڈ ہے
+                        اور درسِ نظامی کی تعلیم مقررہ دینی نصاب کے
+                        مطابق فراہم کی جاتی ہے۔
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             TEACHERS QUALITY
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    👩‍🏫
+                </span>
+
+                <h2 data-i18n="qualified_teachers_heading">
+                    دینی تعلیم یافتہ اساتذہ
+                </h2>
+
+            </div>
+
+            <div class="intro-content-card">
+
+                <p data-i18n="qualified_teachers_text">
+                    مدرسہ کے تمام اساتذہ وفاق المدارس کے تحت اپنی
+                    باقاعدہ دینی تعلیم مکمل کر چکے ہیں اور دینی علوم
+                    کی تدریس کے لیے علمی و عملی تیاری رکھتے ہیں۔
+                    ہمارا تعلیمی ماحول علم، ادب، اخلاق اور ذمہ دارانہ
+                    تربیت کو بنیادی اہمیت دیتا ہے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             FEMALE EDUCATION IMPORTANCE
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    🌷
+                </span>
+
+                <h2 data-i18n="female_education_heading">
+                    طالبات کی دینی تعلیم کیوں ضروری ہے؟
+                </h2>
+
+            </div>
+
+
+            <div class="intro-quran-card">
+
+                <div class="intro-arabic-quote">
+                    وَقُلْ رَبِّ زِدْنِي عِلْمًا
+                </div>
+
+                <div
+                    class="intro-quote-translation"
+                    data-i18n="quran_knowledge_translation"
+                >
+                    اور کہیے: اے میرے رب! میرے علم میں اضافہ فرما۔
+                </div>
+
+                <div
+                    class="intro-reference"
+                    data-i18n="quran_knowledge_reference"
+                >
+                    سورۃ طٰہٰ: 114
+                </div>
+
+            </div>
+
+
+            <div class="intro-content-card">
+
+                <p data-i18n="female_education_text_1">
+                    اسلام میں علم کو بلند مقام حاصل ہے۔ نبی کریم ﷺ کے
+                    زمانے میں خواتین نے بھی دینی علم حاصل کرنے کے لیے
+                    خصوصی وقت کی درخواست کی، اور آپ ﷺ نے ان کی تعلیم
+                    کا باقاعدہ اہتمام فرمایا۔
+                </p>
+
+                <p data-i18n="female_education_text_2">
+                    ایک دینی تعلیم یافتہ خاتون اپنی ذات کے ساتھ اپنے
+                    گھر، اولاد اور آنے والی نسلوں کی دینی و اخلاقی
+                    تربیت میں بھی اہم کردار ادا کرتی ہے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             CURRENT ENVIRONMENT
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    🛡️
+                </span>
+
+                <h2 data-i18n="current_environment_heading">
+                    موجودہ دور میں دینی تربیت کی اہمیت
+                </h2>
+
+            </div>
+
+            <div class="intro-content-card">
+
+                <p data-i18n="current_environment_text_1">
+                    موجودہ دور میں معاشرتی، اخلاقی اور فکری ماحول
+                    تیزی سے بدل رہا ہے۔ ایسے حالات میں بچیوں کے لیے
+                    صرف رسمی تعلیم کافی نہیں، بلکہ دینی شعور، اچھے
+                    اخلاق، صحیح و غلط کی پہچان، حیا اور اسلامی طرزِ
+                    زندگی کی سمجھ بھی نہایت اہم ہے۔
+                </p>
+
+                <p data-i18n="current_environment_text_2">
+                    خواہ کوئی طالبہ پہلے سے تعلیم یافتہ ہو یا اس کی
+                    سابقہ رسمی تعلیم محدود رہی ہو، مدرسہ اسے اس کی
+                    استعداد کے مطابق دینی علم حاصل کرنے اور اپنی
+                    علمی و اخلاقی بنیاد مضبوط کرنے کا موقع فراہم کرتا ہے۔
+                </p>
+
+                <p data-i18n="current_environment_text_3">
+                    ہمارا مقصد طالبات کو موجودہ دور کے مختلف فکری،
+                    اخلاقی اور معاشرتی چیلنجز کو سمجھنے اور قرآن و
+                    سنت کی روشنی میں اپنی زندگی گزارنے کے قابل بنانا ہے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             DARSI NIZAMI
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    📚
+                </span>
+
+                <h2 data-i18n="darsi_nizami_heading">
+                    درسِ نظامی
+                </h2>
+
+            </div>
+
+            <div class="intro-content-card">
+
+                <p data-i18n="darsi_nizami_text">
+                    درسِ نظامی طالبات کو اسلامی علوم کی مضبوط بنیاد
+                    فراہم کرتا ہے۔ اس کے ذریعے قرآن، حدیث، فقہ،
+                    اصول، عربی زبان اور دیگر دینی علوم مرحلہ وار
+                    پڑھائے جاتے ہیں تاکہ طالبات دین کو سمجھ، دلیل،
+                    علم اور ذمہ داری کے ساتھ سیکھ سکیں۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             MADRASSA LIVING
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    🏠
+                </span>
+
+                <h2 data-i18n="living_heading">
+                    مدرسہ میں رہائش
+                </h2>
+
+            </div>
+
+            <div class="intro-safety-card">
+
+                <h3 data-i18n="living_safety_title">
+                    24 گھنٹے منظم نگرانی اور محفوظ ماحول
+                </h3>
+
+                <p data-i18n="living_text_1">
+                    مدرسہ میں رہائش پذیر طالبات کی تعلیم، تربیت،
+                    نظم و ضبط، روزمرہ سرگرمیوں اور حفاظت پر مسلسل
+                    توجہ دی جاتی ہے۔
+                </p>
+
+                <p data-i18n="living_text_2">
+                    مدرسہ سے عارضی خروج، واپسی اور ملاقات کے لیے
+                    باقاعدہ قواعد موجود ہوں گے۔ طالبہ صرف منظور شدہ
+                    محرم یا سرپرست اور مدرسہ انتظامیہ کی اجازت کے
+                    مطابق باہر جا سکے گی۔
+                </p>
+
+                <p data-i18n="living_text_3">
+                    آمد و رفت کا مکمل ریکارڈ، وقت، منظور شدہ محرم
+                    اور متعلقہ تفصیلات محفوظ کی جائیں گی تاکہ والدین
+                    اور انتظامیہ کے اعتماد کو برقرار رکھا جا سکے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             CLASSES
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    🎓
+                </span>
+
+                <h2 data-i18n="classes_heading">
+                    دستیاب کلاسیں
+                </h2>
+
+            </div>
+
+            <div class="intro-classes-grid">
+
+                <article class="intro-class-card">
+                    <span>01</span>
+                    <strong data-i18n="class_sanvia_amma">
+                        ثانویہ عامہ
+                    </strong>
+                </article>
+
+                <article class="intro-class-card">
+                    <span>02</span>
+                    <strong data-i18n="class_sanvia_khasa">
+                        ثانویہ خاصہ
+                    </strong>
+                </article>
+
+                <article class="intro-class-card">
+                    <span>03</span>
+                    <strong data-i18n="class_alia_one">
+                        عالیہ اول
+                    </strong>
+                </article>
+
+                <article class="intro-class-card">
+                    <span>04</span>
+                    <strong data-i18n="class_alia_two">
+                        عالیہ دوم
+                    </strong>
+                </article>
+
+                <article class="intro-class-card">
+                    <span>05</span>
+                    <strong data-i18n="class_almia_one">
+                        عالمیہ اول
+                    </strong>
+                </article>
+
+                <article class="intro-class-card">
+                    <span>06</span>
+                    <strong data-i18n="class_almia_two">
+                        عالمیہ دوم / دورۂ حدیث
+                    </strong>
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             LIVE STATISTICS
+        ========================================== -->
+
+        <section class="intro-section intro-stats-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    📊
+                </span>
+
+                <h2 data-i18n="statistics_heading">
+                    ہماری تعلیمی برادری
+                </h2>
+
+            </div>
+
+            <div class="intro-stats-grid">
+
+                <article class="intro-stat-card">
+
+                    <div class="intro-stat-icon">
+                        👩‍🎓
+                    </div>
+
+                    <strong
+                        id="publicStudentCount"
+                        class="intro-stat-number"
+                    >
+                        --
+                    </strong>
+
+                    <span data-i18n="registered_students">
+                        کل رجسٹرڈ طالبات
+                    </span>
+
+                </article>
+
+
+                <article class="intro-stat-card">
+
+                    <div class="intro-stat-icon">
+                        👩‍🏫
+                    </div>
+
+                    <strong
+                        id="publicTeacherCount"
+                        class="intro-stat-number"
+                    >
+                        --
+                    </strong>
+
+                    <span data-i18n="registered_teachers">
+                        کل رجسٹرڈ اساتذہ
+                    </span>
+
+                </article>
+
+            </div>
+
+            <p
+                class="intro-stats-note"
+                data-i18n="statistics_note"
+            >
+                اعداد و شمار مدرسہ کے موجودہ ریکارڈ کے مطابق
+                خودکار طور پر اپ ڈیٹ ہوتے ہیں۔
             </p>
 
-            <div class="application-button-grid">
+        </section>
+
+
+
+        <!-- =========================================
+             NEW ADMISSION
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-admission-card">
+
+                <div class="intro-admission-icon">
+                    ✨
+                </div>
+
+                <h2 data-i18n="new_admission_heading">
+                    نئی طالبات کے لیے داخلہ
+                </h2>
+
+                <p data-i18n="new_admission_text">
+                    اگر آپ چاہتے ہیں کہ آپ کی بیٹی قرآن و سنت،
+                    دینی علوم، بہترین اخلاق اور منظم اسلامی تربیت
+                    حاصل کرے تو مدرسہ شہناز اختر للبنات میں
+                    داخلے کے لیے آن لائن درخواست جمع کی جا سکتی ہے۔
+                </p>
 
                 <button
                     type="button"
-                    id="studentApplyButton"
-                    class="home-action-button application-button"
+                    id="admissionApplyButton"
+                    class="intro-large-action-button"
+                    data-i18n="submit_admission_application"
                 >
-                    <span>👧</span>
-                    طالبہ داخلہ درخواست
+                    داخلے کی درخواست جمع کریں
+                </button>
+
+                <p
+                    class="intro-small-note"
+                    data-i18n="application_review_note"
+                >
+                    درخواست مدرسہ انتظامیہ کی جانچ اور منظوری کے بعد
+                    قبول کی جائے گی۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             DONATION / SUPPORT
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    🤲
+                </span>
+
+                <h2 data-i18n="support_heading">
+                    خدمتِ دین اور علم میں حصہ
+                </h2>
+
+            </div>
+
+
+            <div class="intro-quran-card">
+
+                <div class="intro-arabic-quote">
+                    مَثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ
+                    فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ
+                    أَنبَتَتْ سَبْعَ سَنَابِلَ
+                </div>
+
+                <div
+                    class="intro-reference"
+                    data-i18n="donation_quran_reference"
+                >
+                    سورۃ البقرۃ: 261
+                </div>
+
+            </div>
+
+
+            <div class="intro-content-card">
+
+                <p data-i18n="support_text_1">
+                    طالبات کو قرآن و حدیث کی تعلیم دینا اور دینی علم
+                    کے فروغ میں حصہ لینا ایک عظیم خدمت ہے۔ رسول اللہ ﷺ
+                    نے صدقۂ جاریہ اور ایسے علم کو جس سے فائدہ اٹھایا جائے،
+                    انسان کے لیے جاری رہنے والی نیکیوں میں شمار فرمایا ہے۔
+                </p>
+
+                <p data-i18n="support_text_2">
+                    طالبات کی دینی تعلیم، قرآن و حدیث کی تدریس،
+                    کتابوں، تعلیمی ضروریات، مدرسہ میں رہائش اور ادارے
+                    کی دیگر دینی و تعلیمی خدمات میں اہلِ خیر کا تعاون
+                    اس علمی سفر کو جاری رکھنے میں مددگار بنتا ہے۔
+                </p>
+
+                <p
+                    class="intro-support-highlight"
+                    data-i18n="support_text_3"
+                >
+                    علمِ دین کی خدمت میں کیا گیا چھوٹا یا بڑا حصہ
+                    کسی طالبہ کی تعلیم اور آنے والی نسلوں کی دینی
+                    تربیت کا ذریعہ بن سکتا ہے۔
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             ADMIN MESSAGE
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-section-heading">
+
+                <span class="intro-section-icon">
+                    ✉️
+                </span>
+
+                <h2 data-i18n="admin_message_heading">
+                    منتظم کا پیغام
+                </h2>
+
+            </div>
+
+
+            <article class="intro-admin-message-card">
+
+                <div class="intro-admin-profile">
+
+                    <div
+                        class="intro-admin-photo-wrapper"
+                        id="adminPhotoWrapper"
+                    >
+
+                        <img
+                            id="introAdminPhoto"
+                            src="assets/admin-jameel-khan.jpg"
+                            alt="مولوی جمیل خان حقانی"
+                            class="intro-admin-photo"
+                        >
+
+                        <div
+                            id="introAdminPhotoFallback"
+                            class="intro-admin-photo-fallback"
+                        >
+                            ج
+                        </div>
+
+                    </div>
+
+
+                    <div class="intro-admin-identity">
+
+                        <h3 data-i18n="admin_name">
+                            مولوی جمیل خان حقانی
+                        </h3>
+
+                        <p data-i18n="admin_designation">
+                            منتظم، مدرسہ شہناز اختر للبنات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <blockquote data-i18n="admin_message_text_1">
+                    ہماری ذمہ داری صرف طالبات کو کتابی تعلیم دینا نہیں،
+                    بلکہ ایسی باعلم، باعمل، بااخلاق اور مضبوط دینی شعور
+                    رکھنے والی خواتین تیار کرنا ہے جو اپنے دین کو سمجھیں،
+                    اس پر عمل کریں اور اپنے گھر، خاندان اور معاشرے میں
+                    خیر، حیا، کردار اور صحیح اسلامی رہنمائی کا ذریعہ بنیں۔
+                </blockquote>
+
+                <blockquote data-i18n="admin_message_text_2">
+                    موجودہ دور کے فکری، اخلاقی اور معاشرتی چیلنجز کو
+                    دیکھتے ہوئے ہم طالبات کی تعلیم، تربیت، نظم و ضبط
+                    اور محفوظ ماحول پر خصوصی توجہ دیتے ہیں۔ مدرسہ میں
+                    رہائش پذیر طالبات کی 24 گھنٹے منظم نگرانی، مقررہ
+                    اصولوں اور ذمہ دار انتظامیہ کے تحت دیکھ بھال کی جاتی ہے۔
+                </blockquote>
+
+                <blockquote data-i18n="admin_message_text_3">
+                    ہمارا مقصد یہ ہے کہ ہر طالبہ یہاں سے صرف ایک سند
+                    لے کر نہ جائے، بلکہ قرآن و سنت سے مضبوط تعلق،
+                    اچھا کردار، دینی بصیرت اور زندگی بھر کام آنے والی
+                    تربیت لے کر نکلے۔ والدین کا اعتماد، اساتذہ کی محنت
+                    اور اہلِ خیر کا تعاون ہماری اس دینی و تعلیمی خدمت
+                    کی بنیاد ہے۔
+                </blockquote>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- =========================================
+             CONTACT
+        ========================================== -->
+
+        <section class="intro-section">
+
+            <div class="intro-contact-card">
+
+                <div class="intro-section-heading">
+
+                    <span class="intro-section-icon">
+                        ☎️
+                    </span>
+
+                    <h2 data-i18n="contact_heading">
+                        رابطہ
+                    </h2>
+
+                </div>
+
+
+                <div class="intro-contact-grid">
+
+                    <a
+                        href="tel:+923436387621"
+                        class="intro-contact-item"
+                    >
+
+                        <span class="intro-contact-icon">
+                            📞
+                        </span>
+
+                        <div>
+                            <strong data-i18n="phone_label">
+                                فون
+                            </strong>
+
+                            <span dir="ltr">
+                                +92 343 6387621
+                            </span>
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="mailto:abdurraheempk1@gmail.com"
+                        class="intro-contact-item"
+                    >
+
+                        <span class="intro-contact-icon">
+                            ✉️
+                        </span>
+
+                        <div>
+                            <strong data-i18n="email_label">
+                                ای میل
+                            </strong>
+
+                            <span dir="ltr">
+                                abdurraheempk1@gmail.com
+                            </span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             FINAL CALL TO ACTION
+        ========================================== -->
+
+        <section class="intro-final-cta">
+
+            <h2 data-i18n="final_cta_heading">
+                اپنی بیٹی کے دینی تعلیمی سفر کا آغاز آج ہی کریں
+            </h2>
+
+            <p data-i18n="final_cta_text">
+                علم، تربیت، اخلاق اور قرآن و سنت سے مضبوط تعلق کی طرف
+                پہلا قدم۔
+            </p>
+
+            <div class="intro-final-buttons">
+
+                <button
+                    type="button"
+                    id="bottomAdmissionButton"
+                    class="hero-primary-button"
+                    data-i18n="new_admission"
+                >
+                    نیا داخلہ
                 </button>
 
                 <button
                     type="button"
-                    id="teacherApplyButton"
-                    class="home-action-button application-button"
+                    id="bottomLoginButton"
+                    class="hero-secondary-button"
+                    data-i18n="login"
                 >
-                    <span>👩‍🏫</span>
-                    استاد کی درخواست
+                    لاگ اِن
                 </button>
 
             </div>
 
-            <p class="approval-notice">
-                🔒 طالبہ یا استاد کی درخواست جمع ہونے سے اکاؤنٹ فوراً فعال نہیں ہوگا۔
-                ایڈمن کی منظوری کے بعد ہی اکاؤنٹ فعال کیا جائے گا۔
-            </p>
-
         </section>
+
 
     </main>
 
 
-    <!-- =========================
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="intro-footer">
+
+        <div class="intro-footer-name">
+            مدرسہ شہناز اختر للبنات
+        </div>
+
+        <div
+            class="intro-footer-address"
+            data-i18n="madrassa_address"
+        >
+            گاؤں ہل غورغشتوں، ضلع بونیر
+        </div>
+
+        <div
+            class="intro-footer-system"
+            data-i18n="management_system"
+        >
+            مدرسہ مینجمنٹ سسٹم
+        </div>
+
+        <div class="intro-footer-contact">
+
+            <span dir="ltr">
+                +92 343 6387621
+            </span>
+
+            <span>
+                |
+            </span>
+
+            <span dir="ltr">
+                abdurraheempk1@gmail.com
+            </span>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =========================================
+         CONNECTION / GLOBAL MESSAGE
+    ========================================== -->
+
+    <div
+        id="globalMessage"
+        class="global-message"
+        aria-live="polite"
+    ></div>
+
+
+
+    <!-- =========================================
          SUPABASE
-    ========================== -->
+    ========================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
-
-    <!-- =========================
-         MAIN SCRIPT
-    ========================== -->
-
-    <script src="script.js?v=22"></script>
-
-
-    <!-- =========================
-         HOME BUTTON ROUTING
-    ========================== -->
-
-    <script>
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
-
-                const adminButton =
-                    document.getElementById(
-                        "adminLoginButton"
-                    );
-
-                const teacherButton =
-                    document.getElementById(
-                        "teacherLoginButton"
-                    );
-
-                const studentButton =
-                    document.getElementById(
-                        "studentLoginButton"
-                    );
-
-                const studentApplyButton =
-                    document.getElementById(
-                        "studentApplyButton"
-                    );
-
-                const teacherApplyButton =
-                    document.getElementById(
-                        "teacherApplyButton"
-                    );
-
-
-                if (adminButton) {
-
-                    adminButton.addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "login.html?role=admin";
-                        }
-                    );
-                }
-
-
-                if (teacherButton) {
-
-                    teacherButton.addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "login.html?role=teacher";
-                        }
-                    );
-                }
-
-
-                if (studentButton) {
-
-                    studentButton.addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "login.html?role=student";
-                        }
-                    );
-                }
-
-
-                if (studentApplyButton) {
-
-                    studentApplyButton.addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "student-apply.html";
-                        }
-                    );
-                }
-
-
-                if (teacherApplyButton) {
-
-                    teacherApplyButton.addEventListener(
-                        "click",
-                        function () {
-
-                            window.location.href =
-                                "teacher-apply.html";
-                        }
-                    );
-                }
-
-            }
-        );
-
-    </script>
+    <script src="script.js"></script>
 
 </body>
 
