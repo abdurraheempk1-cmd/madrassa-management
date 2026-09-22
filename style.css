@@ -3717,6 +3717,2082 @@ body.profile-print-page {
         print-color-adjust: exact !important;
     }
 }
+
+/* =========================================================
+   PROFESSIONAL PUBLIC INTRODUCTION PAGE
+   مدرسہ شہناز اختر للبنات
+   ========================================================= */
+
+body.intro-page {
+    --intro-green: #0f5132;
+    --intro-green-dark: #083d27;
+    --intro-green-soft: #eaf4ee;
+    --intro-gold: #b68a35;
+    --intro-gold-soft: #f8f1df;
+    --intro-text: #17251e;
+    --intro-muted: #647168;
+    --intro-border: #dce7df;
+    --intro-white: #ffffff;
+    --intro-bg: #f5f8f6;
+    --intro-shadow: 0 12px 34px rgba(15, 81, 50, 0.09);
+
+    margin: 0;
+    padding: 0 !important;
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(182, 138, 53, 0.08),
+            transparent 30%
+        ),
+        #f5f8f6;
+
+    color: var(--intro-text);
+
+    font-family:
+        "Noto Nastaliq Urdu",
+        serif;
+
+    line-height: 2;
+}
+
+
+/* =========================================================
+   GENERAL RESET ONLY FOR INTRO PAGE
+   ========================================================= */
+
+.intro-page *,
+.intro-page *::before,
+.intro-page *::after {
+    box-sizing: border-box;
+}
+
+.intro-page button,
+.intro-page select,
+.intro-page input,
+.intro-page textarea {
+    font-family: inherit;
+}
+
+.intro-page button {
+    width: auto !important;
+    margin: 0;
+}
+
+.intro-page a {
+    text-decoration: none;
+}
+
+.intro-page img {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.intro-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    width: 100%;
+
+    background:
+        rgba(255, 255, 255, 0.96);
+
+    border-bottom:
+        1px solid var(--intro-border);
+
+    box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.05);
+
+    backdrop-filter: blur(12px);
+}
+
+.intro-topbar-inner {
+    width: min(1180px, calc(100% - 32px));
+
+    min-height: 74px;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.intro-language-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    white-space: nowrap;
+
+    color: var(--intro-green-dark);
+
+    font-weight: 700;
+}
+
+.language-selector {
+    width: auto !important;
+    min-width: 125px;
+
+    height: 44px;
+
+    margin: 0 !important;
+    padding: 4px 14px;
+
+    border:
+        1px solid #cad9cf;
+
+    border-radius: 10px;
+
+    background:
+        var(--intro-white);
+
+    color:
+        var(--intro-text);
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+.language-selector:focus {
+    border-color:
+        var(--intro-green);
+
+    box-shadow:
+        0 0 0 3px rgba(15, 81, 50, 0.08);
+}
+
+.intro-top-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.intro-login-btn,
+.intro-signup-btn {
+    min-height: 44px !important;
+
+    padding:
+        7px 22px !important;
+
+    border-radius:
+        10px !important;
+
+    font-size:
+        15px !important;
+
+    font-weight:
+        700 !important;
+}
+
+.intro-login-btn {
+    background:
+        transparent !important;
+
+    color:
+        var(--intro-green) !important;
+
+    border:
+        1px solid var(--intro-green) !important;
+}
+
+.intro-signup-btn {
+    background:
+        var(--intro-green) !important;
+
+    color:
+        white !important;
+
+    border:
+        1px solid var(--intro-green) !important;
+
+    box-shadow:
+        0 5px 14px rgba(15, 81, 50, 0.15);
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.intro-main {
+    width:
+        min(1120px, calc(100% - 32px));
+
+    margin:
+        0 auto;
+
+    padding:
+        30px 0 80px;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.intro-hero {
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 520px;
+
+    padding:
+        65px 55px;
+
+    border-radius:
+        26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0a422a 0%,
+            #0f613b 60%,
+            #176f49 100%
+        );
+
+    color:
+        white;
+
+    text-align:
+        center;
+
+    box-shadow:
+        0 22px 55px rgba(8, 61, 39, 0.22);
+}
+
+.intro-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 320px;
+    height: 320px;
+
+    top: -120px;
+    right: -100px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+}
+
+.intro-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    left: -80px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(182, 138, 53, 0.15);
+}
+
+.intro-bismillah {
+    position: relative;
+    z-index: 2;
+
+    margin-bottom: 6px;
+
+    font-size:
+        clamp(34px, 6vw, 58px);
+
+    color:
+        #f5df9d;
+}
+
+.intro-kalma {
+    position: relative;
+    z-index: 2;
+
+    max-width:
+        760px;
+
+    margin:
+        0 auto 20px;
+
+    font-size:
+        clamp(22px, 3.2vw, 36px);
+
+    line-height:
+        1.8;
+
+    color:
+        #fff7dc;
+}
+
+.intro-madrassa-icon {
+    display: none;
+}
+
+.intro-hero h1 {
+    position: relative;
+    z-index: 2;
+
+    max-width:
+        900px;
+
+    margin:
+        16px auto 8px;
+
+    color:
+        white;
+
+    font-size:
+        clamp(30px, 5vw, 52px);
+
+    font-weight:
+        700;
+
+    line-height:
+        1.8;
+}
+
+.intro-tagline {
+    position: relative;
+    z-index: 2;
+
+    max-width:
+        800px;
+
+    margin:
+        0 auto;
+
+    color:
+        #deeee4;
+
+    font-size:
+        clamp(17px, 2.2vw, 23px);
+
+    line-height:
+        2;
+}
+
+.intro-address {
+    position: relative;
+    z-index: 2;
+
+    display: inline-block;
+
+    margin:
+        12px auto 26px;
+
+    padding:
+        4px 16px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 255, 255, 0.1);
+
+    color:
+        #ffffff;
+
+    font-size:
+        15px;
+}
+
+.intro-hero-actions {
+    position: relative;
+    z-index: 2;
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        12px;
+
+    margin-top:
+        20px;
+}
+
+.hero-primary-button,
+.hero-secondary-button {
+    width:
+        auto !important;
+
+    min-height:
+        52px !important;
+
+    padding:
+        8px 28px !important;
+
+    border-radius:
+        12px !important;
+
+    font-size:
+        16px !important;
+
+    font-weight:
+        700 !important;
+}
+
+.hero-primary-button {
+    background:
+        #f3d785 !important;
+
+    color:
+        #173c29 !important;
+
+    border:
+        1px solid #f3d785 !important;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.13);
+}
+
+.hero-secondary-button {
+    background:
+        rgba(255, 255, 255, 0.09) !important;
+
+    color:
+        white !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.35) !important;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.intro-section {
+    margin-top:
+        52px;
+}
+
+.intro-section-heading {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    margin-bottom:
+        17px;
+}
+
+.intro-section-heading h2 {
+    margin:
+        0;
+
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        clamp(24px, 3vw, 34px);
+
+    font-weight:
+        700;
+
+    line-height:
+        1.8;
+}
+
+.intro-section-icon {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 42px;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--intro-green-soft);
+
+    font-size:
+        18px;
+}
+
+/*
+   Emojis can look informal.
+   Keep them subtle.
+*/
+
+.intro-content-card,
+.intro-highlight-card,
+.intro-safety-card,
+.intro-contact-card,
+.intro-admin-message-card,
+.intro-admission-card {
+    background:
+        var(--intro-white);
+
+    border:
+        1px solid var(--intro-border);
+
+    border-radius:
+        20px;
+
+    box-shadow:
+        var(--intro-shadow);
+}
+
+
+/* =========================================================
+   STANDARD TEXT CARD
+   ========================================================= */
+
+.intro-content-card {
+    padding:
+        28px 32px;
+}
+
+.intro-content-card p {
+    margin:
+        0;
+
+    color:
+        #37483e;
+
+    font-size:
+        17px;
+
+    line-height:
+        2.35;
+}
+
+.intro-content-card p + p {
+    margin-top:
+        14px;
+}
+
+
+/* =========================================================
+   WIFAQ HIGHLIGHT
+   ========================================================= */
+
+.intro-highlight-card {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        22px;
+
+    padding:
+        27px 30px;
+
+    border-inline-start:
+        5px solid var(--intro-gold);
+}
+
+.intro-highlight-icon {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 54px;
+
+    width:
+        54px;
+
+    height:
+        54px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--intro-gold-soft);
+
+    color:
+        #8c6825;
+
+    font-size:
+        28px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-weight:
+        bold;
+}
+
+.intro-highlight-card h2 {
+    margin:
+        0 0 5px;
+
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        25px;
+}
+
+.intro-highlight-card p {
+    margin:
+        0;
+
+    color:
+        #49584f;
+
+    font-size:
+        16px;
+
+    line-height:
+        2.1;
+}
+
+
+/* =========================================================
+   QURAN / HADITH CARD
+   ========================================================= */
+
+.intro-quran-card {
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    margin-bottom:
+        18px;
+
+    padding:
+        32px;
+
+    border:
+        1px solid #eadcae;
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf7,
+            #faf3df
+        );
+
+    text-align:
+        center;
+}
+
+.intro-quran-card::before {
+    content: "۞";
+
+    position:
+        absolute;
+
+    top:
+        8px;
+
+    right:
+        20px;
+
+    color:
+        rgba(182, 138, 53, 0.18);
+
+    font-size:
+        70px;
+}
+
+.intro-arabic-quote {
+    position:
+        relative;
+
+    color:
+        #294b37;
+
+    font-family:
+        "Traditional Arabic",
+        "Noto Naskh Arabic",
+        serif;
+
+    font-size:
+        clamp(25px, 4vw, 38px);
+
+    line-height:
+        2;
+}
+
+.intro-quote-translation {
+    margin-top:
+        7px;
+
+    color:
+        #4c594f;
+
+    font-size:
+        17px;
+}
+
+.intro-reference {
+    display:
+        inline-block;
+
+    margin-top:
+        12px;
+
+    padding:
+        2px 13px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(182, 138, 53, 0.12);
+
+    color:
+        #806021;
+
+    font-size:
+        14px;
+}
+
+
+/* =========================================================
+   MADRASSA LIVING
+   ========================================================= */
+
+.intro-safety-card {
+    position:
+        relative;
+
+    padding:
+        30px 34px;
+
+    border-inline-start:
+        5px solid var(--intro-green);
+}
+
+.intro-safety-card h3 {
+    margin:
+        0 0 10px;
+
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        22px;
+}
+
+.intro-safety-card p {
+    margin:
+        8px 0;
+
+    color:
+        #43534a;
+
+    font-size:
+        16px;
+
+    line-height:
+        2.25;
+}
+
+
+/* =========================================================
+   CLASSES
+   ========================================================= */
+
+.intro-classes-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        15px;
+}
+
+.intro-class-card {
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    min-height:
+        112px;
+
+    padding:
+        22px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+
+    border:
+        1px solid var(--intro-border);
+
+    border-radius:
+        17px;
+
+    background:
+        white;
+
+    box-shadow:
+        0 7px 22px rgba(15, 81, 50, 0.06);
+}
+
+.intro-class-card span {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 42px;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    border-radius:
+        11px;
+
+    background:
+        var(--intro-green-soft);
+
+    color:
+        var(--intro-green);
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+}
+
+.intro-class-card strong {
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        19px;
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.intro-stats-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        18px;
+}
+
+.intro-stat-card {
+    padding:
+        28px;
+
+    border:
+        1px solid var(--intro-border);
+
+    border-radius:
+        20px;
+
+    background:
+        white;
+
+    text-align:
+        center;
+
+    box-shadow:
+        var(--intro-shadow);
+}
+
+.intro-stat-icon {
+    width:
+        52px;
+
+    height:
+        52px;
+
+    margin:
+        0 auto 8px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--intro-green-soft);
+
+    font-size:
+        23px;
+}
+
+.intro-stat-number {
+    display:
+        block;
+
+    color:
+        var(--intro-green);
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        clamp(32px, 5vw, 48px);
+
+    line-height:
+        1.2;
+}
+
+.intro-stat-card > span:last-child {
+    display:
+        block;
+
+    margin-top:
+        10px;
+
+    color:
+        #59685e;
+
+    font-size:
+        16px;
+}
+
+.intro-stats-note {
+    margin:
+        12px 0 0;
+
+    text-align:
+        center;
+
+    color:
+        var(--intro-muted);
+
+    font-size:
+        13px;
+}
+
+
+/* =========================================================
+   ADMISSION CTA
+   ========================================================= */
+
+.intro-admission-card {
+    padding:
+        42px 35px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0c4a2f,
+            #12623d
+        );
+
+    color:
+        white;
+
+    text-align:
+        center;
+
+    border:
+        none;
+
+    box-shadow:
+        0 18px 45px rgba(15, 81, 50, 0.22);
+}
+
+.intro-admission-icon {
+    font-size:
+        32px;
+}
+
+.intro-admission-card h2 {
+    margin:
+        8px 0 10px;
+
+    color:
+        white;
+
+    font-size:
+        clamp(25px, 4vw, 36px);
+}
+
+.intro-admission-card p {
+    max-width:
+        760px;
+
+    margin:
+        0 auto;
+
+    color:
+        #e3f0e8;
+
+    font-size:
+        16px;
+
+    line-height:
+        2.3;
+}
+
+.intro-large-action-button {
+    margin-top:
+        22px !important;
+
+    min-height:
+        54px !important;
+
+    padding:
+        7px 30px !important;
+
+    border:
+        none !important;
+
+    border-radius:
+        12px !important;
+
+    background:
+        #f3d785 !important;
+
+    color:
+        #193b29 !important;
+
+    font-size:
+        16px !important;
+
+    font-weight:
+        700 !important;
+}
+
+.intro-small-note {
+    margin-top:
+        12px !important;
+
+    color:
+        #cbded2 !important;
+
+    font-size:
+        13px !important;
+}
+
+
+/* =========================================================
+   SUPPORT / DONATION
+   ========================================================= */
+
+.intro-support-highlight {
+    margin-top:
+        17px !important;
+
+    padding:
+        16px 20px;
+
+    border-radius:
+        12px;
+
+    background:
+        var(--intro-green-soft);
+
+    color:
+        var(--intro-green-dark) !important;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   ADMIN MESSAGE
+   ========================================================= */
+
+.intro-admin-message-card {
+    padding:
+        32px;
+}
+
+.intro-admin-profile {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        18px;
+
+    padding-bottom:
+        22px;
+
+    margin-bottom:
+        22px;
+
+    border-bottom:
+        1px solid var(--intro-border);
+}
+
+.intro-admin-photo-wrapper {
+    flex:
+        0 0 90px;
+
+    width:
+        90px;
+
+    height:
+        90px;
+
+    position:
+        relative;
+}
+
+.intro-admin-photo {
+    width:
+        90px;
+
+    height:
+        90px;
+
+    object-fit:
+        cover;
+
+    border:
+        3px solid white;
+
+    border-radius:
+        50%;
+
+    box-shadow:
+        0 0 0 2px var(--intro-gold);
+}
+
+.intro-admin-photo-fallback {
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--intro-green);
+
+    color:
+        white;
+
+    font-size:
+        30px;
+
+    z-index:
+        -1;
+}
+
+.intro-admin-identity h3 {
+    margin:
+        0;
+
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        23px;
+}
+
+.intro-admin-identity p {
+    margin:
+        0;
+
+    color:
+        var(--intro-muted);
+
+    font-size:
+        14px;
+}
+
+.intro-admin-message-card blockquote {
+    margin:
+        0;
+
+    padding:
+        0;
+
+    border:
+        none;
+
+    color:
+        #405047;
+
+    font-size:
+        16px;
+
+    line-height:
+        2.4;
+}
+
+.intro-admin-message-card blockquote + blockquote {
+    margin-top:
+        15px;
+}
+
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+
+.intro-contact-card {
+    padding:
+        30px;
+}
+
+.intro-contact-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        15px;
+}
+
+.intro-contact-item {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        15px;
+
+    padding:
+        18px;
+
+    border:
+        1px solid var(--intro-border);
+
+    border-radius:
+        14px;
+
+    background:
+        #fbfdfb;
+
+    color:
+        var(--intro-text);
+}
+
+.intro-contact-icon {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 45px;
+
+    width:
+        45px;
+
+    height:
+        45px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--intro-green-soft);
+}
+
+.intro-contact-item strong,
+.intro-contact-item span {
+    display:
+        block;
+}
+
+
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+
+.intro-final-cta {
+    margin-top:
+        58px;
+
+    padding:
+        46px 35px;
+
+    border-radius:
+        24px;
+
+    background:
+        #102b20;
+
+    color:
+        white;
+
+    text-align:
+        center;
+}
+
+.intro-final-cta h2 {
+    margin:
+        0;
+
+    color:
+        white;
+
+    font-size:
+        clamp(26px, 4vw, 38px);
+}
+
+.intro-final-cta p {
+    margin:
+        8px auto 20px;
+
+    max-width:
+        680px;
+
+    color:
+        #cbd9d0;
+
+    font-size:
+        16px;
+}
+
+.intro-final-buttons {
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        12px;
+
+    flex-wrap:
+        wrap;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.intro-footer {
+    padding:
+        34px 20px;
+
+    background:
+        #081e15;
+
+    color:
+        #cdd8d1;
+
+    text-align:
+        center;
+}
+
+.intro-footer-name {
+    color:
+        white;
+
+    font-size:
+        21px;
+
+    font-weight:
+        700;
+}
+
+.intro-footer-address,
+.intro-footer-system,
+.intro-footer-contact {
+    margin-top:
+        4px;
+
+    font-size:
+        13px;
+}
+
+.intro-footer-contact {
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+}
+
+
+/* =========================================================
+   LOGIN / SIGNUP POPUP
+   ========================================================= */
+
+.intro-options-panel {
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        5000;
+
+    padding:
+        20px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        rgba(5, 27, 18, 0.65);
+
+    backdrop-filter:
+        blur(6px);
+}
+
+.intro-options-panel[hidden] {
+    display:
+        none !important;
+}
+
+.intro-options-card {
+    position:
+        relative;
+
+    width:
+        min(460px, 100%);
+
+    padding:
+        34px;
+
+    border-radius:
+        21px;
+
+    background:
+        white;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.25);
+
+    text-align:
+        center;
+}
+
+.intro-options-card h2 {
+    margin:
+        0;
+
+    color:
+        var(--intro-green-dark);
+
+    font-size:
+        27px;
+}
+
+.intro-options-card > p {
+    color:
+        var(--intro-muted);
+}
+
+.intro-panel-close {
+    position:
+        absolute;
+
+    top:
+        12px;
+
+    inset-inline-end:
+        12px;
+
+    width:
+        38px !important;
+
+    height:
+        38px !important;
+
+    min-height:
+        38px !important;
+
+    padding:
+        0 !important;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        none !important;
+
+    border-radius:
+        50% !important;
+
+    background:
+        #edf3ef !important;
+
+    color:
+        #344b3d !important;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        24px !important;
+}
+
+.intro-option-buttons {
+    display:
+        grid;
+
+    gap:
+        11px;
+
+    margin-top:
+        18px;
+}
+
+.intro-option-buttons a {
+    display:
+        block;
+
+    padding:
+        12px 18px;
+
+    border:
+        1px solid var(--intro-green);
+
+    border-radius:
+        11px;
+
+    background:
+        white;
+
+    color:
+        var(--intro-green);
+
+    font-weight:
+        700;
+}
+
+.intro-option-buttons a.primary,
+.intro-option-buttons a:hover {
+    background:
+        var(--intro-green);
+
+    color:
+        white;
+}
+
+.intro-admin-signup-note {
+    margin-top:
+        15px;
+
+    padding:
+        10px;
+
+    border-radius:
+        10px;
+
+    background:
+        #f7f8f7;
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   ENGLISH / LTR SUPPORT
+   ========================================================= */
+
+html[dir="ltr"] .intro-page {
+    font-family:
+        Arial,
+        "Segoe UI",
+        sans-serif;
+}
+
+html[dir="ltr"] .intro-arabic-quote,
+html[dir="ltr"] .intro-bismillah,
+html[dir="ltr"] .intro-kalma {
+    font-family:
+        "Traditional Arabic",
+        "Noto Naskh Arabic",
+        serif;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .intro-main {
+        width:
+            min(100% - 24px, 760px);
+    }
+
+    .intro-classes-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .intro-hero {
+        min-height:
+            auto;
+
+        padding:
+            52px 30px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    body.intro-page {
+        line-height:
+            1.9;
+    }
+
+    .intro-topbar-inner {
+        width:
+            calc(100% - 20px);
+
+        min-height:
+            66px;
+
+        gap:
+            7px;
+    }
+
+    .intro-language-wrapper label {
+        display:
+            none;
+    }
+
+    .language-selector {
+        min-width:
+            96px;
+
+        max-width:
+            112px;
+
+        height:
+            40px;
+
+        padding:
+            3px 8px;
+
+        font-size:
+            13px;
+    }
+
+    .intro-top-actions {
+        gap:
+            6px;
+    }
+
+    .intro-login-btn,
+    .intro-signup-btn {
+        min-height:
+            40px !important;
+
+        padding:
+            4px 12px !important;
+
+        border-radius:
+            9px !important;
+
+        font-size:
+            13px !important;
+    }
+
+    .intro-main {
+        width:
+            calc(100% - 20px);
+
+        padding-top:
+            14px;
+
+        padding-bottom:
+            50px;
+    }
+
+    .intro-hero {
+        padding:
+            40px 18px;
+
+        border-radius:
+            18px;
+    }
+
+    .intro-bismillah {
+        font-size:
+            38px;
+    }
+
+    .intro-kalma {
+        font-size:
+            21px;
+
+        line-height:
+            2;
+    }
+
+    .intro-hero h1 {
+        font-size:
+            29px;
+
+        line-height:
+            1.8;
+    }
+
+    .intro-tagline {
+        font-size:
+            15px;
+
+        line-height:
+            2;
+    }
+
+    .intro-hero-actions {
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr;
+
+        width:
+            100%;
+    }
+
+    .hero-primary-button,
+    .hero-secondary-button {
+        width:
+            100% !important;
+
+        min-height:
+            50px !important;
+    }
+
+    .intro-section {
+        margin-top:
+            36px;
+    }
+
+    .intro-section-heading {
+        gap:
+            9px;
+
+        align-items:
+            flex-start;
+    }
+
+    .intro-section-icon {
+        display:
+            none;
+    }
+
+    .intro-section-heading h2 {
+        font-size:
+            24px;
+
+        line-height:
+            1.8;
+    }
+
+    .intro-content-card,
+    .intro-safety-card,
+    .intro-admin-message-card,
+    .intro-contact-card {
+        padding:
+            22px 18px;
+    }
+
+    .intro-content-card p,
+    .intro-safety-card p,
+    .intro-admin-message-card blockquote {
+        font-size:
+            15px;
+
+        line-height:
+            2.2;
+    }
+
+    .intro-highlight-card {
+        padding:
+            22px 18px;
+
+        align-items:
+            flex-start;
+    }
+
+    .intro-highlight-icon {
+        flex-basis:
+            42px;
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        font-size:
+            21px;
+    }
+
+    .intro-highlight-card h2 {
+        font-size:
+            21px;
+    }
+
+    .intro-quran-card {
+        padding:
+            26px 17px;
+    }
+
+    .intro-arabic-quote {
+        font-size:
+            25px;
+    }
+
+    .intro-classes-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .intro-class-card {
+        min-height:
+            86px;
+
+        padding:
+            16px;
+    }
+
+    .intro-stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap:
+            9px;
+    }
+
+    .intro-stat-card {
+        padding:
+            20px 8px;
+    }
+
+    .intro-stat-number {
+        font-size:
+            32px;
+    }
+
+    .intro-stat-card > span:last-child {
+        font-size:
+            13px;
+    }
+
+    .intro-admission-card {
+        padding:
+            34px 18px;
+
+        border-radius:
+            18px;
+    }
+
+    .intro-admin-profile {
+        flex-direction:
+            column;
+
+        text-align:
+            center;
+    }
+
+    .intro-admin-photo-wrapper,
+    .intro-admin-photo {
+        width:
+            82px;
+
+        height:
+            82px;
+    }
+
+    .intro-contact-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .intro-contact-item {
+        padding:
+            14px;
+    }
+
+    .intro-final-cta {
+        padding:
+            36px 18px;
+
+        border-radius:
+            18px;
+    }
+
+    .intro-final-buttons {
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr;
+
+        width:
+            100%;
+    }
+
+    .intro-options-card {
+        padding:
+            30px 20px 22px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    .intro-topbar-inner {
+        width:
+            calc(100% - 12px);
+    }
+
+    .language-selector {
+        min-width:
+            86px;
+
+        max-width:
+            92px;
+
+        font-size:
+            12px;
+    }
+
+    .intro-login-btn,
+    .intro-signup-btn {
+        padding:
+            3px 9px !important;
+
+        font-size:
+            12px !important;
+    }
+
+    .intro-stats-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
 /* =========================================================
    END PART 3 / 3
    COMPLETE STYLE.CSS
