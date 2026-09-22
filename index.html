@@ -11,6 +11,11 @@
     >
 
     <meta
+        name="google"
+        content="notranslate"
+    >
+
+    <meta
         name="description"
         content="مدرسہ شہناز اختر للبنات، گاؤں ہل غورغشتوں، ضلع بونیر"
     >
@@ -46,20 +51,24 @@
 
         (function () {
 
-            const saved =
+            const savedLanguage =
                 localStorage.getItem(
                     "appLanguage"
                 ) || "ur";
 
-            const rtl =
-                ["ur", "ar", "ps"]
-                    .includes(saved);
+
+            const rtlLanguages =
+                ["ur", "ar", "ps"];
+
 
             document.documentElement.lang =
-                saved;
+                savedLanguage;
+
 
             document.documentElement.dir =
-                rtl
+                rtlLanguages.includes(
+                    savedLanguage
+                )
                     ? "rtl"
                     : "ltr";
 
@@ -71,7 +80,7 @@
     <style>
 
         /* =================================================
-           ONLY LANGUAGE DIRECTION FIXES
+           LANGUAGE / DIRECTION ONLY
            Existing professional design remains unchanged
         ================================================= */
 
@@ -80,6 +89,15 @@
                 Arial,
                 "Segoe UI",
                 sans-serif !important;
+        }
+
+
+        html[lang="ur"] body.intro-page,
+        html[lang="ar"] body.intro-page,
+        html[lang="ps"] body.intro-page {
+            font-family:
+                "Noto Nastaliq Urdu",
+                serif !important;
         }
 
 
@@ -93,7 +111,9 @@
         }
 
 
-        /* English must read from left */
+        /* ==============================================
+           ENGLISH = LEFT / LTR
+        =============================================== */
 
         html[dir="ltr"] .intro-section-heading,
         html[dir="ltr"] .intro-content-card,
@@ -102,7 +122,6 @@
         html[dir="ltr"] .intro-admin-message-card,
         html[dir="ltr"] .intro-admin-profile,
         html[dir="ltr"] .intro-admin-identity,
-        html[dir="ltr"] .intro-contact-item,
         html[dir="ltr"] .intro-class-card {
             direction: ltr !important;
             text-align: left !important;
@@ -123,7 +142,32 @@
         }
 
 
-        /* Urdu / Arabic / Pashto */
+        html[dir="ltr"] .intro-topbar-inner {
+            direction: ltr !important;
+        }
+
+
+        html[dir="ltr"] .intro-highlight-card {
+            border-left:
+                5px solid var(--intro-gold, #b68a35) !important;
+
+            border-right:
+                1px solid var(--intro-border, #dce7df) !important;
+        }
+
+
+        html[dir="ltr"] .intro-safety-card {
+            border-left:
+                5px solid var(--intro-green, #0f5132) !important;
+
+            border-right:
+                1px solid var(--intro-border, #dce7df) !important;
+        }
+
+
+        /* ==============================================
+           RTL LANGUAGES
+        =============================================== */
 
         html[dir="rtl"] .intro-section-heading,
         html[dir="rtl"] .intro-content-card,
@@ -132,7 +176,6 @@
         html[dir="rtl"] .intro-admin-message-card,
         html[dir="rtl"] .intro-admin-profile,
         html[dir="rtl"] .intro-admin-identity,
-        html[dir="rtl"] .intro-contact-item,
         html[dir="rtl"] .intro-class-card {
             direction: rtl !important;
             text-align: right !important;
@@ -153,7 +196,14 @@
         }
 
 
-        /* Always centered */
+        html[dir="rtl"] .intro-topbar-inner {
+            direction: rtl !important;
+        }
+
+
+        /* ==============================================
+           ALWAYS CENTERED
+        =============================================== */
 
         .intro-hero,
         .intro-quran-card,
@@ -164,11 +214,46 @@
         }
 
 
-        .intro-arabic-quote,
+        /* Arabic religious text never translates */
+
+        .intro-bismillah,
         .intro-kalma,
-        .intro-bismillah {
+        .intro-arabic-quote {
             direction: rtl !important;
             text-align: center !important;
+
+            font-family:
+                "Traditional Arabic",
+                "Noto Naskh Arabic",
+                serif !important;
+        }
+
+
+        /* Footer clickable links */
+
+        .intro-footer-link {
+            color: inherit;
+            text-decoration: none;
+            direction: ltr;
+        }
+
+
+        .intro-footer-link:hover {
+            text-decoration: underline;
+        }
+
+
+        .intro-footer-link:active {
+            opacity: 0.75;
+        }
+
+
+        /* Stop weird English punctuation direction */
+
+        html[dir="ltr"] .intro-content-card p,
+        html[dir="ltr"] .intro-safety-card p,
+        html[dir="ltr"] .intro-admin-message-card blockquote {
+            unicode-bidi: plaintext;
         }
 
     </style>
@@ -177,11 +262,14 @@
 
 
 
-<body class="home-page intro-page">
+<body
+    class="home-page intro-page notranslate"
+    translate="no"
+>
 
 
 <!-- =====================================================
-     HEADER
+     TOP HEADER
 ===================================================== -->
 
 <header class="intro-topbar">
@@ -201,7 +289,8 @@
 
             <select
                 id="languageSelector"
-                class="language-selector"
+                class="language-selector notranslate"
+                translate="no"
                 aria-label="Language"
             >
 
@@ -272,6 +361,7 @@
             type="button"
             class="intro-panel-close"
             data-close-panel="loginOptionsPanel"
+            aria-label="Close"
         >
             ×
         </button>
@@ -336,6 +426,7 @@
             type="button"
             class="intro-panel-close"
             data-close-panel="signupOptionsPanel"
+            aria-label="Close"
         >
             ×
         </button>
@@ -394,13 +485,19 @@
 
 <section class="intro-hero">
 
-    <div class="intro-bismillah">
+    <div
+        class="intro-bismillah notranslate"
+        translate="no"
+        lang="ar"
+        dir="rtl"
+    >
         ﷽
     </div>
 
 
     <div
-        class="intro-kalma"
+        class="intro-kalma notranslate"
+        translate="no"
         lang="ar"
         dir="rtl"
     >
@@ -434,12 +531,12 @@
 
 
 <!-- =====================================================
-     2. WIFAQ REGISTRATION
+     2. WIFAQ
 ===================================================== -->
 
 <section class="intro-section">
 
-    <div class="intro-highlight-card wifaq-card">
+    <div class="intro-highlight-card">
 
         <div class="intro-highlight-icon">
             ✓
@@ -468,7 +565,7 @@
 
 
 <!-- =====================================================
-     3. MADRASSA INTRODUCTION
+     3. INTRODUCTION
 ===================================================== -->
 
 <section class="intro-section">
@@ -533,11 +630,11 @@
     </div>
 
 
-
     <div class="intro-quran-card">
 
         <div
-            class="intro-arabic-quote"
+            class="intro-arabic-quote notranslate"
+            translate="no"
             lang="ar"
             dir="rtl"
         >
@@ -561,7 +658,6 @@
         </div>
 
     </div>
-
 
 
     <div class="intro-content-card">
@@ -687,7 +783,7 @@
 
 
 <!-- =====================================================
-     7. AVAILABLE CLASSES
+     7. CLASSES
 ===================================================== -->
 
 <section class="intro-section">
@@ -707,70 +803,51 @@
 
     <div class="intro-classes-grid">
 
-
         <article class="intro-class-card">
-
             <span>01</span>
-
             <strong data-i18n="class1">
                 ثانویہ عامہ
             </strong>
-
         </article>
 
 
         <article class="intro-class-card">
-
             <span>02</span>
-
             <strong data-i18n="class2">
                 ثانویہ خاصہ
             </strong>
-
         </article>
 
 
         <article class="intro-class-card">
-
             <span>03</span>
-
             <strong data-i18n="class3">
                 عالیہ اول
             </strong>
-
         </article>
 
 
         <article class="intro-class-card">
-
             <span>04</span>
-
             <strong data-i18n="class4">
                 عالیہ دوم
             </strong>
-
         </article>
 
 
         <article class="intro-class-card">
-
             <span>05</span>
-
             <strong data-i18n="class5">
                 عالمیہ اول
             </strong>
-
         </article>
 
 
         <article class="intro-class-card">
-
             <span>06</span>
-
             <strong data-i18n="class6">
                 عالمیہ دوم / دورۂ حدیث
             </strong>
-
         </article>
 
     </div>
@@ -853,12 +930,12 @@
 
     <div class="intro-stats-grid">
 
-
         <article class="intro-stat-card">
 
             <div class="intro-stat-icon">
                 👩‍🎓
             </div>
+
 
             <strong
                 id="publicStudentCount"
@@ -867,12 +944,12 @@
                 --
             </strong>
 
+
             <span data-i18n="registeredStudents">
                 کل رجسٹرڈ طالبات
             </span>
 
         </article>
-
 
 
         <article class="intro-stat-card">
@@ -881,12 +958,14 @@
                 👩‍🏫
             </div>
 
+
             <strong
                 id="publicTeacherCount"
                 class="intro-stat-number"
             >
                 --
             </strong>
+
 
             <span data-i18n="registeredTeachers">
                 کل رجسٹرڈ اساتذہ
@@ -910,7 +989,7 @@
 
 
 <!-- =====================================================
-     10. OUR TEACHERS
+     10. TEACHERS
 ===================================================== -->
 
 <section class="intro-section">
@@ -995,12 +1074,12 @@
             </div>
 
 
-
             <div class="intro-admin-identity">
 
                 <h3 data-i18n="adminName">
                     مولوی جمیل خان حقانی
                 </h3>
+
 
                 <p data-i18n="adminDesignation">
                     منتظم، مدرسہ شہناز اختر للبنات
@@ -1009,7 +1088,6 @@
             </div>
 
         </div>
-
 
 
         <blockquote data-i18n="adminMessage1">
@@ -1068,7 +1146,8 @@
     <div class="intro-quran-card">
 
         <div
-            class="intro-arabic-quote"
+            class="intro-arabic-quote notranslate"
+            translate="no"
             lang="ar"
             dir="rtl"
         >
@@ -1130,9 +1209,8 @@
 </section>
 
 
-
-
 </main>
+
 
 
 <!-- =====================================================
@@ -1189,6 +1267,8 @@
 
 </footer>
 
+
+
 <!-- =====================================================
      SUPABASE
 ===================================================== -->
@@ -1200,7 +1280,7 @@
 
 
 <!-- =====================================================
-     INTRO PAGE SCRIPT
+     COMPLETE INTRO PAGE SCRIPT
 ===================================================== -->
 
 <script>
@@ -1242,9 +1322,14 @@
     const translations = {
 
 
-        /* ================= URDU ================= */
+        /* =================================================
+           URDU
+        ================================================= */
 
         ur: {
+
+            pageTitle:
+                "مدرسہ شہناز اختر للبنات",
 
             language:
                 "زبان",
@@ -1441,24 +1526,20 @@
             muslimReference:
                 "صحیح مسلم",
 
-            contactTitle:
-                "رابطہ",
-
-            phone:
-                "فون",
-
-            email:
-                "ای میل",
-
             managementSystem:
                 "مدرسہ مینجمنٹ سسٹم"
         },
 
 
 
-        /* ================= ENGLISH ================= */
+        /* =================================================
+           ENGLISH
+        ================================================= */
 
         en: {
+
+            pageTitle:
+                "Madrassa Shahnaz Akhtar Lil-Banat",
 
             language:
                 "Language",
@@ -1655,24 +1736,20 @@
             muslimReference:
                 "Sahih Muslim",
 
-            contactTitle:
-                "Contact",
-
-            phone:
-                "Phone",
-
-            email:
-                "Email",
-
             managementSystem:
                 "Madrassa Management System"
         },
 
 
 
-        /* ================= ARABIC ================= */
+        /* =================================================
+           ARABIC
+        ================================================= */
 
         ar: {
+
+            pageTitle:
+                "مدرسة شهناز أختر للبنات",
 
             language:
                 "اللغة",
@@ -1869,24 +1946,20 @@
             muslimReference:
                 "صحيح مسلم",
 
-            contactTitle:
-                "اتصل بنا",
-
-            phone:
-                "الهاتف",
-
-            email:
-                "البريد الإلكتروني",
-
             managementSystem:
                 "نظام إدارة المدرسة"
         },
 
 
 
-        /* ================= PASHTO ================= */
+        /* =================================================
+           PASHTO
+        ================================================= */
 
         ps: {
+
+            pageTitle:
+                "مدرسه شهناز اختر للبنات",
 
             language:
                 "ژبه",
@@ -2083,15 +2156,6 @@
             muslimReference:
                 "صحیح مسلم",
 
-            contactTitle:
-                "اړیکه",
-
-            phone:
-                "تلیفون",
-
-            email:
-                "برېښنالیک",
-
             managementSystem:
                 "د مدرسې د مدیریت سیستم"
         }
@@ -2101,7 +2165,7 @@
 
 
     /* =====================================================
-       LANGUAGE
+       GET SAVED LANGUAGE
     ===================================================== */
 
     function getSavedLanguage() {
@@ -2114,8 +2178,14 @@
 
         if (
             saved &&
-            translations[saved]
+            Object.prototype
+                .hasOwnProperty
+                .call(
+                    translations,
+                    saved
+                )
         ) {
+
             return saved;
         }
 
@@ -2125,9 +2195,21 @@
 
 
 
+    /* =====================================================
+       APPLY LANGUAGE
+    ===================================================== */
+
     function applyLanguage(language) {
 
-        if (!translations[language]) {
+        if (
+            !Object.prototype
+                .hasOwnProperty
+                .call(
+                    translations,
+                    language
+                )
+        ) {
+
             language = "ur";
         }
 
@@ -2156,6 +2238,10 @@
             isRTL
                 ? "rtl"
                 : "ltr";
+
+
+        document.title =
+            dictionary.pageTitle;
 
 
         document
@@ -2195,6 +2281,7 @@
 
 
         if (selector) {
+
             selector.value =
                 language;
         }
@@ -2256,18 +2343,18 @@
 
 
     /* =====================================================
-       LIVE COUNTS
+       LIVE PUBLIC COUNTS
     ===================================================== */
 
     async function loadPublicStatistics() {
 
-        const studentCount =
+        const studentElement =
             document.getElementById(
                 "publicStudentCount"
             );
 
 
-        const teacherCount =
+        const teacherElement =
             document.getElementById(
                 "publicTeacherCount"
             );
@@ -2277,10 +2364,12 @@
 
             if (
                 !window.supabase ||
-                !window.supabase.createClient
+                typeof window.supabase.createClient
+                    !== "function"
             ) {
+
                 throw new Error(
-                    "Supabase library unavailable"
+                    "Supabase unavailable"
                 );
             }
 
@@ -2318,20 +2407,20 @@
                 );
 
 
-            if (studentCount) {
+            if (studentElement) {
 
-                studentCount.textContent =
+                studentElement.textContent =
                     Number.isFinite(students)
-                        ? students
+                        ? String(students)
                         : "--";
             }
 
 
-            if (teacherCount) {
+            if (teacherElement) {
 
-                teacherCount.textContent =
+                teacherElement.textContent =
                     Number.isFinite(teachers)
-                        ? teachers
+                        ? String(teachers)
                         : "--";
             }
 
@@ -2339,19 +2428,21 @@
         } catch (error) {
 
             console.error(
-                "Public statistics error:",
+                "Statistics error:",
                 error
             );
 
 
-            if (studentCount) {
-                studentCount.textContent =
+            if (studentElement) {
+
+                studentElement.textContent =
                     "--";
             }
 
 
-            if (teacherCount) {
-                teacherCount.textContent =
+            if (teacherElement) {
+
+                teacherElement.textContent =
                     "--";
             }
 
@@ -2379,49 +2470,59 @@
             );
 
 
-        if (!image || !fallback) {
+        if (
+            !image ||
+            !fallback
+        ) {
             return;
         }
 
 
-        image.addEventListener(
-            "load",
-            function () {
+        function showImage() {
 
-                fallback.style.display =
-                    "none";
+            image.style.display =
+                "block";
 
-                image.style.display =
-                    "block";
-
-            }
-        );
+            fallback.style.display =
+                "none";
+        }
 
 
-        image.addEventListener(
-            "error",
-            function () {
-
-                image.style.display =
-                    "none";
-
-                fallback.style.display =
-                    "flex";
-
-            }
-        );
-
-
-        if (
-            image.complete &&
-            image.naturalWidth === 0
-        ) {
+        function showFallback() {
 
             image.style.display =
                 "none";
 
             fallback.style.display =
                 "flex";
+        }
+
+
+        image.addEventListener(
+            "load",
+            showImage
+        );
+
+
+        image.addEventListener(
+            "error",
+            showFallback
+        );
+
+
+        if (image.complete) {
+
+            if (
+                image.naturalWidth > 0
+            ) {
+
+                showImage();
+
+            } else {
+
+                showFallback();
+            }
+
         }
 
     }
@@ -2524,10 +2625,14 @@
                             "click",
                             function () {
 
-                                closePanel(
+                                const panelId =
                                     this.getAttribute(
                                         "data-close-panel"
-                                    )
+                                    );
+
+
+                                closePanel(
+                                    panelId
                                 );
 
                             }
@@ -2573,19 +2678,21 @@
                 function (event) {
 
                     if (
-                        event.key ===
+                        event.key !==
                         "Escape"
                     ) {
-
-                        closePanel(
-                            "loginOptionsPanel"
-                        );
-
-                        closePanel(
-                            "signupOptionsPanel"
-                        );
-
+                        return;
                     }
+
+
+                    closePanel(
+                        "loginOptionsPanel"
+                    );
+
+
+                    closePanel(
+                        "signupOptionsPanel"
+                    );
 
                 }
             );
@@ -2602,7 +2709,7 @@
 
 
     /* =====================================================
-       SHARED LANGUAGE ACCESS
+       AVAILABLE TO OTHER PAGES LATER
     ===================================================== */
 
     window.MadrassaLanguage = {
@@ -2625,4 +2732,4 @@
 
 
 </body>
-    </html>
+</html>
