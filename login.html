@@ -10,9 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        لاگ اِن - مدرسہ شہناز اختر للبنات
-    </title>
+    <title>لاگ اِن | مدرسہ شہناز اختر للبنات</title>
 
     <link
         rel="preconnect"
@@ -26,7 +24,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
@@ -35,216 +33,1465 @@
         href="style.css"
     >
 
+
+    <style>
+
+        /* =================================================
+           LOGIN PAGE ONLY
+           Does NOT affect the introduction page
+        ================================================= */
+
+        body.login-page-v2 {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #f4f8f6 0%,
+                    #eef4f1 100%
+                );
+
+            color: #17251f;
+
+            overflow-x: hidden;
+
+        }
+
+
+        body.login-page-v2[dir="rtl"] {
+
+            font-family:
+                "Noto Nastaliq Urdu",
+                serif;
+
+        }
+
+
+        body.login-page-v2[dir="ltr"] {
+
+            font-family:
+                "Inter",
+                sans-serif;
+
+        }
+
+
+        .login-page-wrapper {
+
+            width: 100%;
+
+            min-height: 100vh;
+
+            padding:
+                max(22px, env(safe-area-inset-top))
+                16px
+                max(34px, env(safe-area-inset-bottom));
+
+            box-sizing: border-box;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: flex-start;
+
+        }
+
+
+        .login-shell {
+
+            width: 100%;
+
+            max-width: 520px;
+
+            margin: 0 auto;
+
+        }
+
+
+        /* ================================================
+           TOP BAR
+        ================================================ */
+
+        .login-topbar {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .login-back-mini {
+
+            width: 46px;
+
+            height: 46px;
+
+            min-height: 46px;
+
+            padding: 0;
+
+            margin: 0;
+
+            border: 1px solid #cfdcd5;
+
+            border-radius: 14px;
+
+            background: #ffffff;
+
+            color: #0d5b3b;
+
+            font-size: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            box-shadow:
+                0 6px 20px
+                rgba(18, 63, 45, 0.07);
+
+        }
+
+
+        .login-language-wrap {
+
+            min-width: 150px;
+
+        }
+
+
+        .login-language-select {
+
+            width: 100%;
+
+            min-height: 46px;
+
+            padding: 8px 14px;
+
+            border: 1px solid #cbd9d2;
+
+            border-radius: 14px;
+
+            background: #ffffff;
+
+            color: #163a2c;
+
+            font: inherit;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+
+        /* ================================================
+           LOGIN CARD
+        ================================================ */
+
+        .login-card-v2 {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            background: #ffffff;
+
+            border:
+                1px solid
+                rgba(14, 89, 58, 0.12);
+
+            border-radius: 28px;
+
+            padding: 28px 22px 24px;
+
+            box-shadow:
+                0 18px 55px
+                rgba(22, 72, 53, 0.10);
+
+        }
+
+
+        .login-brand {
+
+            text-align: center;
+
+            margin-bottom: 24px;
+
+        }
+
+
+        .login-lock {
+
+            width: 58px;
+
+            height: 58px;
+
+            margin: 0 auto 10px;
+
+            border-radius: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #eaf5ef;
+
+            color: #0d5b3b;
+
+            font-size: 26px;
+
+        }
+
+
+        .login-title {
+
+            margin: 0 0 8px;
+
+            color: #0c5538;
+
+            font-size: clamp(
+                30px,
+                8vw,
+                42px
+            );
+
+            font-weight: 700;
+
+            line-height: 1.5;
+
+        }
+
+
+        .login-madrassa-name {
+
+            margin: 0;
+
+            color: #1d2d26;
+
+            font-size: 19px;
+
+            font-weight: 700;
+
+            line-height: 1.9;
+
+        }
+
+
+        .login-address {
+
+            margin: 3px 0 0;
+
+            color: #738179;
+
+            font-size: 13px;
+
+            line-height: 1.8;
+
+        }
+
+
+        .login-role-badge {
+
+            margin:
+                18px auto 0;
+
+            width: fit-content;
+
+            max-width: 100%;
+
+            padding: 8px 16px;
+
+            border-radius: 999px;
+
+            background: #f4eee0;
+
+            color: #80611f;
+
+            font-weight: 700;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+        }
+
+
+        /* ================================================
+           FORM
+        ================================================ */
+
+        .login-form-v2 {
+
+            margin-top: 24px;
+
+        }
+
+
+        .login-field {
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .login-label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #24362e;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            line-height: 1.7;
+
+        }
+
+
+        .login-input {
+
+            width: 100%;
+
+            height: 56px;
+
+            box-sizing: border-box;
+
+            border:
+                1.5px solid
+                #d4dfd9;
+
+            border-radius: 16px;
+
+            background: #fbfdfc;
+
+            padding: 10px 16px;
+
+            color: #18261f;
+
+            font: inherit;
+
+            font-size: 16px;
+
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+
+        }
+
+
+        .login-input:focus {
+
+            border-color: #0d6643;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(13, 102, 67, 0.10);
+
+        }
+
+
+        .login-password-wrap {
+
+            position: relative;
+
+        }
+
+
+        .login-password-wrap .login-input {
+
+            padding-inline-end: 68px;
+
+        }
+
+
+        .login-eye {
+
+            position: absolute;
+
+            top: 50%;
+
+            inset-inline-end: 7px;
+
+            transform: translateY(-50%);
+
+            width: 48px;
+
+            height: 42px;
+
+            min-height: 42px;
+
+            margin: 0;
+
+            padding: 0;
+
+            border: 0;
+
+            border-radius: 12px;
+
+            background: #edf5f1;
+
+            color: #0c5c3d;
+
+            font-size: 19px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+        .login-remember {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin: 3px 0 18px;
+
+            color: #55665d;
+
+            font-size: 14px;
+
+        }
+
+
+        .login-remember input {
+
+            width: 20px;
+
+            height: 20px;
+
+            margin: 0;
+
+            accent-color: #0d6543;
+
+        }
+
+
+        /* ================================================
+           DYNAMIC LOGIN MESSAGE
+        ================================================ */
+
+        #loginMessage {
+
+            display: none;
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            margin: 0 0 18px;
+
+            padding: 13px 15px;
+
+            border-radius: 14px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            line-height: 1.8;
+
+            text-align: start;
+
+        }
+
+
+        #loginMessage.error {
+
+            display: block;
+
+            color: #8c1d24;
+
+            background: #fff0f1;
+
+            border: 1px solid #f3b9bd;
+
+            border-inline-start:
+                5px solid #c7353e;
+
+        }
+
+
+        #loginMessage.info {
+
+            display: block;
+
+            color: #24516a;
+
+            background: #edf7fc;
+
+            border: 1px solid #bfdae8;
+
+            border-inline-start:
+                5px solid #3c7e9f;
+
+        }
+
+
+        #loginMessage.success {
+
+            display: block;
+
+            color: #145d3c;
+
+            background: #eaf7f0;
+
+            border: 1px solid #b8dec9;
+
+            border-inline-start:
+                5px solid #167149;
+
+        }
+
+
+        /* ================================================
+           ACTIONS
+        ================================================ */
+
+        .login-primary {
+
+            width: 100%;
+
+            min-height: 56px;
+
+            margin: 0;
+
+            padding: 10px 18px;
+
+            border: 0;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0c5a3b,
+                    #11744d
+                );
+
+            color: #ffffff;
+
+            font: inherit;
+
+            font-size: 17px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 24px
+                rgba(12, 90, 59, 0.20);
+
+        }
+
+
+        .login-primary:active {
+
+            transform: scale(.985);
+
+        }
+
+
+        .login-secondary {
+
+            width: 100%;
+
+            min-height: 52px;
+
+            margin: 12px 0 0;
+
+            padding: 9px 16px;
+
+            border:
+                1px solid
+                #cad8d1;
+
+            border-radius: 16px;
+
+            background: #ffffff;
+
+            color: #315045;
+
+            font: inherit;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+        }
+
+
+        .login-security-note {
+
+            margin: 21px 2px 0;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid #edf0ee;
+
+            color: #7a867f;
+
+            font-size: 13px;
+
+            line-height: 1.9;
+
+            text-align: center;
+
+        }
+
+
+        /* ================================================
+           MOBILE
+        ================================================ */
+
+        @media (
+            max-width: 480px
+        ) {
+
+            .login-page-wrapper {
+
+                padding-inline:
+                    14px;
+
+            }
+
+
+            .login-card-v2 {
+
+                padding:
+                    24px 18px 22px;
+
+                border-radius:
+                    24px;
+
+            }
+
+
+            .login-language-wrap {
+
+                min-width:
+                    135px;
+
+            }
+
+
+            .login-title {
+
+                font-size:
+                    34px;
+
+            }
+
+
+            .login-madrassa-name {
+
+                font-size:
+                    17px;
+
+            }
+
+        }
+
+
+        @media (
+            min-width: 768px
+        ) {
+
+            .login-page-wrapper {
+
+                align-items:
+                    center;
+
+                padding:
+                    36px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
 
-<body>
 
-    <main class="login-container">
+<body class="login-page-v2">
 
-        <div
-            class="login-logo"
-            aria-hidden="true"
-        >
-            🔐
-        </div>
+<div class="login-page-wrapper">
+
+    <main class="login-shell">
 
 
-        <h1>
-            لاگ اِن
-        </h1>
+        <!-- =============================================
+             TOP BAR
+        ============================================== -->
 
-
-        <div class="madrassa-name">
-            مدرسہ شہناز اختر للبنات
-        </div>
-
-
-        <p class="address">
-            گاؤں غرشٹو، ضلع بونیر
-        </p>
-
-
-        <!-- =========================
-             SELECTED ACCOUNT TYPE
-        ========================== -->
-
-        <div
-            id="selectedRoleBox"
-            class="selected-role-box"
-        >
-
-            <span>
-                اکاؤنٹ:
-            </span>
-
-            <strong id="selectedRoleText">
-                منتخب نہیں
-            </strong>
-
-        </div>
-
-
-        <!-- =========================
-             LOGIN FORM
-        ========================== -->
-
-        <form
-            id="loginForm"
-            autocomplete="on"
-        >
-
-            <input
-                type="hidden"
-                id="loginRole"
-                name="loginRole"
-            >
-
-
-            <label for="username">
-                صارف نام
-            </label>
-
-            <input
-                type="text"
-                id="username"
-                name="username"
-                autocomplete="username"
-                placeholder="صارف نام درج کریں"
-                required
-            >
-
-
-            <label for="password">
-                پاس ورڈ
-            </label>
-
-
-            <div class="password-box">
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    autocomplete="current-password"
-                    placeholder="پاس ورڈ درج کریں"
-                    required
-                >
-
-                <button
-                    type="button"
-                    id="togglePassword"
-                    class="eye-button"
-                    aria-label="پاس ورڈ دکھائیں"
-                >
-                    👁️
-                </button>
-
-            </div>
-
-
-            <div class="remember-row">
-
-                <input
-                    type="checkbox"
-                    id="rememberMe"
-                    name="rememberMe"
-                >
-
-                <label for="rememberMe">
-                    مجھے یاد رکھیں
-                </label>
-
-            </div>
-
-
-            <!-- =========================
-                 MESSAGE
-            ========================== -->
-
-            <div
-                id="loginMessage"
-                class="message"
-                aria-live="polite"
-            ></div>
-
-
-            <!-- =========================
-                 BUTTONS
-            ========================== -->
-
-            <button
-                type="submit"
-                id="loginButton"
-            >
-                🔐 لاگ اِن
-            </button>
-
+        <div class="login-topbar">
 
             <button
                 type="button"
                 id="backButton"
-                class="back-button"
+                class="login-back-mini"
+                aria-label="Back"
             >
-                ↩️ واپس جائیں
+                ←
             </button>
 
-        </form>
 
+            <div class="login-language-wrap">
 
-        <!-- =========================
-             SECURITY
-        ========================== -->
+                <select
+                    id="loginLanguage"
+                    class="login-language-select"
+                    aria-label="Language"
+                >
 
-        <div class="login-security-note">
+                    <option value="ur">
+                        اردو
+                    </option>
 
-            🔒 صرف ایڈمن سے منظور شدہ اور فعال اکاؤنٹ
-            لاگ اِن کر سکتا ہے۔
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="ar">
+                        العربية
+                    </option>
+
+                    <option value="ps">
+                        پښتو
+                    </option>
+
+                </select>
+
+            </div>
 
         </div>
 
 
-        <!-- =========================
-             PENDING ACCOUNT
-        ========================== -->
 
-        <div
-            id="pendingAccountMessage"
-            class="approval-notice hidden"
-        >
-            ⏳ آپ کی درخواست ابھی ایڈمن کی منظوری کے انتظار میں ہے۔
-        </div>
+        <!-- =============================================
+             LOGIN CARD
+        ============================================== -->
+
+        <section class="login-card-v2">
 
 
-        <!-- =========================
-             REJECTED ACCOUNT
-        ========================== -->
+            <header class="login-brand">
 
-        <div
-            id="rejectedAccountMessage"
-            class="rejected-notice hidden"
-        >
-            ❌ آپ کی درخواست منظور نہیں ہوئی۔
-            مزید معلومات کے لیے مدرسہ انتظامیہ سے رابطہ کریں۔
-        </div>
+                <div class="login-lock">
+                    🔐
+                </div>
+
+
+                <h1
+                    class="login-title"
+                    data-login-i18n="loginTitle"
+                >
+                    لاگ اِن
+                </h1>
+
+
+                <p
+                    class="login-madrassa-name"
+                    data-login-i18n="madrassaName"
+                >
+                    مدرسہ شہناز اختر للبنات
+                </p>
+
+
+                <p
+                    class="login-address"
+                    data-login-i18n="address"
+                >
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+
+                <div class="login-role-badge">
+
+                    <span
+                        data-login-i18n="account"
+                    >
+                        اکاؤنٹ
+                    </span>
+
+                    :
+
+                    <span id="selectedRoleText">
+                        —
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =========================================
+                 LOGIN FORM
+            ========================================== -->
+
+            <form
+                id="loginForm"
+                class="login-form-v2"
+                autocomplete="on"
+            >
+
+                <input
+                    type="hidden"
+                    id="loginRole"
+                >
+
+
+                <div class="login-field">
+
+                    <label
+                        for="username"
+                        class="login-label"
+                        data-login-i18n="username"
+                    >
+                        صارف نام
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="username"
+                        class="login-input"
+                        autocomplete="username"
+                        required
+                        data-login-placeholder="usernamePlaceholder"
+                        placeholder="صارف نام درج کریں"
+                    >
+
+                </div>
+
+
+                <div class="login-field">
+
+                    <label
+                        for="password"
+                        class="login-label"
+                        data-login-i18n="password"
+                    >
+                        پاس ورڈ
+                    </label>
+
+
+                    <div class="login-password-wrap">
+
+                        <input
+                            type="password"
+                            id="password"
+                            class="login-input"
+                            autocomplete="current-password"
+                            required
+                            data-login-placeholder="passwordPlaceholder"
+                            placeholder="پاس ورڈ درج کریں"
+                        >
+
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="login-eye"
+                            aria-label="Show password"
+                        >
+                            👁️
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <label class="login-remember">
+
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                    >
+
+                    <span
+                        data-login-i18n="remember"
+                    >
+                        مجھے یاد رکھیں
+                    </span>
+
+                </label>
+
+
+                <!--
+                    صرف dynamic message یہاں آئے گا۔
+                    Pending / Rejected messages یہاں
+                    hard-coded نہیں ہیں۔
+                -->
+
+                <div
+                    id="loginMessage"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="login-primary"
+                    data-login-i18n="loginButton"
+                >
+                    لاگ اِن
+                </button>
+
+
+                <button
+                    type="button"
+                    id="backButtonBottom"
+                    class="login-secondary"
+                    data-login-i18n="back"
+                >
+                    واپس جائیں
+                </button>
+
+            </form>
+
+
+            <p
+                class="login-security-note"
+                data-login-i18n="securityNote"
+            >
+                صرف منظور شدہ اور فعال اکاؤنٹ لاگ اِن کر سکتا ہے۔
+            </p>
+
+        </section>
 
     </main>
 
-
-    <!-- =========================
-         SUPABASE
-    ========================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+</div>
 
 
-    <!-- =========================
-         MAIN SCRIPT
-    ========================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="script.js?v=21"></script>
+<script src="script.js"></script>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const translations = {
+
+        ur: {
+
+            loginTitle:
+                "لاگ اِن",
+
+            madrassaName:
+                "مدرسہ شہناز اختر للبنات",
+
+            address:
+                "گاؤں ہل غورغشتوں، ضلع بونیر",
+
+            account:
+                "اکاؤنٹ",
+
+            username:
+                "صارف نام",
+
+            usernamePlaceholder:
+                "صارف نام درج کریں",
+
+            password:
+                "پاس ورڈ",
+
+            passwordPlaceholder:
+                "پاس ورڈ درج کریں",
+
+            remember:
+                "مجھے یاد رکھیں",
+
+            loginButton:
+                "لاگ اِن",
+
+            back:
+                "واپس جائیں",
+
+            securityNote:
+                "صرف منظور شدہ اور فعال اکاؤنٹ لاگ اِن کر سکتا ہے۔",
+
+            roles: {
+                admin:
+                    "ایڈمن",
+
+                teacher:
+                    "استاد",
+
+                student:
+                    "طالبہ"
+            }
+        },
+
+
+        en: {
+
+            loginTitle:
+                "Login",
+
+            madrassaName:
+                "Madrassa Shahnaz Akhtar Lil-Banat",
+
+            address:
+                "Village Hal Ghorghashtoon, District Buner",
+
+            account:
+                "Account",
+
+            username:
+                "Username",
+
+            usernamePlaceholder:
+                "Enter username",
+
+            password:
+                "Password",
+
+            passwordPlaceholder:
+                "Enter password",
+
+            remember:
+                "Remember me",
+
+            loginButton:
+                "Login",
+
+            back:
+                "Go Back",
+
+            securityNote:
+                "Only approved and active accounts can log in.",
+
+            roles: {
+                admin:
+                    "Admin",
+
+                teacher:
+                    "Teacher",
+
+                student:
+                    "Student"
+            }
+        },
+
+
+        ar: {
+
+            loginTitle:
+                "تسجيل الدخول",
+
+            madrassaName:
+                "مدرسة شهناز أختر للبنات",
+
+            address:
+                "قرية هَل غورغشتون، مقاطعة بونير",
+
+            account:
+                "الحساب",
+
+            username:
+                "اسم المستخدم",
+
+            usernamePlaceholder:
+                "أدخل اسم المستخدم",
+
+            password:
+                "كلمة المرور",
+
+            passwordPlaceholder:
+                "أدخل كلمة المرور",
+
+            remember:
+                "تذكرني",
+
+            loginButton:
+                "تسجيل الدخول",
+
+            back:
+                "العودة",
+
+            securityNote:
+                "يمكن فقط للحسابات المعتمدة والنشطة تسجيل الدخول.",
+
+            roles: {
+                admin:
+                    "المدير",
+
+                teacher:
+                    "المعلمة",
+
+                student:
+                    "الطالبة"
+            }
+        },
+
+
+        ps: {
+
+            loginTitle:
+                "ننوتل",
+
+            madrassaName:
+                "مدرسه شهناز اختر للبنات",
+
+            address:
+                "کلی هَل غورغشتون، ضلع بونیر",
+
+            account:
+                "حساب",
+
+            username:
+                "کارن نوم",
+
+            usernamePlaceholder:
+                "کارن نوم ولیکئ",
+
+            password:
+                "پټنوم",
+
+            passwordPlaceholder:
+                "پټنوم ولیکئ",
+
+            remember:
+                "ما په یاد وساتئ",
+
+            loginButton:
+                "ننوتل",
+
+            back:
+                "بېرته لاړ شئ",
+
+            securityNote:
+                "یوازې منظور شوی او فعال حساب ننوتلی شي.",
+
+            roles: {
+                admin:
+                    "اډمین",
+
+                teacher:
+                    "استاده",
+
+                student:
+                    "طالب علمه"
+            }
+        }
+
+    };
+
+
+    function getSavedLanguage() {
+
+        const possible = [
+
+            localStorage.getItem(
+                "madrassaLanguage"
+            ),
+
+            localStorage.getItem(
+                "selectedLanguage"
+            ),
+
+            localStorage.getItem(
+                "language"
+            ),
+
+            localStorage.getItem(
+                "siteLanguage"
+            )
+
+        ];
+
+
+        const language =
+            possible.find(
+                value =>
+                    translations[value]
+            );
+
+
+        return language || "ur";
+    }
+
+
+    function saveLanguage(
+        language
+    ) {
+
+        localStorage.setItem(
+            "madrassaLanguage",
+            language
+        );
+
+        localStorage.setItem(
+            "selectedLanguage",
+            language
+        );
+
+        localStorage.setItem(
+            "language",
+            language
+        );
+
+    }
+
+
+    function currentRole() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const role =
+            params
+                .get("role") ||
+            "admin";
+
+
+        return [
+            "admin",
+            "teacher",
+            "student"
+        ].includes(role)
+            ? role
+            : "admin";
+    }
+
+
+    function applyLanguage(
+        language
+    ) {
+
+        if (
+            !translations[language]
+        ) {
+
+            language =
+                "ur";
+        }
+
+
+        const text =
+            translations[
+                language
+            ];
+
+
+        const rtl =
+            language === "ur" ||
+            language === "ar" ||
+            language === "ps";
+
+
+        document.documentElement.lang =
+            language;
+
+
+        document.documentElement.dir =
+            rtl
+                ? "rtl"
+                : "ltr";
+
+
+        document.body.dir =
+            rtl
+                ? "rtl"
+                : "ltr";
+
+
+        document
+            .querySelectorAll(
+                "[data-login-i18n]"
+            )
+            .forEach(
+                element => {
+
+                    const key =
+                        element.dataset
+                            .loginI18n;
+
+
+                    if (
+                        text[key] !==
+                        undefined
+                    ) {
+
+                        element.textContent =
+                            text[key];
+                    }
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                "[data-login-placeholder]"
+            )
+            .forEach(
+                element => {
+
+                    const key =
+                        element.dataset
+                            .loginPlaceholder;
+
+
+                    if (
+                        text[key] !==
+                        undefined
+                    ) {
+
+                        element.placeholder =
+                            text[key];
+                    }
+                }
+            );
+
+
+        const roleText =
+            document.getElementById(
+                "selectedRoleText"
+            );
+
+
+        if (roleText) {
+
+            roleText.textContent =
+                text.roles[
+                    currentRole()
+                ];
+        }
+
+
+        const selector =
+            document.getElementById(
+                "loginLanguage"
+            );
+
+
+        if (selector) {
+
+            selector.value =
+                language;
+        }
+
+
+        window.LOGIN_LANGUAGE =
+            language;
+
+
+        window.LOGIN_TRANSLATIONS =
+            translations;
+
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const language =
+                getSavedLanguage();
+
+
+            applyLanguage(
+                language
+            );
+
+
+            const selector =
+                document.getElementById(
+                    "loginLanguage"
+                );
+
+
+            if (selector) {
+
+                selector.addEventListener(
+                    "change",
+                    function () {
+
+                        saveLanguage(
+                            selector.value
+                        );
+
+
+                        applyLanguage(
+                            selector.value
+                        );
+                    }
+                );
+            }
+
+
+            const bottomBack =
+                document.getElementById(
+                    "backButtonBottom"
+                );
+
+
+            if (bottomBack) {
+
+                bottomBack.addEventListener(
+                    "click",
+                    function () {
+
+                        window.location.href =
+                            "index.html";
+                    }
+                );
+            }
+
+        }
+    );
+
+})();
+
+</script>
 
 </body>
-
 </html>
