@@ -13,9 +13,9 @@
     <title>لاگ اِن | مدرسہ شہناز اختر للبنات</title>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          FONTS
-    ================================================== -->
+    ====================================================== -->
 
     <link
         rel="preconnect"
@@ -29,14 +29,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap"
         rel="stylesheet"
     >
 
 
-    <!-- =================================================
+    <!-- =====================================================
          MAIN WEBSITE CSS
-    ================================================== -->
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -44,15 +44,24 @@
     >
 
 
-    <!-- =================================================
-         LOGIN PAGE ONLY CSS
-         First Introduction Page is NOT affected
-    ================================================== -->
+    <!-- =====================================================
+         LOGIN PAGE ONLY
+         FIRST PAGE IS NOT AFFECTED
+    ====================================================== -->
 
     <style>
 
         * {
             box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
         }
 
 
@@ -66,7 +75,7 @@
                 linear-gradient(
                     180deg,
                     #f4f8f6 0%,
-                    #eef4f1 100%
+                    #edf4f1 100%
                 );
 
             color: #17251f;
@@ -76,26 +85,26 @@
 
 
         /* =================================================
+           RTL LANGUAGES
            URDU / ARABIC / PASHTO
         ================================================== */
 
         body.login-page-v2[dir="rtl"] {
 
+            direction: rtl;
+
             font-family:
                 "Noto Nastaliq Urdu",
                 serif;
-
-            direction: rtl;
         }
 
-
-        body.login-page-v2[dir="rtl"]
-        .login-card-v2,
 
         body.login-page-v2[dir="rtl"]
         .login-form-v2 {
 
             direction: rtl;
+
+            text-align: right;
         }
 
 
@@ -103,14 +112,10 @@
         .login-label,
 
         body.login-page-v2[dir="rtl"]
-        #loginMessage {
-
-            text-align: right;
-        }
-
+        .login-input,
 
         body.login-page-v2[dir="rtl"]
-        .login-input {
+        #loginMessage {
 
             direction: rtl;
 
@@ -125,18 +130,16 @@
 
         body.login-page-v2[dir="ltr"] {
 
+            direction: ltr;
+
             font-family:
                 "Inter",
+                Arial,
                 sans-serif;
-
-            direction: ltr;
 
             text-align: left;
         }
 
-
-        body.login-page-v2[dir="ltr"]
-        .login-card-v2,
 
         body.login-page-v2[dir="ltr"]
         .login-form-v2 {
@@ -151,40 +154,19 @@
         .login-label,
 
         body.login-page-v2[dir="ltr"]
-        #loginMessage,
+        .login-input,
 
         body.login-page-v2[dir="ltr"]
-        .login-remember {
+        #loginMessage {
 
             direction: ltr;
 
             text-align: left;
-        }
-
-
-        body.login-page-v2[dir="ltr"]
-        .login-input {
-
-            direction: ltr;
-
-            text-align: left;
-        }
-
-
-        /*
-           Brand stays centered in every language
-        */
-
-        .login-brand {
-
-            direction: inherit;
-
-            text-align: center;
         }
 
 
         /* =================================================
-           PAGE WRAPPER
+           PAGE
         ================================================== */
 
         .login-page-wrapper {
@@ -232,9 +214,9 @@
 
             display: flex;
 
-            align-items: center;
-
             justify-content: space-between;
+
+            align-items: center;
 
             gap: 12px;
 
@@ -242,29 +224,35 @@
         }
 
 
+        .login-topbar button {
+
+            margin: 0;
+        }
+
+
         .login-back-mini {
 
-            width: 48px;
+            width: 48px !important;
+
+            min-width: 48px !important;
+
+            max-width: 48px !important;
 
             height: 48px;
 
-            min-width: 48px;
-
             min-height: 48px;
 
-            padding: 0;
-
-            margin: 0;
+            padding: 0 !important;
 
             border:
                 1px solid
-                #cfdcd5;
+                #ccd9d3;
 
             border-radius: 14px;
 
             background: #ffffff;
 
-            color: #0d5b3b;
+            color: #0c5c3c;
 
             font-size: 21px;
 
@@ -277,12 +265,12 @@
             cursor: pointer;
 
             box-shadow:
-                0 6px 20px
+                0 5px 18px
                 rgba(
-                    18,
-                    63,
-                    45,
-                    0.07
+                    13,
+                    80,
+                    53,
+                    0.06
                 );
         }
 
@@ -302,18 +290,18 @@
             min-height: 48px;
 
             padding:
-                8px
+                7px
                 14px;
 
             border:
                 1px solid
-                #cbd9d2;
+                #ccd9d3;
 
             border-radius: 14px;
 
             background: #ffffff;
 
-            color: #163a2c;
+            color: #193c2e;
 
             font: inherit;
 
@@ -324,12 +312,17 @@
 
 
         /* =================================================
-           LOGIN CARD
+           CARD
         ================================================== */
 
         .login-card-v2 {
 
             width: 100%;
+
+            padding:
+                28px
+                22px
+                24px;
 
             background: #ffffff;
 
@@ -344,19 +337,16 @@
 
             border-radius: 28px;
 
-            padding:
-                28px
-                22px
-                24px;
-
             box-shadow:
-                0 18px 55px
+                0 18px 50px
                 rgba(
-                    22,
-                    72,
-                    53,
+                    18,
+                    70,
+                    50,
                     0.10
                 );
+
+            overflow: hidden;
         }
 
 
@@ -366,15 +356,19 @@
 
         .login-brand {
 
+            width: 100%;
+
             margin-bottom: 24px;
+
+            text-align: center !important;
         }
 
 
         .login-lock {
 
-            width: 58px;
+            width: 60px;
 
-            height: 58px;
+            height: 60px;
 
             margin:
                 0 auto
@@ -382,31 +376,30 @@
 
             border-radius: 18px;
 
+            background: #eaf5ef;
+
             display: flex;
 
             align-items: center;
 
             justify-content: center;
 
-            background: #eaf5ef;
-
-            color: #0d5b3b;
-
-            font-size: 26px;
+            font-size: 27px;
         }
 
 
         .login-title {
 
             margin:
-                0 0
-                8px;
+                0
+                0
+                7px;
 
-            color: #0c5538;
+            color: #0b5a3b;
 
             font-size:
                 clamp(
-                    30px,
+                    31px,
                     8vw,
                     42px
                 );
@@ -421,7 +414,7 @@
 
             margin: 0;
 
-            color: #1d2d26;
+            color: #172c23;
 
             font-size: 19px;
 
@@ -434,11 +427,11 @@
         .login-address {
 
             margin:
-                4px
+                3px
                 0
                 0;
 
-            color: #738179;
+            color: #77827c;
 
             font-size: 13px;
 
@@ -458,17 +451,17 @@
 
             padding:
                 8px
-                16px;
+                17px;
 
             border-radius: 999px;
 
-            background: #f4eee0;
+            background: #f6f0e3;
 
-            color: #80611f;
-
-            font-weight: 700;
+            color: #80631f;
 
             font-size: 14px;
+
+            font-weight: 700;
 
             line-height: 1.7;
         }
@@ -482,7 +475,7 @@
 
             width: 100%;
 
-            margin-top: 24px;
+            margin-top: 22px;
         }
 
 
@@ -500,9 +493,12 @@
 
             width: 100%;
 
-            margin-bottom: 8px;
+            margin:
+                0
+                0
+                8px;
 
-            color: #24362e;
+            color: #263a31;
 
             font-size: 16px;
 
@@ -514,23 +510,29 @@
 
         .login-input {
 
-            width: 100%;
+            display: block;
+
+            width: 100% !important;
+
+            max-width: 100%;
 
             height: 58px;
 
-            border:
-                1.5px solid
-                #d4dfd9;
-
-            border-radius: 16px;
-
-            background: #fbfdfc;
+            margin: 0 !important;
 
             padding:
                 10px
                 16px;
 
-            color: #18261f;
+            border:
+                1.5px solid
+                #d1ddd7;
+
+            border-radius: 16px;
+
+            background: #fbfdfc;
+
+            color: #16241d;
 
             font: inherit;
 
@@ -539,27 +541,24 @@
             outline: none;
 
             transition:
-                border-color
-                .2s ease,
-                box-shadow
-                .2s ease,
-                background
-                .2s ease;
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
         }
 
 
         .login-input:focus {
 
-            border-color: #0d6643;
+            border-color: #116b49;
 
             background: #ffffff;
 
             box-shadow:
                 0 0 0 4px
                 rgba(
-                    13,
-                    102,
-                    67,
+                    17,
+                    107,
+                    73,
                     0.10
                 );
         }
@@ -595,27 +594,27 @@
             transform:
                 translateY(-50%);
 
-            width: 48px;
+            width: 48px !important;
+
+            min-width: 48px !important;
+
+            max-width: 48px !important;
 
             height: 42px;
 
-            min-width: 48px;
-
             min-height: 42px;
 
-            margin: 0;
+            margin: 0 !important;
 
-            padding: 0;
+            padding: 0 !important;
 
             border: 0;
 
             border-radius: 12px;
 
-            background: #edf5f1;
+            background: #edf6f1;
 
-            color: #0c5c3d;
-
-            font-size: 19px;
+            color: #0d5e3e;
 
             display: flex;
 
@@ -623,12 +622,14 @@
 
             justify-content: center;
 
+            font-size: 18px;
+
             cursor: pointer;
         }
 
 
         /* =================================================
-           REMEMBER ME
+           REMEMBER
         ================================================== */
 
         .login-remember {
@@ -642,11 +643,11 @@
             gap: 10px;
 
             margin:
-                4px
+                2px
                 0
                 18px;
 
-            color: #55665d;
+            color: #52655b;
 
             font-size: 14px;
 
@@ -658,21 +659,18 @@
 
             width: 20px;
 
-            height: 20px;
+            min-width: 20px;
 
-            flex:
-                0 0
-                20px;
+            height: 20px;
 
             margin: 0;
 
-            accent-color: #0d6543;
+            accent-color: #0d6845;
         }
 
 
         /* =================================================
            LOGIN MESSAGE
-           HIGHLIGHTED
         ================================================== */
 
         #loginMessage {
@@ -704,13 +702,13 @@
 
             display: block;
 
-            color: #8c1d24;
+            color: #941f27;
 
             background: #fff0f1;
 
             border:
                 1px solid
-                #f3b9bd;
+                #efb7bb;
 
             border-inline-start:
                 5px solid
@@ -722,9 +720,9 @@
 
             display: block;
 
-            color: #24516a;
+            color: #21536d;
 
-            background: #edf7fc;
+            background: #eef8fd;
 
             border:
                 1px solid
@@ -732,7 +730,7 @@
 
             border-inline-start:
                 5px solid
-                #3c7e9f;
+                #3b819f;
         }
 
 
@@ -740,13 +738,13 @@
 
             display: block;
 
-            color: #145d3c;
+            color: #145f3e;
 
-            background: #eaf7f0;
+            background: #ebf8f1;
 
             border:
                 1px solid
-                #b8dec9;
+                #b8dfca;
 
             border-inline-start:
                 5px solid
@@ -755,16 +753,18 @@
 
 
         /* =================================================
-           BUTTONS
+           LOGIN BUTTON
         ================================================== */
 
         .login-primary {
 
-            width: 100%;
+            width: 100% !important;
+
+            max-width: 100%;
 
             min-height: 56px;
 
-            margin: 0;
+            margin: 0 !important;
 
             padding:
                 10px
@@ -777,8 +777,8 @@
             background:
                 linear-gradient(
                     135deg,
-                    #0c5a3b,
-                    #11744d
+                    #0c5b3c,
+                    #11754e
                 );
 
             color: #ffffff;
@@ -795,21 +795,22 @@
                 0 10px 24px
                 rgba(
                     12,
-                    90,
-                    59,
-                    0.20
+                    91,
+                    60,
+                    0.18
                 );
         }
 
 
         .login-primary:active {
 
-            transform:
-                scale(
-                    .985
-                );
+            transform: scale(.985);
         }
 
+
+        /* =================================================
+           BACK LINK
+        ================================================== */
 
         .login-secondary {
 
@@ -817,14 +818,7 @@
 
             min-height: 52px;
 
-            margin:
-                12px
-                0
-                0;
-
-            padding:
-                9px
-                16px;
+            margin-top: 12px;
 
             border:
                 1px solid
@@ -834,20 +828,26 @@
 
             background: #ffffff;
 
-            color: #315045;
+            color: #315146;
 
-            font: inherit;
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-decoration: none;
 
             font-size: 15px;
 
             font-weight: 600;
 
-            cursor: pointer;
+            line-height: 1.5;
         }
 
 
         /* =================================================
-           SECURITY NOTE
+           SECURITY
         ================================================== */
 
         .login-security-note {
@@ -861,15 +861,15 @@
 
             border-top:
                 1px solid
-                #edf0ee;
+                #edf1ef;
 
-            color: #7a867f;
+            color: #78857e;
+
+            text-align: center;
 
             font-size: 13px;
 
             line-height: 1.9;
-
-            text-align: center;
         }
 
 
@@ -884,8 +884,7 @@
 
             .login-page-wrapper {
 
-                padding-inline:
-                    14px;
+                padding-inline: 14px;
             }
 
 
@@ -896,16 +895,13 @@
                     18px
                     22px;
 
-                border-radius:
-                    24px;
+                border-radius: 24px;
             }
 
 
             .login-language-wrap {
 
-                width: 138px;
-
-                max-width: 50%;
+                width: 140px;
             }
 
 
@@ -918,12 +914,6 @@
             .login-madrassa-name {
 
                 font-size: 17px;
-            }
-
-
-            .login-input {
-
-                height: 56px;
             }
 
         }
@@ -940,9 +930,9 @@
 
             .login-page-wrapper {
 
-                align-items: center;
-
                 padding: 36px;
+
+                align-items: center;
             }
 
         }
@@ -1061,9 +1051,7 @@
                         اکاؤنٹ
                     </span>
 
-                    <span>
-                        :
-                    </span>
+                    <span>:</span>
 
                     <span id="selectedRoleText">
                         —
@@ -1162,7 +1150,7 @@
 
 
 
-                <!-- REMEMBER ME -->
+                <!-- REMEMBER -->
 
                 <label class="login-remember">
 
@@ -1181,10 +1169,10 @@
 
 
 
-                <!-- =================================================
-                     ONLY DYNAMIC LOGIN MESSAGE
-                     No Pending / Rejected permanent text
-                ================================================== -->
+                <!--
+                    ONLY DYNAMIC LOGIN MESSAGE.
+                    NO PERMANENT PENDING / REJECTED MESSAGE.
+                -->
 
                 <div
                     id="loginMessage"
@@ -1208,21 +1196,22 @@
 
                 <!-- BACK -->
 
-                <button
-                    type="button"
-                    id="backButtonBottom"
+                <a
+                    href="index.html"
                     class="login-secondary"
                     data-login-i18n="back"
                 >
                     واپس جائیں
-                </button>
+                </a>
 
 
             </form>
 
 
 
-            <!-- SECURITY NOTE -->
+            <!-- =================================================
+                 SECURITY NOTE
+            ================================================== -->
 
             <p
                 class="login-security-note"
@@ -1251,8 +1240,9 @@
 ></script>
 
 
+
 <!-- =====================================================
-     MAIN SCRIPT
+     EXISTING WORKING SCRIPT.JS
 ===================================================== -->
 
 <script src="script.js"></script>
@@ -1260,7 +1250,9 @@
 
 
 <!-- =====================================================
-     LOGIN LANGUAGE SYSTEM
+     LOGIN LANGUAGE
+     NO MUTATION OBSERVER
+     NO LOGIN SUBMIT INTERFERENCE
 ===================================================== -->
 
 <script>
@@ -1276,10 +1268,6 @@
 
     const translations = {
 
-
-        /* =============================================
-           URDU
-        ============================================== */
 
         ur: {
 
@@ -1342,11 +1330,6 @@
         },
 
 
-
-        /* =============================================
-           ENGLISH
-        ============================================== */
-
         en: {
 
             loginTitle:
@@ -1408,11 +1391,6 @@
         },
 
 
-
-        /* =============================================
-           ARABIC
-        ============================================== */
-
         ar: {
 
             loginTitle:
@@ -1473,11 +1451,6 @@
             }
         },
 
-
-
-        /* =============================================
-           PASHTO
-        ============================================== */
 
         ps: {
 
@@ -1544,17 +1517,12 @@
 
 
     /* =================================================
-       LANGUAGE STORAGE
-
-       Login page first reads the language already
-       selected on the Main / Introduction page.
-
-       Default only when nothing was ever selected = Urdu
+       READ MAIN PAGE LANGUAGE
     ================================================== */
 
     function getSavedLanguage() {
 
-        const possibleKeys = [
+        const exactKeys = [
 
             "madrassaLanguage",
 
@@ -1566,12 +1534,18 @@
 
             "currentLanguage",
 
-            "preferredLanguage"
+            "preferredLanguage",
+
+            "appLanguage",
+
+            "madrassa_language",
+
+            "lang"
         ];
 
 
         for (
-            const key of possibleKeys
+            const key of exactKeys
         ) {
 
             const value =
@@ -1582,7 +1556,9 @@
 
             if (
                 value &&
-                translations[value]
+                translations[
+                    value
+                ]
             ) {
 
                 return value;
@@ -1590,10 +1566,63 @@
         }
 
 
+        /*
+           Extra fallback:
+           find the Main Page language even if
+           it uses another language-related key.
+        */
+
+        for (
+            let i = 0;
+            i < localStorage.length;
+            i++
+        ) {
+
+            const key =
+                localStorage.key(i);
+
+
+            if (
+                !key ||
+                !/lang|language/i.test(
+                    key
+                )
+            ) {
+
+                continue;
+            }
+
+
+            const value =
+                localStorage.getItem(
+                    key
+                );
+
+
+            if (
+                value &&
+                translations[
+                    value
+                ]
+            ) {
+
+                return value;
+            }
+        }
+
+
+        /*
+           First ever visit only
+        */
+
         return "ur";
     }
 
 
+
+    /* =================================================
+       SAVE LANGUAGE
+    ================================================== */
 
     function saveLanguage(
         language
@@ -1610,54 +1639,30 @@
         }
 
 
-        /*
-           Save into all supported keys so
-           Main Page and Login Page remain synced.
-        */
-
-        localStorage.setItem(
+        [
             "madrassaLanguage",
-            language
-        );
-
-
-        localStorage.setItem(
             "selectedLanguage",
-            language
-        );
-
-
-        localStorage.setItem(
             "siteLanguage",
-            language
-        );
+            "language"
+        ]
+            .forEach(
+                key => {
 
-
-        localStorage.setItem(
-            "language",
-            language
-        );
-
-
-        localStorage.setItem(
-            "currentLanguage",
-            language
-        );
-
-
-        localStorage.setItem(
-            "preferredLanguage",
-            language
-        );
+                    localStorage.setItem(
+                        key,
+                        language
+                    );
+                }
+            );
     }
 
 
 
     /* =================================================
-       CURRENT LOGIN ROLE
+       ROLE
     ================================================== */
 
-    function currentRole() {
+    function getRole() {
 
         const params =
             new URLSearchParams(
@@ -1672,6 +1677,7 @@
                 ) ||
                 "admin"
             )
+                .trim()
                 .toLowerCase();
 
 
@@ -1712,30 +1718,21 @@
         }
 
 
-        const text =
+        const dictionary =
             translations[
                 language
             ];
 
 
-        /* =============================================
-           DIRECTION
-        ============================================== */
-
-        const rtlLanguages = [
-
-            "ur",
-
-            "ar",
-
-            "ps"
-        ];
-
-
         const isRTL =
-            rtlLanguages.includes(
-                language
-            );
+            [
+                "ur",
+                "ar",
+                "ps"
+            ]
+                .includes(
+                    language
+                );
 
 
         const direction =
@@ -1743,6 +1740,10 @@
                 ? "rtl"
                 : "ltr";
 
+
+        /* =============================================
+           PAGE DIRECTION
+        ============================================== */
 
         document.documentElement.lang =
             language;
@@ -1764,7 +1765,7 @@
 
 
         /* =============================================
-           TEXT
+           STATIC TEXT
         ============================================== */
 
         document
@@ -1780,12 +1781,12 @@
 
 
                     if (
-                        text[key] !==
+                        dictionary[key] !==
                         undefined
                     ) {
 
                         element.textContent =
-                            text[key];
+                            dictionary[key];
                     }
                 }
             );
@@ -1809,12 +1810,12 @@
 
 
                     if (
-                        text[key] !==
+                        dictionary[key] !==
                         undefined
                     ) {
 
                         element.placeholder =
-                            text[key];
+                            dictionary[key];
                     }
                 }
             );
@@ -1834,16 +1835,15 @@
         if (roleText) {
 
             roleText.textContent =
-                text.roles[
-                    currentRole()
-                ] ||
-                text.roles.admin;
+                dictionary.roles[
+                    getRole()
+                ];
         }
 
 
 
         /* =============================================
-           LANGUAGE SELECT
+           SELECT
         ============================================== */
 
         const selector =
@@ -1892,13 +1892,13 @@
 
 
         /* =============================================
-           TITLE
+           PAGE TITLE
         ============================================== */
 
         document.title =
-            text.loginTitle +
+            dictionary.loginTitle +
             " | " +
-            text.madrassaName;
+            dictionary.madrassaName;
 
 
 
@@ -1913,171 +1913,173 @@
 
 
     /* =================================================
-       TRANSLATE DYNAMIC SCRIPT.JS LOGIN MESSAGES
+       TRANSLATE ONLY LOGIN MESSAGES
+       WITHOUT OBSERVER
     ================================================== */
 
-    function translateLoginMessage() {
-
-        const box =
-            document.getElementById(
-                "loginMessage"
-            );
-
-
-        if (!box) {
-            return;
-        }
-
+    function translateLoginMessage(
+        originalText
+    ) {
 
         const language =
             window.LOGIN_LANGUAGE ||
             getSavedLanguage();
 
 
-        const text =
+        const dictionary =
             translations[
                 language
             ] ||
             translations.ur;
 
 
-        const current =
+        const value =
             String(
-                box.textContent ||
+                originalText ||
                 ""
             )
                 .trim();
 
 
-        if (!current) {
-            return;
-        }
-
-
-        const loadingMessages = [
-
-            "لاگ اِن کیا جا رہا ہے...",
-
-            "Logging in..."
-        ];
-
-
-        const emptyMessages = [
-
+        if (
+            value ===
             "صارف نام اور پاس ورڈ درج کریں۔"
-        ];
-
-
-        const invalidMessages = [
-
-            "صارف نام، پاس ورڈ یا اکاؤنٹ کی حالت درست نہیں ہے۔",
-
-            "صارف نام، پاس ورڈ یا اکاؤنٹ کی حالت درست نہیں ہے۔",
-
-            "لاگ اِن نہیں ہو سکا۔"
-        ];
-
-
-        let translated =
-            current;
-
-
-        if (
-            loadingMessages.includes(
-                current
-            )
         ) {
 
-            translated =
-                text.loggingIn;
-
-
-        } else if (
-            emptyMessages.includes(
-                current
-            )
-        ) {
-
-            translated =
-                text.emptyCredentials;
-
-
-        } else if (
-            invalidMessages.includes(
-                current
-            )
-        ) {
-
-            translated =
-                text.invalidLogin;
+            return dictionary
+                .emptyCredentials;
         }
 
 
         if (
-            translated !==
-            current
+            value ===
+            "لاگ اِن کیا جا رہا ہے..."
         ) {
 
-            box.textContent =
-                translated;
+            return dictionary
+                .loggingIn;
         }
 
-
-        /*
-           Ensure important messages remain highlighted
-        */
 
         if (
-            translated ===
-            text.invalidLogin ||
-            translated ===
-            text.emptyCredentials
+            value ===
+            "صارف نام، پاس ورڈ یا اکاؤنٹ کی حالت درست نہیں ہے۔"
         ) {
 
-            box.classList.remove(
-                "info",
-                "success"
-            );
-
-
-            box.classList.add(
-                "error"
-            );
-
-
-        } else if (
-            translated ===
-            text.loggingIn
-        ) {
-
-            box.classList.remove(
-                "error",
-                "success"
-            );
-
-
-            box.classList.add(
-                "info"
-            );
+            return dictionary
+                .invalidLogin;
         }
 
+
+        return originalText;
     }
 
 
 
     /* =================================================
-       START PAGE
+       CONNECT WITH EXISTING script.js
+       WITHOUT CHANGING LOGIN LOGIC
+    ================================================== */
+
+    if (
+        window.App &&
+        typeof window.App.message ===
+        "function"
+    ) {
+
+        const originalMessage =
+            window.App.message;
+
+
+        window.App.message =
+            function (
+                target,
+                text,
+                type
+            ) {
+
+                let output =
+                    text;
+
+
+                const node =
+                    typeof target ===
+                    "string"
+                        ? document
+                            .getElementById(
+                                target
+                            )
+                        : target;
+
+
+                if (
+                    node &&
+                    node.id ===
+                    "loginMessage"
+                ) {
+
+                    output =
+                        translateLoginMessage(
+                            text
+                        );
+                }
+
+
+                return originalMessage.call(
+                    window.App,
+                    target,
+                    output,
+                    type
+                );
+            };
+    }
+
+
+
+    /*
+       script.js sets the role name itself.
+       We keep its login logic exactly as it is,
+       then simply re-apply the selected language.
+    */
+
+    if (
+        window.App &&
+        typeof window.App.initLogin ===
+        "function"
+    ) {
+
+        const originalInitLogin =
+            window.App.initLogin;
+
+
+        window.App.initLogin =
+            function () {
+
+                const result =
+                    originalInitLogin.apply(
+                        window.App,
+                        arguments
+                    );
+
+
+                applyLanguage(
+                    getSavedLanguage()
+                );
+
+
+                return result;
+            };
+    }
+
+
+
+    /* =================================================
+       PAGE READY
     ================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
         function () {
-
-            /*
-               IMPORTANT:
-               Main Page selected language is used here.
-               If no selection exists, Urdu is default.
-            */
 
             const language =
                 getSavedLanguage();
@@ -2090,7 +2092,7 @@
 
 
             /* ==========================================
-               LANGUAGE CHANGE
+               LANGUAGE SELECT
             ========================================== */
 
             const selector =
@@ -2119,77 +2121,28 @@
                         );
 
 
-                        translateLoginMessage();
-                    }
-                );
-            }
+                        /*
+                           Clear an old message when
+                           language is manually changed.
+                        */
+
+                        const message =
+                            document.getElementById(
+                                "loginMessage"
+                            );
 
 
+                        if (message) {
 
-            /* ==========================================
-               BOTTOM BACK BUTTON
-            ========================================== */
+                            message.textContent =
+                                "";
 
-            const bottomBack =
-                document.getElementById(
-                    "backButtonBottom"
-                );
-
-
-            if (bottomBack) {
-
-                bottomBack.addEventListener(
-                    "click",
-                    function () {
-
-                        window.location.href =
-                            "index.html";
-                    }
-                );
-            }
-
-
-
-            /* ==========================================
-               WATCH LOGIN MESSAGE FROM script.js
-            ========================================== */
-
-            const loginMessage =
-                document.getElementById(
-                    "loginMessage"
-                );
-
-
-            if (loginMessage) {
-
-                const observer =
-                    new MutationObserver(
-                        function () {
-
-                            translateLoginMessage();
+                            message.classList.remove(
+                                "error",
+                                "info",
+                                "success"
+                            );
                         }
-                    );
-
-
-                observer.observe(
-                    loginMessage,
-                    {
-                        childList:
-                            true,
-
-                        characterData:
-                            true,
-
-                        subtree:
-                            true,
-
-                        attributes:
-                            true,
-
-                        attributeFilter:
-                            [
-                                "class"
-                            ]
                     }
                 );
             }
@@ -2204,4 +2157,4 @@
 
 </body>
 
-</html>
+    </html>
