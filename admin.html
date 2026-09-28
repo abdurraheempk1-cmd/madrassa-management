@@ -34,7 +34,617 @@
         rel="stylesheet"
         href="style.css"
     >
+<style>
 
+/* =========================================================
+   ADMIN MAIN PAGE - FINAL COMPACT MOBILE DESIGN
+   Only admin.html
+========================================================= */
+
+body.admin-short-dashboard {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #f4f7f5;
+    color: #173228;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+
+/* MAIN */
+
+.admin-short-dashboard .portal-main {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 18px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.admin-short-header {
+    width: 100%;
+    min-height: 125px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #074a32,
+            #0b6a47
+        );
+
+    border-radius: 18px;
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 25px
+        rgba(7,74,50,.12);
+}
+
+.admin-short-label {
+    display: block;
+    color: #d6e9df;
+    font-size: 10px;
+}
+
+.admin-short-header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 27px;
+    line-height: 1.8;
+}
+
+.admin-short-header p {
+    margin: 0;
+    color: rgba(255,255,255,.75);
+    font-size: 10px;
+}
+
+.admin-short-date {
+    padding: 7px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.10);
+    color: #ffffff;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   TOP 4 CARDS
+========================================================= */
+
+.admin-short-summary {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0,1fr));
+
+    gap: 9px;
+    margin-bottom: 12px;
+}
+
+.admin-short-stat {
+    min-width: 0;
+    min-height: 110px;
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid #dfe8e3;
+    border-radius: 15px;
+
+    background: #ffffff;
+    color: #173228;
+
+    box-shadow:
+        0 4px 15px
+        rgba(20,65,45,.04);
+}
+
+.admin-short-stat-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 5px;
+
+    border-radius: 10px;
+
+    background: #e9f4ee;
+    color: #0b6342;
+
+    font-family: Arial, sans-serif;
+}
+
+.admin-short-stat small {
+    color: #728178;
+    font-size: 9px;
+}
+
+.admin-short-stat strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #13362a;
+
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    line-height: 1.25;
+
+    direction: ltr;
+    text-align: right;
+}
+
+.admin-short-stat .admin-short-money {
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   WHITE SECTIONS
+========================================================= */
+
+.admin-short-card {
+    width: 100%;
+
+    margin-bottom: 12px;
+    padding: 15px;
+
+    border: 1px solid #dfe8e3;
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 4px 15px
+        rgba(20,65,45,.04);
+}
+
+.admin-short-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-bottom: 11px;
+}
+
+.admin-short-card-heading h2 {
+    margin: 0;
+    color: #15372a;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.admin-short-card-heading p {
+    margin: 0;
+    color: #839087;
+    font-size: 9px;
+}
+
+.admin-short-card-heading > a {
+    flex: 0 0 auto;
+
+    padding: 4px 9px;
+
+    border-radius: 8px;
+
+    background: #edf6f1;
+    color: #0b6242;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+.admin-short-attendance {
+    display: grid;
+
+    grid-template-columns:
+        135px minmax(0,1fr);
+
+    gap: 8px;
+}
+
+.admin-short-attendance-main {
+    min-height: 105px;
+
+    padding: 12px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #075c3e,
+            #0b704b
+        );
+
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-short-attendance-main span {
+    color: #d9ebe2;
+    font-size: 9px;
+}
+
+.admin-short-attendance-main strong {
+    margin-top: 4px;
+
+    font-family: Arial, sans-serif;
+    font-size: 31px;
+    line-height: 1;
+}
+
+.admin-short-attendance-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap: 6px;
+}
+
+.admin-short-attendance-grid > div {
+    min-width: 0;
+    min-height: 92px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e3ebe6;
+    background: #f8faf9;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.admin-short-attendance-grid small {
+    color: #728178;
+    font-size: 8px;
+}
+
+.admin-short-attendance-grid strong {
+    margin-top: 3px;
+
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+
+    color: #17382b;
+}
+
+
+/* =========================================================
+   QUICK OPTIONS
+========================================================= */
+
+.admin-short-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6,minmax(0,1fr));
+
+    gap: 7px;
+}
+
+.admin-short-actions > a {
+    min-width: 0;
+    min-height: 82px;
+
+    padding: 8px 4px;
+
+    border: 1px solid #e1e9e4;
+    border-radius: 12px;
+
+    background: #f9fbfa;
+    color: #17372b;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.admin-short-actions > a > span {
+    width: 33px;
+    height: 33px;
+
+    margin-bottom: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #eaf4ef;
+
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.admin-short-actions strong {
+    font-size: 9px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   CLASS SUMMARY
+========================================================= */
+
+.admin-short-classes {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap: 7px;
+}
+
+.admin-short-classes > div,
+.admin-short-classes > a {
+    min-width: 0;
+    min-height: 58px;
+
+    padding: 8px 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 6px;
+
+    border: 1px solid #e3ebe6;
+    border-radius: 11px;
+
+    background: #fafcfb;
+}
+
+.admin-short-classes span {
+    color: #58695f;
+    font-size: 9px;
+}
+
+.admin-short-classes strong {
+    color: #0b6744;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .admin-short-dashboard .portal-main {
+        padding: 9px;
+    }
+
+    .admin-short-header {
+        min-height: 105px;
+        padding: 15px;
+        margin-bottom: 8px;
+        border-radius: 14px;
+    }
+
+    .admin-short-label {
+        font-size: 8px;
+    }
+
+    .admin-short-header h1 {
+        font-size: 20px;
+    }
+
+    .admin-short-header p {
+        font-size: 8px;
+    }
+
+    .admin-short-date {
+        display: none;
+    }
+
+
+    /* 4 important cards */
+
+    .admin-short-summary {
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .admin-short-stat {
+        min-height: 93px;
+        padding: 9px;
+        border-radius: 12px;
+    }
+
+    .admin-short-stat-icon {
+        width: 29px;
+        height: 29px;
+        border-radius: 8px;
+        font-size: 12px;
+    }
+
+    .admin-short-stat small {
+        font-size: 8px;
+    }
+
+    .admin-short-stat strong {
+        font-size: 21px;
+    }
+
+    .admin-short-stat .admin-short-money {
+        font-size: 13px;
+    }
+
+
+    /* sections */
+
+    .admin-short-card {
+        margin-bottom: 8px;
+        padding: 11px;
+        border-radius: 13px;
+    }
+
+    .admin-short-card-heading {
+        margin-bottom: 8px;
+    }
+
+    .admin-short-card-heading h2 {
+        font-size: 14px;
+    }
+
+    .admin-short-card-heading p {
+        font-size: 8px;
+    }
+
+
+    /* attendance */
+
+    .admin-short-attendance {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-short-attendance-main {
+        min-height: 75px;
+    }
+
+    .admin-short-attendance-main strong {
+        font-size: 27px;
+    }
+
+    .admin-short-attendance-grid {
+        grid-template-columns:
+            repeat(4,minmax(0,1fr));
+
+        gap: 4px;
+    }
+
+    .admin-short-attendance-grid > div {
+        min-height: 62px;
+        padding: 5px;
+    }
+
+    .admin-short-attendance-grid small {
+        font-size: 7px;
+    }
+
+    .admin-short-attendance-grid strong {
+        font-size: 17px;
+    }
+
+
+    /* quick access */
+
+    .admin-short-actions {
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+
+        gap: 5px;
+    }
+
+    .admin-short-actions > a {
+        min-height: 70px;
+        padding: 6px 2px;
+    }
+
+    .admin-short-actions > a > span {
+        width: 28px;
+        height: 28px;
+
+        margin-bottom: 3px;
+
+        font-size: 12px;
+    }
+
+    .admin-short-actions strong {
+        font-size: 8px;
+    }
+
+
+    /* classes */
+
+    .admin-short-classes {
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap: 5px;
+    }
+
+    .admin-short-classes > div,
+    .admin-short-classes > a {
+        min-height: 50px;
+        padding: 6px 8px;
+    }
+
+    .admin-short-classes span {
+        font-size: 8px;
+    }
+
+    .admin-short-classes strong {
+        font-size: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-width: 370px) {
+
+    .admin-short-actions {
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+    .admin-short-attendance-grid {
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+}
+
+</style>
 </head>
 
 
