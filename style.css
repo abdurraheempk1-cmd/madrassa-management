@@ -7237,6 +7237,18 @@ body.admin-dashboard-page .portal-sidebar-overlay {
     }
 
 }
+
+/* =========================================================
+   FINAL ADMIN DASHBOARD CONFLICT FIX
+========================================================= */
+
+@media (max-width: 850px) {
+
+    body.admin-dashboard-page {
+        padding-top: 0 !important;
+    }
+
+}
 /* =========================================================
    END PART 3 / 3
    COMPLETE STYLE.CSS
