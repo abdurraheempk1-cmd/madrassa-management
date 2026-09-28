@@ -38,1563 +38,726 @@
 </head>
 
 
-<body class="admin-portal-page admin-dashboard-page">
+<body class="admin-portal-page admin-short-dashboard">
 
 
 <!-- =====================================================
      MOBILE HEADER
 ===================================================== -->
 
-<header class="admin-mobile-header">
-
-    <div class="admin-mobile-brand">
-
-        <div class="admin-mobile-brand-icon">
-            🕌
-        </div>
-
-        <div>
-
-            <strong>
-                مدرسہ شہناز اختر للبنات
-            </strong>
-
-            <small>
-                ایڈمن پورٹل
-            </small>
-
-        </div>
-
-    </div>
-
+<header class="portal-mobile-header">
 
     <button
         type="button"
+        class="portal-menu-button"
         id="adminMenuButton"
-        class="admin-mobile-menu"
         aria-label="مینو"
     >
         ☰
     </button>
 
+    <div class="portal-mobile-title">
+        مدرسہ شہناز اختر للبنات
+    </div>
+
 </header>
 
 
 
+<div class="portal-layout">
+
+
 <!-- =====================================================
-     MAIN LAYOUT
+     SIDEBAR
 ===================================================== -->
 
-<div class="admin-dashboard-layout">
+<aside
+    class="portal-sidebar"
+    id="adminSidebar"
+>
 
 
-    <!-- =================================================
-         SIDEBAR
-    ================================================== -->
+    <div class="portal-brand">
 
-    <aside
-        class="admin-dashboard-sidebar"
-        id="adminSidebar"
-    >
+        <div class="portal-brand-icon">
+            🕌
+        </div>
+
+        <h2>
+            مدرسہ شہناز اختر للبنات
+        </h2>
+
+        <p>
+            گاؤں ہل غورغشتوں، ضلع بونیر
+        </p>
+
+        <span class="portal-role-label">
+            ایڈمن پورٹل
+        </span>
+
+    </div>
 
 
-        <div class="admin-sidebar-brand">
 
-            <div class="admin-sidebar-logo">
-                🕌
-            </div>
+    <nav class="portal-navigation">
 
-            <h2>
-                مدرسہ شہناز اختر للبنات
-            </h2>
 
-            <p>
-                گاؤں ہل غورغشتوں، ضلع بونیر
-            </p>
+        <a
+            href="admin.html"
+            class="portal-nav-link active"
+        >
+            <span>⌂</span>
+            <strong>ڈیش بورڈ</strong>
+        </a>
 
-            <span class="admin-role-badge">
-                ایڈمن پورٹل
+
+        <a
+            href="students.html"
+            class="portal-nav-link"
+        >
+            <span>👥</span>
+            <strong>طالبات</strong>
+        </a>
+
+
+        <a
+            href="teachers.html"
+            class="portal-nav-link"
+        >
+            <span>👤</span>
+            <strong>اساتذہ</strong>
+        </a>
+
+
+        <a
+            href="admin-attendance.html"
+            class="portal-nav-link"
+        >
+            <span>✓</span>
+            <strong>حاضری</strong>
+        </a>
+
+
+        <a
+            href="admin-marks.html"
+            class="portal-nav-link"
+        >
+            <span>▤</span>
+            <strong>امتحانات و نمبرات</strong>
+        </a>
+
+
+        <a
+            href="admin-homework.html"
+            class="portal-nav-link"
+        >
+            <span>📚</span>
+            <strong>ہوم ورک</strong>
+
+            <span
+                class="nav-count"
+                id="adminHomeworkCount"
+                hidden
+            >
+                0
+            </span>
+        </a>
+
+
+        <a
+            href="admin-announcements.html"
+            class="portal-nav-link"
+        >
+            <span>🔔</span>
+            <strong>اعلانات</strong>
+        </a>
+
+
+        <a
+            href="admin-feedback.html"
+            class="portal-nav-link"
+        >
+            <span>✎</span>
+            <strong>اساتذہ کے نوٹس</strong>
+        </a>
+
+
+        <div class="portal-nav-divider"></div>
+
+
+        <a
+            href="admin-finance.html"
+            class="portal-nav-link"
+        >
+            <span>Rs</span>
+            <strong>مالیات</strong>
+        </a>
+
+
+        <a
+            href="admin-hostel.html"
+            class="portal-nav-link"
+        >
+            <span>🏠</span>
+            <strong>مدرسہ میں رہائش</strong>
+        </a>
+
+
+        <a
+            href="admin-promotions.html"
+            class="portal-nav-link"
+        >
+            <span>↑</span>
+            <strong>ترقی و جماعت تبدیلی</strong>
+        </a>
+
+
+        <a
+            href="admin-id-cards.html"
+            class="portal-nav-link"
+        >
+            <span>▣</span>
+            <strong>شناختی کارڈ</strong>
+        </a>
+
+
+        <a
+            href="admin-reports.html"
+            class="portal-nav-link"
+        >
+            <span>📊</span>
+            <strong>رپورٹس</strong>
+        </a>
+
+
+        <div class="portal-nav-divider"></div>
+
+
+        <a
+            href="admin-accounts.html"
+            class="portal-nav-link"
+        >
+            <span>🔐</span>
+
+            <strong>
+                اکاؤنٹس اور منظوری
+            </strong>
+
+            <span
+                class="nav-count"
+                id="adminPendingApprovalCount"
+                hidden
+            >
+                0
+            </span>
+        </a>
+
+
+        <a
+            href="admin-settings.html"
+            class="portal-nav-link"
+        >
+            <span>⚙</span>
+            <strong>ترتیبات</strong>
+        </a>
+
+
+    </nav>
+
+
+
+    <div class="portal-sidebar-footer">
+
+        <button
+            type="button"
+            id="adminLogoutButton"
+            class="portal-logout-button"
+        >
+            خروج
+        </button>
+
+    </div>
+
+
+</aside>
+
+
+
+<div
+    class="portal-sidebar-overlay"
+    id="adminSidebarOverlay"
+></div>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="portal-main">
+
+
+    <!-- HEADER -->
+
+    <section class="admin-short-header">
+
+        <div>
+
+            <span class="admin-short-label">
+                مرکزی انتظامی نظام
             </span>
 
-        </div>
-
-
-
-        <nav class="admin-sidebar-nav">
-
-
-            <a
-                href="admin.html"
-                class="admin-nav-item active"
-            >
-                <span class="admin-nav-icon">
-                    ⌂
+            <h1>
+                السلام علیکم،
+                <span id="adminWelcomeName">
+                    ایڈمن
                 </span>
+            </h1>
 
-                <span>
-                    ڈیش بورڈ
-                </span>
-            </a>
-
-
-            <a
-                href="students.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    👥
-                </span>
-
-                <span>
-                    طالبات
-                </span>
-            </a>
-
-
-            <a
-                href="teachers.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    👤
-                </span>
-
-                <span>
-                    اساتذہ
-                </span>
-            </a>
-
-
-            <a
-                href="admin-attendance.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ✓
-                </span>
-
-                <span>
-                    حاضری
-                </span>
-            </a>
-
-
-            <a
-                href="admin-marks.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ▤
-                </span>
-
-                <span>
-                    امتحانات و نمبرات
-                </span>
-            </a>
-
-
-            <a
-                href="admin-homework.html"
-                class="admin-nav-item"
-            >
-
-                <span class="admin-nav-icon">
-                    📚
-                </span>
-
-                <span>
-                    ہوم ورک
-                </span>
-
-                <span
-                    class="admin-nav-count"
-                    id="adminHomeworkCount"
-                    hidden
-                >
-                    0
-                </span>
-
-            </a>
-
-
-            <a
-                href="admin-announcements.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    🔔
-                </span>
-
-                <span>
-                    اعلانات
-                </span>
-            </a>
-
-
-            <a
-                href="admin-feedback.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ✎
-                </span>
-
-                <span>
-                    اساتذہ کے نوٹس
-                </span>
-            </a>
-
-
-            <div class="admin-nav-divider"></div>
-
-
-            <a
-                href="admin-finance.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ₨
-                </span>
-
-                <span>
-                    مالیات
-                </span>
-            </a>
-
-
-            <a
-                href="admin-hostel.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    🏠
-                </span>
-
-                <span>
-                    مدرسہ میں رہائش
-                </span>
-            </a>
-
-
-            <a
-                href="admin-promotions.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ↑
-                </span>
-
-                <span>
-                    ترقی و جماعت تبدیلی
-                </span>
-            </a>
-
-
-            <a
-                href="admin-id-cards.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ▣
-                </span>
-
-                <span>
-                    شناختی کارڈ
-                </span>
-            </a>
-
-
-            <a
-                href="admin-reports.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    📊
-                </span>
-
-                <span>
-                    رپورٹس
-                </span>
-            </a>
-
-
-            <div class="admin-nav-divider"></div>
-
-
-            <a
-                href="admin-accounts.html"
-                class="admin-nav-item"
-            >
-
-                <span class="admin-nav-icon">
-                    🔐
-                </span>
-
-                <span>
-                    اکاؤنٹس اور منظوری
-                </span>
-
-                <span
-                    class="admin-nav-count"
-                    id="adminPendingApprovalCount"
-                    hidden
-                >
-                    0
-                </span>
-
-            </a>
-
-
-            <a
-                href="admin-settings.html"
-                class="admin-nav-item"
-            >
-                <span class="admin-nav-icon">
-                    ⚙
-                </span>
-
-                <span>
-                    ترتیبات
-                </span>
-            </a>
-
-
-        </nav>
-
-
-
-        <div class="admin-sidebar-footer">
-
-            <button
-                type="button"
-                id="adminLogoutButton"
-                class="admin-sidebar-logout"
-            >
-                <span>
-                    ⇥
-                </span>
-
-                <strong>
-                    خروج
-                </strong>
-            </button>
+            <p>
+                مدرسہ مینجمنٹ سسٹم
+            </p>
 
         </div>
 
 
-    </aside>
+        <span
+            id="adminTodayDate"
+            class="admin-short-date"
+        >
+            —
+        </span>
+
+    </section>
 
 
-
-    <!-- =================================================
-         MOBILE OVERLAY
-    ================================================== -->
 
     <div
-        class="portal-sidebar-overlay"
-        id="adminSidebarOverlay"
+        id="adminDashboardMessage"
+        class="portal-message"
+        hidden
     ></div>
 
 
 
     <!-- =================================================
-         MAIN CONTENT
+         MAIN SUMMARY
     ================================================== -->
 
-    <main class="admin-dashboard-main">
+    <section class="admin-short-summary">
 
 
-        <!-- =================================================
-             TOP HEADER
-        ================================================== -->
+        <a
+            href="students.html"
+            class="admin-short-stat"
+        >
 
-        <section class="admin-dashboard-header">
+            <span class="admin-short-stat-icon">
+                👥
+            </span>
 
-            <div class="admin-dashboard-welcome">
+            <small>
+                کل طالبات
+            </small>
 
-                <span class="admin-dashboard-eyebrow">
-                    مرکزی انتظامی نظام
-                </span>
+            <strong id="studentTotal">
+                0
+            </strong>
 
-                <h1>
-                    السلام علیکم،
-                    <span id="adminWelcomeName">
-                        ایڈمن
-                    </span>
-                </h1>
+        </a>
+
+
+        <a
+            href="teachers.html"
+            class="admin-short-stat"
+        >
+
+            <span class="admin-short-stat-icon">
+                👤
+            </span>
+
+            <small>
+                کل اساتذہ
+            </small>
+
+            <strong id="teacherTotal">
+                0
+            </strong>
+
+        </a>
+
+
+        <a
+            href="admin-accounts.html"
+            class="admin-short-stat"
+        >
+
+            <span class="admin-short-stat-icon">
+                🔐
+            </span>
+
+            <small>
+                زیرِ التواء
+            </small>
+
+            <strong id="adminPendingApplications">
+                0
+            </strong>
+
+        </a>
+
+
+        <a
+            href="admin-finance.html"
+            class="admin-short-stat"
+        >
+
+            <span class="admin-short-stat-icon">
+                Rs
+            </span>
+
+            <small>
+                موجودہ بیلنس
+            </small>
+
+            <strong
+                id="adminCurrentBalance"
+                class="admin-short-money"
+            >
+                0 PKR
+            </strong>
+
+        </a>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         ATTENDANCE
+    ================================================== -->
+
+    <section class="admin-short-card">
+
+
+        <div class="admin-short-card-heading">
+
+            <div>
+
+                <h2>
+                    آج کی حاضری
+                </h2>
 
                 <p>
-                    مدرسہ کے تعلیمی، انتظامی اور مالی ریکارڈ کا مرکزی ڈیش بورڈ
+                    آج محفوظ شدہ تمام پیریڈز
                 </p>
 
             </div>
 
 
-            <div class="admin-dashboard-header-meta">
-
-                <div class="admin-date-card">
-
-                    <span>
-                        آج
-                    </span>
-
-                    <strong id="adminTodayDate">
-                        —
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MESSAGE
-        ================================================== -->
-
-        <div
-            id="adminDashboardMessage"
-            class="portal-message"
-            hidden
-        ></div>
-
-
-
-        <!-- =================================================
-             PRIMARY OVERVIEW
-        ================================================== -->
-
-        <section class="admin-overview-section">
-
-
-            <div class="admin-overview-grid">
-
-
-                <article class="admin-overview-card admin-overview-students">
-
-                    <div class="admin-overview-card-top">
-
-                        <span class="admin-overview-icon">
-                            👥
-                        </span>
-
-                        <a href="students.html">
-                            تفصیل
-                        </a>
-
-                    </div>
-
-                    <span class="admin-overview-label">
-                        کل طالبات
-                    </span>
-
-                    <strong
-                        class="admin-overview-number"
-                        id="studentTotal"
-                    >
-                        0
-                    </strong>
-
-                    <p>
-                        مدرسہ میں رجسٹرڈ طالبات
-                    </p>
-
-                </article>
-
-
-
-                <article class="admin-overview-card admin-overview-teachers">
-
-                    <div class="admin-overview-card-top">
-
-                        <span class="admin-overview-icon">
-                            👤
-                        </span>
-
-                        <a href="teachers.html">
-                            تفصیل
-                        </a>
-
-                    </div>
-
-                    <span class="admin-overview-label">
-                        کل اساتذہ
-                    </span>
-
-                    <strong
-                        class="admin-overview-number"
-                        id="teacherTotal"
-                    >
-                        0
-                    </strong>
-
-                    <p>
-                        فعال تدریسی عملہ
-                    </p>
-
-                </article>
-
-
-
-                <article class="admin-overview-card admin-overview-pending">
-
-                    <div class="admin-overview-card-top">
-
-                        <span class="admin-overview-icon">
-                            🔐
-                        </span>
-
-                        <a href="admin-accounts.html">
-                            جائزہ
-                        </a>
-
-                    </div>
-
-                    <span class="admin-overview-label">
-                        زیرِ التواء درخواستیں
-                    </span>
-
-                    <strong
-                        class="admin-overview-number"
-                        id="adminPendingApplications"
-                    >
-                        0
-                    </strong>
-
-                    <p>
-                        منظوری کی منتظر درخواستیں
-                    </p>
-
-                </article>
-
-
-
-                <article class="admin-overview-card admin-overview-balance">
-
-                    <div class="admin-overview-card-top">
-
-                        <span class="admin-overview-icon">
-                            ₨
-                        </span>
-
-                        <a href="admin-finance.html">
-                            مالیات
-                        </a>
-
-                    </div>
-
-                    <span class="admin-overview-label">
-                        موجودہ مدرسہ بیلنس
-                    </span>
-
-                    <strong
-                        class="admin-overview-number admin-money-number"
-                        id="adminCurrentBalance"
-                    >
-                        0 PKR
-                    </strong>
-
-                    <p>
-                        موجودہ دستیاب مجموعی رقم
-                    </p>
-
-                </article>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             TWO COLUMN
-        ================================================== -->
-
-        <div class="admin-dashboard-two-column">
-
-
-            <!-- ATTENDANCE -->
-
-            <section class="admin-dashboard-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            روزانہ ریکارڈ
-                        </span>
-
-                        <h2>
-                            آج کی حاضری
-                        </h2>
-
-                        <p>
-                            محفوظ شدہ تمام پیریڈز کا خلاصہ
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="admin-attendance.html"
-                        class="admin-panel-action"
-                    >
-                        مکمل ریکارڈ
-                    </a>
-
-                </div>
-
-
-
-                <div class="admin-attendance-feature">
-
-                    <div class="admin-attendance-percentage">
-
-                        <span>
-                            حاضری
-                        </span>
-
-                        <strong id="adminTodayAttendancePercentage">
-                            0%
-                        </strong>
-
-                        <small>
-                            آج کا تناسب
-                        </small>
-
-                    </div>
-
-
-                    <div class="admin-attendance-metrics">
-
-
-                        <div class="admin-mini-stat">
-
-                            <span>
-                                کل اندراج
-                            </span>
-
-                            <strong id="adminAttendanceTotal">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div class="admin-mini-stat success">
-
-                            <span>
-                                حاضر
-                            </span>
-
-                            <strong id="adminAttendancePresent">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div class="admin-mini-stat danger">
-
-                            <span>
-                                غیر حاضر
-                            </span>
-
-                            <strong id="adminAttendanceAbsent">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div class="admin-mini-stat warning">
-
-                            <span>
-                                رخصت
-                            </span>
-
-                            <strong id="adminAttendanceLeave">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- FINANCE -->
-
-            <section class="admin-dashboard-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            مالی صورتحال
-                        </span>
-
-                        <h2>
-                            مالی خلاصہ
-                        </h2>
-
-                        <p>
-                            وصولیاں، ادائیگیاں اور فنڈز
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="admin-finance.html"
-                        class="admin-panel-action"
-                    >
-                        مالیات
-                    </a>
-
-                </div>
-
-
-
-                <div class="admin-finance-summary">
-
-
-                    <div class="admin-finance-item">
-
-                        <span>
-                            کل وصولی
-                        </span>
-
-                        <strong id="adminFinanceReceived">
-                            0 PKR
-                        </strong>
-
-                    </div>
-
-
-                    <div class="admin-finance-item">
-
-                        <span>
-                            کل ادائیگی
-                        </span>
-
-                        <strong id="adminFinancePaid">
-                            0 PKR
-                        </strong>
-
-                    </div>
-
-
-                    <div class="admin-finance-item">
-
-                        <span>
-                            مخصوص فنڈ
-                        </span>
-
-                        <strong id="adminRestrictedBalance">
-                            0 PKR
-                        </strong>
-
-                    </div>
-
-
-                    <div class="admin-finance-item">
-
-                        <span>
-                            غیر مخصوص عطیہ
-                        </span>
-
-                        <strong id="adminUnrestrictedBalance">
-                            0 PKR
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-            </section>
-
+            <a href="admin-attendance.html">
+                مکمل ریکارڈ
+            </a>
 
         </div>
 
 
 
-        <!-- =================================================
-             QUICK ACCESS
-        ================================================== -->
+        <div class="admin-short-attendance">
 
-        <section class="admin-dashboard-panel admin-quick-panel">
 
-            <div class="admin-panel-header">
+            <div class="admin-short-attendance-main">
+
+                <span>
+                    آج کی حاضری
+                </span>
+
+                <strong id="adminTodayAttendancePercentage">
+                    0%
+                </strong>
+
+            </div>
+
+
+
+            <div class="admin-short-attendance-grid">
+
 
                 <div>
 
-                    <span class="admin-panel-kicker">
-                        فوری رسائی
-                    </span>
+                    <small>
+                        کل
+                    </small>
 
-                    <h2>
-                        اہم انتظامی اختیارات
-                    </h2>
-
-                    <p>
-                        روزمرہ استعمال ہونے والے اہم ماڈیولز
-                    </p>
+                    <strong id="adminAttendanceTotal">
+                        0
+                    </strong>
 
                 </div>
 
-            </div>
-
-
-
-            <div class="admin-quick-grid">
-
-
-                <a
-                    href="students.html"
-                    class="admin-quick-card"
-                >
-                    <span>👥</span>
-
-                    <strong>
-                        طالبات
-                    </strong>
-
-                    <small>
-                        ریکارڈ اور پروفائل
-                    </small>
-                </a>
-
-
-                <a
-                    href="teachers.html"
-                    class="admin-quick-card"
-                >
-                    <span>👤</span>
-
-                    <strong>
-                        اساتذہ
-                    </strong>
-
-                    <small>
-                        عملہ اور پروفائل
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-attendance.html"
-                    class="admin-quick-card"
-                >
-                    <span>✓</span>
-
-                    <strong>
-                        حاضری
-                    </strong>
-
-                    <small>
-                        روزانہ حاضری
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-marks.html"
-                    class="admin-quick-card"
-                >
-                    <span>▤</span>
-
-                    <strong>
-                        نمبرات
-                    </strong>
-
-                    <small>
-                        امتحانات و نتائج
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-homework.html"
-                    class="admin-quick-card"
-                >
-                    <span>📚</span>
-
-                    <strong>
-                        ہوم ورک
-                    </strong>
-
-                    <small>
-                        تعلیمی کام
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-announcements.html"
-                    class="admin-quick-card"
-                >
-                    <span>🔔</span>
-
-                    <strong>
-                        اعلانات
-                    </strong>
-
-                    <small>
-                        تازہ معلومات
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-finance.html"
-                    class="admin-quick-card"
-                >
-                    <span>₨</span>
-
-                    <strong>
-                        مالیات
-                    </strong>
-
-                    <small>
-                        فیس، عطیات و اخراجات
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-hostel.html"
-                    class="admin-quick-card"
-                >
-                    <span>🏠</span>
-
-                    <strong>
-                        مدرسہ میں رہائش
-                    </strong>
-
-                    <small>
-                        خروج و واپسی
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-promotions.html"
-                    class="admin-quick-card"
-                >
-                    <span>↑</span>
-
-                    <strong>
-                        ترقی
-                    </strong>
-
-                    <small>
-                        جماعت تبدیلی
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-id-cards.html"
-                    class="admin-quick-card"
-                >
-                    <span>▣</span>
-
-                    <strong>
-                        شناختی کارڈ
-                    </strong>
-
-                    <small>
-                        پرنٹ اور ریکارڈ
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-accounts.html"
-                    class="admin-quick-card"
-                >
-                    <span>🔐</span>
-
-                    <strong>
-                        اکاؤنٹس
-                    </strong>
-
-                    <small>
-                        منظوری و انتظام
-                    </small>
-                </a>
-
-
-                <a
-                    href="admin-reports.html"
-                    class="admin-quick-card admin-quick-reports"
-                >
-                    <span>📊</span>
-
-                    <strong>
-                        رپورٹس
-                    </strong>
-
-                    <small>
-                        مکمل انتظامی رپورٹس
-                    </small>
-                </a>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             CLASSES
-        ================================================== -->
-
-        <section class="admin-dashboard-panel">
-
-            <div class="admin-panel-header">
 
                 <div>
 
-                    <span class="admin-panel-kicker">
-                        تعلیمی درجہ بندی
-                    </span>
+                    <small>
+                        حاضر
+                    </small>
 
-                    <h2>
-                        جماعتوں کا خلاصہ
-                    </h2>
-
-                    <p>
-                        ہر جماعت میں موجود طالبات کی تعداد
-                    </p>
+                    <strong id="adminAttendancePresent">
+                        0
+                    </strong>
 
                 </div>
 
-            </div>
-
-
-
-            <div class="admin-class-grid-pro">
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        01
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            ثانویہ عامہ
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassThanviaAmma">
-                        0
-                    </strong>
-
-                </article>
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        02
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            ثانویہ خاصہ
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassThanviaKhasa">
-                        0
-                    </strong>
-
-                </article>
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        03
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            عالیہ اول
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassAliaFirst">
-                        0
-                    </strong>
-
-                </article>
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        04
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            عالیہ دوم
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassAliaSecond">
-                        0
-                    </strong>
-
-                </article>
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        05
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            عالمیہ اول
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassAlmiaFirst">
-                        0
-                    </strong>
-
-                </article>
-
-
-                <article class="admin-class-card-pro">
-
-                    <span class="admin-class-number">
-                        06
-                    </span>
-
-                    <div>
-
-                        <h3>
-                            عالمیہ دوم / دورۂ حدیث
-                        </h3>
-
-                        <span>
-                            طالبات
-                        </span>
-
-                    </div>
-
-                    <strong id="adminClassAlmiaSecond">
-                        0
-                    </strong>
-
-                </article>
-
-
-            </div>
-
-
-
-            <div class="admin-residence-summary">
 
                 <div>
 
-                    <span>
-                        🏠
-                    </span>
+                    <small>
+                        غیر حاضر
+                    </small>
 
-                    <div>
-
-                        <strong>
-                            مدرسہ میں رہائش پذیر طالبات
-                        </strong>
-
-                        <small>
-                            موجودہ رہائشی طالبات
-                        </small>
-
-                    </div>
+                    <strong id="adminAttendanceAbsent">
+                        0
+                    </strong>
 
                 </div>
 
+
+                <div>
+
+                    <small>
+                        رخصت
+                    </small>
+
+                    <strong id="adminAttendanceLeave">
+                        0
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         QUICK ACCESS
+    ================================================== -->
+
+    <section class="admin-short-card">
+
+
+        <div class="admin-short-card-heading">
+
+            <div>
+
+                <h2>
+                    فوری اختیارات
+                </h2>
+
+                <p>
+                    اہم انتظامی حصے
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-short-actions">
+
+
+            <a href="students.html">
+                <span>👥</span>
+                <strong>طالبات</strong>
+            </a>
+
+
+            <a href="teachers.html">
+                <span>👤</span>
+                <strong>اساتذہ</strong>
+            </a>
+
+
+            <a href="admin-attendance.html">
+                <span>✓</span>
+                <strong>حاضری</strong>
+            </a>
+
+
+            <a href="admin-marks.html">
+                <span>▤</span>
+                <strong>نمبرات</strong>
+            </a>
+
+
+            <a href="admin-homework.html">
+                <span>📚</span>
+                <strong>ہوم ورک</strong>
+            </a>
+
+
+            <a href="admin-announcements.html">
+                <span>🔔</span>
+                <strong>اعلانات</strong>
+            </a>
+
+
+            <a href="admin-finance.html">
+                <span>Rs</span>
+                <strong>مالیات</strong>
+            </a>
+
+
+            <a href="admin-hostel.html">
+                <span>🏠</span>
+                <strong>مدرسہ میں رہائش</strong>
+            </a>
+
+
+            <a href="admin-promotions.html">
+                <span>↑</span>
+                <strong>ترقی</strong>
+            </a>
+
+
+            <a href="admin-id-cards.html">
+                <span>▣</span>
+                <strong>شناختی کارڈ</strong>
+            </a>
+
+
+            <a href="admin-reports.html">
+                <span>📊</span>
+                <strong>رپورٹس</strong>
+            </a>
+
+
+            <a href="admin-accounts.html">
+                <span>🔐</span>
+                <strong>اکاؤنٹس</strong>
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         CLASSES
+    ================================================== -->
+
+    <section class="admin-short-card">
+
+
+        <div class="admin-short-card-heading">
+
+            <div>
+
+                <h2>
+                    جماعتوں کا خلاصہ
+                </h2>
+
+                <p>
+                    موجودہ طالبات
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-short-classes">
+
+
+            <div>
+                <span>ثانویہ عامہ</span>
+                <strong id="adminClassThanviaAmma">0</strong>
+            </div>
+
+
+            <div>
+                <span>ثانویہ خاصہ</span>
+                <strong id="adminClassThanviaKhasa">0</strong>
+            </div>
+
+
+            <div>
+                <span>عالیہ اول</span>
+                <strong id="adminClassAliaFirst">0</strong>
+            </div>
+
+
+            <div>
+                <span>عالیہ دوم</span>
+                <strong id="adminClassAliaSecond">0</strong>
+            </div>
+
+
+            <div>
+                <span>عالمیہ اول</span>
+                <strong id="adminClassAlmiaFirst">0</strong>
+            </div>
+
+
+            <div>
+                <span>عالمیہ دوم / دورۂ حدیث</span>
+                <strong id="adminClassAlmiaSecond">0</strong>
+            </div>
+
+
+            <a href="admin-hostel.html">
+
+                <span>
+                    مدرسہ میں رہائش
+                </span>
 
                 <strong id="adminHostelStudentCount">
                     0
                 </strong>
 
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             RECENT ACTIVITY
-        ================================================== -->
-
-        <div class="admin-activity-grid">
-
-
-            <section class="admin-dashboard-panel admin-activity-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            اکاؤنٹس
-                        </span>
-
-                        <h2>
-                            زیرِ التواء درخواستیں
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="admin-accounts.html"
-                        class="admin-panel-action"
-                    >
-                        تمام دیکھیں
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="adminRecentApplications"
-                    class="admin-application-list admin-modern-list"
-                >
-
-                    <div class="portal-empty-state">
-                        درخواستیں لوڈ کی جا رہی ہیں...
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <section class="admin-dashboard-panel admin-activity-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            تعلیم
-                        </span>
-
-                        <h2>
-                            حالیہ ہوم ورک
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="admin-homework.html"
-                        class="admin-panel-action"
-                    >
-                        تمام دیکھیں
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="adminRecentHomework"
-                    class="homework-card-list admin-modern-list"
-                >
-
-                    <div class="portal-empty-state">
-                        ہوم ورک لوڈ کیا جا رہا ہے...
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <section class="admin-dashboard-panel admin-activity-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            اطلاعات
-                        </span>
-
-                        <h2>
-                            حالیہ اعلانات
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="admin-announcements.html"
-                        class="admin-panel-action"
-                    >
-                        تمام دیکھیں
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="adminRecentAnnouncements"
-                    class="announcement-card-list admin-modern-list"
-                >
-
-                    <div class="portal-empty-state">
-                        اعلانات لوڈ کیے جا رہے ہیں...
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <section class="admin-dashboard-panel admin-activity-panel">
-
-                <div class="admin-panel-header">
-
-                    <div>
-
-                        <span class="admin-panel-kicker">
-                            نگرانی
-                        </span>
-
-                        <h2>
-                            حالیہ استاد نوٹس
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="admin-feedback.html"
-                        class="admin-panel-action"
-                    >
-                        تمام دیکھیں
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="adminRecentFeedback"
-                    class="student-note-list admin-modern-list"
-                >
-
-                    <div class="portal-empty-state">
-                        نوٹس لوڈ کیے جا رہے ہیں...
-                    </div>
-
-                </div>
-
-            </section>
+            </a>
 
 
         </div>
 
-
-
-        <!-- =================================================
-             SYSTEM
-        ================================================== -->
-
-        <section class="admin-dashboard-panel admin-system-panel">
-
-            <div class="admin-panel-header">
-
-                <div>
-
-                    <span class="admin-panel-kicker">
-                        نظام و حفاظت
-                    </span>
-
-                    <h2>
-                        سسٹم کی اہم معلومات
-                    </h2>
-
-                </div>
-
-            </div>
+    </section>
 
 
 
-            <div class="admin-system-grid">
+    <footer class="portal-footer">
+
+        <strong>
+            مدرسہ شہناز اختر للبنات
+        </strong>
+
+        <span>
+            گاؤں ہل غورغشتوں، ضلع بونیر
+        </span>
+
+    </footer>
 
 
-                <div class="admin-system-item">
-
-                    <span class="admin-system-icon">
-                        🔐
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            ایڈمن منظوری
-                        </strong>
-
-                        <p>
-                            طالبہ اور استاد کے اکاؤنٹس کی تخلیق اور اہم تبدیلی منظوری کے تحت ہوگی۔
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="admin-system-item">
-
-                    <span class="admin-system-icon">
-                        ⏱
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            5 منٹ غیر فعالیت
-                        </strong>
-
-                        <p>
-                            مسلسل غیر فعالیت کی صورت میں سیشن خودکار طور پر ختم ہوگا۔
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="admin-system-item">
-
-                    <span class="admin-system-icon">
-                        🛡
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            ریکارڈ کی حفاظت
-                        </strong>
-
-                        <p>
-                            حساس انتظامی ریکارڈ صرف مجاز اکاؤنٹ کے ذریعے استعمال ہوگا۔
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             FOOTER
-        ================================================== -->
-
-        <footer class="admin-dashboard-footer">
-
-            <div>
-
-                <strong>
-                    مدرسہ شہناز اختر للبنات
-                </strong>
-
-                <span>
-                    گاؤں ہل غورغشتوں، ضلع بونیر
-                </span>
-
-            </div>
-
-
-            <span>
-                مدرسہ مینجمنٹ سسٹم
-            </span>
-
-        </footer>
-
-
-    </main>
+</main>
 
 </div>
 
 
 
-<!-- =====================================================
-     SUPABASE
-===================================================== -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
-
 <script src="script.js"></script>
 
-
 </body>
-
 </html>
