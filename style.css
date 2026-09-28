@@ -7249,6 +7249,1112 @@ body.admin-dashboard-page .portal-sidebar-overlay {
     }
 
 }
+
+/* =========================================================
+   FINAL UNIVERSAL ADMIN DESIGN
+   SAME GREEN SIDEBAR ON ALL ADMIN PAGES
+========================================================= */
+
+body.admin-portal-page {
+    background: #f4f7f5;
+}
+
+
+/* =========================================================
+   SAME GREEN SIDEBAR EVERY ADMIN PAGE
+========================================================= */
+
+body.admin-portal-page .portal-sidebar {
+    background: #06462f !important;
+    color: #ffffff !important;
+    border-left: 0 !important;
+}
+
+
+body.admin-portal-page .portal-brand {
+    border-bottom:
+        1px solid rgba(255,255,255,.12) !important;
+
+    padding:
+        24px 16px 20px;
+}
+
+
+body.admin-portal-page .portal-brand-icon {
+    width: 58px;
+    height: 58px;
+
+    margin:
+        0 auto 10px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(255,255,255,.09) !important;
+
+    font-size: 27px;
+}
+
+
+body.admin-portal-page .portal-brand h2 {
+    color: #ffffff !important;
+
+    font-size: 17px;
+
+    line-height: 2;
+}
+
+
+body.admin-portal-page .portal-brand p {
+    color:
+        rgba(255,255,255,.68) !important;
+
+    font-size: 10px;
+}
+
+
+body.admin-portal-page .portal-role-label {
+    background: #c99b3e !important;
+
+    color: #ffffff !important;
+
+    padding:
+        3px 13px;
+
+    border-radius: 999px;
+}
+
+
+body.admin-portal-page .portal-navigation {
+    padding:
+        13px 11px;
+
+    gap: 4px;
+}
+
+
+body.admin-portal-page .portal-nav-link {
+    min-height: 48px;
+
+    padding:
+        7px 12px;
+
+    border-radius: 13px;
+
+    color:
+        rgba(255,255,255,.82) !important;
+
+    background:
+        transparent !important;
+}
+
+
+body.admin-portal-page
+.portal-nav-link > span:first-child {
+
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+}
+
+
+body.admin-portal-page
+.portal-nav-link strong {
+
+    color: inherit;
+
+    font-size: 12px;
+}
+
+
+body.admin-portal-page
+.portal-nav-link:hover {
+
+    background:
+        rgba(255,255,255,.07) !important;
+
+    color: #ffffff !important;
+}
+
+
+body.admin-portal-page
+.portal-nav-link.active {
+
+    background:
+        #ffffff !important;
+
+    color:
+        #0b593d !important;
+}
+
+
+body.admin-portal-page
+.portal-nav-link.active
+> span:first-child {
+
+    background:
+        #e9f4ee;
+
+    color:
+        #0c6444;
+}
+
+
+body.admin-portal-page .portal-nav-divider {
+
+    height: 1px;
+
+    margin:
+        10px 5px;
+
+    background:
+        rgba(255,255,255,.10);
+}
+
+
+body.admin-portal-page .nav-count {
+
+    margin-right: auto;
+
+    background:
+        #d3a23e !important;
+
+    color:
+        #ffffff !important;
+}
+
+
+body.admin-portal-page .portal-sidebar-footer {
+
+    border-top:
+        1px solid rgba(255,255,255,.12) !important;
+}
+
+
+body.admin-portal-page .portal-logout-button {
+
+    width: 100%;
+
+    background:
+        rgba(255,255,255,.08) !important;
+
+    border:
+        1px solid rgba(255,255,255,.14) !important;
+
+    color:
+        #ffffff !important;
+
+    min-height:
+        44px;
+}
+
+
+
+/* =========================================================
+   MOBILE ADMIN HEADER
+========================================================= */
+
+body.admin-portal-page .portal-mobile-header {
+
+    background:
+        #ffffff;
+
+    border-bottom:
+        1px solid #dde7e1;
+
+    box-shadow:
+        0 3px 12px rgba(20,55,39,.06);
+}
+
+
+body.admin-portal-page .portal-menu-button {
+
+    background:
+        #0b6041 !important;
+
+    color:
+        #ffffff !important;
+
+    border: 0 !important;
+
+    border-radius:
+        11px;
+}
+
+
+body.admin-portal-page .portal-mobile-title {
+
+    color:
+        #17392b;
+
+    font-size:
+        13px;
+}
+
+
+
+/* =========================================================
+   SHORT ADMIN DASHBOARD
+========================================================= */
+
+.admin-short-dashboard .portal-main {
+    max-width: 1350px;
+
+    margin:
+        0 auto;
+
+    padding:
+        22px;
+}
+
+
+.admin-short-header {
+
+    min-height:
+        130px;
+
+    margin-bottom:
+        14px;
+
+    padding:
+        22px 25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        18px;
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #075238,
+            #0c714b
+        );
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 10px 28px
+        rgba(14,83,57,.12);
+}
+
+
+.admin-short-label {
+
+    display:
+        block;
+
+    color:
+        #d9eae1;
+
+    font-size:
+        10px;
+}
+
+
+.admin-short-header h1 {
+
+    margin: 0;
+
+    color:
+        #ffffff;
+
+    font-size:
+        28px;
+
+    line-height:
+        1.9;
+}
+
+
+.admin-short-header p {
+
+    margin: 0;
+
+    color:
+        rgba(255,255,255,.75);
+
+    font-size:
+        10px;
+}
+
+
+.admin-short-date {
+
+    padding:
+        8px 14px;
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(255,255,255,.10);
+
+    color:
+        #ffffff;
+
+    font-size:
+        10px;
+}
+
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.admin-short-summary {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0,1fr));
+
+    gap:
+        10px;
+
+    margin-bottom:
+        14px;
+}
+
+
+.admin-short-stat {
+
+    min-width: 0;
+
+    min-height:
+        115px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid #e0e8e3;
+
+    border-radius:
+        16px;
+
+    background:
+        #ffffff;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    box-shadow:
+        0 5px 18px
+        rgba(22,63,45,.04);
+}
+
+
+.admin-short-stat-icon {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    margin-bottom:
+        7px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        10px;
+
+    background:
+        #eaf5ef;
+
+    color:
+        #0b6543;
+
+    font-family:
+        Arial,
+        sans-serif;
+}
+
+
+.admin-short-stat small {
+
+    color:
+        #718078;
+
+    font-size:
+        9px;
+}
+
+
+.admin-short-stat strong {
+
+    margin-top:
+        3px;
+
+    color:
+        #153429;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        26px;
+
+    line-height:
+        1.3;
+
+    direction:
+        ltr;
+
+    text-align:
+        right;
+}
+
+
+.admin-short-stat
+.admin-short-money {
+
+    font-size:
+        16px;
+}
+
+
+
+/* =========================================================
+   SHORT CARD
+========================================================= */
+
+.admin-short-card {
+
+    margin-bottom:
+        14px;
+
+    padding:
+        17px;
+
+    border:
+        1px solid #e0e8e3;
+
+    border-radius:
+        18px;
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 5px 18px
+        rgba(22,63,45,.04);
+}
+
+
+.admin-short-card-heading {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    margin-bottom:
+        13px;
+}
+
+
+.admin-short-card-heading h2 {
+
+    margin: 0;
+
+    color:
+        #15382a;
+
+    font-size:
+        17px;
+}
+
+
+.admin-short-card-heading p {
+
+    margin: 0;
+
+    color:
+        #819087;
+
+    font-size:
+        9px;
+}
+
+
+.admin-short-card-heading a {
+
+    padding:
+        5px 10px;
+
+    border-radius:
+        9px;
+
+    background:
+        #edf6f1;
+
+    color:
+        #0b6443;
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+}
+
+
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+.admin-short-attendance {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        145px minmax(0,1fr);
+
+    gap:
+        10px;
+}
+
+
+.admin-short-attendance-main {
+
+    min-height:
+        112px;
+
+    padding:
+        15px;
+
+    border-radius:
+        14px;
+
+    background:
+        #086444;
+
+    color:
+        #ffffff;
+
+    text-align:
+        center;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+}
+
+
+.admin-short-attendance-main span {
+
+    color:
+        #d6ebe1;
+
+    font-size:
+        9px;
+}
+
+
+.admin-short-attendance-main strong {
+
+    margin-top:
+        5px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        33px;
+}
+
+
+.admin-short-attendance-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:
+        8px;
+}
+
+
+.admin-short-attendance-grid div {
+
+    min-height:
+        100px;
+
+    padding:
+        12px;
+
+    border-radius:
+        13px;
+
+    background:
+        #f7faf8;
+
+    border:
+        1px solid #e5ece8;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+}
+
+
+.admin-short-attendance-grid small {
+
+    color:
+        #728078;
+
+    font-size:
+        9px;
+}
+
+
+.admin-short-attendance-grid strong {
+
+    margin-top:
+        4px;
+
+    color:
+        #17382b;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        23px;
+}
+
+
+
+/* =========================================================
+   QUICK OPTIONS
+========================================================= */
+
+.admin-short-actions {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(6,minmax(0,1fr));
+
+    gap:
+        8px;
+}
+
+
+.admin-short-actions a {
+
+    min-height:
+        90px;
+
+    padding:
+        10px 5px;
+
+    border:
+        1px solid #e2e9e5;
+
+    border-radius:
+        13px;
+
+    background:
+        #f9fbfa;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+}
+
+
+.admin-short-actions a > span {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    margin-bottom:
+        5px;
+
+    border-radius:
+        10px;
+
+    background:
+        #eaf4ef;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-family:
+        Arial,
+        sans-serif;
+}
+
+
+.admin-short-actions strong {
+
+    color:
+        #17382b;
+
+    font-size:
+        10px;
+}
+
+
+
+/* =========================================================
+   CLASSES
+========================================================= */
+
+.admin-short-classes {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:
+        8px;
+}
+
+
+.admin-short-classes > div,
+.admin-short-classes > a {
+
+    min-height:
+        62px;
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid #e4ebe7;
+
+    border-radius:
+        12px;
+
+    background:
+        #fafcfb;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        8px;
+}
+
+
+.admin-short-classes span {
+
+    color:
+        #54665d;
+
+    font-size:
+        9px;
+}
+
+
+.admin-short-classes strong {
+
+    color:
+        #0c6544;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        19px;
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    body.admin-portal-page {
+        padding-top:
+            56px !important;
+    }
+
+
+    body.admin-portal-page .portal-sidebar {
+
+        width:
+            min(82vw, 320px);
+
+        background:
+            #06462f !important;
+    }
+
+
+    body.admin-portal-page
+    .portal-sidebar.open,
+
+    body.admin-portal-page
+    .portal-sidebar.active {
+
+        transform:
+            translateX(0) !important;
+    }
+
+
+    body.admin-portal-page
+    .portal-sidebar-overlay.open,
+
+    body.admin-portal-page
+    .portal-sidebar-overlay.active {
+
+        display:
+            block !important;
+    }
+
+
+    .admin-short-dashboard
+    .portal-main {
+
+        padding:
+            10px;
+    }
+
+
+    .admin-short-header {
+
+        min-height:
+            110px;
+
+        padding:
+            17px;
+
+        border-radius:
+            16px;
+    }
+
+
+    .admin-short-header h1 {
+
+        font-size:
+            21px;
+    }
+
+
+    .admin-short-date {
+
+        display:
+            none;
+    }
+
+
+    .admin-short-summary {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:
+            7px;
+    }
+
+
+    .admin-short-stat {
+
+        min-height:
+            105px;
+
+        padding:
+            11px;
+    }
+
+
+    .admin-short-stat strong {
+
+        font-size:
+            23px;
+    }
+
+
+    .admin-short-attendance {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .admin-short-attendance-main {
+
+        min-height:
+            90px;
+    }
+
+
+    .admin-short-attendance-grid {
+
+        grid-template-columns:
+            repeat(4,minmax(0,1fr));
+
+        gap:
+            5px;
+    }
+
+
+    .admin-short-attendance-grid div {
+
+        min-height:
+            72px;
+
+        padding:
+            7px;
+    }
+
+
+    .admin-short-attendance-grid strong {
+
+        font-size:
+            18px;
+    }
+
+
+    .admin-short-actions {
+
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+
+        gap:
+            6px;
+    }
+
+
+    .admin-short-actions a {
+
+        min-height:
+            82px;
+    }
+
+
+    .admin-short-classes {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+}
+
+
+
+@media (max-width: 390px) {
+
+    .admin-short-actions {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+
+    .admin-short-attendance-grid {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+}
 /* =========================================================
    END PART 3 / 3
    COMPLETE STYLE.CSS
