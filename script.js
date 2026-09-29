@@ -2043,17 +2043,14 @@
                     }
                 }
 
-                if (
-                    !App.hasEntryPermission()
-                ) {
-
-                    window.location.replace(
-                        "index.html"
-                    );
-
-                    return false;
-                }
-
+                /*
+                   Login and application pages are public entry
+                   points. Do not require a sessionStorage flag:
+                   the introduction page has its own inline script
+                   and therefore cannot create that flag reliably.
+                   Authentication is still enforced before any
+                   protected admin, teacher, or student page opens.
+                */
                 return true;
             }
 
