@@ -1,9 +1,173 @@
-<!doctype html>
-<html lang="ur" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>طالبہ پورٹل</title><link rel="stylesheet" href="style.css"></head>
-<body class="portal-page"><header class="portal-top"><button type="button" data-sidebar-toggle>☰</button><div><h1>طالبہ پورٹل</h1><p>مدرسہ شہناز اختر للبنات</p></div><button type="button" data-logout>لاگ آؤٹ</button></header>
-<nav class="portal-nav"><a href="student.html">میرا پروفائل</a><a href="my-attendance.html">میری حاضری</a><a href="my-marks.html">میرے نمبرات</a><a href="homework.html">ہوم ورک</a><a href="announcements.html">اعلانات</a><a href="settings.html">ترتیبات</a></nav>
-<main class="portal-main"><section class="portal-hero"><h2>خوش آمدید، <span id="studentName">طالبہ</span></h2><p>آپ کا ذاتی تعلیمی ریکارڈ</p></section>
-<section id="profile" class="portal-panel"><h2>میرا پروفائل</h2><div class="profile-grid"><p><b>نام:</b> <span id="studentProfileName">—</span></p><p><b>داخلہ نمبر:</b> <span id="studentProfileAdmissionNo">—</span></p><p><b>جماعت:</b> <span id="studentProfileClass">—</span></p><p><b>والد:</b> <span id="studentProfileFatherName">—</span></p><p><b>سرپرست:</b> <span id="studentProfileGuardianName">—</span></p><p><b>فون:</b> <span id="studentProfilePhone">—</span></p><p><b>شناختی نمبر:</b> <span id="studentProfileCNIC">—</span></p><p><b>تاریخ پیدائش:</b> <span id="studentProfileDOB">—</span></p><p><b>رہائش:</b> <span id="studentProfileResidence">—</span></p><p><b>پتہ:</b> <span id="studentProfileAddress">—</span></p></div></section>
-<section class="portal-panel"><h2>حاضری کا خلاصہ</h2><div class="metric-grid"><article><span id="studentAttendanceTotal">0</span><small>کل</small></article><article><span id="studentAttendancePresent">0</span><small>حاضر</small></article><article><span id="studentAttendanceAbsent">0</span><small>غیر حاضر</small></article><article><span id="studentAttendanceLeave">0</span><small>رخصت</small></article><article><span id="studentAttendanceLate">0</span><small>تاخیر</small></article><article><span id="studentAttendancePercentage">0%</span><small>فیصد</small></article></div></section>
-<section class="portal-panel"><h2>نمبرات کا خلاصہ</h2><div class="metric-grid"><article><span id="studentMarksObtained">0</span><small>حاصل کردہ</small></article><article><span id="studentMarksTotal">0</span><small>کل نمبر</small></article><article><span id="studentMarksPercentage">0%</span><small>فیصد</small></article></div></section></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طالبہ پورٹل | مدرسہ شہناز اختر للبنات</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="student-portal-page">
+
+    <!-- MOBILE HEADER -->
+    <header class="portal-mobile-header">
+        <button type="button"
+                class="portal-menu-button"
+                id="studentMenuButton"
+                aria-label="مینو"
+                aria-expanded="false">
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            طالبہ پورٹل
+        </div>
+    </header>
+
+
+    <div class="portal-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="portal-sidebar" id="studentSidebar">
+
+            <div class="portal-brand">
+                <div class="portal-brand-icon">🕌</div>
+
+                <h2>مدرسہ شہناز اختر للبنات</h2>
+
+                <p>گاؤں ہل غورغشتوں، ضلع بونیر</p>
+
+                <span class="portal-role-label">طالبہ پورٹل</span>
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a href="student.html" class="portal-nav-link active">
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a href="student.html#profile" class="portal-nav-link">
+                    <span>👤</span>
+                    <strong>میرا پروفائل</strong>
+                </a>
+
+                <a href="my-attendance.html" class="portal-nav-link">
+                    <span>✓</span>
+                    <strong>میری حاضری</strong>
+                </a>
+
+                <a href="my-marks.html" class="portal-nav-link">
+                    <span>▤</span>
+                    <strong>میرے نمبر</strong>
+                </a>
+
+                <a href="homework.html" class="portal-nav-link">
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                    <span class="nav-count" id="studentHomeworkCount" hidden>0</span>
+                </a>
+
+                <a href="announcements.html" class="portal-nav-link">
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                    <span class="nav-count" id="studentAnnouncementCount" hidden>0</span>
+                </a>
+
+                <a href="settings.html" class="portal-nav-link">
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+                <button type="button"
+                        id="studentLogoutButton"
+                        class="portal-logout-button">
+                    خروج
+                </button>
+            </div>
+
+        </aside>
+
+
+        <div class="portal-sidebar-overlay" id="studentSidebarOverlay"></div>
+
+
+        <!-- MAIN -->
+        <main class="portal-main">
+
+            <section class="portal-topbar">
+                <div>
+                    <h1>طالبہ پورٹل</h1>
+                    <p>اپنا تعلیمی ریکارڈ اور ذاتی معلومات دیکھیں</p>
+                </div>
+            </section>
+
+
+            <section class="portal-hero">
+                <h2>خوش آمدید، <span id="studentName">طالبہ</span></h2>
+                <p>آپ کا ذاتی تعلیمی ریکارڈ</p>
+            </section>
+
+
+            <section id="profile" class="portal-panel">
+                <h2>میرا پروفائل</h2>
+
+                <div class="profile-grid">
+                    <p><b>نام:</b> <span id="studentProfileName">—</span></p>
+                    <p><b>داخلہ نمبر:</b> <span id="studentProfileAdmissionNo">—</span></p>
+                    <p><b>جماعت:</b> <span id="studentProfileClass">—</span></p>
+                    <p><b>والد:</b> <span id="studentProfileFatherName">—</span></p>
+                    <p><b>سرپرست:</b> <span id="studentProfileGuardianName">—</span></p>
+                    <p><b>فون:</b> <span id="studentProfilePhone">—</span></p>
+                    <p><b>شناختی نمبر:</b> <span id="studentProfileCNIC">—</span></p>
+                    <p><b>تاریخ پیدائش:</b> <span id="studentProfileDOB">—</span></p>
+                    <p><b>رہائش:</b> <span id="studentProfileResidence">—</span></p>
+                    <p><b>پتہ:</b> <span id="studentProfileAddress">—</span></p>
+                </div>
+            </section>
+
+
+            <section class="portal-panel">
+                <h2>حاضری کا خلاصہ</h2>
+
+                <div class="metric-grid">
+                    <article><span id="studentAttendanceTotal">0</span><small>کل</small></article>
+                    <article><span id="studentAttendancePresent">0</span><small>حاضر</small></article>
+                    <article><span id="studentAttendanceAbsent">0</span><small>غیر حاضر</small></article>
+                    <article><span id="studentAttendanceLeave">0</span><small>رخصت</small></article>
+                    <article><span id="studentAttendanceLate">0</span><small>تاخیر</small></article>
+                    <article><span id="studentAttendancePercentage">0%</span><small>فیصد</small></article>
+                </div>
+            </section>
+
+
+            <section class="portal-panel">
+                <h2>نمبرات کا خلاصہ</h2>
+
+                <div class="metric-grid">
+                    <article><span id="studentMarksObtained">0</span><small>حاصل کردہ</small></article>
+                    <article><span id="studentMarksTotal">0</span><small>کل نمبر</small></article>
+                    <article><span id="studentMarksPercentage">0%</span><small>فیصد</small></article>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
