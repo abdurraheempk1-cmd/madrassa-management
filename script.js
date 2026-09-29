@@ -13511,206 +13511,110 @@ App.renderAccountApplications =
 
         const container =
             App.first(
+                "adminApplicationsBody",
                 "accountApplicationsList",
                 "adminAccountsList",
                 "applicationsList"
             );
 
-
         if (!container) {
             return;
         }
 
-
         records =
-            Array.isArray(
-                records
-            )
+            Array.isArray(records)
                 ? records
                 : [];
 
+        const pendingRecords =
+            records.filter(item => {
+                const status = App.safe(item.status || "pending").trim().toLowerCase();
+                return !status || status === "pending" || status === "زیر التواء" || status === "زیرِ التواء";
+            });
 
-        if (!records.length) {
+        App.setText(
+            "adminPendingApplicationsTotal",
+            pendingRecords.length,
+            "0"
+        );
 
+        if (!pendingRecords.length) {
             container.innerHTML =
-                App.empty(
-                    "کوئی درخواست موجود نہیں۔"
-                );
-
+                container.tagName.toLowerCase() === "tbody"
+                    ? `<tr><td colspan="7" class="table-empty">کوئی زیرِ التواء درخواست موجود نہیں۔</td></tr>`
+                    : App.empty("کوئی زیرِ التواء درخواست موجود نہیں۔");
             return;
         }
 
+        const renderActions = applicationKey => `
+            <div class="record-card-actions account-inline-actions">
+                <button type="button" data-account-details="${App.escape(applicationKey)}">تفصیل</button>
+                <button type="button" data-account-approve="${App.escape(applicationKey)}">منظور کریں</button>
+                <button type="button" data-account-reject="${App.escape(applicationKey)}">مسترد کریں</button>
+            </div>`;
 
-        container.innerHTML =
-            records
-                .map(
-                    item => {
+        if (container.tagName.toLowerCase() === "tbody") {
+            container.innerHTML = pendingRecords.map(item => {
+                const id = Number(item.id);
+                const type = App.safe(item.application_type || "student").toLowerCase();
+                const applicationKey = type + ":" + id;
+                const typeUrdu = type === "teacher" ? "استاد" : "طالبہ";
+                const refNo = item.application_no || item.admission_no || item.teacher_code || item.request_no || id || "—";
+                const created = App.date(item.created_at || item.submitted_at || item.application_date || item.created_on);
+                return `
+                    <tr>
+                        <td>${App.escape(created || "—")}</td>
+                        <td>${App.escape(typeUrdu)}</td>
+                        <td>${App.escape(item.name || item.full_name || "—")}</td>
+                        <td>${App.escape(refNo)}</td>
+                        <td>${App.escape(item.phone || "—")}</td>
+                        <td>${App.escape(App.statusUrdu(item.status || "pending"))}</td>
+                        <td>${renderActions(applicationKey)}</td>
+                    </tr>`;
+            }).join("");
+        } else {
+            container.innerHTML = pendingRecords.map(item => {
+                const id = Number(item.id);
+                const type = App.safe(item.application_type || "student").toLowerCase();
+                const applicationKey = type + ":" + id;
+                return `
+                    <article class="record-card">
+                        <h3>${App.escape(item.name || item.full_name || "—")}</h3>
+                        <p>قسم: ${App.escape(type === "teacher" ? "استاد" : "طالبہ")}</p>
+                        <p>فون: ${App.escape(item.phone || "—")}</p>
+                        <p>حالت: ${App.escape(App.statusUrdu(item.status || "pending"))}</p>
+                        ${renderActions(applicationKey)}
+                    </article>`;
+            }).join("");
+        }
 
-                        const id =
-                            Number(
-                                item.id
-                            );
+        container.querySelectorAll("[data-account-details]").forEach(button => {
+            button.addEventListener("click", function () {
+                const record = App.accountApplications.find(item =>
+                    App.safe(item.application_type || "student") + ":" + Number(item.id) ===
+                    button.dataset.accountDetails
+                );
+                if (!record) return;
+                App.openGeneratedPanel(
+                    "generatedAccountDetails",
+                    "درخواست کی مکمل تفصیل",
+                    App.renderDeepProfile(record, "account")
+                );
+            });
+        });
 
-                        const applicationKey =
-                            App.safe(
-                                item.application_type ||
-                                "student"
-                            ) + ":" + id;
+        container.querySelectorAll("[data-account-approve]").forEach(button => {
+            button.addEventListener("click", function () {
+                App.reviewAccountApplication(button.dataset.accountApprove, "approved");
+            });
+        });
 
-
-                        return `
-                            <article class="record-card">
-
-                                <h3>
-                                    ${App.escape(
-                                        item.name ||
-                                        item.full_name ||
-                                        "—"
-                                    )}
-                                </h3>
-
-                                <p>
-                                    قسم:
-                                    ${App.escape(
-                                        item.application_type ||
-                                        item.role ||
-                                        "—"
-                                    )}
-                                </p>
-
-                                <p>
-                                    صارف نام:
-                                    ${App.escape(
-                                        item.requested_username ||
-                                        item.username ||
-                                        "—"
-                                    )}
-                                </p>
-
-                                <p>
-                                    حالت:
-                                    ${App.escape(
-                                        App.statusUrdu(
-                                            item.status ||
-                                            "pending"
-                                        )
-                                    )}
-                                </p>
-
-                                <div class="record-card-actions">
-
-                                    <button
-                                        type="button"
-                                        data-account-details="${App.escape(applicationKey)}"
-                                    >
-                                        مکمل تفصیل
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        data-account-approve="${App.escape(applicationKey)}"
-                                    >
-                                        منظور کریں
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        data-account-reject="${App.escape(applicationKey)}"
-                                    >
-                                        مسترد کریں
-                                    </button>
-
-                                </div>
-
-                            </article>
-                        `;
-                    }
-                )
-                .join("");
-
-
-        container
-            .querySelectorAll(
-                "[data-account-details]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            const record =
-                                App.accountApplications
-                                    .find(
-                                        item =>
-                                            App.safe(item.application_type || "student") +
-                                                ":" + Number(item.id) ===
-                                            button.dataset.accountDetails
-                                    );
-
-
-                            if (!record) {
-                                return;
-                            }
-
-
-                            App.openGeneratedPanel(
-                                "generatedAccountDetails",
-                                "درخواست کی مکمل تفصیل",
-                                App.renderDeepProfile(
-                                    record,
-                                    "account"
-                                )
-                            );
-                        }
-                    );
-                }
-            );
-
-
-        container
-            .querySelectorAll(
-                "[data-account-approve]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            App.reviewAccountApplication(
-                                button.dataset.accountApprove,
-                                "approved"
-                            );
-                        }
-                    );
-                }
-            );
-
-
-        container
-            .querySelectorAll(
-                "[data-account-reject]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            App.reviewAccountApplication(
-                                button.dataset.accountReject,
-                                "rejected"
-                            );
-                        }
-                    );
-                }
-            );
+        container.querySelectorAll("[data-account-reject]").forEach(button => {
+            button.addEventListener("click", function () {
+                App.reviewAccountApplication(button.dataset.accountReject, "rejected");
+            });
+        });
     };
-
 
 App.reviewAccountApplication =
     async function (
@@ -13817,57 +13721,55 @@ App.reviewAccountApplication =
 App.loadAccountApplications =
     async function () {
 
+        let students = [];
+        let teachers = [];
+        const errors = [];
+
         try {
-
-            const [students, teachers] =
-                await Promise.all([
-                    App.authedRpc(
-                        "admin_get_student_applications"
-                    ),
-                    App.authedRpc(
-                        "admin_get_teacher_applications"
-                    )
-                ]);
-
-            App.accountApplications = [
-                ...App.asArray(students).map(
-                    item => ({
-                        ...item,
-                        application_type: "student"
-                    })
-                ),
-                ...App.asArray(teachers).map(
-                    item => ({
-                        ...item,
-                        application_type: "teacher"
-                    })
+            students = App.asArray(
+                await App.authedRpc(
+                    "admin_get_student_applications"
                 )
-            ];
-
-
-            App.renderAccountApplications(
-                App.accountApplications
             );
-
-
         } catch (error) {
+            console.error("Student applications:", error);
+            errors.push("طالبات کی درخواستیں لوڈ نہیں ہو سکیں۔");
+        }
 
-            console.error(
-                "Accounts overview:",
-                error
+        try {
+            teachers = App.asArray(
+                await App.authedRpc(
+                    "admin_get_teacher_applications"
+                )
             );
+        } catch (error) {
+            console.error("Teacher applications:", error);
+            errors.push("اساتذہ کی درخواستیں لوڈ نہیں ہو سکیں۔");
+        }
 
+        App.accountApplications = [
+            ...students.map(item => ({
+                ...item,
+                application_type: "student"
+            })),
+            ...teachers.map(item => ({
+                ...item,
+                application_type: "teacher"
+            }))
+        ];
 
-            App.accountApplications =
-                [];
+        App.renderAccountApplications(
+            App.accountApplications
+        );
 
-
-            App.renderAccountApplications(
-                []
+        if (errors.length) {
+            App.message(
+                "adminAccountsMessage",
+                errors.join(" "),
+                "error"
             );
         }
     };
-
 
 App.initAccountsPage =
     async function () {

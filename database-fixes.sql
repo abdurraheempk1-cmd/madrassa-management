@@ -197,3 +197,37 @@ grant execute on function public.teacher_get_feedback(uuid) to anon, authenticat
 grant execute on function public.homework_get_submissions(uuid,bigint) to anon, authenticated;
 
 commit;
+
+-- =========================================================
+-- 2026-09-29: UPDATED STUDENT APPLICATION CLASS RULE
+-- New admission: first 7 classes; transfer: all 12 classes.
+-- =========================================================
+
+begin;
+
+alter table public.student_applications
+    drop constraint if exists student_applications_class_rule_check;
+
+alter table public.student_applications
+    add constraint student_applications_class_rule_check
+    check (
+        (
+            admission_type = 'نیا داخلہ'
+            and student_class in (
+                'قاعدہ', 'ناظرہ', 'ترجمہ', 'حفظ', 'تجوید', 'متوسطہ',
+                'ثانویہ خاصہ سال اول'
+            )
+        )
+        or
+        (
+            admission_type = 'منتقلی'
+            and student_class in (
+                'قاعدہ', 'ناظرہ', 'ترجمہ', 'حفظ', 'تجوید', 'متوسطہ',
+                'ثانویہ خاصہ سال اول', 'ثانویہ خاصہ سال دوم',
+                'عالیہ سال اول', 'عالیہ سال دوم', 'عالمیہ سال اول',
+                'عالمیہ سال دوم / دورۂ حدیث'
+            )
+        )
+    );
+
+commit;
