@@ -4733,53 +4733,27 @@ App.studentListClassFilter =
 
 App.loadStudents =
     async function () {
-
-        let builder =
-            function (query) {
-
-                return query.order(
-                    "id",
-                    {
-                        ascending:
-                            false
-                    }
-                );
-            };
-
-
         const selectedClass =
             App.studentListClassFilter();
 
-
-        if (
-            selectedClass
-        ) {
-
-            builder =
-                function (query) {
-
-                    return query
-                        .eq(
-                            "student_class",
-                            selectedClass
-                        )
-                        .order(
-                            "id",
-                            {
-                                ascending:
-                                    false
-                            }
-                        );
-                };
-        }
-
+        const response =
+            await App.authedRpc(
+                "admin_get_students"
+            );
 
         App.students =
-            await App.selectTable(
-                "Students",
-                "*",
-                builder
-            );
+            App.asArray(response)
+                .filter(
+                    student =>
+                        !selectedClass ||
+                        App.safe(student.student_class) ===
+                            selectedClass
+                )
+                .sort(
+                    (a, b) =>
+                        Number(b.id || 0) -
+                        Number(a.id || 0)
+                );
 
 
         return App.students;
@@ -5327,11 +5301,12 @@ App.openStudentEdit =
 
 
         if (!student) {
-
+            await App.loadStudents();
             student =
-                await App.one(
-                    "Students",
-                    studentId
+                App.students.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(studentId)
                 );
         }
 
@@ -5693,7 +5668,7 @@ App.deleteStudent =
         try {
 
             await App.authedRpc(
-                "admin_delete_student",
+                "admin_deactivate_student",
                 {
                     p_student_id:
                         Number(
@@ -6257,19 +6232,18 @@ App.currentTeacherId =
 App.loadTeachers =
     async function () {
 
-        App.teachers =
-            await App.selectTable(
-                "Teachers",
-                "*",
-                query =>
-                    query.order(
-                        "id",
-                        {
-                            ascending:
-                                false
-                        }
-                    )
+        const response =
+            await App.authedRpc(
+                "admin_get_teachers"
             );
+
+        App.teachers =
+            App.asArray(response)
+                .sort(
+                    (a, b) =>
+                        Number(b.id || 0) -
+                        Number(a.id || 0)
+                );
 
 
         return App.teachers;
@@ -6770,11 +6744,12 @@ App.openTeacherEdit =
 
 
         if (!teacher) {
-
+            await App.loadTeachers();
             teacher =
-                await App.one(
-                    "Teachers",
-                    teacherId
+                App.teachers.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(teacherId)
                 );
         }
 
@@ -7116,7 +7091,7 @@ App.deleteTeacher =
         try {
 
             await App.authedRpc(
-                "admin_delete_teacher",
+                "admin_deactivate_teacher",
                 {
                     p_teacher_id:
                         Number(
@@ -8265,25 +8240,16 @@ App.loadAdminAttendance =
         try {
 
             App.adminAttendanceRecords =
-                await App.selectTable(
-                    "Attendance",
-                    "*",
-                    query =>
-                        query
-                            .order(
-                                "attendance_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
-                            .order(
-                                "period_number",
-                                {
-                                    ascending:
-                                        true
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "attendance_get_records",
+                        {
+                            p_date: null,
+                            p_period: null,
+                            p_class: null,
+                            p_teacher_id: null
+                        }
+                    )
                 );
 
 
@@ -9710,31 +9676,15 @@ App.initMyAttendance =
         try {
 
             App.myAttendanceRecords =
-                await App.selectTable(
-                    "Attendance",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "student_id",
-                                Number(
-                                    studentId
-                                )
-                            )
-                            .order(
-                                "attendance_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
-                            .order(
-                                "period_number",
-                                {
-                                    ascending:
-                                        true
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "attendance_get_student",
+                        {
+                            p_date: null,
+                            p_subject: null,
+                            p_period: null
+                        }
+                    )
                 );
 
 
@@ -10293,17 +10243,13 @@ App.loadAdminMarks =
         try {
 
             App.adminMarksRecords =
-                await App.selectTable(
-                    "Marks",
-                    "*",
-                    query =>
-                        query.order(
-                            "exam_date",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
+                App.asArray(
+                    await App.authedRpc(
+                        "marks_get_manage",
+                        {
+                            p_student_id: null
+                        }
+                    )
                 );
 
 
@@ -10830,24 +10776,10 @@ App.initMyMarks =
         try {
 
             App.myMarksRecords =
-                await App.selectTable(
-                    "Marks",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "student_id",
-                                Number(
-                                    studentId
-                                )
-                            )
-                            .order(
-                                "exam_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "marks_get_student"
+                    )
                 );
 
 
@@ -10905,53 +10837,24 @@ App.loadStudentHomework =
 
         try {
 
-            const student =
-                await App.one(
-                    "Students",
-                    studentId,
-                    "id,student_class"
-                );
-
-
-            if (!student) {
-
-                throw new Error(
-                    "Student not found"
-                );
-            }
-
-
             const homework =
-                await App.selectTable(
-                    "Homework",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "student_class",
-                                student.student_class
-                            )
-                            .order(
-                                "assigned_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
-                );
+                App.asArray(
+                    await App.authedRpc(
+                        "homework_get_student"
+                    )
+                )
+                    .map(
+                        item => ({
+                            ...item,
+                            id: item.id || item.homework_id
+                        })
+                    );
 
 
             const submissions =
-                await App.selectTable(
-                    "HomeworkSubmissions",
-                    "*",
-                    query =>
-                        query.eq(
-                            "student_id",
-                            Number(
-                                studentId
-                            )
-                        )
+                homework.filter(
+                    item =>
+                        item.submission_id
                 );
 
 
@@ -10959,10 +10862,12 @@ App.loadStudentHomework =
                 new Map(
                     submissions.map(
                         item => [
-                            Number(
-                                item.homework_id
-                            ),
-                            item
+                            Number(item.homework_id),
+                            {
+                                id: item.submission_id,
+                                status: item.submission_status,
+                                teacher_note: item.teacher_note
+                            }
                         ]
                     )
                 );
@@ -11146,7 +11051,7 @@ App.submitHomework =
         try {
 
             await App.authedRpc(
-                "student_submit_homework",
+                "homework_submit",
                 {
                     p_homework_id:
                         Number(
@@ -11154,7 +11059,10 @@ App.submitHomework =
                         ),
 
                     p_submission_text:
-                        text.trim()
+                        text.trim(),
+
+                    p_attachment_url:
+                        null
                 }
             );
 
@@ -11328,26 +11236,16 @@ App.openHomeworkSubmissions =
 
         try {
 
-            const records =
-                await App.selectTable(
-                    "HomeworkSubmissions",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "homework_id",
-                                Number(
-                                    homeworkId
-                                )
-                            )
-                            .order(
-                                "submitted_at",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
-                );
+                const records =
+                    App.asArray(
+                        await App.authedRpc(
+                            "homework_get_submissions",
+                            {
+                                p_homework_id:
+                                    Number(homeworkId)
+                            }
+                        )
+                    );
 
 
             const body =
@@ -11437,18 +11335,17 @@ App.loadAdminHomework =
         try {
 
             App.adminHomeworkRecords =
-                await App.selectTable(
-                    "Homework",
-                    "*",
-                    query =>
-                        query.order(
-                            "assigned_date",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
-                );
+                App.asArray(
+                    await App.authedRpc(
+                        "homework_get_manage"
+                    )
+                )
+                    .map(
+                        item => ({
+                            ...item,
+                            id: item.id || item.homework_id
+                        })
+                    );
 
 
             App.renderAdminHomework(
@@ -11532,46 +11429,15 @@ App.loadStudentAnnouncements =
 
         try {
 
-            const student =
-                await App.one(
-                    "Students",
-                    studentId,
-                    "id,student_class"
-                );
-
-
             const records =
-                await App.selectTable(
-                    "Announcements",
-                    "*",
-                    query =>
-                        query.order(
-                            "created_at",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
+                App.asArray(
+                    await App.authedRpc(
+                        "announcement_get_student"
+                    )
                 );
 
 
-            const filtered =
-                records.filter(
-                    item => {
-
-                        const target =
-                            App.safe(
-                                item.student_class
-                            ).trim();
-
-
-                        return (
-                            !target ||
-                            target ===
-                            student?.student_class
-                        );
-                    }
-                );
+            const filtered = records;
 
 
             container.innerHTML =
@@ -11752,18 +11618,17 @@ App.loadAdminAnnouncements =
         try {
 
             App.adminAnnouncementRecords =
-                await App.selectTable(
-                    "Announcements",
-                    "*",
-                    query =>
-                        query.order(
-                            "created_at",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
-                );
+                App.asArray(
+                    await App.authedRpc(
+                        "announcement_get_manage"
+                    )
+                )
+                    .map(
+                        item => ({
+                            ...item,
+                            id: item.id || item.announcement_id
+                        })
+                    );
 
 
             App.renderAdminAnnouncements(
@@ -11840,17 +11705,10 @@ App.loadAdminFeedback =
         try {
 
             const records =
-                await App.selectTable(
-                    "student_feedback",
-                    "*",
-                    query =>
-                        query.order(
-                            "feedback_date",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
+                App.asArray(
+                    await App.authedRpc(
+                        "admin_get_feedback"
+                    )
                 );
 
 
@@ -13714,6 +13572,12 @@ App.renderAccountApplications =
                                 item.id
                             );
 
+                        const applicationKey =
+                            App.safe(
+                                item.application_type ||
+                                "student"
+                            ) + ":" + id;
+
 
                         return `
                             <article class="record-card">
@@ -13758,21 +13622,21 @@ App.renderAccountApplications =
 
                                     <button
                                         type="button"
-                                        data-account-details="${id}"
+                                        data-account-details="${App.escape(applicationKey)}"
                                     >
                                         مکمل تفصیل
                                     </button>
 
                                     <button
                                         type="button"
-                                        data-account-approve="${id}"
+                                        data-account-approve="${App.escape(applicationKey)}"
                                     >
                                         منظور کریں
                                     </button>
 
                                     <button
                                         type="button"
-                                        data-account-reject="${id}"
+                                        data-account-reject="${App.escape(applicationKey)}"
                                     >
                                         مسترد کریں
                                     </button>
@@ -13801,13 +13665,9 @@ App.renderAccountApplications =
                                 App.accountApplications
                                     .find(
                                         item =>
-                                            Number(
-                                                item.id
-                                            ) ===
-                                            Number(
-                                                button.dataset
-                                                    .accountDetails
-                                            )
+                                            App.safe(item.application_type || "student") +
+                                                ":" + Number(item.id) ===
+                                            button.dataset.accountDetails
                                     );
 
 
@@ -13842,10 +13702,7 @@ App.renderAccountApplications =
                         function () {
 
                             App.reviewAccountApplication(
-                                Number(
-                                    button.dataset
-                                        .accountApprove
-                                ),
+                                button.dataset.accountApprove,
                                 "approved"
                             );
                         }
@@ -13866,10 +13723,7 @@ App.renderAccountApplications =
                         function () {
 
                             App.reviewAccountApplication(
-                                Number(
-                                    button.dataset
-                                        .accountReject
-                                ),
+                                button.dataset.accountReject,
                                 "rejected"
                             );
                         }
@@ -13881,7 +13735,7 @@ App.renderAccountApplications =
 
 App.reviewAccountApplication =
     async function (
-        applicationId,
+        applicationKey,
         decision
     ) {
 
@@ -13915,20 +13769,42 @@ App.reviewAccountApplication =
 
         try {
 
+            const [requestedType, rawId] =
+                App.safe(applicationKey)
+                    .split(":");
+
+            const applicationId =
+                Number(rawId || applicationKey);
+
+            const record =
+                App.accountApplications.find(
+                    item =>
+                        Number(item.id) === applicationId &&
+                        App.safe(item.application_type || "student") ===
+                            (requestedType || "student")
+                );
+
+            const type =
+                App.safe(
+                    record?.application_type
+                ).toLowerCase();
+
+            const rpcName =
+                type === "teacher"
+                    ? decision === "approved"
+                        ? "admin_approve_teacher_application"
+                        : "admin_reject_teacher_application"
+                    : decision === "approved"
+                        ? "admin_approve_student_application"
+                        : "admin_reject_student_application";
+
             await App.authedRpc(
-                "admin_review_application",
+                rpcName,
                 {
                     p_application_id:
-                        Number(
-                            applicationId
-                        ),
-
-                    p_decision:
-                        decision,
-
-                    p_note:
-                        note ||
-                        null
+                        Number(applicationId),
+                    p_admin_note:
+                        note || null
                 }
             );
 
@@ -13964,30 +13840,30 @@ App.loadAccountApplications =
 
         try {
 
-            const response =
-                await App.authedRpc(
-                    "admin_accounts_overview"
-                );
+            const [students, teachers] =
+                await Promise.all([
+                    App.authedRpc(
+                        "admin_get_student_applications"
+                    ),
+                    App.authedRpc(
+                        "admin_get_teacher_applications"
+                    )
+                ]);
 
-
-            if (
-                Array.isArray(
-                    response
+            App.accountApplications = [
+                ...App.asArray(students).map(
+                    item => ({
+                        ...item,
+                        application_type: "student"
+                    })
+                ),
+                ...App.asArray(teachers).map(
+                    item => ({
+                        ...item,
+                        application_type: "teacher"
+                    })
                 )
-            ) {
-
-                App.accountApplications =
-                    response;
-
-
-            } else {
-
-                App.accountApplications =
-                    App.asArray(
-                        response
-                            ?.applications
-                    );
-            }
+            ];
 
 
             App.renderAccountApplications(
@@ -14079,13 +13955,17 @@ App.initTeacherDashboard =
         try {
 
             const teacher =
-                await App.one(
-                    "Teachers",
-                    teacherId
+                await App.authedRpc(
+                    "teacher_get_my_profile"
                 );
 
+            const teacherProfile =
+                teacher?.profile ||
+                teacher?.teacher ||
+                teacher;
 
-            if (!teacher) {
+
+            if (!teacherProfile) {
                 return;
             }
 
@@ -14093,35 +13973,35 @@ App.initTeacherDashboard =
             const mapping = {
 
                 teacherProfileName:
-                    teacher.name,
+                    teacherProfile.name,
 
                 teacherName:
-                    teacher.name,
+                    teacherProfile.name,
 
                 teacherProfileCode:
-                    teacher.teacher_code,
+                    teacherProfile.teacher_code,
 
                 teacherProfilePhone:
-                    teacher.phone,
+                    teacherProfile.phone,
 
                 teacherProfileCNIC:
-                    teacher.cnic,
+                    teacherProfile.cnic,
 
                 teacherProfileQualification:
-                    teacher.qualification,
+                    teacherProfile.qualification,
 
                 teacherProfileClass:
-                    teacher.teaching_class,
+                    teacherProfile.teaching_class,
 
                 teacherProfileSubject:
-                    teacher.subject,
+                    teacherProfile.subject,
 
                 teacherProfileExperience:
-                    teacher.experience_years,
+                    teacherProfile.experience_years,
 
                 teacherProfileJoiningDate:
                     App.date(
-                        teacher.joining_date
+                        teacherProfile.joining_date
                     )
             };
 
@@ -14190,35 +14070,14 @@ App.initTeacherStudents =
 
         try {
 
-            const teacher =
-                await App.one(
-                    "Teachers",
-                    session.teacher_id ||
-                    App.getTeacherId()
-                );
-
-
-            const className =
-                teacher?.teaching_class;
-
-
             const students =
-                await App.selectTable(
-                    "Students",
-                    "*",
-                    query =>
-                        className
-                            ? query
-                                .eq(
-                                    "student_class",
-                                    className
-                                )
-                                .order(
-                                    "name"
-                                )
-                            : query.order(
-                                "name"
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "attendance_get_students",
+                        {
+                            p_class: null
+                        }
+                    )
                 );
 
 
@@ -14311,25 +14170,13 @@ App.initTeacherMarks =
         try {
 
             const records =
-                await App.selectTable(
-                    "Marks",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "teacher_id",
-                                Number(
-                                    session.teacher_id ||
-                                    App.getTeacherId()
-                                )
-                            )
-                            .order(
-                                "exam_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "marks_get_manage",
+                        {
+                            p_student_id: null
+                        }
+                    )
                 );
 
 
@@ -14439,25 +14286,10 @@ App.initTeacherHomework =
         try {
 
             const records =
-                await App.selectTable(
-                    "Homework",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "teacher_id",
-                                Number(
-                                    session.teacher_id ||
-                                    App.getTeacherId()
-                                )
-                            )
-                            .order(
-                                "assigned_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "homework_get_manage"
+                    )
                 );
 
 
@@ -14559,17 +14391,10 @@ App.initTeacherAnnouncements =
         try {
 
             const records =
-                await App.selectTable(
-                    "Announcements",
-                    "*",
-                    query =>
-                        query.order(
-                            "created_at",
-                            {
-                                ascending:
-                                    false
-                            }
-                        )
+                App.asArray(
+                    await App.authedRpc(
+                        "announcement_get_manage"
+                    )
                 );
 
 
@@ -14669,22 +14494,10 @@ App.initTeacherFeedback =
         try {
 
             const records =
-                await App.selectTable(
-                    "student_feedback",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "teacher_id",
-                                teacherId
-                            )
-                            .order(
-                                "feedback_date",
-                                {
-                                    ascending:
-                                        false
-                                }
-                            )
+                App.asArray(
+                    await App.authedRpc(
+                        "teacher_get_feedback"
+                    )
                 );
 
 
@@ -14786,13 +14599,17 @@ App.initStudentDashboard =
         try {
 
             const student =
-                await App.one(
-                    "Students",
-                    studentId
+                await App.authedRpc(
+                    "student_get_my_profile"
                 );
 
+            const studentProfile =
+                student?.profile ||
+                student?.student ||
+                student;
 
-            if (!student) {
+
+            if (!studentProfile) {
                 return;
             }
 
@@ -14800,39 +14617,39 @@ App.initStudentDashboard =
             const mapping = {
 
                 studentProfileName:
-                    student.name,
+                    studentProfile.name,
 
                 studentName:
-                    student.name,
+                    studentProfile.name,
 
                 studentProfileAdmissionNo:
-                    student.admission_no,
+                    studentProfile.admission_no,
 
                 studentProfileClass:
-                    student.student_class,
+                    studentProfile.student_class,
 
                 studentProfileFatherName:
-                    student.father_name,
+                    studentProfile.father_name,
 
                 studentProfileGuardianName:
-                    student.guardian_name,
+                    studentProfile.guardian_name,
 
                 studentProfilePhone:
-                    student.phone,
+                    studentProfile.phone,
 
                 studentProfileCNIC:
-                    student.cnic,
+                    studentProfile.cnic,
 
                 studentProfileDOB:
                     App.date(
-                        student.date_of_birth
+                        studentProfile.date_of_birth
                     ),
 
                 studentProfileResidence:
-                    student.residence_type,
+                    studentProfile.residence_type,
 
                 studentProfileAddress:
-                    student.address
+                    studentProfile.address
             };
 
 
@@ -14853,23 +14670,27 @@ App.initStudentDashboard =
             try {
 
                 const attendance =
-                    await App.selectTable(
-                        "Attendance",
-                        "*",
-                        query =>
-                            query.eq(
-                                "student_id",
-                                Number(
-                                    studentId
-                                )
-                            )
+                    await App.authedRpc(
+                        "attendance_get_student_summary",
+                        {
+                            p_range: "year",
+                            p_reference_date:
+                                new Date()
+                                    .toISOString()
+                                    .slice(0, 10)
+                        }
                     );
 
 
                 const summary =
-                    App.attendanceSummary(
-                        attendance
-                    );
+                    {
+                        total: Number(attendance?.total_attendance || 0),
+                        present: Number(attendance?.present_count || 0),
+                        absent: Number(attendance?.absent_count || 0),
+                        leave: Number(attendance?.leave_count || 0),
+                        late: Number(attendance?.late_count || 0),
+                        percentage: Number(attendance?.attendance_percentage || 0).toFixed(1)
+                    };
 
 
                 App.setText(
@@ -14927,23 +14748,17 @@ App.initStudentDashboard =
             try {
 
                 const marks =
-                    await App.selectTable(
-                        "Marks",
-                        "*",
-                        query =>
-                            query.eq(
-                                "student_id",
-                                Number(
-                                    studentId
-                                )
-                            )
+                    await App.authedRpc(
+                        "marks_get_student_summary"
                     );
 
 
                 const summary =
-                    App.calculateMarks(
-                        marks
-                    );
+                    {
+                        total: Number(marks?.total_marks || 0),
+                        obtained: Number(marks?.obtained_marks || 0),
+                        percentage: Number(marks?.percentage || 0).toFixed(1)
+                    };
 
 
                 App.setText(
@@ -15076,7 +14891,7 @@ App.bindPasswordForm =
                 try {
 
                     await App.authedRpc(
-                        "account_change_password",
+                        "change_my_password",
                         {
                             p_current_password:
                                 currentPassword,
@@ -15510,6 +15325,173 @@ App.collectApplicationMahrams =
     };
 
 
+App.bindApplicationUtilities =
+    function () {
+
+        [
+            "backToHome",
+            "cancelStudentApplication",
+            "cancelTeacherApplication"
+        ].forEach(
+            id => {
+                const button = App.el(id);
+                if (!button) return;
+                App.bindOnce(
+                    button,
+                    "applicationBack",
+                    "click",
+                    () => window.location.replace("index.html")
+                );
+            }
+        );
+
+        const admissionType =
+            App.el("applyAdmissionType");
+        const classSelect =
+            App.el("applyClass");
+        const previousGroup =
+            App.el("applyPreviousMadrassaGroup");
+        const transferGroup =
+            App.el("applyTransferDateGroup");
+
+        const updateAdmissionFields =
+            function () {
+                if (!admissionType) return;
+                const transfer =
+                    admissionType.value === "منتقلی";
+                [previousGroup, transferGroup]
+                    .forEach(node => {
+                        if (node) node.hidden = !transfer;
+                    });
+                if (classSelect) {
+                    Array.from(classSelect.options)
+                        .forEach(option => {
+                            option.disabled =
+                                !transfer &&
+                                option.value &&
+                                option.value !== "ثانویہ عامہ";
+                        });
+                    if (!transfer && classSelect.value !== "ثانویہ عامہ") {
+                        classSelect.value = "";
+                    }
+                }
+            };
+
+        if (admissionType) {
+            App.bindOnce(
+                admissionType,
+                "admissionFields",
+                "change",
+                updateAdmissionFields
+            );
+            updateAdmissionFields();
+        }
+
+        const residence =
+            App.el("applyResidenceType");
+        const mahramSection =
+            App.el("applyMahramSection");
+        const mahramList =
+            App.el("applyMahramList");
+
+        const addMahramRow =
+            function () {
+                if (!mahramList) return;
+                const count =
+                    mahramList.querySelectorAll("[data-mahram-row]").length;
+                if (count >= App.MAX_MAHRAMS) {
+                    alert("زیادہ سے زیادہ پانچ محرم شامل کیے جا سکتے ہیں۔");
+                    return;
+                }
+                const row = document.createElement("div");
+                row.className = "mahram-row form-grid";
+                row.dataset.mahramRow = String(count + 1);
+                row.innerHTML = `
+                    <input class="mahram-name" data-mahram-name required placeholder="محرم کا نام">
+                    <input class="mahram-relation" data-mahram-relation required placeholder="رشتہ">
+                    <input class="mahram-cnic cnic-input" data-mahram-cnic required placeholder="شناختی نمبر">
+                    <input class="mahram-phone phone-input" data-mahram-phone placeholder="فون نمبر">
+                    <button type="button" data-remove-mahram>ہٹائیں</button>`;
+                row.querySelector("[data-remove-mahram]")
+                    ?.addEventListener("click", () => row.remove());
+                mahramList.appendChild(row);
+                App.bindInputFormatting();
+            };
+
+        const updateResidence =
+            function () {
+                if (!residence || !mahramSection) return;
+                const resident =
+                    residence.value === "مدرسہ میں رہائش" ||
+                    residence.value === "ہاسٹل";
+                mahramSection.hidden = !resident;
+                if (resident && mahramList && !mahramList.children.length) {
+                    addMahramRow();
+                }
+            };
+
+        if (residence) {
+            App.bindOnce(residence, "residenceFields", "change", updateResidence);
+            updateResidence();
+        }
+
+        const addMahram = App.el("addApplyMahram");
+        if (addMahram) {
+            App.bindOnce(addMahram, "addMahram", "click", addMahramRow);
+        }
+
+        const bindStatusCheck =
+            function (buttonId, inputId, resultId, rpcName) {
+                const button = App.el(buttonId);
+                const input = App.el(inputId);
+                const result = App.el(resultId);
+                if (!button || !input || !result) return;
+                App.bindOnce(
+                    button,
+                    "statusCheck",
+                    "click",
+                    async function () {
+                        const number = App.safe(input.value).trim();
+                        if (!number) {
+                            App.message(result, "درخواست نمبر درج کریں۔", "error");
+                            return;
+                        }
+                        button.disabled = true;
+                        try {
+                            const data = await App.rpc(
+                                rpcName,
+                                { p_application_no: number }
+                            );
+                            if (!data) throw new Error("درخواست نہیں ملی");
+                            const status = App.statusUrdu(data.status || "pending");
+                            result.innerHTML = `
+                                <strong>حالت: ${App.escape(status)}</strong>
+                                ${data.admin_note ? `<p>${App.escape(data.admin_note)}</p>` : ""}`;
+                            result.className = "message success";
+                        } catch (error) {
+                            App.message(result, error?.message || "درخواست نہیں ملی۔", "error");
+                        } finally {
+                            button.disabled = false;
+                        }
+                    }
+                );
+            };
+
+        bindStatusCheck(
+            "checkStudentApplicationStatus",
+            "studentApplicationNumber",
+            "studentApplicationStatusResult",
+            "get_student_application_status"
+        );
+        bindStatusCheck(
+            "checkTeacherApplicationStatus",
+            "teacherApplicationNumber",
+            "teacherApplicationStatusResult",
+            "get_teacher_application_status"
+        );
+    };
+
+
 /* =====================================================
    STUDENT APPLICATION
    ===================================================== */
@@ -15523,6 +15505,8 @@ App.initStudentApplication =
         ) {
             return;
         }
+
+        App.bindApplicationUtilities();
 
         const form =
             App.first(
@@ -15545,13 +15529,15 @@ App.initStudentApplication =
                 const admissionType =
                     App.valueAny(
                         "admissionType",
-                        "studentAdmissionType"
+                        "studentAdmissionType",
+                        "applyAdmissionType"
                     );
 
                 const studentClass =
                     App.valueAny(
                         "studentClass",
-                        "applicationStudentClass"
+                        "applicationStudentClass",
+                        "applyClass"
                     );
 
                 if (
@@ -15572,17 +15558,19 @@ App.initStudentApplication =
                 const phone =
                     App.normalizePhone(
                         App.valueAny(
-                            "studentPhone",
-                            "phone"
+                        "studentPhone",
+                        "phone",
+                        "applyPhone"
                         )
                     );
 
                 const cnic =
                     App.normalizeDigits(
                         App.valueAny(
-                            "studentCNIC",
-                            "studentBForm",
-                            "cnic"
+                        "studentCNIC",
+                        "studentBForm",
+                        "cnic",
+                        "applyCNIC"
                         )
                     );
 
@@ -15614,13 +15602,15 @@ App.initStudentApplication =
                     App.valueAny(
                         "studentApplicationPassword",
                         "applicationPassword",
-                        "password"
+                        "password",
+                        "applyPassword"
                     );
 
                 const confirmPassword =
                     App.valueAny(
                         "studentApplicationConfirmPassword",
-                        "confirmPassword"
+                        "confirmPassword",
+                        "applyConfirmPassword"
                     );
 
                 if (
@@ -15651,7 +15641,8 @@ App.initStudentApplication =
                 const name =
                     App.valueAny(
                         "studentName",
-                        "name"
+                        "name",
+                        "applyStudentName"
                     );
 
                 if (!name) {
@@ -15688,14 +15679,16 @@ App.initStudentApplication =
                                 p_father_name:
                                     App.valueAny(
                                         "fatherName",
-                                        "studentFatherName"
+                                        "studentFatherName",
+                                        "applyFatherName"
                                     ) ||
                                     null,
 
                                 p_guardian_name:
                                     App.valueAny(
                                         "guardianName",
-                                        "studentGuardianName"
+                                        "studentGuardianName",
+                                        "applyGuardianName"
                                     ) ||
                                     null,
 
@@ -15711,7 +15704,8 @@ App.initStudentApplication =
                                     App.valueAny(
                                         "dateOfBirth",
                                         "studentDateOfBirth",
-                                        "studentDOB"
+                                        "studentDOB",
+                                        "applyDateOfBirth"
                                     ) ||
                                     null,
 
@@ -15722,28 +15716,32 @@ App.initStudentApplication =
                                 p_address:
                                     App.valueAny(
                                         "address",
-                                        "studentAddress"
+                                        "studentAddress",
+                                        "applyAddress"
                                     ) ||
                                     null,
 
                                 p_residence_type:
                                     App.valueAny(
                                         "residenceType",
-                                        "studentResidenceType"
+                                        "studentResidenceType",
+                                        "applyResidenceType"
                                     ) ||
                                     null,
 
                                 p_previous_madrassa:
                                     App.valueAny(
                                         "previousMadrassa",
-                                        "studentPreviousMadrassa"
+                                        "studentPreviousMadrassa",
+                                        "applyPreviousMadrassa"
                                     ) ||
                                     null,
 
                                 p_transfer_date:
                                     App.valueAny(
                                         "transferDate",
-                                        "studentTransferDate"
+                                        "studentTransferDate",
+                                        "applyTransferDate"
                                     ) ||
                                     null,
 
@@ -15754,7 +15752,8 @@ App.initStudentApplication =
                                     App.valueAny(
                                         "studentApplicationUsername",
                                         "applicationUsername",
-                                        "username"
+                                        "username",
+                                        "applyUsername"
                                     ) ||
                                     null,
 
@@ -15822,6 +15821,8 @@ App.initTeacherApplication =
             return;
         }
 
+        App.bindApplicationUtilities();
+
         const form =
             App.first(
                 "teacherApplicationForm",
@@ -15844,7 +15845,8 @@ App.initTeacherApplication =
                     App.valueAny(
                         "teacherDateOfBirth",
                         "dateOfBirth",
-                        "teacherDOB"
+                        "teacherDOB",
+                        "applyTeacherDateOfBirth"
                     );
 
                 const age =
@@ -15867,7 +15869,8 @@ App.initTeacherApplication =
                         App.valueAny(
                             "teacherExperience",
                             "teacherExperienceYears",
-                            "experienceYears"
+                            "experienceYears",
+                            "applyTeacherExperience"
                         ) ||
                         0
                     );
@@ -15889,16 +15892,18 @@ App.initTeacherApplication =
                 const phone =
                     App.normalizePhone(
                         App.valueAny(
-                            "teacherPhone",
-                            "phone"
+                        "teacherPhone",
+                        "phone",
+                        "applyTeacherPhone"
                         )
                     );
 
                 const cnic =
                     App.normalizeDigits(
                         App.valueAny(
-                            "teacherCNIC",
-                            "cnic"
+                        "teacherCNIC",
+                        "cnic",
+                        "applyTeacherCNIC"
                         )
                     );
 
@@ -15930,13 +15935,15 @@ App.initTeacherApplication =
                     App.valueAny(
                         "teacherApplicationPassword",
                         "applicationPassword",
-                        "password"
+                        "password",
+                        "applyTeacherPassword"
                     );
 
                 const confirmPassword =
                     App.valueAny(
                         "teacherApplicationConfirmPassword",
-                        "confirmPassword"
+                        "confirmPassword",
+                        "applyTeacherConfirmPassword"
                     );
 
                 if (
@@ -15967,7 +15974,8 @@ App.initTeacherApplication =
                 const name =
                     App.valueAny(
                         "teacherName",
-                        "name"
+                        "name",
+                        "applyTeacherName"
                     );
 
                 if (!name) {
@@ -16000,7 +16008,8 @@ App.initTeacherApplication =
                                 p_father_name:
                                     App.valueAny(
                                         "teacherFatherName",
-                                        "fatherName"
+                                        "fatherName",
+                                        "applyTeacherFatherName"
                                     ) ||
                                     null,
 
@@ -16015,14 +16024,16 @@ App.initTeacherApplication =
                                 p_qualification:
                                     App.valueAny(
                                         "teacherQualification",
-                                        "qualification"
+                                        "qualification",
+                                        "applyTeacherQualification"
                                     ) ||
                                     null,
 
                                 p_address:
                                     App.valueAny(
                                         "teacherAddress",
-                                        "address"
+                                        "address",
+                                        "applyTeacherAddress"
                                     ) ||
                                     null,
 
@@ -16032,31 +16043,40 @@ App.initTeacherApplication =
                                 p_specialization:
                                     App.valueAny(
                                         "teacherSpecialization",
-                                        "specialization"
+                                        "specialization",
+                                        "applyTeacherSpecialization"
                                     ) ||
                                     null,
 
-                                p_experience_years:
-                                    experience,
+                                p_experience:
+                                    App.valueAny(
+                                        "teacherExperience",
+                                        "teacherExperienceYears",
+                                        "experienceYears",
+                                        "applyTeacherExperience"
+                                    ) || null,
 
                                 p_previous_institute:
                                     App.valueAny(
                                         "previousInstitute",
-                                        "teacherPreviousInstitute"
+                                        "teacherPreviousInstitute",
+                                        "applyTeacherPreviousInstitute"
                                     ) ||
                                     null,
 
                                 p_preferred_class:
                                     App.valueAny(
                                         "preferredClass",
-                                        "teacherTeachingClass"
+                                        "teacherTeachingClass",
+                                        "applyTeacherPreferredClass"
                                     ) ||
                                     null,
 
                                 p_available_from:
                                     App.valueAny(
                                         "availableFrom",
-                                        "teacherAvailableFrom"
+                                        "teacherAvailableFrom",
+                                        "applyTeacherAvailableFrom"
                                     ) ||
                                     null,
 
@@ -16064,7 +16084,8 @@ App.initTeacherApplication =
                                     App.valueAny(
                                         "teacherApplicationUsername",
                                         "applicationUsername",
-                                        "username"
+                                        "username",
+                                        "applyTeacherUsername"
                                     ) ||
                                     null,
 
@@ -16157,16 +16178,10 @@ App.initAdminHomework =
                 try {
 
                     App.adminHomeworkRecords =
-                        await App.selectTable(
-                            "Homework",
-                            "*",
-                            query =>
-                                query.order(
-                                    "assigned_date",
-                                    {
-                                        ascending: false
-                                    }
-                                )
+                        App.asArray(
+                            await App.authedRpc(
+                                "homework_get_manage"
+                            )
                         );
 
                     container.innerHTML =
@@ -16399,21 +16414,14 @@ App.openHomeworkSubmissions =
         try {
 
             const records =
-                await App.selectTable(
-                    "HomeworkSubmissions",
-                    "*",
-                    query =>
-                        query
-                            .eq(
-                                "homework_id",
+                App.asArray(
+                    await App.authedRpc(
+                        "homework_get_submissions",
+                        {
+                            p_homework_id:
                                 Number(homeworkId)
-                            )
-                            .order(
-                                "submitted_at",
-                                {
-                                    ascending: false
-                                }
-                            )
+                        }
+                    )
                 );
 
             const body =
@@ -16496,16 +16504,10 @@ App.initAdminAnnouncements =
                 try {
 
                     App.adminAnnouncementRecords =
-                        await App.selectTable(
-                            "Announcements",
-                            "*",
-                            query =>
-                                query.order(
-                                    "created_at",
-                                    {
-                                        ascending: false
-                                    }
-                                )
+                        App.asArray(
+                            await App.authedRpc(
+                                "announcement_get_manage"
+                            )
                         );
 
                     container.innerHTML =
@@ -16779,23 +16781,13 @@ App.initTeacherMarks =
                 try {
 
                     const records =
-                        await App.selectTable(
-                            "Marks",
-                            "*",
-                            query =>
-                                query
-                                    .eq(
-                                        "teacher_id",
-                                        Number(
-                                            teacherId
-                                        )
-                                    )
-                                    .order(
-                                        "exam_date",
-                                        {
-                                            ascending: false
-                                        }
-                                    )
+                        App.asArray(
+                            await App.authedRpc(
+                                "marks_get_manage",
+                                {
+                                    p_student_id: null
+                                }
+                            )
                         );
 
                     body.innerHTML =
@@ -17002,23 +16994,10 @@ App.initTeacherHomework =
                 try {
 
                     const records =
-                        await App.selectTable(
-                            "Homework",
-                            "*",
-                            query =>
-                                query
-                                    .eq(
-                                        "teacher_id",
-                                        Number(
-                                            teacherId
-                                        )
-                                    )
-                                    .order(
-                                        "assigned_date",
-                                        {
-                                            ascending: false
-                                        }
-                                    )
+                        App.asArray(
+                            await App.authedRpc(
+                                "homework_get_manage"
+                            )
                         );
 
                     container.innerHTML =
@@ -17275,23 +17254,10 @@ App.initTeacherAnnouncements =
                 try {
 
                     const records =
-                        await App.selectTable(
-                            "Announcements",
-                            "*",
-                            query =>
-                                query
-                                    .eq(
-                                        "teacher_id",
-                                        Number(
-                                            teacherId
-                                        )
-                                    )
-                                    .order(
-                                        "created_at",
-                                        {
-                                            ascending: false
-                                        }
-                                    )
+                        App.asArray(
+                            await App.authedRpc(
+                                "announcement_get_manage"
+                            )
                         );
 
                     container.innerHTML =
@@ -17433,23 +17399,10 @@ App.initTeacherFeedback =
                 try {
 
                     const records =
-                        await App.selectTable(
-                            "student_feedback",
-                            "*",
-                            query =>
-                                query
-                                    .eq(
-                                        "teacher_id",
-                                        Number(
-                                            teacherId
-                                        )
-                                    )
-                                    .order(
-                                        "feedback_date",
-                                        {
-                                            ascending: false
-                                        }
-                                    )
+                        App.asArray(
+                            await App.authedRpc(
+                                "teacher_get_feedback"
+                            )
                         );
 
                     body.innerHTML =
@@ -18557,4 +18510,3 @@ if (
    ===================================================== */
 
 })();
-

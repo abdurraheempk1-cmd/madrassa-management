@@ -267,7 +267,7 @@
                             <input
                                 type="text"
                                 id="applyTeacherSpecialization"
-                                placeholder="مثلاً حفظ، تجوید، درس نظامی"
+                                placeholder="مثلاً حفظ، تجوید، فقہ"
                             >
 
                         </div>
@@ -280,9 +280,11 @@
                             </label>
 
                             <input
-                                type="text"
+                                type="number"
                                 id="applyTeacherExperience"
-                                placeholder="مثلاً 3 سال"
+                                min="5"
+                                step="1"
+                                placeholder="کم از کم 5 سال"
                             >
 
                         </div>
@@ -337,25 +339,12 @@
                                     منتخب کریں
                                 </option>
 
-                                <option value="ناظرہ">
-                                    ناظرہ
-                                </option>
-
-                                <option value="حفظ">
-                                    حفظ
-                                </option>
-
-                                <option value="ترجمہ">
-                                    ترجمہ
-                                </option>
-
-                                <option value="درس نظامی">
-                                    درس نظامی
-                                </option>
-
-                                <option value="دیگر">
-                                    دیگر
-                                </option>
+                                <option value="ثانویہ عامہ">ثانویہ عامہ</option>
+                                <option value="ثانویہ خاصہ">ثانویہ خاصہ</option>
+                                <option value="عالیہ اول">عالیہ اول</option>
+                                <option value="عالیہ دوم">عالیہ دوم</option>
+                                <option value="عالمیہ اول">عالمیہ اول</option>
+                                <option value="عالمیہ دوم / دورۂ حدیث">عالمیہ دوم / دورۂ حدیث</option>
 
                             </select>
 
