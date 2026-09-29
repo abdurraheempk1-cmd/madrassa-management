@@ -30,6 +30,32 @@
 
     App.MAX_MAHRAMS = 5;
 
+    App.CLASSES = [
+        "قاعدہ",
+        "ناظرہ",
+        "ترجمہ",
+        "حفظ",
+        "تجوید",
+        "متوسطہ",
+        "ثانویہ خاصہ سال اول",
+        "ثانویہ خاصہ سال دوم",
+        "عالیہ سال اول",
+        "عالیہ سال دوم",
+        "عالمیہ سال اول",
+        "عالمیہ سال دوم / دورۂ حدیث"
+    ];
+
+    /* پہلی سات جماعتوں میں نیا داخلہ ممکن ہے؛ باقی کے لیے منتقلی ضروری ہے۔ */
+    App.NEW_ADMISSION_CLASSES = [
+        "قاعدہ",
+        "ناظرہ",
+        "ترجمہ",
+        "حفظ",
+        "تجوید",
+        "متوسطہ",
+        "ثانویہ خاصہ سال اول"
+    ];
+
     /*
        EXACT INACTIVITY TIMEOUT
        5 minutes
@@ -3086,23 +3112,18 @@
 
             const map = {
 
-                adminClassThanviaAmma:
-                    "ثانویہ عامہ",
-
-                adminClassThanviaKhasa:
-                    "ثانویہ خاصہ",
-
-                adminClassAliaFirst:
-                    "عالیہ اول",
-
-                adminClassAliaSecond:
-                    "عالیہ دوم",
-
-                adminClassAlmiaFirst:
-                    "عالمیہ اول",
-
-                adminClassAlmiaSecond:
-                    "عالمیہ دوم / دورۂ حدیث"
+                adminClassQaida: "قاعدہ",
+                adminClassNazra: "ناظرہ",
+                adminClassTarjuma: "ترجمہ",
+                adminClassHifz: "حفظ",
+                adminClassTajweed: "تجوید",
+                adminClassMutawassita: "متوسطہ",
+                adminClassThanviaKhasaFirst: "ثانویہ خاصہ سال اول",
+                adminClassThanviaKhasaSecond: "ثانویہ خاصہ سال دوم",
+                adminClassAliaFirst: "عالیہ سال اول",
+                adminClassAliaSecond: "عالیہ سال دوم",
+                adminClassAlmiaFirst: "عالمیہ سال اول",
+                adminClassAlmiaSecond: "عالمیہ سال دوم / دورۂ حدیث"
             };
 
 
@@ -3315,62 +3336,24 @@
     App.dashboardClassId =
         function (name) {
 
-            const value =
-                App.safe(name)
-                    .trim();
+            const value = App.safe(name).trim();
 
-            if (
-                value.includes(
-                    "ثانویہ عامہ"
-                )
-            ) {
-                return "adminClassThanviaAmma";
-            }
+            const map = {
+                "قاعدہ": "adminClassQaida",
+                "ناظرہ": "adminClassNazra",
+                "ترجمہ": "adminClassTarjuma",
+                "حفظ": "adminClassHifz",
+                "تجوید": "adminClassTajweed",
+                "متوسطہ": "adminClassMutawassita",
+                "ثانویہ خاصہ سال اول": "adminClassThanviaKhasaFirst",
+                "ثانویہ خاصہ سال دوم": "adminClassThanviaKhasaSecond",
+                "عالیہ سال اول": "adminClassAliaFirst",
+                "عالیہ سال دوم": "adminClassAliaSecond",
+                "عالمیہ سال اول": "adminClassAlmiaFirst",
+                "عالمیہ سال دوم / دورۂ حدیث": "adminClassAlmiaSecond"
+            };
 
-            if (
-                value.includes(
-                    "ثانویہ خاصہ"
-                )
-            ) {
-                return "adminClassThanviaKhasa";
-            }
-
-            if (
-                value.includes(
-                    "عالیہ اول"
-                )
-            ) {
-                return "adminClassAliaFirst";
-            }
-
-            if (
-                value.includes(
-                    "عالیہ دوم"
-                )
-            ) {
-                return "adminClassAliaSecond";
-            }
-
-            if (
-                value.includes(
-                    "عالمیہ اول"
-                )
-            ) {
-                return "adminClassAlmiaFirst";
-            }
-
-            if (
-                value.includes(
-                    "عالمیہ دوم"
-                ) ||
-                value.includes(
-                    "دورہ"
-                )
-            ) {
-                return "adminClassAlmiaSecond";
-            }
-
-            return null;
+            return map[value] || null;
         };
 
 
@@ -3378,8 +3361,14 @@
         function (classes) {
 
             [
-                "adminClassThanviaAmma",
-                "adminClassThanviaKhasa",
+                "adminClassQaida",
+                "adminClassNazra",
+                "adminClassTarjuma",
+                "adminClassHifz",
+                "adminClassTajweed",
+                "adminClassMutawassita",
+                "adminClassThanviaKhasaFirst",
+                "adminClassThanviaKhasaSecond",
                 "adminClassAliaFirst",
                 "adminClassAliaSecond",
                 "adminClassAlmiaFirst",
@@ -5414,14 +5403,7 @@ App.openStudentEdit =
                             >
 
                                 ${
-                                    [
-                                        "ثانویہ عامہ",
-                                        "ثانویہ خاصہ",
-                                        "عالیہ اول",
-                                        "عالیہ دوم",
-                                        "عالمیہ اول",
-                                        "عالمیہ دوم / دورۂ حدیث"
-                                    ]
+                                    App.CLASSES
                                         .map(
                                             item => `
                                                 <option
@@ -15366,9 +15348,13 @@ App.bindApplicationUtilities =
                             option.disabled =
                                 !transfer &&
                                 option.value &&
-                                option.value !== "ثانویہ عامہ";
+                                !App.NEW_ADMISSION_CLASSES.includes(option.value);
                         });
-                    if (!transfer && classSelect.value !== "ثانویہ عامہ") {
+                    if (
+                        !transfer &&
+                        classSelect.value &&
+                        !App.NEW_ADMISSION_CLASSES.includes(classSelect.value)
+                    ) {
                         classSelect.value = "";
                     }
                 }
@@ -15538,15 +15524,13 @@ App.initStudentApplication =
                     );
 
                 if (
-                    admissionType ===
-                        "نیا داخلہ" &&
+                    admissionType === "نیا داخلہ" &&
                     studentClass &&
-                    studentClass !==
-                        "ثانویہ عامہ"
+                    !App.NEW_ADMISSION_CLASSES.includes(studentClass)
                 ) {
 
                     alert(
-                        "نئے داخلہ کے لیے صرف ثانویہ عامہ منتخب کریں۔ اعلیٰ جماعت کے لیے منتقلی منتخب کریں۔"
+                        "نئے داخلہ کے لیے قاعدہ سے ثانویہ خاصہ سال اول تک جماعت منتخب کریں۔ اس سے اوپر کی جماعت کے لیے منتقلی منتخب کریں۔"
                     );
 
                     return;
@@ -16356,7 +16340,7 @@ App.initAdminHomework =
                     const studentClass =
                         window.prompt(
                             "کلاس:",
-                            "ثانویہ عامہ"
+                            "قاعدہ"
                         );
 
                     if (!studentClass) {

@@ -158,31 +158,21 @@
                                 id="applyClass"
                                 required
                             >
-
                                 <option value="">
                                     کلاس منتخب کریں
                                 </option>
-
-                                <option value="ناظرہ">
-                                    ناظرہ
-                                </option>
-
-                                <option value="حفظ">
-                                    حفظ
-                                </option>
-
-                                <option value="ترجمہ">
-                                    ترجمہ
-                                </option>
-
-                                <option value="درس نظامی">
-                                    درس نظامی
-                                </option>
-
-                                <option value="دیگر">
-                                    دیگر
-                                </option>
-
+                                <option value="قاعدہ">قاعدہ</option>
+                                <option value="ناظرہ">ناظرہ</option>
+                                <option value="ترجمہ">ترجمہ</option>
+                                <option value="حفظ">حفظ</option>
+                                <option value="تجوید">تجوید</option>
+                                <option value="متوسطہ">متوسطہ</option>
+                                <option value="ثانویہ خاصہ سال اول">ثانویہ خاصہ سال اول</option>
+                                <option value="ثانویہ خاصہ سال دوم">ثانویہ خاصہ سال دوم</option>
+                                <option value="عالیہ سال اول">عالیہ سال اول</option>
+                                <option value="عالیہ سال دوم">عالیہ سال دوم</option>
+                                <option value="عالمیہ سال اول">عالمیہ سال اول</option>
+                                <option value="عالمیہ سال دوم / دورۂ حدیث">عالمیہ سال دوم / دورۂ حدیث</option>
                             </select>
 
                         </div>
