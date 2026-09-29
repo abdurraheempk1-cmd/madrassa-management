@@ -1809,6 +1809,8 @@
 
             "admin-accounts.html",
 
+            "approvals.html",
+
             "admin-settings.html",
 
             "print-profile.html"
@@ -13798,6 +13800,294 @@ App.initAccountsPage =
 
 
 /* =====================================================
+   DEDICATED APPLICATION APPROVAL PAGE
+   approvals.html
+   ===================================================== */
+
+App.approvalPageRecords = [];
+App.approvalPageSelectedKey = null;
+App.approvalPageDecision = null;
+
+App.approvalStatusKey = function (status) {
+    const value = App.safe(status || "pending").trim().toLowerCase();
+
+    if (["approved", "active", "منظور", "منظور شدہ", "فعال"].includes(value)) {
+        return "approved";
+    }
+
+    if (["rejected", "declined", "مسترد", "نامنظور", "رد"].includes(value)) {
+        return "rejected";
+    }
+
+    return "pending";
+};
+
+App.approvalPageShow = function (id) {
+    const node = App.el(id);
+    if (node) node.classList.remove("hidden");
+};
+
+App.approvalPageHide = function (id) {
+    const node = App.el(id);
+    if (node) node.classList.add("hidden");
+};
+
+App.renderApprovalPageList = function (type, records) {
+    const isTeacher = type === "teacher";
+    const list = App.el(isTeacher ? "teacherApplicationsList" : "studentApplicationsList");
+    const count = App.el(isTeacher ? "teacherApplicationCount" : "studentApplicationCount");
+
+    records = Array.isArray(records) ? records : [];
+
+    if (count) count.textContent = String(records.length);
+    if (!list) return;
+
+    if (!records.length) {
+        list.innerHTML = App.empty(isTeacher ? "اساتذہ کی کوئی درخواست موجود نہیں۔" : "طالبات کی کوئی درخواست موجود نہیں۔");
+        return;
+    }
+
+    list.innerHTML = records.map(item => {
+        const id = Number(item.id || 0);
+        const key = type + ":" + id;
+        const statusKey = App.approvalStatusKey(item.status);
+        const statusText = App.statusUrdu(item.status || "pending");
+        const name = item.name || item.full_name || "—";
+        const ref = item.application_no || item.request_no || item.admission_no || item.teacher_code || id || "—";
+        const cls = item.student_class || item.teaching_class || item.class_name || "—";
+        const phone = item.phone || "—";
+        const username = item.requested_username || item.username || "—";
+
+        return `
+            <article class="record-card application-record-card">
+                <div class="record-card-main">
+                    <h3>${App.escape(name)}</h3>
+                    <p>درخواست نمبر: <strong>${App.escape(ref)}</strong></p>
+                    <p>${isTeacher ? "تدریسی جماعت" : "جماعت"}: ${App.escape(cls)}</p>
+                    <p>فون: ${App.escape(phone)}</p>
+                    <p>صارف نام: ${App.escape(username)}</p>
+                    <p>حالت: <strong>${App.escape(statusText)}</strong></p>
+                </div>
+                <div class="record-card-actions">
+                    <button type="button" data-approval-view="${App.escape(key)}">تفصیل</button>
+                    ${statusKey === "pending" ? `
+                        <button type="button" data-approval-approve="${App.escape(key)}">منظور کریں</button>
+                        <button type="button" data-approval-reject="${App.escape(key)}">نامنظور کریں</button>
+                    ` : ""}
+                </div>
+            </article>`;
+    }).join("");
+
+    list.querySelectorAll("[data-approval-view]").forEach(button => {
+        button.addEventListener("click", () => App.openApprovalPageDetails(button.dataset.approvalView));
+    });
+
+    list.querySelectorAll("[data-approval-approve]").forEach(button => {
+        button.addEventListener("click", () => {
+            App.openApprovalPageDetails(button.dataset.approvalApprove);
+            App.prepareApprovalPageDecision("approved");
+        });
+    });
+
+    list.querySelectorAll("[data-approval-reject]").forEach(button => {
+        button.addEventListener("click", () => {
+            App.openApprovalPageDetails(button.dataset.approvalReject);
+            App.prepareApprovalPageDecision("rejected");
+        });
+    });
+};
+
+App.openApprovalPageDetails = function (key) {
+    const record = App.approvalPageRecords.find(item => item.application_key === key);
+    if (!record) return;
+
+    App.approvalPageSelectedKey = key;
+
+    App.setText(
+        "applicationDetailsTitle",
+        (record.application_type === "teacher" ? "استاد" : "طالبہ") + " کی درخواست"
+    );
+
+    const content = App.el("applicationDetailsContent");
+    if (content) {
+        content.innerHTML = App.renderDeepProfile(record, "account");
+    }
+
+    const note = App.el("applicationAdminNote");
+    if (note) note.value = App.safe(record.admin_note || "");
+
+    const decision = App.el("applicationDecisionSection");
+    if (decision) {
+        decision.style.display = App.approvalStatusKey(record.status) === "pending" ? "block" : "none";
+    }
+
+    App.approvalPageShow("applicationDetailsOverlay");
+};
+
+App.prepareApprovalPageDecision = function (decision) {
+    if (!App.approvalPageSelectedKey) return;
+
+    App.approvalPageDecision = decision;
+
+    App.setText(
+        "approvalConfirmationTitle",
+        decision === "approved" ? "درخواست منظور کریں" : "درخواست نامنظور کریں"
+    );
+
+    const body = App.el("approvalConfirmationContent");
+    if (body) {
+        body.textContent = decision === "approved"
+            ? "کیا آپ واقعی یہ درخواست منظور کرنا چاہتے ہیں؟"
+            : "کیا آپ واقعی یہ درخواست نامنظور کرنا چاہتے ہیں؟";
+    }
+
+    App.approvalPageShow("approvalConfirmationOverlay");
+};
+
+App.confirmApprovalPageDecision = async function () {
+    const key = App.approvalPageSelectedKey;
+    const decision = App.approvalPageDecision;
+    if (!key || !decision) return;
+
+    const record = App.approvalPageRecords.find(item => item.application_key === key);
+    if (!record) return;
+
+    const note = App.safe(App.el("applicationAdminNote")?.value).trim() || null;
+    const type = record.application_type;
+
+    const rpcName =
+        type === "teacher"
+            ? decision === "approved"
+                ? "admin_approve_teacher_application"
+                : "admin_reject_teacher_application"
+            : decision === "approved"
+                ? "admin_approve_student_application"
+                : "admin_reject_student_application";
+
+    const confirmButton = App.el("confirmApplicationDecision");
+    if (confirmButton) confirmButton.disabled = true;
+
+    try {
+        await App.authedRpc(rpcName, {
+            p_application_id: Number(record.id),
+            p_admin_note: note
+        });
+
+        alert(decision === "approved" ? "درخواست منظور ہوگئی۔" : "درخواست نامنظور ہوگئی۔");
+
+        App.approvalPageHide("approvalConfirmationOverlay");
+        App.approvalPageHide("applicationDetailsOverlay");
+        App.approvalPageSelectedKey = null;
+        App.approvalPageDecision = null;
+
+        await App.loadApprovalPage();
+    } catch (error) {
+        console.error("Approval page decision:", error);
+        alert(error?.message || "درخواست اپڈیٹ نہیں ہو سکی۔");
+    } finally {
+        if (confirmButton) confirmButton.disabled = false;
+    }
+};
+
+App.loadApprovalPage = async function () {
+    let students = [];
+    let teachers = [];
+
+    try {
+        students = App.asArray(await App.authedRpc("admin_get_student_applications"));
+        App.message("studentApplicationsMessage", "", "");
+    } catch (error) {
+        console.error("Approval student applications:", error);
+        App.message("studentApplicationsMessage", "طالبات کی درخواستیں لوڈ نہیں ہو سکیں۔", "error");
+    }
+
+    try {
+        teachers = App.asArray(await App.authedRpc("admin_get_teacher_applications"));
+        App.message("teacherApplicationsMessage", "", "");
+    } catch (error) {
+        console.error("Approval teacher applications:", error);
+        App.message("teacherApplicationsMessage", "اساتذہ کی درخواستیں لوڈ نہیں ہو سکیں۔", "error");
+    }
+
+    App.approvalPageRecords = [
+        ...students.map(item => ({
+            ...item,
+            application_type: "student",
+            application_key: "student:" + Number(item.id)
+        })),
+        ...teachers.map(item => ({
+            ...item,
+            application_type: "teacher",
+            application_key: "teacher:" + Number(item.id)
+        }))
+    ];
+
+    const pendingStudents = students.filter(item => App.approvalStatusKey(item.status) === "pending");
+    const pendingTeachers = teachers.filter(item => App.approvalStatusKey(item.status) === "pending");
+    const approvedTotal = App.approvalPageRecords.filter(item => App.approvalStatusKey(item.status) === "approved").length;
+    const rejectedTotal = App.approvalPageRecords.filter(item => App.approvalStatusKey(item.status) === "rejected").length;
+
+    App.setText("pendingStudentApplications", pendingStudents.length, "0");
+    App.setText("pendingTeacherApplications", pendingTeachers.length, "0");
+    App.setText("approvedApplicationsTotal", approvedTotal, "0");
+    App.setText("rejectedApplicationsTotal", rejectedTotal, "0");
+
+    App.renderApprovalPageList("student", students);
+    App.renderApprovalPageList("teacher", teachers);
+};
+
+App.initApprovalsPage = async function () {
+    if (App.currentFile !== "approvals.html") return;
+
+    const session = await App.requireRole("admin");
+    if (!session) return;
+
+    const back = App.el("backToDashboard");
+    if (back && back.dataset.bound !== "1") {
+        back.dataset.bound = "1";
+        back.addEventListener("click", () => {
+            localStorage.setItem("lastActivity", String(Date.now()));
+            window.location.href = "admin.html";
+        });
+    }
+
+    const closeDetails = App.el("closeApplicationDetails");
+    if (closeDetails && closeDetails.dataset.bound !== "1") {
+        closeDetails.dataset.bound = "1";
+        closeDetails.addEventListener("click", () => App.approvalPageHide("applicationDetailsOverlay"));
+    }
+
+    const approve = App.el("approveApplicationButton");
+    if (approve && approve.dataset.bound !== "1") {
+        approve.dataset.bound = "1";
+        approve.addEventListener("click", () => App.prepareApprovalPageDecision("approved"));
+    }
+
+    const reject = App.el("rejectApplicationButton");
+    if (reject && reject.dataset.bound !== "1") {
+        reject.dataset.bound = "1";
+        reject.addEventListener("click", () => App.prepareApprovalPageDecision("rejected"));
+    }
+
+    ["closeApprovalConfirmation", "cancelApplicationDecision"].forEach(id => {
+        const node = App.el(id);
+        if (node && node.dataset.bound !== "1") {
+            node.dataset.bound = "1";
+            node.addEventListener("click", () => App.approvalPageHide("approvalConfirmationOverlay"));
+        }
+    });
+
+    const confirm = App.el("confirmApplicationDecision");
+    if (confirm && confirm.dataset.bound !== "1") {
+        confirm.dataset.bound = "1";
+        confirm.addEventListener("click", App.confirmApprovalPageDecision);
+    }
+
+    await App.loadApprovalPage();
+};
+
+
+/* =====================================================
    TEACHER DASHBOARD
    ===================================================== */
 
@@ -18183,6 +18473,13 @@ App.initializeCurrentPage =
             case "admin-accounts.html":
 
                 await App.initAccountsPage();
+
+                break;
+
+
+            case "approvals.html":
+
+                await App.initApprovalsPage();
 
                 break;
 
