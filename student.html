@@ -10,6 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        .portal-hero h2 {
+            font-size: clamp(34px, 7vw, 52px);
+            line-height: 1.7;
+            margin: 0;
+        }
+    </style>
 </head>
 
 <body class="student-portal-page">
@@ -48,14 +56,14 @@
 
             <nav class="portal-navigation">
 
-                <a href="student.html" class="portal-nav-link active">
+                <a href="student.html" class="portal-nav-link">
                     <span>⌂</span>
                     <strong>ڈیش بورڈ</strong>
                 </a>
 
                 <a href="student.html#profile" class="portal-nav-link">
                     <span>👤</span>
-                    <strong>میرا پروفائل</strong>
+                    <strong>پروفائل</strong>
                 </a>
 
                 <a href="my-attendance.html" class="portal-nav-link">
@@ -115,12 +123,12 @@
 
             <section class="portal-hero">
                 <h2>خوش آمدید، <span id="studentName">طالبہ</span></h2>
-                <p>آپ کا ذاتی تعلیمی ریکارڈ</p>
+                
             </section>
 
 
             <section id="profile" class="portal-panel">
-                <h2>میرا پروفائل</h2>
+                <h2>پروفائل</h2>
 
                 <div class="profile-grid">
                     <p><b>نام:</b> <span id="studentProfileName">—</span></p>

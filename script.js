@@ -2401,6 +2401,16 @@
                 App.currentFile ||
                 "index.html";
 
+            const studentPortalPages =
+                new Set([
+                    "student.html",
+                    "my-attendance.html",
+                    "my-marks.html",
+                    "homework.html",
+                    "announcements.html",
+                    "settings.html"
+                ]);
+
             document
                 .querySelectorAll(
                     ".portal-nav-link"
@@ -2411,6 +2421,11 @@
                         link.classList.remove(
                             "active"
                         );
+
+                        /* Student sidebar keeps one consistent design on every page. */
+                        if (studentPortalPages.has(current)) {
+                            return;
+                        }
 
                         const href =
                             App.safe(
@@ -2448,6 +2463,7 @@
                 "adminLogoutButton",
                 "teacherLogoutButton",
                 "studentLogoutButton",
+                "settingsLogoutButton",
                 "settingsAdminLogoutButton",
                 "settingsTeacherLogoutButton",
                 "settingsStudentLogoutButton"
@@ -14974,6 +14990,257 @@ App.initStudentDashboard =
 
 
 /* =====================================================
+   PASSWORD VISIBILITY BUTTONS
+   ===================================================== */
+
+App.bindPasswordVisibilityButtons =
+    function () {
+
+        document
+            .querySelectorAll(
+                "[data-password-target]"
+            )
+            .forEach(
+                button => {
+
+                    if (
+                        button.dataset
+                            .passwordEyeBound ===
+                        "true"
+                    ) {
+                        return;
+                    }
+
+                    const targetId =
+                        button.getAttribute(
+                            "data-password-target"
+                        );
+
+                    const input =
+                        targetId
+                            ? App.el(targetId)
+                            : null;
+
+                    if (!input) {
+                        return;
+                    }
+
+                    button.dataset.passwordEyeBound =
+                        "true";
+
+                    button.addEventListener(
+                        "click",
+                        function (event) {
+
+                            event.preventDefault();
+
+                            const show =
+                                input.type ===
+                                "password";
+
+                            input.type =
+                                show
+                                    ? "text"
+                                    : "password";
+
+                            button.setAttribute(
+                                "aria-label",
+                                show
+                                    ? "پاس ورڈ چھپائیں"
+                                    : "پاس ورڈ دکھائیں"
+                            );
+                        }
+                    );
+                }
+            );
+    };
+
+
+/* =====================================================
+   STUDENT SETTINGS PROFILE
+   ===================================================== */
+
+App.loadStudentSettingsProfile =
+    async function () {
+
+        if (
+            App.currentFile !==
+            "settings.html"
+        ) {
+            return;
+        }
+
+        const message =
+            App.el(
+                "studentSettingsMessage"
+            );
+
+        try {
+
+            const session =
+                await App.requireRole(
+                    "student"
+                );
+
+            if (!session) {
+                return;
+            }
+
+            const result =
+                await App.authedRpc(
+                    "student_get_my_profile"
+                );
+
+            const profile =
+                result?.profile ||
+                result?.student ||
+                result ||
+                {};
+
+            const mapping = {
+                settingsStudentName:
+                    profile.name ||
+                    "—",
+                settingsAdmissionNo:
+                    profile.admission_no ||
+                    "—",
+                settingsFatherName:
+                    profile.father_name ||
+                    "—",
+                settingsStudentClass:
+                    profile.student_class ||
+                    "—",
+                settingsStudentPhone:
+                    profile.phone ||
+                    "—",
+                settingsAccountStatus:
+                    App.statusUrdu(
+                        profile.account_status ||
+                        profile.status ||
+                        session.status ||
+                        "active"
+                    )
+            };
+
+            Object.entries(mapping)
+                .forEach(
+                    ([id, value]) => {
+                        App.setText(
+                            id,
+                            value,
+                            "—"
+                        );
+                    }
+                );
+
+            if (message) {
+                message.textContent =
+                    "";
+                message.className =
+                    "";
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Student settings profile:",
+                error
+            );
+
+            if (message) {
+                App.message(
+                    message,
+                    "اکاؤنٹ کی معلومات لوڈ نہیں ہو سکیں۔",
+                    "error"
+                );
+            }
+        }
+    };
+
+
+App.bindStudentPasswordRequirements =
+    function () {
+
+        if (
+            App.currentFile !==
+            "settings.html"
+        ) {
+            return;
+        }
+
+        const password =
+            App.el(
+                "newStudentPassword"
+            );
+
+        const confirm =
+            App.el(
+                "confirmStudentPassword"
+            );
+
+        const lengthNode =
+            App.el(
+                "passwordLengthRequirement"
+            );
+
+        const matchNode =
+            App.el(
+                "passwordMatchRequirement"
+            );
+
+        if (!password || !confirm) {
+            return;
+        }
+
+        const update =
+            function () {
+
+                const lengthOk =
+                    password.value.length >=
+                    8;
+
+                const matchOk =
+                    confirm.value.length > 0 &&
+                    password.value ===
+                    confirm.value;
+
+                if (lengthNode) {
+                    lengthNode.textContent =
+                        (lengthOk ? "✓ " : "○ ") +
+                        "کم از کم 8 حروف";
+                }
+
+                if (matchNode) {
+                    matchNode.textContent =
+                        (matchOk ? "✓ " : "○ ") +
+                        "دونوں نئے پاس ورڈ ایک جیسے ہوں";
+                }
+            };
+
+        [password, confirm]
+            .forEach(
+                input => {
+                    if (
+                        input.dataset
+                            .passwordRequirementBound ===
+                        "true"
+                    ) {
+                        return;
+                    }
+                    input.dataset.passwordRequirementBound =
+                        "true";
+                    input.addEventListener(
+                        "input",
+                        update
+                    );
+                }
+            );
+
+        update();
+    };
+
+
+/* =====================================================
    SETTINGS / PASSWORD
    ===================================================== */
 
@@ -15207,7 +15474,18 @@ App.initSettings =
         );
 
 
+        App.bindPasswordVisibilityButtons();
+
+        App.bindStudentPasswordRequirements();
+
         App.bindLanguageSetting();
+
+        if (
+            App.currentFile ===
+            "settings.html"
+        ) {
+            App.loadStudentSettingsProfile();
+        }
     };
 
 
