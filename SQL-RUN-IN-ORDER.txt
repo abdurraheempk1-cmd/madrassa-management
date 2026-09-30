@@ -30,3 +30,11 @@ Wait for Success before running the next file.
 Do not paste all parts together; Supabase may reject an oversized query.
 
 database_sql_history.sql is reference/history only.
+
+
+PROMOTION / CLASS UPGRADE FIX (2026-09-30):
+    Run: sql-parts/09-promotion-class-constraint-fix.sql
+
+This removes the new-admission eligibility check from the permanent Students table.
+The restriction stays on student applications only, so existing students can progress
+through all valid classes.
