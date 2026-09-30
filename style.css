@@ -8759,3 +8759,92 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
         grid-template-columns: 110px minmax(0, 1fr);
     }
 }
+
+
+/* =========================================================
+   ID CARD OWNER SELECTOR
+   ========================================================= */
+
+.id-card-single-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 10px;
+    align-items: end;
+}
+
+.id-card-single-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    font-weight: 700;
+    color: #2f4a40;
+}
+
+.id-card-single-form input,
+.id-card-single-form select {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+}
+
+.id-card-single-form button {
+    width: auto;
+    min-width: 170px;
+    min-height: 48px;
+    margin: 0;
+}
+
+.id-card-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin: 10px 0 14px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.id-card-selection-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #dbe7e1;
+    border-radius: 12px;
+    background: #fbfdfc;
+    cursor: pointer;
+}
+
+.id-card-selection-item input {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+}
+
+.id-card-selection-item span {
+    min-width: 0;
+}
+
+.id-card-selection-item strong,
+.id-card-selection-item small {
+    display: block;
+}
+
+.id-card-selection-item small {
+    margin-top: 2px;
+    color: #64748b;
+}
+
+@media (max-width: 760px) {
+    .id-card-single-form {
+        grid-template-columns: 1fr;
+    }
+
+    .id-card-single-form button {
+        width: 100%;
+    }
+
+    .id-card-selection-grid {
+        grid-template-columns: 1fr;
+    }
+}
