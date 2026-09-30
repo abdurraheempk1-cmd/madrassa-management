@@ -421,3 +421,22 @@
   font-size:2.6mm!important;
   font-weight:800!important;
 }
+
+
+/* ---------- v7: QR only, no explanatory text ---------- */
+.id-card-qr-panel.id-card-qr-only{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:22.5mm!important;
+  min-width:22.5mm!important;
+  max-width:22.5mm!important;
+  height:100%!important;
+}
+.id-card-qr-panel.id-card-qr-only .id-card-qr{
+  margin:auto!important;
+}
+.id-card-qr-panel.id-card-qr-only>span,
+.id-card-qr-panel.id-card-qr-only>small{
+  display:none!important;
+}
