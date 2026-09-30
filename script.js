@@ -36,6 +36,7 @@
         "ترجمہ",
         "حفظ",
         "تجوید",
+        "اعدادیہ",
         "متوسطہ",
         "ثانویہ خاصہ سال اول",
         "ثانویہ خاصہ سال دوم",
@@ -45,13 +46,14 @@
         "عالمیہ سال دوم / دورۂ حدیث"
     ];
 
-    /* پہلی سات جماعتوں میں نیا داخلہ ممکن ہے؛ باقی کے لیے منتقلی ضروری ہے۔ */
+    /* بنیادی جماعتوں میں نیا داخلہ ممکن ہے؛ اعلیٰ جماعتوں کے لیے منتقلی ضروری ہے۔ */
     App.NEW_ADMISSION_CLASSES = [
         "قاعدہ",
         "ناظرہ",
         "ترجمہ",
         "حفظ",
         "تجوید",
+        "اعدادیہ",
         "متوسطہ",
         "ثانویہ خاصہ سال اول"
     ];
@@ -3015,6 +3017,311 @@
         };
 
 
+
+
+    /* =====================================================
+       ACCOUNT RECOVERY
+       Student / Teacher: reference + CNIC + phone verification.
+       Admin: configured recovery code verification.
+       Student/Teacher require Admin review; Admin recovery code completes self-recovery.
+       ===================================================== */
+
+    App.recoveryRoleNames = {
+        admin: "ایڈمن",
+        teacher: "استاد",
+        student: "طالبہ"
+    };
+
+    App.setRecoveryMessage = function (id, text, type) {
+        const node = App.el(id);
+        if (!node) return;
+        node.textContent = text || "";
+        node.className = "recovery-message" + (type ? " " + type : "");
+    };
+
+    App.openAccountRecovery = function (requestType) {
+        const modal = App.el("accountRecoveryModal");
+        if (!modal) return;
+
+        const role = App.safe(new URLSearchParams(window.location.search).get("role")).trim().toLowerCase();
+        if (!["admin", "teacher", "student"].includes(role)) return;
+
+        App.el("recoveryRole").value = role;
+        App.el("recoveryType").value = requestType;
+
+        const roleName = App.recoveryRoleNames[role] || role;
+        App.setText("accountRecoveryTitle", requestType === "username" ? "صارف نام کی بحالی" : "پاس ورڈ کی بحالی");
+        App.setText(
+            "accountRecoverySubtitle",
+            role === "admin"
+                ? "محفوظ بحالی کوڈ سے تصدیق کے بعد ایڈمن بحالی فوراً مکمل ہوگی۔"
+                : "تصدیق کے بعد درخواست ایڈمن منظوری کے لیے جائے گی۔"
+        );
+        App.setText("accountRecoveryRoleNote", "اکاؤنٹ: " + roleName);
+
+        const common = App.el("studentTeacherRecoveryFields");
+        const admin = App.el("adminRecoveryFields");
+        if (common) common.hidden = role === "admin";
+        if (admin) admin.hidden = role !== "admin";
+
+        const referenceLabel = App.el("recoveryReferenceLabel");
+        if (referenceLabel) {
+            referenceLabel.textContent = role === "student" ? "داخلہ / وفاق نمبر" : "استاد کوڈ";
+        }
+
+        const passFields = App.el("recoveryNewPasswordFields");
+        if (passFields) passFields.hidden = requestType !== "password";
+
+        const form = App.el("accountRecoveryForm");
+        if (form) form.reset();
+        App.el("recoveryRole").value = role;
+        App.el("recoveryType").value = requestType;
+        if (common) common.hidden = role === "admin";
+        if (admin) admin.hidden = role !== "admin";
+        if (passFields) passFields.hidden = requestType !== "password";
+
+        const statusForm = App.el("recoveryStatusForm");
+        if (statusForm) statusForm.hidden = true;
+        App.setRecoveryMessage("recoveryRequestMessage", "", "");
+        App.setRecoveryMessage("recoveryStatusMessage", "", "");
+
+        modal.hidden = false;
+        document.body.style.overflow = "hidden";
+    };
+
+    App.closeAccountRecovery = function () {
+        const modal = App.el("accountRecoveryModal");
+        if (modal) modal.hidden = true;
+        document.body.style.overflow = "";
+    };
+
+    App.initAccountRecovery = function () {
+        if (App.currentFile !== "login.html") return;
+
+        const forgotUsername = App.el("forgotUsernameButton");
+        const forgotPassword = App.el("forgotPasswordButton");
+        const close = App.el("closeAccountRecovery");
+        const backdrop = App.el("accountRecoveryBackdrop");
+        const showStatus = App.el("showRecoveryStatusForm");
+        const requestForm = App.el("accountRecoveryForm");
+        const statusForm = App.el("recoveryStatusForm");
+
+        if (forgotUsername && forgotUsername.dataset.bound !== "1") {
+            forgotUsername.dataset.bound = "1";
+            forgotUsername.addEventListener("click", () => App.openAccountRecovery("username"));
+        }
+        if (forgotPassword && forgotPassword.dataset.bound !== "1") {
+            forgotPassword.dataset.bound = "1";
+            forgotPassword.addEventListener("click", () => App.openAccountRecovery("password"));
+        }
+        [close, backdrop].forEach(node => {
+            if (node && node.dataset.bound !== "1") {
+                node.dataset.bound = "1";
+                node.addEventListener("click", App.closeAccountRecovery);
+            }
+        });
+        if (showStatus && showStatus.dataset.bound !== "1") {
+            showStatus.dataset.bound = "1";
+            showStatus.addEventListener("click", () => {
+                if (statusForm) statusForm.hidden = !statusForm.hidden;
+            });
+        }
+
+        if (requestForm && requestForm.dataset.bound !== "1") {
+            requestForm.dataset.bound = "1";
+            requestForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const role = App.val("recoveryRole");
+                const type = App.val("recoveryType");
+                const pin = App.val("recoveryPin");
+                const newPassword = App.val("recoveryNewPassword");
+                const confirmPassword = App.val("recoveryConfirmPassword");
+
+                if (pin.length < 4) {
+                    App.setRecoveryMessage("recoveryRequestMessage", "درخواست PIN کم از کم 4 ہندسوں/حروف کا ہونا چاہیے۔", "error");
+                    return;
+                }
+                if (type === "password") {
+                    if (newPassword.length < 8) {
+                        App.setRecoveryMessage("recoveryRequestMessage", "نیا پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے۔", "error");
+                        return;
+                    }
+                    if (newPassword !== confirmPassword) {
+                        App.setRecoveryMessage("recoveryRequestMessage", "دونوں نئے پاس ورڈ ایک جیسے نہیں ہیں۔", "error");
+                        return;
+                    }
+                }
+
+                const submit = App.el("submitRecoveryRequest");
+                if (submit) submit.disabled = true;
+                try {
+                    const result = await App.rpc("request_account_recovery", {
+                        p_role: role,
+                        p_request_type: type,
+                        p_reference: role === "admin" ? null : App.val("recoveryReference"),
+                        p_cnic: role === "admin" ? null : App.normalizeDigits(App.val("recoveryCNIC")),
+                        p_phone: role === "admin" ? null : App.normalizePhone(App.val("recoveryPhone")),
+                        p_admin_recovery_code: role === "admin" ? App.val("recoveryAdminCode") : null,
+                        p_new_password: type === "password" ? newPassword : null,
+                        p_recovery_pin: pin
+                    });
+                    const number = App.safe(result?.request_no || result);
+                    const resultStatus = App.safe(result?.status || "pending").toLowerCase();
+                    let recoveryText;
+                    if (role === "admin" && resultStatus === "approved") {
+                        if (type === "username" && result?.username) {
+                            recoveryText = "تصدیق کامیاب ہوگئی۔\nآپ کا صارف نام: " + result.username +
+                                "\nدرخواست نمبر: " + number + "\nPIN محفوظ رکھیں۔";
+                        } else {
+                            recoveryText = "تصدیق کامیاب ہوگئی۔ نیا پاس ورڈ فعال کر دیا گیا ہے۔\nدرخواست نمبر: " +
+                                number + "\nاب نئے پاس ورڈ سے لاگ اِن کریں۔";
+                        }
+                    } else {
+                        recoveryText = "درخواست کامیابی سے جمع ہوگئی۔\nدرخواست نمبر: " + number +
+                            "\nیہ نمبر اور PIN محفوظ رکھیں۔ Admin منظوری کے بعد حالت دوبارہ چیک کریں۔";
+                    }
+                    App.setRecoveryMessage("recoveryRequestMessage", recoveryText, "success");
+                    const numberInput = App.el("recoveryStatusNumber");
+                    if (numberInput) numberInput.value = number;
+                } catch (error) {
+                    console.error("Account recovery request:", error);
+                    App.setRecoveryMessage("recoveryRequestMessage", error?.message || "تصدیق یا درخواست مکمل نہیں ہو سکی۔", "error");
+                } finally {
+                    if (submit) submit.disabled = false;
+                }
+            });
+        }
+
+        if (statusForm && statusForm.dataset.bound !== "1") {
+            statusForm.dataset.bound = "1";
+            statusForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+                try {
+                    const result = await App.rpc("get_account_recovery_status", {
+                        p_request_no: App.val("recoveryStatusNumber"),
+                        p_recovery_pin: App.val("recoveryStatusPin")
+                    });
+                    const status = App.safe(result?.status || "pending");
+                    let text = "حالت: " + App.statusUrdu(status);
+                    if (status === "approved" || status === "منظور") {
+                        if (result?.request_type === "username" && result?.username) {
+                            text += "\nآپ کا صارف نام: " + result.username;
+                        } else if (result?.request_type === "password") {
+                            text += "\nآپ کا نیا پاس ورڈ فعال کر دیا گیا ہے۔ اب لاگ اِن کریں۔";
+                        }
+                    }
+                    if (result?.admin_note) text += "\nایڈمن نوٹ: " + result.admin_note;
+                    App.setRecoveryMessage("recoveryStatusMessage", text, status === "rejected" ? "error" : "success");
+                } catch (error) {
+                    console.error("Recovery status:", error);
+                    App.setRecoveryMessage("recoveryStatusMessage", error?.message || "درخواست کی حالت نہیں مل سکی۔", "error");
+                }
+            });
+        }
+    };
+
+    App.recoveryRequests = [];
+
+    App.renderRecoveryRequests = function (records) {
+        const body = App.el("adminRecoveryRequestsBody");
+        if (!body) return;
+        records = Array.isArray(records) ? records : [];
+        if (!records.length) {
+            body.innerHTML = '<tr><td colspan="7" class="table-empty">کوئی اکاؤنٹ بحالی درخواست موجود نہیں۔</td></tr>';
+            return;
+        }
+        body.innerHTML = records.map(item => {
+            const role = App.recoveryRoleNames[App.safe(item.role).toLowerCase()] || App.safe(item.role);
+            const kind = item.request_type === "username" ? "صارف نام" : "پاس ورڈ";
+            const status = App.statusUrdu(item.status || "pending");
+            const pending = App.safe(item.status || "pending").toLowerCase() === "pending";
+            return `
+                <tr>
+                    <td>${App.escape(App.dateTime(item.created_at))}</td>
+                    <td>${App.escape(item.request_no || "—")}</td>
+                    <td>${App.escape(role)}</td>
+                    <td>${App.escape(kind)}</td>
+                    <td>${App.escape(item.reference_value || "—")}</td>
+                    <td>${App.escape(status)}</td>
+                    <td>${pending ? `
+                        <div class="record-card-actions account-inline-actions">
+                            <button type="button" data-recovery-approve="${Number(item.id)}">منظور کریں</button>
+                            <button type="button" data-recovery-reject="${Number(item.id)}">مسترد کریں</button>
+                        </div>` : "—"}</td>
+                </tr>`;
+        }).join("");
+
+        body.querySelectorAll("[data-recovery-approve]").forEach(button => {
+            button.addEventListener("click", () => App.reviewRecoveryRequest(Number(button.dataset.recoveryApprove), "approved"));
+        });
+        body.querySelectorAll("[data-recovery-reject]").forEach(button => {
+            button.addEventListener("click", () => App.reviewRecoveryRequest(Number(button.dataset.recoveryReject), "rejected"));
+        });
+    };
+
+    App.loadRecoveryRequests = async function () {
+        if (App.currentFile !== "admin-accounts.html") return;
+        try {
+            const rows = App.asArray(await App.authedRpc("admin_get_recovery_requests"));
+            App.recoveryRequests = rows;
+            App.renderRecoveryRequests(rows);
+            App.message("adminRecoveryRequestsMessage", "", "");
+        } catch (error) {
+            console.error("Recovery requests:", error);
+            App.renderRecoveryRequests([]);
+            App.message("adminRecoveryRequestsMessage", error?.message || "اکاؤنٹ بحالی کی درخواستیں لوڈ نہیں ہو سکیں۔", "error");
+        }
+    };
+
+    App.reviewRecoveryRequest = async function (id, decision) {
+        const label = decision === "approved" ? "منظور" : "مسترد";
+        if (!window.confirm("کیا آپ یہ اکاؤنٹ بحالی درخواست " + label + " کرنا چاہتے ہیں؟")) return;
+        const note = window.prompt("ایڈمن نوٹ (اختیاری):", "");
+        if (note === null) return;
+        try {
+            await App.authedRpc("admin_review_recovery_request", {
+                p_request_id: Number(id),
+                p_decision: decision,
+                p_admin_note: note || null
+            });
+            alert("درخواست " + label + " ہوگئی۔");
+            await App.loadRecoveryRequests();
+        } catch (error) {
+            console.error("Review recovery:", error);
+            alert(error?.message || "درخواست اپڈیٹ نہیں ہو سکی۔");
+        }
+    };
+
+    App.bindAdminRecoveryCodeForm = function () {
+        if (App.currentFile !== "admin-settings.html") return;
+        const form = App.el("adminRecoveryCodeForm");
+        if (!form || form.dataset.bound === "1") return;
+        form.dataset.bound = "1";
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const code = App.val("adminRecoveryCode");
+            const confirm = App.val("confirmAdminRecoveryCode");
+            if (code.length < 8) {
+                App.message("adminRecoveryCodeMessage", "بحالی کوڈ کم از کم 8 حروف/ہندسے کا ہونا چاہیے۔", "error");
+                return;
+            }
+            if (code !== confirm) {
+                App.message("adminRecoveryCodeMessage", "دونوں بحالی کوڈ ایک جیسے نہیں ہیں۔", "error");
+                return;
+            }
+            try {
+                await App.authedRpc("admin_set_recovery_code", { p_recovery_code: code });
+                form.reset();
+                App.message("adminRecoveryCodeMessage", "ایڈمن بحالی کوڈ محفوظ ہوگیا۔", "success");
+            } catch (error) {
+                console.error("Admin recovery code:", error);
+                App.message("adminRecoveryCodeMessage", error?.message || "بحالی کوڈ محفوظ نہیں ہو سکا۔", "error");
+            }
+        });
+    };
+
+
     /* =====================================================
        PRINT PROFILE LINK
        ===================================================== */
@@ -3135,6 +3442,7 @@
                 adminClassTarjuma: "ترجمہ",
                 adminClassHifz: "حفظ",
                 adminClassTajweed: "تجوید",
+                adminClassIdadiya: "اعدادیہ",
                 adminClassMutawassita: "متوسطہ",
                 adminClassThanviaKhasaFirst: "ثانویہ خاصہ سال اول",
                 adminClassThanviaKhasaSecond: "ثانویہ خاصہ سال دوم",
@@ -3362,6 +3670,7 @@
                 "ترجمہ": "adminClassTarjuma",
                 "حفظ": "adminClassHifz",
                 "تجوید": "adminClassTajweed",
+                "اعدادیہ": "adminClassIdadiya",
                 "متوسطہ": "adminClassMutawassita",
                 "ثانویہ خاصہ سال اول": "adminClassThanviaKhasaFirst",
                 "ثانویہ خاصہ سال دوم": "adminClassThanviaKhasaSecond",
@@ -3384,6 +3693,7 @@
                 "adminClassTarjuma",
                 "adminClassHifz",
                 "adminClassTajweed",
+                "adminClassIdadiya",
                 "adminClassMutawassita",
                 "adminClassThanviaKhasaFirst",
                 "adminClassThanviaKhasaSecond",
@@ -5336,6 +5646,20 @@ App.openStudentEdit =
                     >
 
                         <label>
+                            داخلہ / وفاق نمبر
+                            <input
+                                id="editStudentAdmissionNo"
+                                type="text"
+                                value="${App.escape(
+                                    student.admission_no ||
+                                    ""
+                                )}"
+                                required
+                            >
+                            <small>وفاق المدارس کا نمبر ملنے کے بعد یہاں درج کریں۔ یہ نمبر منفرد ہونا چاہیے۔</small>
+                        </label>
+
+                        <label>
                             نام
                             <input
                                 id="editStudentName"
@@ -5527,6 +5851,11 @@ App.openStudentEdit =
 
 
                     const payload = {
+
+                        admission_no:
+                            App.val(
+                                "editStudentAdmissionNo"
+                            ),
 
                         name:
                             App.val(
@@ -13812,6 +14141,13 @@ App.initAccountsPage =
 
 
         await App.loadAccountApplications();
+        await App.loadRecoveryRequests();
+
+        const refreshRecovery = App.el("refreshRecoveryRequests");
+        if (refreshRecovery && refreshRecovery.dataset.bound !== "1") {
+            refreshRecovery.dataset.bound = "1";
+            refreshRecovery.addEventListener("click", App.loadRecoveryRequests);
+        }
     };
 
 
@@ -15478,6 +15814,8 @@ App.initSettings =
 
         App.bindStudentPasswordRequirements();
 
+        App.bindAdminRecoveryCodeForm();
+
         App.bindLanguageSetting();
 
         if (
@@ -16000,7 +16338,7 @@ App.initStudentApplication =
                 ) {
 
                     alert(
-                        "نئے داخلہ کے لیے قاعدہ سے ثانویہ خاصہ سال اول تک جماعت منتخب کریں۔ اس سے اوپر کی جماعت کے لیے منتقلی منتخب کریں۔"
+                        "نئے داخلہ کے لیے قاعدہ، ناظرہ، ترجمہ، حفظ، تجوید، اعدادیہ، متوسطہ یا ثانویہ خاصہ سال اول منتخب کریں۔ اس سے اوپر کی جماعت کے لیے منتقلی منتخب کریں۔"
                     );
 
                     return;
@@ -18639,6 +18977,7 @@ App.initializeCurrentPage =
             case "login.html":
 
                 App.initLogin();
+                App.initAccountRecovery();
 
                 break;
 

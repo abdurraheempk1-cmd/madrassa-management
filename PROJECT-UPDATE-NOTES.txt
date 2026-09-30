@@ -1,0 +1,29 @@
+مدرسہ مینجمنٹ سسٹم — 30-09-2026 Update
+
+Included in this complete project:
+- Student portal fixes from previous combined update.
+- New valid class: اعدادیہ.
+- Dashboard count/card for اعدادیہ.
+- Default temporary Admission Number when blank.
+- Admin can edit Admission/Wifaq Number; duplicate number is rejected.
+- Forgot Username for Admin / Teacher / Student.
+- Forgot Password for Admin / Teacher / Student.
+- Student verification: Admission/Wifaq No + CNIC/B-Form + Phone.
+- Teacher verification: Teacher Code + CNIC + Phone.
+- Admin verification: Admin Recovery Code configured in Admin Settings.
+- All recovery requests wait for Admin approval.
+- Recovery status uses Request Number + requester PIN.
+- Recovery actions are logged in database audit table.
+- SQL history/reference files included.
+
+IMPORTANT:
+1) Backup Supabase first.
+2) Run database-fixes.sql in Supabase SQL Editor.
+3) Upload the complete project files to GitHub.
+4) Login as Admin and set an Admin Recovery Code in Admin Settings.
+
+2026-09-30 SECURITY CORRECTION:
+- Recovery helper RPCs locked down.
+- Admin recovery code now performs secure self-recovery without requiring another Admin approval.
+- Admin recovery code minimum length increased to 8.
+- Student/Teacher recovery remains Admin-approved.

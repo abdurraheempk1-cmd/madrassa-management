@@ -937,6 +937,35 @@
 
         }
 
+    
+
+        /* =================================================
+           ACCOUNT RECOVERY
+        ================================================== */
+        .login-recovery-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+        .login-recovery-link{border:1px solid #cbdad3;background:#f7fbf9;color:#174f3b;border-radius:12px;padding:11px 10px;font:inherit;cursor:pointer}
+        .login-recovery-link:active{transform:scale(.99)}
+        .recovery-modal[hidden]{display:none!important}
+        .recovery-modal{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px}
+        .recovery-modal-backdrop{position:absolute;inset:0;background:rgba(10,27,21,.62);backdrop-filter:blur(3px)}
+        .recovery-modal-card{position:relative;z-index:1;width:min(620px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.28);direction:rtl;text-align:right}
+        .recovery-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+        .recovery-modal-head h2{margin:0;font-size:24px;color:#143d30}
+        .recovery-close{width:42px;height:42px;border:0;border-radius:12px;background:#f0f4f2;cursor:pointer;font-size:20px}
+        .recovery-role-note{background:#eef7f3;border:1px solid #d8ebe3;border-radius:14px;padding:12px;margin:0 0 16px;color:#285345}
+        .recovery-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .recovery-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+        .recovery-field.full{grid-column:1/-1}
+        .recovery-field label{font-weight:700;color:#263b33}
+        .recovery-field input,.recovery-field select{width:100%;min-height:50px;border:1px solid #c8d8d1;border-radius:12px;padding:9px 12px;font:inherit;background:#fff;color:#152a22}
+        .recovery-primary{width:100%;min-height:52px;border:0;border-radius:13px;background:#176b4d;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+        .recovery-secondary{width:100%;min-height:48px;border:1px solid #c9d8d2;border-radius:13px;background:#f7faf9;color:#244b3d;font:inherit;cursor:pointer;margin-top:10px}
+        .recovery-message{margin-top:12px;padding:11px 12px;border-radius:12px;display:none;white-space:pre-wrap}
+        .recovery-message.success{display:block;background:#e9f8ef;color:#176b3b;border:1px solid #bde5ca}
+        .recovery-message.error{display:block;background:#fff0f0;color:#9b2929;border:1px solid #f1c3c3}
+        .recovery-status-box{margin-top:14px;padding-top:14px;border-top:1px solid #e3ece8}
+        @media(max-width:560px){.login-recovery-actions,.recovery-grid{grid-template-columns:1fr}.recovery-field.full{grid-column:auto}.recovery-modal-card{padding:17px;border-radius:17px}}
+
     </style>
 
 </head>
@@ -1194,6 +1223,14 @@
 
 
 
+
+
+                <div class="login-recovery-actions">
+                    <button type="button" id="forgotUsernameButton" class="login-recovery-link">صارف نام بھول گئے؟</button>
+                    <button type="button" id="forgotPasswordButton" class="login-recovery-link">پاس ورڈ بھول گئے؟</button>
+                </div>
+
+
                 <!-- BACK -->
 
                 <a
@@ -1229,6 +1266,89 @@
 
 </div>
 
+
+
+
+
+<!-- =====================================================
+     ACCOUNT RECOVERY MODAL
+===================================================== -->
+<div class="recovery-modal" id="accountRecoveryModal" hidden>
+    <div class="recovery-modal-backdrop" id="accountRecoveryBackdrop"></div>
+    <section class="recovery-modal-card" role="dialog" aria-modal="true" aria-labelledby="accountRecoveryTitle">
+        <div class="recovery-modal-head">
+            <div>
+                <h2 id="accountRecoveryTitle">اکاؤنٹ بحالی</h2>
+                <p id="accountRecoverySubtitle">تصدیق کے بعد درخواست ایڈمن کے پاس جائے گی۔</p>
+            </div>
+            <button type="button" class="recovery-close" id="closeAccountRecovery" aria-label="بند کریں">✕</button>
+        </div>
+        <p class="recovery-role-note" id="accountRecoveryRoleNote"></p>
+
+        <form id="accountRecoveryForm">
+            <input type="hidden" id="recoveryRole">
+            <input type="hidden" id="recoveryType">
+
+            <div id="studentTeacherRecoveryFields" class="recovery-grid">
+                <div class="recovery-field full">
+                    <label for="recoveryReference" id="recoveryReferenceLabel">داخلہ / استاد نمبر</label>
+                    <input id="recoveryReference" type="text" autocomplete="off">
+                </div>
+                <div class="recovery-field">
+                    <label for="recoveryCNIC">شناختی کارڈ / ب فارم</label>
+                    <input id="recoveryCNIC" type="text" inputmode="numeric" autocomplete="off" placeholder="xxxxx-xxxxxxx-x">
+                </div>
+                <div class="recovery-field">
+                    <label for="recoveryPhone">رابطہ نمبر</label>
+                    <input id="recoveryPhone" type="text" inputmode="tel" autocomplete="off" placeholder="03xxxxxxxxx">
+                </div>
+            </div>
+
+            <div id="adminRecoveryFields" hidden>
+                <div class="recovery-field">
+                    <label for="recoveryAdminCode">ایڈمن بحالی کوڈ</label>
+                    <input id="recoveryAdminCode" type="password" minlength="8" autocomplete="off" placeholder="اپنا محفوظ بحالی کوڈ درج کریں">
+                </div>
+            </div>
+
+            <div id="recoveryNewPasswordFields" hidden>
+                <div class="recovery-field">
+                    <label for="recoveryNewPassword">نیا پاس ورڈ</label>
+                    <input id="recoveryNewPassword" type="password" minlength="8" autocomplete="new-password">
+                </div>
+                <div class="recovery-field">
+                    <label for="recoveryConfirmPassword">نیا پاس ورڈ دوبارہ</label>
+                    <input id="recoveryConfirmPassword" type="password" minlength="8" autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="recovery-field">
+                <label for="recoveryPin">درخواست PIN</label>
+                <input id="recoveryPin" type="password" inputmode="numeric" minlength="4" maxlength="12" autocomplete="off" placeholder="4 سے 12 ہندسوں کا PIN">
+                <small>یہ PIN محفوظ رکھیں؛ درخواست کی حالت دیکھنے کے لیے ضروری ہوگا۔</small>
+            </div>
+
+            <button type="submit" class="recovery-primary" id="submitRecoveryRequest">بحالی کی درخواست بھیجیں</button>
+            <button type="button" class="recovery-secondary" id="showRecoveryStatusForm">درخواست کی حالت دیکھیں</button>
+            <div id="recoveryRequestMessage" class="recovery-message" aria-live="polite"></div>
+        </form>
+
+        <form id="recoveryStatusForm" class="recovery-status-box" hidden>
+            <div class="recovery-grid">
+                <div class="recovery-field">
+                    <label for="recoveryStatusNumber">درخواست نمبر</label>
+                    <input id="recoveryStatusNumber" type="text" autocomplete="off" placeholder="REC-XXXXXXXXXX" required>
+                </div>
+                <div class="recovery-field">
+                    <label for="recoveryStatusPin">درخواست PIN</label>
+                    <input id="recoveryStatusPin" type="password" inputmode="numeric" autocomplete="off" required>
+                </div>
+            </div>
+            <button type="submit" class="recovery-primary">حالت چیک کریں</button>
+            <div id="recoveryStatusMessage" class="recovery-message" aria-live="polite"></div>
+        </form>
+    </section>
+</div>
 
 
 <!-- =====================================================

@@ -509,6 +509,41 @@
             </section>
 
 
+
+
+            <!-- ADMIN RECOVERY CODE -->
+            <section class="portal-section">
+                <div class="portal-section-heading">
+                    <div>
+                        <h2>ایڈمن اکاؤنٹ بحالی کوڈ</h2>
+                        <p>اگر صارف نام یا پاس ورڈ بھول جائیں تو اسی کوڈ سے ایڈمن کی شناخت کی تصدیق ہوگی۔</p>
+                    </div>
+                </div>
+
+                <form id="adminRecoveryCodeForm" class="settings-form">
+                    <div class="portal-field">
+                        <label for="adminRecoveryCode">نیا بحالی کوڈ</label>
+                        <div class="password-field-wrapper">
+                            <input type="password" id="adminRecoveryCode" minlength="8" autocomplete="new-password" required>
+                            <button type="button" class="password-eye-button" data-password-target="adminRecoveryCode" aria-label="کوڈ دکھائیں">👁</button>
+                        </div>
+                        <small class="portal-field-help">کم از کم 8 حروف/ہندسے۔ اسے کسی کے ساتھ شیئر نہ کریں۔</small>
+                    </div>
+                    <div class="portal-field">
+                        <label for="confirmAdminRecoveryCode">بحالی کوڈ دوبارہ</label>
+                        <div class="password-field-wrapper">
+                            <input type="password" id="confirmAdminRecoveryCode" minlength="8" autocomplete="new-password" required>
+                            <button type="button" class="password-eye-button" data-password-target="confirmAdminRecoveryCode" aria-label="کوڈ دکھائیں">👁</button>
+                        </div>
+                    </div>
+                    <div class="portal-form-actions">
+                        <button type="submit" class="small-action-button" id="saveAdminRecoveryCode">بحالی کوڈ محفوظ کریں</button>
+                    </div>
+                    <div id="adminRecoveryCodeMessage" class="portal-message" hidden></div>
+                </form>
+            </section>
+
+
             <!-- SYSTEM INFORMATION -->
 
             <section class="portal-section">

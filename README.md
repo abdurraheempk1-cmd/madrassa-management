@@ -31,3 +31,17 @@
 - duplicate HTML IDs verification
 - Supabase public RPC connectivity verification
 - custom session RPC اور RLS access-path alignment
+
+## 30-09-2026 Update
+
+- نئی جماعت: **اعدادیہ**
+- طالبہ کا Admission Number خالی ہو تو temporary نمبر خود بن سکتا ہے۔
+- Admin طالبہ کا Admission/Wifaq Number edit کر سکتا ہے؛ duplicate نمبر قبول نہیں ہوگا۔
+- Login page پر Student, Teacher اور Admin کے لیے **صارف نام بھول گئے؟** اور **پاس ورڈ بھول گئے؟** شامل ہیں۔
+- Student/Teacher recovery میں شناخت کی تصدیق کے بعد request Admin approval کے لیے جاتی ہے۔
+- Admin پہلے `admin-settings.html` میں اپنا محفوظ Recovery Code مقرر کرے۔
+- Recovery requests `admin-accounts.html` میں approve/reject کی جا سکتی ہیں۔
+- SQL history/reference کے لیے `database_sql_history.sql` اور `SQL-README.md` شامل ہیں۔
+
+### Database update
+Supabase SQL Editor میں backup کے بعد مکمل `database-fixes.sql` Run کریں۔ اگر پرانا cumulative SQL پہلے Run ہو چکا ہو تو صرف `database-update-2026-09-30.sql` بھی Run کیا جا سکتا ہے۔

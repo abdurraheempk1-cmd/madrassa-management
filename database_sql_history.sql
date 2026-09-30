@@ -1,7 +1,11 @@
--- IMPORTANT: Supabase web SQL Editor may reject this combined file as “Query is too large”.
--- In the web SQL Editor, run the five files inside /sql-parts in numeric order instead.
--- This combined file is kept as a complete reference/history copy.
-
+-- =========================================================
+-- مدرسہ شہناز اختر للبنات
+-- DATABASE SQL HISTORY / REFERENCE
+-- =========================================================
+-- This file is for knowledge/reference and repeatable setup.
+-- It consolidates the SQL migrations currently shipped with this project.
+-- Run database-fixes.sql for the current cumulative database update.
+-- =========================================================
 -- Madrassa Management System compatibility migration
 -- Run once in Supabase SQL Editor after taking a database backup.
 
@@ -425,9 +429,7 @@ $$;
 grant execute on function public.admin_update_student(uuid,bigint,jsonb) to anon, authenticated;
 
 -- =========================================================
--- C. ACCOUNT RECOVERY TABLES (SECURE VERSION)
--- Student/Teacher: verified request -> Admin approval.
--- Admin: recovery-code verification -> immediate self-recovery.
+-- C. ACCOUNT RECOVERY TABLES
 -- =========================================================
 
 create table if not exists public.account_recovery_requests (
@@ -473,14 +475,13 @@ alter table public.account_recovery_requests enable row level security;
 alter table public.admin_recovery_secrets enable row level security;
 alter table public.account_recovery_audit enable row level security;
 
-revoke all on table public.account_recovery_requests from public, anon, authenticated;
-revoke all on table public.admin_recovery_secrets from public, anon, authenticated;
-revoke all on table public.account_recovery_audit from public, anon, authenticated;
+revoke all on table public.account_recovery_requests from anon, authenticated;
+revoke all on table public.admin_recovery_secrets from anon, authenticated;
+revoke all on table public.account_recovery_audit from anon, authenticated;
 
 -- =========================================================
--- D. INTERNAL ACCOUNT LOOKUP HELPERS
--- IMPORTANT: these are SECURITY DEFINER helpers and are NOT
--- callable directly by website roles.
+-- D. ACCOUNT LOOKUP HELPERS
+-- These helpers support the project's separate role account tables.
 -- =========================================================
 
 create or replace function public.recovery_get_username(
@@ -669,13 +670,6 @@ begin
 end;
 $$;
 
--- Remove the default PUBLIC execute privilege from every sensitive helper.
-revoke all on function public.recovery_get_username(text,text) from public, anon, authenticated;
-revoke all on function public.recovery_set_password_hash(text,text,text) from public, anon, authenticated;
-revoke all on function public.recovery_resolve_student_account(text,text,text) from public, anon, authenticated;
-revoke all on function public.recovery_resolve_teacher_account(text,text,text) from public, anon, authenticated;
-revoke all on function public.recovery_resolve_admin_account(text) from public, anon, authenticated;
-
 -- =========================================================
 -- E. ADMIN CONFIGURES OWN RECOVERY CODE WHILE LOGGED IN
 -- =========================================================
@@ -698,8 +692,8 @@ begin
         raise exception 'Admin session required';
     end if;
 
-    if length(coalesce(p_recovery_code,'')) < 8 then
-        raise exception 'Recovery code must be at least 8 characters';
+    if length(coalesce(p_recovery_code,'')) < 6 then
+        raise exception 'Recovery code must be at least 6 characters';
     end if;
 
     v_account_id := v_session->>'account_id';
@@ -721,9 +715,6 @@ $$;
 
 -- =========================================================
 -- F. PUBLIC RECOVERY REQUEST
--- Student/Teacher stay pending for Admin review.
--- Admin recovery code acts as the verification and completes
--- recovery immediately, so a single Admin cannot lock themself out.
 -- =========================================================
 
 create or replace function public.request_account_recovery(
@@ -745,11 +736,8 @@ declare
     v_type text := lower(btrim(coalesce(p_request_type,'')));
     v_resolved jsonb;
     v_account_id text;
-    v_username text;
     v_request_no text;
     v_new_hash text;
-    v_request_id bigint;
-    v_ok boolean;
 begin
     if v_role not in ('admin','teacher','student') then
         raise exception 'Invalid account role';
@@ -776,7 +764,7 @@ begin
         end if;
         v_resolved := public.recovery_resolve_teacher_account(p_reference, p_cnic, p_phone);
     else
-        if length(coalesce(p_admin_recovery_code,'')) < 8 then
+        if length(coalesce(p_admin_recovery_code,'')) < 6 then
             raise exception 'Admin recovery code is required';
         end if;
         v_resolved := public.recovery_resolve_admin_account(p_admin_recovery_code);
@@ -787,7 +775,6 @@ begin
     end if;
 
     v_account_id := v_resolved->>'account_id';
-    v_username := v_resolved->>'username';
 
     if v_type = 'password' then
         if length(coalesce(p_new_password,'')) < 8 then
@@ -796,12 +783,8 @@ begin
         v_new_hash := crypt(p_new_password, gen_salt('bf'));
     end if;
 
-    -- Replace older pending requests of the same type.
     update public.account_recovery_requests
-       set status = 'cancelled',
-           reviewed_at = now(),
-           admin_note = 'Replaced by a newer request',
-           new_password_hash = null
+       set status = 'cancelled', reviewed_at = now(), admin_note = 'Replaced by a newer request'
      where role = v_role
        and account_id = v_account_id
        and request_type = v_type
@@ -812,64 +795,27 @@ begin
         exit when not exists (select 1 from public.account_recovery_requests where request_no = v_request_no);
     end loop;
 
-    if v_role = 'admin' then
-        -- Recovery code already verified the Admin. No second Admin is required.
-        if v_type = 'password' then
-            v_ok := public.recovery_set_password_hash('admin', v_account_id, v_new_hash);
-            if not v_ok then
-                raise exception 'Admin password could not be updated';
-            end if;
-        end if;
-
-        insert into public.account_recovery_requests(
-            request_no, role, request_type, account_id, reference_value,
-            recovery_pin_hash, new_password_hash, status,
-            admin_note, reviewed_at, reviewed_by
-        ) values (
-            v_request_no, 'admin', v_type, v_account_id, 'ADMIN',
-            crypt(p_recovery_pin, gen_salt('bf')), null, 'approved',
-            'Verified with Admin recovery code', now(), v_account_id
-        ) returning id into v_request_id;
-
-        insert into public.account_recovery_audit(
-            recovery_request_id, action, role, account_id, performed_by, note
-        ) values (
-            v_request_id,
-            case when v_type = 'password' then 'admin_password_self_recovered' else 'admin_username_self_recovered' end,
-            'admin', v_account_id, v_account_id, 'Verified with Admin recovery code'
-        );
-
-        return jsonb_build_object(
-            'request_no', v_request_no,
-            'status', 'approved',
-            'request_type', v_type,
-            'username', case when v_type = 'username' then v_username else null end
-        );
-    end if;
-
     insert into public.account_recovery_requests(
         request_no, role, request_type, account_id, reference_value,
         recovery_pin_hash, new_password_hash, status
     ) values (
         v_request_no, v_role, v_type, v_account_id,
-        btrim(coalesce(p_reference,'')),
+        case when v_role = 'admin' then 'ADMIN' else btrim(coalesce(p_reference,'')) end,
         crypt(p_recovery_pin, gen_salt('bf')), v_new_hash, 'pending'
-    ) returning id into v_request_id;
+    );
 
-    insert into public.account_recovery_audit(
-        recovery_request_id, action, role, account_id, note
-    ) values (v_request_id, 'recovery_requested', v_role, v_account_id, v_type);
+    insert into public.account_recovery_audit(action, role, account_id, note)
+    values ('recovery_requested', v_role, v_account_id, v_type);
 
     return jsonb_build_object(
         'request_no', v_request_no,
-        'status', 'pending',
-        'request_type', v_type
+        'status', 'pending'
     );
 end;
 $$;
 
 -- =========================================================
--- G. ADMIN REVIEWS STUDENT / TEACHER RECOVERY REQUESTS
+-- G. ADMIN REVIEWS RECOVERY REQUEST
 -- =========================================================
 
 create or replace function public.admin_get_recovery_requests(
@@ -936,9 +882,6 @@ begin
     if v_request.status <> 'pending' then
         raise exception 'Recovery request has already been reviewed';
     end if;
-    if v_request.role = 'admin' then
-        raise exception 'Admin self-recovery is verified by the Admin recovery code and does not use manual approval';
-    end if;
 
     if v_decision = 'approved' and v_request.request_type = 'password' then
         if v_request.new_password_hash is null then
@@ -954,8 +897,7 @@ begin
        set status = v_decision,
            admin_note = p_admin_note,
            reviewed_at = now(),
-           reviewed_by = v_admin_id,
-           new_password_hash = null
+           reviewed_by = v_admin_id
      where id = p_request_id;
 
     insert into public.account_recovery_audit(
@@ -1017,16 +959,8 @@ end;
 $$;
 
 -- =========================================================
--- I. FUNCTION PERMISSIONS
--- Revoke default PUBLIC execute first, then grant only the
--- entry-point RPCs required by the website.
+-- I. PERMISSIONS
 -- =========================================================
-
-revoke all on function public.request_account_recovery(text,text,text,text,text,text,text,text) from public, anon, authenticated;
-revoke all on function public.get_account_recovery_status(text,text) from public, anon, authenticated;
-revoke all on function public.admin_get_recovery_requests(uuid) from public, anon, authenticated;
-revoke all on function public.admin_review_recovery_request(uuid,bigint,text,text) from public, anon, authenticated;
-revoke all on function public.admin_set_recovery_code(uuid,text) from public, anon, authenticated;
 
 grant execute on function public.request_account_recovery(text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.get_account_recovery_status(text,text) to anon, authenticated;

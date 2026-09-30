@@ -1,0 +1,13 @@
+1) SUPABASE DATABASE
+Open SQL-RUN-IN-ORDER.txt.
+In Supabase SQL Editor, run the 5 files inside the sql-parts folder ONE AT A TIME in numeric order.
+Do not paste database-fixes.sql as one large query in the web SQL Editor.
+
+2) WEBSITE
+After all 5 SQL parts show Success, upload/replace the complete website project files in GitHub.
+
+3) ADMIN RECOVERY
+Log in as Admin, open Admin Settings, and create a Recovery Code of at least 8 characters.
+
+4) IMPORTANT
+If any SQL part shows an error, stop before running the next part and send the full error screenshot.

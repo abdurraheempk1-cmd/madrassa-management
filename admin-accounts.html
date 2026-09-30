@@ -561,6 +561,7 @@
                                 <option value="ترجمہ">ترجمہ</option>
                                 <option value="حفظ">حفظ</option>
                                 <option value="تجوید">تجوید</option>
+                                <option value="اعدادیہ">اعدادیہ</option>
                                 <option value="متوسطہ">متوسطہ</option>
                                 <option value="ثانویہ خاصہ سال اول">ثانویہ خاصہ سال اول</option>
                                 <option value="ثانویہ خاصہ سال دوم">ثانویہ خاصہ سال دوم</option>
@@ -1391,6 +1392,40 @@
                 </div>
 
             </div>
+
+
+
+
+            <!-- ACCOUNT RECOVERY REQUESTS -->
+            <section class="portal-section" id="adminRecoveryRequestsSection">
+                <div class="portal-section-heading">
+                    <div>
+                        <h2>اکاؤنٹ بحالی کی درخواستیں</h2>
+                        <p>صارف نام یا پاس ورڈ بھولنے کی تصدیق شدہ درخواستیں</p>
+                    </div>
+                    <button type="button" id="refreshRecoveryRequests" class="small-action-button secondary">تازہ کریں</button>
+                </div>
+
+                <div class="responsive-table-wrapper">
+                    <table class="portal-table">
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>درخواست نمبر</th>
+                                <th>قسم</th>
+                                <th>بحالی</th>
+                                <th>حوالہ</th>
+                                <th>حالت</th>
+                                <th>عمل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRecoveryRequestsBody">
+                            <tr><td colspan="7" class="table-empty">درخواستیں لوڈ کی جا رہی ہیں...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="adminRecoveryRequestsMessage" class="portal-message" hidden></div>
+            </section>
 
 
             <!-- FOOTER -->
