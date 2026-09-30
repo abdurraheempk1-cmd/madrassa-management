@@ -8704,3 +8704,58 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
         font-size: 12px;
     }
 }
+
+
+/* =========================================================
+   STUDENT DETAILS - PERSONAL LAYOUT + SCREEN-ONLY FOOTER
+   ========================================================= */
+
+.student-complete-details-card .professional-personal-section .print-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+
+.student-complete-details-card .professional-personal-section .print-info-item {
+    display: grid;
+    grid-template-columns: minmax(105px, .75fr) minmax(0, 1.25fr);
+    align-items: start;
+    gap: 8px;
+    min-height: 52px;
+    padding: 10px 12px;
+    border: 1px solid #dfe9e4;
+    border-radius: 10px;
+    background: #fbfdfc;
+}
+
+.student-complete-details-card .professional-personal-section .print-info-label {
+    min-width: 0;
+    color: #5a6b64;
+    font-weight: 700;
+}
+
+.student-complete-details-card .professional-personal-section .print-info-value {
+    min-width: 0;
+    color: #172f27;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.student-complete-details-card .professional-signatures {
+    display: none !important;
+}
+
+.student-complete-details-card .professional-document-footer {
+    margin-top: 16px;
+    padding-top: 10px;
+}
+
+@media (max-width: 560px) {
+    .student-complete-details-card .professional-personal-section .print-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-complete-details-card .professional-personal-section .print-info-item {
+        grid-template-columns: 110px minmax(0, 1fr);
+    }
+}
