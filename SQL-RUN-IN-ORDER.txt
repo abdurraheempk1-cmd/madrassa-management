@@ -1,27 +1,32 @@
 SUPABASE SQL - RUN IN THIS ORDER
 
-If Parts 01-05 were already run successfully before this update:
-    Run ONLY: sql-parts/06-bulk-student-import.sql
+If Parts 01-06 were already run successfully:
+    Run: sql-parts/07-public-id-card-qr-verification.sql
+    Then: sql-parts/08-bulk-student-credentials.sql
 
-For a database where none of the 2026-09-30 update SQL has been run yet:
+Part 07:
+    Makes Student QR verification public without Admin login.
+    QR result shows only Wifaq/admission number, name, father name, CNIC/B-Form,
+    phone, class, date of birth, address and Mahram details.
+
+Part 08:
+    Bulk username = first word of student name.
+    Duplicate first names become name2, name3, etc.
+    Temporary password = birth year repeated twice, e.g. 1998 -> 19981998.
+    10-digit Pakistani mobile numbers beginning with 3 receive the missing leading 0.
+
+If none of the 2026-09-30 SQL parts have been run:
     01-core-compatibility.sql
     02-classes-admission-number.sql
     03-recovery-tables-helpers.sql
     04-recovery-request.sql
     05-recovery-review-permissions.sql
     06-bulk-student-import.sql
+    07-public-id-card-qr-verification.sql
+    08-bulk-student-credentials.sql
 
 Run ONE file at a time in Supabase SQL Editor.
 Wait for Success before running the next file.
 Do not paste all parts together; Supabase may reject an oversized query.
 
-The database_sql_history.sql file is reference/history only. Do not run it as an extra migration after the parts above.
-
-PHONE/BULK IMPORT FIX (2026-09-30):
-Re-run sql-parts/06-bulk-student-import.sql once after uploading this project. It is safe to re-run and updates the bulk import RPC with phone normalization.
-
-
-STUDENT COMPLETE HISTORY / PHOTO / DUPLICATE UPDATE (2026-09-30):
-After the existing Parts 01-06 are complete, run:
-    database-update-student-complete-history.sql
-This migration is safe to re-run. It adds student photo, update audit history, chronological student history events, and duplicate-safe merge/update support.
+database_sql_history.sql is reference/history only.
