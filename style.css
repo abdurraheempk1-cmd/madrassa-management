@@ -9670,3 +9670,162 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
     white-space: nowrap;
 }
 
+
+
+/* =========================================================
+   TALIBA CARD - QR / CONTACT / FULL ADMISSION NUMBER FIX
+   ========================================================= */
+
+.id-card-admission-line {
+    min-width: 0;
+    overflow: visible;
+}
+
+.id-card-admission-line strong {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: right;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-family: system-ui, sans-serif;
+    font-size: 2.2mm;
+    line-height: 1.3;
+    letter-spacing: 0;
+}
+
+.id-card-validity-single {
+    grid-template-columns: 1fr !important;
+}
+
+.id-card-validity-single > div {
+    padding-inline-start: 0 !important;
+    border-inline-start: 0 !important;
+}
+
+.id-card-back-with-qr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20mm;
+    gap: 2.4mm;
+    align-items: start;
+    padding: 2.6mm 3.6mm 8.1mm;
+}
+
+.id-card-back-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2mm 2mm;
+    min-width: 0;
+}
+
+.id-card-back-field {
+    min-width: 0;
+    padding: 1mm 1.3mm;
+    border: .2mm solid #d9e5df;
+    border-radius: 1.5mm;
+    background: #f8fbf9;
+}
+
+.id-card-back-field-wide {
+    grid-column: 1 / -1;
+}
+
+.id-card-back-field span {
+    display: block;
+    margin-bottom: .2mm;
+    color: #697a73;
+    font-size: 1.9mm;
+    line-height: 1.25;
+}
+
+.id-card-back-field strong {
+    display: block;
+    color: #203c31;
+    font-size: 2.25mm;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.id-card-back-field strong[data-no-translate] {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: right;
+    font-family: system-ui, sans-serif;
+}
+
+.id-card-qr-panel {
+    min-width: 0;
+    text-align: center;
+}
+
+.id-card-qr {
+    width: 18mm;
+    height: 18mm;
+    margin: 0 auto .7mm;
+    padding: .7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: .25mm solid #cbdcd4;
+    border-radius: 1.6mm;
+    background: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.id-card-qr canvas,
+.id-card-qr img {
+    width: 16.6mm !important;
+    height: 16.6mm !important;
+    max-width: none !important;
+    display: block !important;
+}
+
+.id-card-qr-panel > span {
+    display: block;
+    color: #1a5e45;
+    font-size: 2.05mm;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.id-card-qr-panel > small {
+    display: block;
+    margin-top: .25mm;
+    color: #74837d;
+    font-size: 1.55mm;
+    line-height: 1.3;
+}
+
+.id-card-qr-fallback {
+    color: #7b3b3b;
+    font-size: 1.7mm;
+    line-height: 1.2;
+}
+
+.id-card-back-footer {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, .8fr);
+}
+
+.id-card-back-footer strong {
+    direction: ltr;
+    unicode-bidi: isolate;
+    white-space: nowrap;
+}
+
+@media print {
+    body.id-card-page .id-card-admission-line strong {
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap !important;
+    }
+
+    body.id-card-page .id-card-qr canvas,
+    body.id-card-page .id-card-qr img {
+        width: 16.6mm !important;
+        height: 16.6mm !important;
+    }
+}
