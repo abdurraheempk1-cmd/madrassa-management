@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>طالبہ کی تصدیق</title>
+  <link rel="stylesheet" href="style.css?v=20260930-cardqr1">
+  <link rel="stylesheet" href="qr-public-verification-fix.css?v=20260930-qrpublic3">
+</head>
+<body class="public-verification-page">
+  <main class="verification-shell">
+    <header class="verification-brand">
+      <div class="verification-logo">🕌</div>
+      <h1>مدرسہ شہناز اختر للبنات</h1>
+      <p>گاؤں ہل غورغشتوں، ضلع بونیر</p>
+      <span class="verification-badge">تصدیق شدہ طالبہ ریکارڈ</span>
+    </header>
+
+    <section id="verificationLoading" class="verification-state">ریکارڈ لوڈ کیا جا رہا ہے...</section>
+    <section id="verificationError" class="verification-state verification-error" hidden>ریکارڈ موجود نہیں یا QR درست نہیں ہے۔</section>
+
+    <section id="verificationContent" class="verification-content" hidden>
+      <div class="verification-summary">
+        <div><span>نام</span><strong id="verifyStudentName" data-no-translate>—</strong></div>
+        <div><span>والد کا نام</span><strong id="verifyFatherName" data-no-translate>—</strong></div>
+        <div class="verification-wide"><span>وفاق نمبر</span><strong id="verifyWifaqNumber" dir="ltr" data-no-translate>—</strong></div>
+      </div>
+
+      <section class="verification-section">
+        <h2>طالبہ کی معلومات</h2>
+        <div class="verification-grid">
+          <div><span>شناختی کارڈ / ب فارم</span><strong id="verifyCNIC" dir="ltr" data-no-translate>—</strong></div>
+          <div><span>فون نمبر</span><strong id="verifyPhone" dir="ltr" data-no-translate>—</strong></div>
+          <div><span>جماعت</span><strong id="verifyClass">—</strong></div>
+          <div><span>تاریخ پیدائش</span><strong id="verifyDOB" data-no-translate>—</strong></div>
+          <div class="verification-wide"><span>پتہ</span><strong id="verifyAddress" data-no-translate>—</strong></div>
+        </div>
+      </section>
+
+      <section class="verification-section">
+        <h2>محرم کی تفصیلات</h2>
+        <div id="verifyMahrams" class="verification-mahram-list"></div>
+      </section>
+
+      <footer class="verification-footer">
+        <strong>مدرسہ شہناز اختر للبنات</strong>
+        <span>یہ ریکارڈ QR کے ذریعے تصدیق کیا گیا ہے۔</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="i18n.js?v=20260930-cardqr1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js?v=20260930-cardqr1"></script>
+  <script src="qr-public-verification-fix.js?v=20260930-qrpublic3"></script>
+</body>
+</html>
