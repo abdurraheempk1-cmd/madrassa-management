@@ -1,0 +1,131 @@
+/* Public QR + ID card compatibility fixes */
+.id-card-admission-line{grid-column:1/-1!important;min-width:0!important}
+.id-card-admission-line strong,
+.id-card-full-number b,
+.id-card-number-strip strong{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+  direction:ltr!important;
+  unicode-bidi:plaintext!important;
+  font-size:clamp(10px,2.1vw,14px)!important;
+  line-height:1.35!important
+}
+.id-card-back-footer.id-card-back-footer-single{
+  grid-template-columns:1fr!important
+}
+.id-card-qr{
+  background:#fff!important;
+  padding:10px!important;
+  border-radius:10px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:164px!important;
+  min-height:164px!important
+}
+.id-card-qr img,.id-card-qr canvas,.id-card-qr-code img,.id-card-qr-code canvas{
+  display:block!important;
+  margin:auto!important;
+  background:#fff!important;
+  image-rendering:pixelated
+}
+.id-card-person-photo{
+  width:76px;
+  height:92px;
+  border:1px solid #d7e3de;
+  border-radius:10px;
+  overflow:hidden;
+  background:#f4f8f6;
+  flex:0 0 auto
+}
+.id-card-person-photo img{width:100%;height:100%;object-fit:cover}
+.id-card-front-body.has-photo{display:flex;gap:12px;align-items:flex-start}
+.id-card-front-body.has-photo .id-card-main-info{min-width:0;flex:1}
+
+.public-verification-page{
+  margin:0;
+  min-height:100vh;
+  background:#f3f7f5;
+  color:#172033;
+  direction:rtl
+}
+.verification-shell{width:min(900px,calc(100% - 24px));margin:24px auto 50px}
+.verification-brand{
+  text-align:center;
+  background:linear-gradient(135deg,#0b5f42,#16815b);
+  color:#fff;
+  border-radius:22px;
+  padding:24px 18px;
+  box-shadow:0 14px 32px rgba(15,80,58,.16)
+}
+.verification-logo{font-size:38px}
+.verification-brand h1{margin:8px 0 4px;font-size:clamp(24px,5vw,38px)}
+.verification-brand p{margin:0;opacity:.9}
+.verification-badge{
+  display:inline-flex;
+  margin-top:14px;
+  padding:7px 14px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:999px;
+  background:rgba(255,255,255,.12)
+}
+.verification-state,.verification-content{
+  margin-top:18px;
+  background:#fff;
+  border:1px solid #dfe9e5;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 10px 25px rgba(23,32,51,.06)
+}
+.verification-error{color:#a61b1b;background:#fff4f4;border-color:#f1caca}
+.verification-summary,.verification-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px
+}
+.verification-summary>div,.verification-grid>div,.verification-mahram-card>div{
+  background:#f7faf9;
+  border:1px solid #e1e9e6;
+  border-radius:14px;
+  padding:12px 14px;
+  min-width:0
+}
+.verification-summary span,.verification-grid span,.verification-mahram-card span{
+  display:block;
+  color:#60706a;
+  font-size:13px;
+  margin-bottom:4px
+}
+.verification-summary strong,.verification-grid strong,.verification-mahram-card b{
+  display:block;
+  font-size:17px;
+  overflow-wrap:anywhere
+}
+.verification-wide{grid-column:1/-1}
+.verification-section{margin-top:18px}
+.verification-section h2{margin:0 0 10px;font-size:22px}
+.verification-mahram-list{display:grid;gap:12px}
+.verification-mahram-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.verification-footer{
+  margin-top:22px;
+  padding-top:16px;
+  border-top:1px solid #dfe9e5;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:8px;
+  color:#52635d
+}
+@media(max-width:600px){
+  .verification-summary,.verification-grid,.verification-mahram-card{grid-template-columns:1fr}
+  .verification-wide{grid-column:auto}
+  .verification-shell{width:min(100% - 14px,900px);margin-top:10px}
+  .verification-state,.verification-content{padding:14px}
+  .id-card-front-body.has-photo{gap:8px}
+}
