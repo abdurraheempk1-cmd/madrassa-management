@@ -19436,7 +19436,7 @@ App.renderProfessionalProfile = function (data, type) {
           </div>
         </div>
       </section>
-      ${personalPairs.length ? `<section class="professional-section"><div class="professional-section-title"><span></span><h3>ذاتی معلومات</h3></div>${App.infoGrid(personalPairs)}</section>` : ""}
+      ${personalPairs.length ? `<section class="professional-section professional-personal-section"><div class="professional-section-title"><span></span><h3>ذاتی معلومات</h3></div>${App.infoGrid(personalPairs)}</section>` : ""}
       ${accountPairs.length ? `<section class="professional-section"><div class="professional-section-title"><span></span><h3>اکاؤنٹ کی معلومات</h3></div>${App.infoGrid(accountPairs)}</section>` : ""}
       ${sections.join("")}
       <footer class="professional-document-footer">
