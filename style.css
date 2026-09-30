@@ -8532,3 +8532,175 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
         font-size: 11px;
     }
 }
+
+
+/* =========================================================
+   STUDENT COMPLETE DETAILS - PROFESSIONAL MODAL
+   ========================================================= */
+
+.student-complete-details-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(15, 23, 42, .48);
+    backdrop-filter: blur(4px);
+}
+
+.student-complete-details-card {
+    width: min(1040px, 100%);
+    max-height: 94vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #d7e4de;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .22);
+}
+
+.student-complete-details-card > .generated-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e0e9e5;
+    background: #f8fbfa;
+}
+
+.student-complete-details-card > .generated-details-header h2 {
+    margin: 0;
+    color: #173b2e;
+    font-size: 20px;
+}
+
+.student-complete-details-card > .generated-details-header [data-generated-close] {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #d5e1dc;
+    border-radius: 10px;
+    background: #fff;
+    color: #33443d;
+    box-shadow: none;
+    font-size: 18px;
+}
+
+.student-complete-details-card > .generated-details-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 18px 22px;
+    background: #f7faf8;
+}
+
+.student-complete-details-card .professional-identity-card,
+.student-complete-details-card .professional-section,
+.student-complete-details-card .professional-document-footer {
+    max-width: 100%;
+}
+
+.student-complete-details-card .professional-document-footer {
+    margin-bottom: 8px;
+}
+
+.student-complete-details-card > .generated-details-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-top: 1px solid #dce7e2;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 -8px 20px rgba(15, 23, 42, .05);
+}
+
+.student-complete-details-card > .generated-details-actions button {
+    width: auto;
+    min-width: 125px;
+    min-height: 42px;
+    margin: 0;
+    padding: 6px 14px;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    .student-complete-details-overlay {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .student-complete-details-card {
+        width: 100%;
+        max-height: 100dvh;
+        min-height: 100dvh;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .student-complete-details-card > .generated-details-header {
+        padding: 11px 12px;
+    }
+
+    .student-complete-details-card > .generated-details-header h2 {
+        font-size: 17px;
+    }
+
+    .student-complete-details-card > .generated-details-body {
+        padding: 12px 10px 18px;
+    }
+
+    .student-complete-details-card .professional-identity-card {
+        display: block;
+        padding: 13px;
+    }
+
+    .student-complete-details-card .professional-avatar {
+        display: none;
+    }
+
+    .student-complete-details-card .professional-identity-main h2 {
+        font-size: 20px;
+    }
+
+    .student-complete-details-card .professional-identity-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    .student-complete-details-card .professional-section {
+        padding: 11px 10px;
+    }
+
+    .student-complete-details-card .professional-table-wrap,
+    .student-complete-details-card .history-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .student-complete-details-card > .generated-details-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 8px;
+    }
+
+    .student-complete-details-card > .generated-details-actions button {
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+        font-size: 12px;
+    }
+}
