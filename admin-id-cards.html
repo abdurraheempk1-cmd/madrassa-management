@@ -1,2 +1,91 @@
-<!doctype html><html lang="ur" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شناختی کارڈ</title><link rel="stylesheet" href="style.css?v=20260930-idselector1"></head><body class="portal-page"><header class="portal-top"><a href="admin.html">← ڈیش بورڈ</a><h1>شناختی کارڈ</h1><button id="idCardPrintButton" type="button">پرنٹ</button></header><main class="portal-main"><section class="portal-panel"><h2>ایک کارڈ جاری کریں</h2><form id="idCardSingleForm" class="portal-form id-card-single-form"><label>قسم<select id="idCardOwnerType"><option value="student">طالبہ</option><option value="teacher">استاد</option><option value="admin">ایڈمن</option></select></label><label>نام / داخلہ نمبر تلاش کریں<input id="idCardOwnerSearch" type="search" autocomplete="off" placeholder="نام یا داخلہ نمبر لکھیں"></label><label>ریکارڈ منتخب کریں<select id="idCardOwnerId" required><option value="">ریکارڈ منتخب کریں</option></select></label><button type="submit">شناختی کارڈ تیار کریں</button></form></section><section class="portal-panel"><h2>گروپ کارڈز</h2><select id="idCardBatchOwnerType"><option value="student">طالبات</option><option value="teacher">اساتذہ</option></select><p>مطلوبہ ریکارڈز منتخب کرکے گروپ کارڈ بنائیں۔</p><div id="idCardSelectionList"></div><button id="createSelectedIdCards" type="button">منتخب کارڈز تیار کریں</button></section></main><script src="i18n.js?v=20260930-bulkselect1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js?v=20260930-idselector1"></script></body></html>
+<!doctype html><html lang="ur" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شناختی کارڈ</title><link rel="stylesheet" href="style.css?v=20260930-idcardprint1"></head><body class="portal-page id-card-page">
+<header class="portal-top no-print">
+    <a href="admin.html">← ڈیش بورڈ</a>
+    <h1>شناختی کارڈ</h1>
+    <button id="idCardPrintButton" type="button">پرنٹ / PDF</button>
+</header>
+
+<main class="portal-main id-card-main">
+    <section class="portal-panel no-print">
+        <h2>کارڈ کی تاریخیں</h2>
+        <div class="id-card-date-grid">
+            <label>
+                جاری ہونے کی تاریخ
+                <input id="idCardIssueDate" type="date" required>
+            </label>
+            <label>
+                میعاد ختم ہونے کی تاریخ
+                <input id="idCardExpiryDate" type="date" required>
+            </label>
+        </div>
+        <p class="id-card-help">یہی تاریخیں ایک کارڈ اور گروپ/کلاس کے تمام تیار کردہ کارڈز پر لگیں گی۔</p>
+    </section>
+
+    <section class="portal-panel no-print">
+        <h2>ایک کارڈ جاری کریں</h2>
+        <form id="idCardSingleForm" class="portal-form id-card-single-form">
+            <label>
+                قسم
+                <select id="idCardOwnerType">
+                    <option value="student">طالبہ</option>
+                    <option value="teacher">استاد</option>
+                    <option value="admin">ایڈمن</option>
+                </select>
+            </label>
+            <label>
+                نام / داخلہ نمبر تلاش کریں
+                <input id="idCardOwnerSearch" type="search" autocomplete="off" placeholder="نام یا داخلہ نمبر لکھیں">
+            </label>
+            <label>
+                ریکارڈ منتخب کریں
+                <select id="idCardOwnerId" required>
+                    <option value="">ریکارڈ منتخب کریں</option>
+                </select>
+            </label>
+            <button type="submit">شناختی کارڈ تیار کریں</button>
+        </form>
+    </section>
+
+    <section class="portal-panel no-print">
+        <h2>گروپ / جماعت کے کارڈز</h2>
+
+        <div class="id-card-batch-toolbar">
+            <label>
+                قسم
+                <select id="idCardBatchOwnerType">
+                    <option value="student">طالبات</option>
+                    <option value="teacher">اساتذہ</option>
+                </select>
+            </label>
+
+            <label id="idCardBatchClassLabel">
+                جماعت
+                <select id="idCardBatchClass">
+                    <option value="">تمام جماعتیں</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="id-card-batch-actions">
+            <button id="idCardSelectAllVisible" type="button">سب منتخب کریں</button>
+            <button id="idCardClearSelection" type="button" class="secondary">انتخاب صاف کریں</button>
+        </div>
+
+        <p>جماعت منتخب کریں یا تمام جماعتیں رکھیں، پھر مطلوبہ طالبات منتخب کرکے کارڈز تیار کریں۔</p>
+        <div id="idCardSelectionList"></div>
+        <button id="createSelectedIdCards" type="button">منتخب کارڈز تیار کریں</button>
+    </section>
+
+    <section id="idCardPreviewSection" class="portal-panel id-card-preview-section" hidden>
+        <div class="id-card-preview-heading no-print">
+            <div>
+                <h2>تیار شدہ شناختی کارڈز</h2>
+                <p>ہر طالبہ کا Front اور Back اسی A4 صفحے پر ساتھ ساتھ رکھا جائے گا۔</p>
+            </div>
+            <button id="idCardPreviewPrintButton" type="button">پرنٹ / PDF</button>
+        </div>
+        <div id="idCardPreviewArea" class="id-card-preview-area"></div>
+    </section>
+</main>
+<script src="i18n.js?v=20260930-bulkselect1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js?v=20260930-idcardprint1"></script></body></html>
