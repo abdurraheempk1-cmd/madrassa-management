@@ -391,3 +391,33 @@
 .id-card-admission-line strong{
   font-size:2.55mm!important;
 }
+
+
+/* ---------- v6: REAL QR FIX ----------
+   qrcodejs creates BOTH a canvas and an img.
+   Never display both at once; otherwise the QR becomes a mixed/half code.
+---------------------------------------------------------- */
+.id-card-qr{
+  direction:ltr!important;
+}
+.id-card-qr canvas{
+  display:block!important;
+  width:18mm!important;
+  height:18mm!important;
+  min-width:18mm!important;
+  min-height:18mm!important;
+  max-width:18mm!important;
+  max-height:18mm!important;
+  margin:auto!important;
+  padding:0!important;
+  background:#fff!important;
+}
+.id-card-qr img{
+  display:none!important;
+}
+
+/* Slightly larger Wifaq / admission number */
+.id-card-admission-line strong{
+  font-size:2.6mm!important;
+  font-weight:800!important;
+}
