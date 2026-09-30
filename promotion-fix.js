@@ -4,6 +4,10 @@ const App=window.App;
 if(!App) return;
 if((App.currentFile||"").toLowerCase()!=="admin-promotions.html") return;
 
+/* Replace the older promotion page binder from script.js on this page.
+   The new guided workflow below is the only submit/click handler. */
+App.initPromotionPage=function(){};
+
 const CLASSES=Array.isArray(App.CLASSES)?App.CLASSES:[
   "قاعدہ","ناظرہ","ترجمہ","حفظ","تجوید","اعدادیہ","متوسطہ",
   "ثانویہ خاصہ سال اول","ثانویہ خاصہ سال دوم","عالیہ سال اول",
