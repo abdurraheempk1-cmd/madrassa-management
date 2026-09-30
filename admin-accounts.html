@@ -24,7 +24,63 @@
           rel="stylesheet">
 
     <link rel="stylesheet"
-          href="style.css?v=20260930-bulkselect3">
+          href="style.css?v=20260930-bulkselect4">
+    <script>
+    (function () {
+        "use strict";
+
+        /*
+           Safety guard for this page:
+           a legacy/external handler can still call classList.add("")
+           before the main application code runs. Filter empty class
+           tokens so the page cannot crash with DOMTokenList SyntaxError.
+        */
+        if (
+            window.DOMTokenList &&
+            DOMTokenList.prototype &&
+            !DOMTokenList.prototype.__msalSafeAdd
+        ) {
+            const nativeAdd =
+                DOMTokenList.prototype.add;
+
+            DOMTokenList.prototype.add =
+                function (...tokens) {
+
+                    const cleanTokens =
+                        tokens
+                            .flatMap(token =>
+                                String(
+                                    token ?? ""
+                                )
+                                    .trim()
+                                    .split(/\s+/)
+                            )
+                            .filter(Boolean);
+
+                    if (!cleanTokens.length) {
+                        return;
+                    }
+
+                    return nativeAdd.apply(
+                        this,
+                        cleanTokens
+                    );
+                };
+
+            Object.defineProperty(
+                DOMTokenList.prototype,
+                "__msalSafeAdd",
+                {
+                    value: true,
+                    configurable: false,
+                    enumerable: false,
+                    writable: false
+                }
+            );
+        }
+    })();
+    </script>
+
 </head>
 
 
@@ -1539,10 +1595,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <script src="i18n.js?v=20260930-bulkselect3"></script>
+    <script src="i18n.js?v=20260930-bulkselect4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="script.js?v=20260930-bulkselect3"></script>
+    <script src="script.js?v=20260930-bulkselect4"></script>
 <script src="student-history-addon.js?v=20260930-history3"></script>
 
 </body>
