@@ -48,6 +48,14 @@ App.renderIdCardQrCodes=function(){
         colorLight:"#ffffff",
         correctLevel:window.QRCode.CorrectLevel.L
       });
+
+      /* QRCode.js creates both canvas and img. Keep only the final image visible. */
+      node.querySelectorAll("canvas").forEach(canvas => {
+        canvas.style.setProperty("display","none","important");
+      });
+      node.querySelectorAll("img").forEach(img => {
+        img.style.setProperty("display","block","important");
+      });
     }catch(error){
       console.error("Student card QR:",error);
       node.innerHTML='<span class="id-card-qr-fallback">QR تیار نہیں ہوا</span>';
