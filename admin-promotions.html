@@ -1,16 +1,208 @@
-<!doctype html><html lang="ur" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>سالانہ ترقی</title><link rel="stylesheet" href="style.css?v=20260930-bulkselect1"></head><body class="portal-page"><header class="portal-top"><a href="admin.html">← ڈیش بورڈ</a><h1>سالانہ نتائج اور ترقی</h1></header><main class="portal-main"><section class="portal-panel"><h2>ایک طالبہ</h2><form id="singlePromotionForm" class="portal-form"><input id="promotionStudentId" type="number" required placeholder="طالبہ ID"><select id="promotionToClass" required>
-                                <option value="قاعدہ">قاعدہ</option>
-                                <option value="ناظرہ">ناظرہ</option>
-                                <option value="ترجمہ">ترجمہ</option>
-                                <option value="حفظ">حفظ</option>
-                                <option value="تجوید">تجوید</option>
-                                <option value="اعدادیہ">اعدادیہ</option>
-                                <option value="متوسطہ">متوسطہ</option>
-                                <option value="ثانویہ خاصہ سال اول">ثانویہ خاصہ سال اول</option>
-                                <option value="ثانویہ خاصہ سال دوم">ثانویہ خاصہ سال دوم</option>
-                                <option value="عالیہ سال اول">عالیہ سال اول</option>
-                                <option value="عالیہ سال دوم">عالیہ سال دوم</option>
-                                <option value="عالمیہ سال اول">عالمیہ سال اول</option>
-                                <option value="عالمیہ سال دوم / دورۂ حدیث">عالمیہ سال دوم / دورۂ حدیث</option>
-                            </select><input id="promotionAcademicYear" placeholder="تعلیمی سال"><input id="promotionExamName" placeholder="امتحان"><input id="promotionPercentage" type="number" min="0" max="100" placeholder="فیصد"><select id="promotionDecision"><option value="promoted">ترقی</option><option value="repeat">اعادہ</option><option value="completed">مکمل</option></select><textarea id="promotionNotes" placeholder="نوٹ"></textarea><button type="submit">محفوظ کریں</button></form></section><section class="portal-panel"><h2>پوری جماعت</h2><form id="wholeClassPromotionForm" class="portal-form"><input id="promotionFromClass" required placeholder="موجودہ جماعت"><input id="promotionWholeToClass" required placeholder="اگلی جماعت"><input id="promotionWholeAcademicYear" placeholder="تعلیمی سال"><input id="promotionWholeExamName" placeholder="امتحان"><select id="promotionWholeDecision"><option value="promoted">ترقی</option><option value="repeat">اعادہ</option></select><textarea id="promotionWholeNotes" placeholder="نوٹ"></textarea><button type="submit">پوری جماعت اپڈیٹ کریں</button></form></section></main><script src="i18n.js?v=20260930-bulkselect1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js?v=20260930-bulkselect1"></script></body></html>
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>سالانہ نتائج اور ترقی</title>
+  <link rel="stylesheet" href="style.css?v=20260930-promotion2">
+  <link rel="stylesheet" href="promotion-fix.css?v=20260930-promotion2">
+</head>
+<body class="portal-page promotion-page">
+<header class="portal-top">
+  <a href="admin.html">← ڈیش بورڈ</a>
+  <h1>سالانہ نتائج اور ترقی</h1>
+</header>
+
+<main class="portal-main">
+
+  <section class="portal-panel promotion-panel">
+    <div class="promotion-heading">
+      <div>
+        <h2>ایک طالبہ</h2>
+        <p>طالبہ منتخب کریں۔ موجودہ جماعت خود دکھے گی اور اگلی جماعت خود منتخب ہوگی۔</p>
+      </div>
+    </div>
+
+    <form id="singlePromotionForm" class="portal-form promotion-form">
+      <label>
+        طالبہ
+        <select id="promotionStudentId" required>
+          <option value="">طالبہ منتخب کریں</option>
+        </select>
+      </label>
+
+      <div class="promotion-current-next">
+        <label>
+          موجودہ جماعت
+          <input id="promotionCurrentClass" type="text" readonly placeholder="طالبہ منتخب کریں">
+        </label>
+
+        <label>
+          اگلی جماعت
+          <select id="promotionToClass" required>
+            <option value="">اگلی جماعت منتخب کریں</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        فیصلہ
+        <select id="promotionDecision">
+          <option value="promoted">ترقی</option>
+          <option value="repeat">اعادہ</option>
+          <option value="completed">تعلیم مکمل</option>
+        </select>
+      </label>
+
+      <div class="promotion-two-column">
+        <label>
+          تعلیمی سال
+          <input id="promotionAcademicYear" placeholder="مثلاً 1447-1448 / 2026-2027">
+        </label>
+
+        <label>
+          امتحان
+          <input id="promotionExamName" placeholder="مثلاً سالانہ امتحان">
+        </label>
+      </div>
+
+      <label>
+        نتیجہ فیصد
+        <input id="promotionPercentage" type="number" min="0" max="100" step="0.01" placeholder="مثلاً 78.5">
+      </label>
+
+      <label>
+        نوٹ
+        <textarea id="promotionNotes" placeholder="اختیاری نوٹ"></textarea>
+      </label>
+
+      <div id="singlePromotionSummary" class="promotion-summary" hidden></div>
+
+      <button type="submit">طالبہ کی ترقی محفوظ کریں</button>
+    </form>
+  </section>
+
+  <section class="portal-panel promotion-panel">
+    <div class="promotion-heading">
+      <div>
+        <h2>منتخب طالبات</h2>
+        <p>ایک جماعت منتخب کریں، پھر مطلوبہ طالبات کو ایک ایک کرکے منتخب کریں۔</p>
+      </div>
+    </div>
+
+    <div class="promotion-form">
+      <label>
+        موجودہ جماعت
+        <select id="promotionSelectedFromClass">
+          <option value="">جماعت منتخب کریں</option>
+        </select>
+      </label>
+
+      <div class="promotion-select-actions">
+        <button id="promotionSelectAll" type="button" class="secondary">سب منتخب کریں</button>
+        <button id="promotionClearAll" type="button" class="secondary">سب ہٹائیں</button>
+        <span id="promotionSelectedCount">0 منتخب</span>
+      </div>
+
+      <div id="promotionStudentSelectionList" class="promotion-student-list">
+        <div class="print-empty">پہلے جماعت منتخب کریں۔</div>
+      </div>
+
+      <label>
+        اگلی جماعت
+        <select id="promotionSelectedToClass">
+          <option value="">اگلی جماعت منتخب کریں</option>
+        </select>
+      </label>
+
+      <label>
+        فیصلہ
+        <select id="promotionSelectedDecision">
+          <option value="promoted">ترقی</option>
+          <option value="repeat">اعادہ</option>
+          <option value="completed">تعلیم مکمل</option>
+        </select>
+      </label>
+
+      <div class="promotion-two-column">
+        <label>
+          تعلیمی سال
+          <input id="promotionSelectedAcademicYear" placeholder="مثلاً 1447-1448 / 2026-2027">
+        </label>
+        <label>
+          امتحان
+          <input id="promotionSelectedExamName" placeholder="مثلاً سالانہ امتحان">
+        </label>
+      </div>
+
+      <label>
+        نوٹ
+        <textarea id="promotionSelectedNotes" placeholder="اختیاری نوٹ"></textarea>
+      </label>
+
+      <button id="promoteSelectedStudents" type="button">منتخب طالبات اپڈیٹ کریں</button>
+    </div>
+  </section>
+
+  <section class="portal-panel promotion-panel">
+    <div class="promotion-heading">
+      <div>
+        <h2>پوری جماعت</h2>
+        <p>پوری جماعت کو ایک ساتھ اگلی جماعت میں منتقل کریں۔</p>
+      </div>
+    </div>
+
+    <form id="wholeClassPromotionForm" class="portal-form promotion-form">
+      <label>
+        موجودہ جماعت
+        <select id="promotionFromClass" required>
+          <option value="">جماعت منتخب کریں</option>
+        </select>
+      </label>
+
+      <label>
+        اگلی جماعت
+        <select id="promotionWholeToClass" required>
+          <option value="">اگلی جماعت منتخب کریں</option>
+        </select>
+      </label>
+
+      <label>
+        فیصلہ
+        <select id="promotionWholeDecision">
+          <option value="promoted">ترقی</option>
+          <option value="repeat">اعادہ</option>
+          <option value="completed">تعلیم مکمل</option>
+        </select>
+      </label>
+
+      <div class="promotion-two-column">
+        <label>
+          تعلیمی سال
+          <input id="promotionWholeAcademicYear" placeholder="مثلاً 1447-1448 / 2026-2027">
+        </label>
+        <label>
+          امتحان
+          <input id="promotionWholeExamName" placeholder="مثلاً سالانہ امتحان">
+        </label>
+      </div>
+
+      <label>
+        نوٹ
+        <textarea id="promotionWholeNotes" placeholder="اختیاری نوٹ"></textarea>
+      </label>
+
+      <div id="wholePromotionSummary" class="promotion-summary" hidden></div>
+
+      <button type="submit">پوری جماعت اپڈیٹ کریں</button>
+    </form>
+  </section>
+
+</main>
+
+<script src="i18n.js?v=20260930-promotion2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js?v=20260930-promotion2"></script>
+<script src="promotion-fix.js?v=20260930-promotion2"></script>
+</body>
+</html>
