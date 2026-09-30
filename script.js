@@ -14082,6 +14082,134 @@ App.idCardDates = function () {
     return { issueDate, expiryDate };
 };
 
+App.MADRASSA_PHONE =
+    "03436387621";
+
+
+App.idCardQrUrl =
+    function (
+        record,
+        type = "student"
+    ) {
+
+        const id =
+            Number(
+                record?.id ||
+                0
+            );
+
+
+        if (!id) {
+            return "";
+        }
+
+
+        const url =
+            new URL(
+                "print-profile.html",
+                window.location.href
+            );
+
+
+        url.searchParams.set(
+            "type",
+            type
+        );
+
+        url.searchParams.set(
+            "id",
+            String(id)
+        );
+
+        url.searchParams.set(
+            "source",
+            "student-card-qr"
+        );
+
+
+        return url.href;
+    };
+
+
+App.renderIdCardQrCodes =
+    function () {
+
+        document
+            .querySelectorAll(
+                "[data-id-card-qr]"
+            )
+            .forEach(
+                node => {
+
+                    const url =
+                        App.safe(
+                            node.dataset.idCardQr
+                        ).trim();
+
+
+                    node.innerHTML =
+                        "";
+
+
+                    if (!url) {
+
+                        node.textContent =
+                            "QR دستیاب نہیں";
+
+                        return;
+                    }
+
+
+                    if (
+                        typeof window.QRCode !==
+                        "function"
+                    ) {
+
+                        node.innerHTML =
+                            '<span class="id-card-qr-fallback">QR لوڈ نہیں ہوا</span>';
+
+                        return;
+                    }
+
+
+                    try {
+
+                        new window.QRCode(
+                            node,
+                            {
+                                text:
+                                    url,
+
+                                width:
+                                    128,
+
+                                height:
+                                    128,
+
+                                correctLevel:
+                                    window.QRCode
+                                        .CorrectLevel
+                                        .M
+                            }
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Student card QR:",
+                            error
+                        );
+
+
+                        node.innerHTML =
+                            '<span class="id-card-qr-fallback">QR تیار نہیں ہوا</span>';
+                    }
+                }
+            );
+    };
+
+
 App.loadIdCardRecords = async function (type) {
     type = App.safe(type).trim().toLowerCase();
     if (App.idCardRecordsCache[type] && App.idCardRecordsCache[type].length) return App.idCardRecordsCache[type];
@@ -14200,13 +14328,12 @@ App.idCardFrontHtml = function (item) {
                 (klass
                     ? '<div><span>' + (type === "student" ? 'جماعت' : 'تدریسی معلومات') + '</span><strong>' + App.escape(klass) + '</strong></div>'
                     : '') +
-                '<div class="id-card-info-wide"><span>' + (type === "student" ? 'وفاق / داخلہ نمبر' : type === "teacher" ? 'استاد کوڈ' : 'صارف') + '</span><strong data-no-translate>' + App.escape(reference) + '</strong></div>' +
+                '<div class="id-card-info-wide id-card-admission-line"><span>' + (type === "student" ? 'وفاق / داخلہ نمبر' : type === "teacher" ? 'استاد کوڈ' : 'صارف') + '</span><strong data-no-translate>' + App.escape(reference) + '</strong></div>' +
             '</div>' +
         '</div>' +
 
-        '<div class="id-card-validity-row">' +
+        '<div class="id-card-validity-row id-card-validity-single">' +
             '<div><span>جاری ہونے کی تاریخ</span><strong>' + App.escape(App.date(item.issueDate)) + '</strong></div>' +
-            '<div><span>میعاد ختم ہونے کی تاریخ</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
         '</div>' +
 
         '<div class="id-card-number-strip"><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(App.formatStudentCardNumber(record,item.cardNo)) + '</strong></div>' +
@@ -14215,30 +14342,48 @@ App.idCardFrontHtml = function (item) {
 
 
 App.idCardBackHtml = function (item) {
+    const record = item.record || {};
+    const type = item.type || "student";
+    const studentPhone = App.safe(record.phone) || "—";
+    const studentAddress = App.safe(record.address) || "—";
+    const qrUrl = App.idCardQrUrl(record,type);
+
     return '<article class="id-card id-card-back">' +
         '<div class="id-card-back-head">' +
             '<strong>' + App.escape(App.NAME) + '</strong>' +
-            '<span>شرائط و تصدیق</span>' +
+            '<span>تفصیل و تصدیق</span>' +
         '</div>' +
 
-        '<div class="id-card-back-content">' +
-            '<div class="id-card-back-address-block">' +
-                '<span>مدرسہ کا پتہ</span>' +
-                '<strong>' + App.escape(App.ADDRESS) + '</strong>' +
+        '<div class="id-card-back-content id-card-back-with-qr">' +
+            '<div class="id-card-back-details">' +
+                '<div class="id-card-back-field id-card-back-field-wide">' +
+                    '<span>طالبہ کا پتہ</span>' +
+                    '<strong>' + App.escape(studentAddress) + '</strong>' +
+                '</div>' +
+                '<div class="id-card-back-field">' +
+                    '<span>طالبہ رابطہ نمبر</span>' +
+                    '<strong data-no-translate>' + App.escape(studentPhone) + '</strong>' +
+                '</div>' +
+                '<div class="id-card-back-field">' +
+                    '<span>مدرسہ رابطہ نمبر</span>' +
+                    '<strong data-no-translate>' + App.escape(App.MADRASSA_PHONE) + '</strong>' +
+                '</div>' +
+                '<div class="id-card-back-field id-card-back-field-wide">' +
+                    '<span>میعاد ختم ہونے کی تاریخ</span>' +
+                    '<strong>' + App.escape(App.date(item.expiryDate)) + '</strong>' +
+                '</div>' +
             '</div>' +
 
-            '<div class="id-card-back-rules">' +
-                '<p><i>1</i><span>یہ ' + App.escape(App.idCardDisplayTitle(item.type || "student")) + ' مدرسہ کے ریکارڈ اور طالبہ کی شناخت کے لیے جاری کیا گیا ہے۔</span></p>' +
-                '<p><i>2</i><span>کارڈ گم یا خراب ہونے کی صورت میں مدرسہ انتظامیہ کو اطلاع دیں۔</span></p>' +
-                '<p><i>3</i><span>میعاد ختم ہونے کے بعد نیا ' + App.escape(App.idCardDisplayTitle(item.type || "student")) + ' جاری کروائیں۔</span></p>' +
+            '<div class="id-card-qr-panel">' +
+                '<div class="id-card-qr" data-id-card-qr="' + App.escape(qrUrl) + '"></div>' +
+                '<span>مکمل ریکارڈ</span>' +
+                '<small>اسکین پر ایڈمن لاگ اِن ضروری ہے</small>' +
             '</div>' +
-
-            '<div class="id-card-back-note">یہ کارڈ مدرسہ شہناز اختر للبنات کی ملکیت ہے۔</div>' +
         '</div>' +
 
         '<div class="id-card-back-footer">' +
-            '<div><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(App.formatStudentCardNumber(item.record || {},item.cardNo)) + '</strong></div>' +
-            '<div><span>کارآمد تا</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
+            '<div><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(App.formatStudentCardNumber(record,item.cardNo)) + '</strong></div>' +
+            '<div><span>مدرسہ فون</span><strong data-no-translate>' + App.escape(App.MADRASSA_PHONE) + '</strong></div>' +
         '</div>' +
     '</article>';
 };
@@ -14262,6 +14407,9 @@ App.renderIdCardPreview = function (items) {
         '</section>'
     ).join("");
     section.hidden = false;
+
+    App.renderIdCardQrCodes();
+
     section.scrollIntoView({behavior:"smooth",block:"start"});
 };
 
