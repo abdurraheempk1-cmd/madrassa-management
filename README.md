@@ -42,3 +42,8 @@ Complete Profile report اب official document style میں بنتی ہے: madra
 - `database_sql_history.sql` — صرف knowledge/reference کے لیے cumulative SQL history
 
 مزید ہدایات کے لیے `RUN-FIRST.txt`, `SQL-RUN-IN-ORDER.txt`, `SQL-README.md` اور `IMPORT-STUDENTS-README.txt` دیکھیں۔
+
+
+## Student Complete History Update
+
+Run `database-update-student-complete-history.sql` after the existing SQL updates. The update adds student photograph support, complete chronological history in the professional PDF, old/new values for profile changes, manual significant-history entries, and duplicate detection that asks the Admin to update/merge the existing student instead of creating a second record.
