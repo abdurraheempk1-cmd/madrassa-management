@@ -345,3 +345,34 @@
   font-size:1.15mm!important;
   line-height:1.05!important;
 }
+
+
+/* ---------- v6: IMPORTANT QRCode.js rendering fix ----------
+   QRCode.js keeps a hidden canvas plus a visible img.
+   Never force both visible, otherwise the flex box shows half of each QR.
+------------------------------------------------------------ */
+.id-card-qr canvas,
+.id-card-qr-code canvas{
+  display:none!important;
+}
+.id-card-qr img,
+.id-card-qr-code img{
+  display:block!important;
+  width:17mm!important;
+  height:17mm!important;
+  min-width:17mm!important;
+  min-height:17mm!important;
+  max-width:17mm!important;
+  max-height:17mm!important;
+  margin:auto!important;
+  padding:0!important;
+  background:#fff!important;
+  image-rendering:pixelated;
+}
+
+/* Wifaq / admission number slightly larger but still one line. */
+.id-card-admission-line strong{
+  font-size:2.45mm!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
