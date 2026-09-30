@@ -13907,6 +13907,10 @@ App.idCardRoleLabel = function (type) {
     return type === "teacher" ? "استاد" : type === "admin" ? "ایڈمن" : "طالبہ";
 };
 
+App.idCardDisplayTitle = function (type) {
+    return type === "teacher" ? "استاد کارڈ" : type === "admin" ? "ایڈمن کارڈ" : "طالبہ کارڈ";
+};
+
 App.idCardResultCardNo = function (result) {
     if (typeof result === "string") return result;
     return App.safe(result?.card_no || result?.card_number || result?.document_no || result?.number || "").trim();
@@ -14187,7 +14191,7 @@ App.idCardFrontHtml = function (item) {
         '</div>' +
 
         '<div class="id-card-front-body">' +
-            '<div class="id-card-title-line">شناختی کارڈ</div>' +
+            '<div class="id-card-title-line">' + App.escape(App.idCardDisplayTitle(type)) + '</div>' +
             '<h3>' + App.escape(name) + '</h3>' +
             '<div class="id-card-info-grid">' +
                 (father
@@ -14224,9 +14228,9 @@ App.idCardBackHtml = function (item) {
             '</div>' +
 
             '<div class="id-card-back-rules">' +
-                '<p><i>1</i><span>یہ شناختی کارڈ مدرسہ کے ریکارڈ اور شناخت کے لیے جاری کیا گیا ہے۔</span></p>' +
+                '<p><i>1</i><span>یہ ' + App.escape(App.idCardDisplayTitle(item.type || "student")) + ' مدرسہ کے ریکارڈ اور طالبہ کی شناخت کے لیے جاری کیا گیا ہے۔</span></p>' +
                 '<p><i>2</i><span>کارڈ گم یا خراب ہونے کی صورت میں مدرسہ انتظامیہ کو اطلاع دیں۔</span></p>' +
-                '<p><i>3</i><span>میعاد ختم ہونے کے بعد نیا شناختی کارڈ جاری کروائیں۔</span></p>' +
+                '<p><i>3</i><span>میعاد ختم ہونے کے بعد نیا ' + App.escape(App.idCardDisplayTitle(item.type || "student")) + ' جاری کروائیں۔</span></p>' +
             '</div>' +
 
             '<div class="id-card-back-note">یہ کارڈ مدرسہ شہناز اختر للبنات کی ملکیت ہے۔</div>' +
@@ -14263,7 +14267,7 @@ App.renderIdCardPreview = function (items) {
 
 App.printIdCardPreview = function () {
     if (!App.idCardCurrentPreview || !App.idCardCurrentPreview.length) {
-        alert("پہلے شناختی کارڈ تیار کریں۔");
+        alert("پہلے طالبہ کارڈ تیار کریں۔");
         return;
     }
     window.print();
@@ -14351,10 +14355,10 @@ App.initIdCards = function () {
                 const ownerId = Number(App.val("idCardOwnerId"));
                 if (!ownerId) throw new Error("براہ کرم نام / داخلہ نمبر سے ریکارڈ منتخب کریں۔");
                 const output = await App.registerAndPreviewIdCards(App.val("idCardOwnerType"),[ownerId],button);
-                alert("شناختی کارڈ تیار ہوگیا۔" + (output?.[0]?.cardNo ? "\nکارڈ نمبر: " + output[0].cardNo : ""));
+                alert("طالبہ کارڈ تیار ہوگیا۔" + (output?.[0]?.cardNo ? "\nکارڈ نمبر: " + output[0].cardNo : ""));
             } catch (error) {
                 console.error("ID card:",error);
-                alert(error?.message || "شناختی کارڈ تیار نہیں ہو سکا۔");
+                alert(error?.message || "طالبہ کارڈ تیار نہیں ہو سکا۔");
             }
         });
     }
@@ -14366,10 +14370,10 @@ App.initIdCards = function () {
                 .map(checkbox => Number(checkbox.value || checkbox.dataset.idCardSelect)).filter(Boolean);
             try {
                 const output = await App.registerAndPreviewIdCards(App.val("idCardBatchOwnerType") || "student",ids,batch);
-                alert(output.length + " شناختی کارڈ تیار ہوگئے۔ Front اور Back ایک ہی A4 صفحے پر ساتھ رکھے گئے ہیں۔");
+                alert(output.length + " طالبہ کارڈ تیار ہوگئے۔ Front اور Back ایک ہی A4 صفحے پر ساتھ رکھے گئے ہیں۔");
             } catch (error) {
                 console.error("ID card batch:",error);
-                alert(error?.message || "شناختی کارڈ تیار نہیں ہو سکے۔");
+                alert(error?.message || "طالبہ کارڈ تیار نہیں ہو سکے۔");
             }
         });
     }
