@@ -13865,6 +13865,417 @@ App.registerIdCardBatch =
     };
 
 
+App.idCardRecordsCache = {};
+
+App.idCardRecordReference =
+    function (type, record) {
+
+        if (!record) {
+            return "—";
+        }
+
+        if (type === "student") {
+            return record.admission_no || record.wifaq_registration_no || "—";
+        }
+
+        if (type === "teacher") {
+            return record.teacher_code || record.cnic || record.phone || "—";
+        }
+
+        return record.username || record.account_no || record.id || "—";
+    };
+
+
+App.idCardRecordName =
+    function (record, fallback = "ریکارڈ") {
+
+        return App.safe(
+            record?.name ||
+            record?.full_name ||
+            record?.username ||
+            fallback
+        ).trim() || fallback;
+    };
+
+
+App.loadIdCardRecords =
+    async function (type) {
+
+        type =
+            App.safe(type)
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            App.idCardRecordsCache[type] &&
+            App.idCardRecordsCache[type].length
+        ) {
+            return App.idCardRecordsCache[type];
+        }
+
+
+        let records = [];
+
+
+        if (type === "student") {
+
+            records =
+                App.asArray(
+                    await App.authedRpc(
+                        "admin_get_students"
+                    )
+                );
+
+        } else if (type === "teacher") {
+
+            records =
+                App.asArray(
+                    await App.authedRpc(
+                        "admin_get_teachers"
+                    )
+                );
+
+        } else if (type === "admin") {
+
+            const id =
+                Number(
+                    App.getAccountId?.() ||
+                    localStorage.getItem("accountId") ||
+                    0
+                );
+
+
+            if (id) {
+
+                records = [
+                    {
+                        id,
+                        name: "موجودہ ایڈمن",
+                        username:
+                            localStorage.getItem(
+                                "username"
+                            ) ||
+                            ""
+                    }
+                ];
+            }
+        }
+
+
+        records =
+            records
+                .filter(
+                    record =>
+                        Number(
+                            record?.id || 0
+                        ) > 0
+                )
+                .sort(
+                    (a, b) =>
+                        App.idCardRecordName(
+                            a
+                        )
+                            .localeCompare(
+                                App.idCardRecordName(
+                                    b
+                                ),
+                                "ur"
+                            )
+                );
+
+
+        App.idCardRecordsCache[type] =
+            records;
+
+
+        return records;
+    };
+
+
+App.renderIdCardOwnerChoices =
+    function (
+        records,
+        type,
+        search = ""
+    ) {
+
+        const select =
+            App.el(
+                "idCardOwnerId"
+            );
+
+
+        if (!select) {
+            return;
+        }
+
+
+        const query =
+            App.safe(search)
+                .trim()
+                .toLowerCase();
+
+
+        const filtered =
+            (records || [])
+                .filter(
+                    record => {
+
+                        if (!query) {
+                            return true;
+                        }
+
+
+                        const haystack =
+                            [
+                                App.idCardRecordName(
+                                    record
+                                ),
+                                App.idCardRecordReference(
+                                    type,
+                                    record
+                                ),
+                                record.phone,
+                                record.cnic
+                            ]
+                                .map(
+                                    value =>
+                                        App.safe(
+                                            value
+                                        )
+                                            .toLowerCase()
+                                )
+                                .join(" ");
+
+
+                        return haystack.includes(
+                            query
+                        );
+                    }
+                );
+
+
+        const typeLabel =
+            type === "teacher"
+                ? "استاد"
+                : type === "admin"
+                    ? "ایڈمن"
+                    : "طالبہ";
+
+
+        select.innerHTML =
+            '<option value="">' +
+            App.escape(
+                filtered.length
+                    ? typeLabel +
+                      " منتخب کریں"
+                    : "کوئی مماثل ریکارڈ نہیں ملا"
+            ) +
+            '</option>' +
+            filtered
+                .map(
+                    record => {
+
+                        const name =
+                            App.idCardRecordName(
+                                record,
+                                typeLabel
+                            );
+
+
+                        const reference =
+                            App.idCardRecordReference(
+                                type,
+                                record
+                            );
+
+
+                        return (
+                            '<option value="' +
+                            Number(
+                                record.id
+                            ) +
+                            '">' +
+                            App.escape(
+                                name +
+                                " — " +
+                                reference
+                            ) +
+                            '</option>'
+                        );
+                    }
+                )
+                .join("");
+    };
+
+
+App.refreshIdCardOwnerChoices =
+    async function () {
+
+        const type =
+            App.val(
+                "idCardOwnerType"
+            ) ||
+            "student";
+
+
+        const search =
+            App.val(
+                "idCardOwnerSearch"
+            );
+
+
+        const select =
+            App.el(
+                "idCardOwnerId"
+            );
+
+
+        if (select) {
+
+            select.innerHTML =
+                '<option value="">ریکارڈ لوڈ ہو رہے ہیں...</option>';
+        }
+
+
+        try {
+
+            const records =
+                await App.loadIdCardRecords(
+                    type
+                );
+
+
+            App.renderIdCardOwnerChoices(
+                records,
+                type,
+                search
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "ID card owner list:",
+                error
+            );
+
+
+            if (select) {
+
+                select.innerHTML =
+                    '<option value="">ریکارڈ لوڈ نہیں ہو سکا</option>';
+            }
+        }
+    };
+
+
+App.refreshIdCardBatchChoices =
+    async function () {
+
+        const type =
+            App.val(
+                "idCardBatchOwnerType"
+            ) ||
+            "student";
+
+
+        const container =
+            App.el(
+                "idCardSelectionList"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        container.innerHTML =
+            App.empty(
+                "ریکارڈ لوڈ ہو رہے ہیں..."
+            );
+
+
+        try {
+
+            const records =
+                await App.loadIdCardRecords(
+                    type
+                );
+
+
+            if (!records.length) {
+
+                container.innerHTML =
+                    App.empty(
+                        "کوئی ریکارڈ موجود نہیں۔"
+                    );
+
+                return;
+            }
+
+
+            container.innerHTML =
+                '<div class="id-card-selection-grid">' +
+                records
+                    .map(
+                        record => {
+
+                            const name =
+                                App.idCardRecordName(
+                                    record
+                                );
+
+
+                            const reference =
+                                App.idCardRecordReference(
+                                    type,
+                                    record
+                                );
+
+
+                            return (
+                                '<label class="id-card-selection-item">' +
+                                '<input type="checkbox" data-id-card-select value="' +
+                                Number(
+                                    record.id
+                                ) +
+                                '">' +
+                                '<span><strong>' +
+                                App.escape(
+                                    name
+                                ) +
+                                '</strong><small>' +
+                                App.escape(
+                                    reference
+                                ) +
+                                '</small></span>' +
+                                '</label>'
+                            );
+                        }
+                    )
+                    .join("") +
+                '</div>';
+
+
+        } catch (error) {
+
+            console.error(
+                "ID card batch list:",
+                error
+            );
+
+
+            container.innerHTML =
+                App.empty(
+                    "ریکارڈ لوڈ نہیں ہو سکا۔"
+                );
+        }
+    };
+
+
 App.initIdCards =
     function () {
 
@@ -13874,6 +14285,60 @@ App.initIdCards =
         ) {
             return;
         }
+
+
+        const ownerType =
+            App.el(
+                "idCardOwnerType"
+            );
+
+        const ownerSearch =
+            App.el(
+                "idCardOwnerSearch"
+            );
+
+        const batchType =
+            App.el(
+                "idCardBatchOwnerType"
+            );
+
+
+        if (ownerType) {
+
+            ownerType.addEventListener(
+                "change",
+                function () {
+
+                    if (ownerSearch) {
+                        ownerSearch.value = "";
+                    }
+
+                    App.refreshIdCardOwnerChoices();
+                }
+            );
+        }
+
+
+        if (ownerSearch) {
+
+            ownerSearch.addEventListener(
+                "input",
+                App.refreshIdCardOwnerChoices
+            );
+        }
+
+
+        if (batchType) {
+
+            batchType.addEventListener(
+                "change",
+                App.refreshIdCardBatchChoices
+            );
+        }
+
+
+        App.refreshIdCardOwnerChoices();
+        App.refreshIdCardBatchChoices();
 
 
         const single =
@@ -13896,6 +14361,22 @@ App.initIdCards =
 
                     try {
 
+                        const ownerId =
+                            Number(
+                                App.val(
+                                    "idCardOwnerId"
+                                )
+                            );
+
+
+                        if (!ownerId) {
+
+                            throw new Error(
+                                "براہ کرم نام / داخلہ نمبر سے ریکارڈ منتخب کریں۔"
+                            );
+                        }
+
+
                         const result =
                             await App.registerIdCard(
 
@@ -13903,9 +14384,7 @@ App.initIdCards =
                                     "idCardOwnerType"
                                 ),
 
-                                App.val(
-                                    "idCardOwnerId"
-                                )
+                                ownerId
                             );
 
 
