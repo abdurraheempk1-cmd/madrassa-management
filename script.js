@@ -5597,9 +5597,22 @@ App.openStudentCompleteDetails =
 
 
             const html =
-                App.renderDeepProfile(
+                App.renderProfessionalProfile(
                     data,
-                    "student-profile"
+                    "student"
+                );
+
+
+            loading.classList.add(
+                "student-complete-details-overlay"
+            );
+
+            loading
+                .querySelector(
+                    ".generated-details-card"
+                )
+                ?.classList.add(
+                    "student-complete-details-card"
                 );
 
 
