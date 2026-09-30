@@ -1,0 +1,59 @@
+/* Annual promotion / class upgrade page */
+.promotion-page .portal-main{max-width:980px}
+.promotion-panel{margin-bottom:18px}
+.promotion-heading h2{margin:0}
+.promotion-heading p{margin:4px 0 16px;color:#64748b;font-size:13px;line-height:1.8}
+.promotion-form{display:grid;gap:13px}
+.promotion-form label{display:grid;gap:7px;font-weight:700;color:#24372f}
+.promotion-form input,
+.promotion-form select,
+.promotion-form textarea{width:100%}
+.promotion-two-column,
+.promotion-current-next{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.promotion-current-next input[readonly]{background:#f4f7f5;color:#234538;font-weight:700}
+.promotion-summary{
+  padding:12px 14px;
+  border:1px solid #cfe2d8;
+  border-radius:13px;
+  background:#f2f8f5;
+  color:#184a37;
+  line-height:1.8
+}
+.promotion-select-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.promotion-select-actions button{width:auto;min-height:40px;margin:0;padding:6px 13px}
+.promotion-select-actions span{margin-inline-start:auto;font-weight:700;color:#176b4c}
+.promotion-student-list{
+  max-height:380px;
+  overflow:auto;
+  border:1px solid #e1e8e4;
+  border-radius:14px;
+  background:#fafcfb;
+  padding:8px
+}
+.promotion-student-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 11px;
+  margin:4px 0;
+  border:1px solid #e2ebe6;
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer
+}
+.promotion-student-row input{width:18px;height:18px;flex:0 0 auto}
+.promotion-student-row span{min-width:0;display:block}
+.promotion-student-row strong{display:block;color:#173a2c}
+.promotion-student-row small{display:block;margin-top:2px;color:#718078}
+.promotion-terminal-note{
+  padding:10px 12px;
+  border-radius:11px;
+  background:#fff7e7;
+  color:#7b5a14;
+  border:1px solid #edd9a4
+}
+@media(max-width:680px){
+  .promotion-two-column,
+  .promotion-current-next{grid-template-columns:1fr}
+  .promotion-select-actions span{width:100%;margin-inline-start:0}
+}
