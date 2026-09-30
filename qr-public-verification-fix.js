@@ -42,11 +42,31 @@ App.renderIdCardQrCodes=function(){
     try{
       new window.QRCode(node,{
         text:url,
-        width:160,
-        height:160,
+        width:180,
+        height:180,
         colorDark:"#000000",
         colorLight:"#ffffff",
         correctLevel:window.QRCode.CorrectLevel.L
+      });
+
+      /* qrcodejs may create BOTH a canvas and a helper img.
+         On the previous card CSS both became visible inside a flex box,
+         which made the printed QR look like "half one QR + half another".
+         Keep exactly one rendered QR surface. */
+      requestAnimationFrame(function(){
+        const canvas=node.querySelector("canvas");
+        const img=node.querySelector("img");
+
+        if(canvas){
+          canvas.style.setProperty("display","block","important");
+          canvas.style.setProperty("margin","0 auto","important");
+          if(img){
+            img.style.setProperty("display","none","important");
+          }
+        }else if(img){
+          img.style.setProperty("display","block","important");
+          img.style.setProperty("margin","0 auto","important");
+        }
       });
 
       /* QRCode.js creates both canvas and img. Keep only the final image visible. */
