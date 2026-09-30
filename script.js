@@ -1780,7 +1780,8 @@
     App.publicPages =
         new Set([
             "",
-            "index.html"
+            "index.html",
+            "verify.html"
         ]);
 
 
