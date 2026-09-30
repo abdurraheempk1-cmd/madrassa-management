@@ -390,13 +390,25 @@
     App.normalizePhone =
         function (value) {
 
-            return App.normalizeDigits(
-                value
-            )
-                .slice(
-                    0,
-                    11
-                );
+            let digits = App.normalizeDigits(value);
+
+            /*
+               Pakistan mobile normalization:
+               3412345678    -> 03412345678
+               923412345678  -> 03412345678
+               00923412345678 -> 03412345678
+               This is especially important for Excel, which often
+               removes the leading zero from numeric phone cells.
+            */
+            if (digits.length === 14 && digits.startsWith("0092")) {
+                digits = "0" + digits.slice(4);
+            } else if (digits.length === 12 && digits.startsWith("92")) {
+                digits = "0" + digits.slice(2);
+            } else if (digits.length === 10 && digits.startsWith("3")) {
+                digits = "0" + digits;
+            }
+
+            return digits.slice(0, 11);
         };
 
 
@@ -14360,7 +14372,9 @@ App.normalizeBulkStudentRow = function (row, rowNo) {
         password: App.bulkRandomPassword(),
         issues,
         warnings,
-        valid: issues.length === 0
+        valid: issues.length === 0,
+        selected: issues.length === 0,
+        imported: false
     };
 };
 
@@ -14390,10 +14404,35 @@ App.readStudentBulkFile = async function (file) {
     return records.map((row,index)=>App.normalizeBulkStudentRow(row,index+2));
 };
 
+App.updateStudentBulkSelectionUI = function () {
+    const rows = App.bulkStudentRows || [];
+    const selectable = rows.filter(r => r.valid && !r.imported);
+    const selected = selectable.filter(r => r.selected).length;
+    App.setText("bulkImportSelectedRows", selected, "0");
+
+    const master = App.el("selectAllStudentBulkRowsCheckbox");
+    if (master) {
+        master.checked = selectable.length > 0 && selected === selectable.length;
+        master.indeterminate = selected > 0 && selected < selectable.length;
+        master.disabled = selectable.length === 0;
+    }
+
+    const submit = App.el("submitStudentBulkImport");
+    if (submit) submit.disabled = selected === 0;
+};
+
+App.setAllStudentBulkRowsSelected = function (selected) {
+    (App.bulkStudentRows || []).forEach(r => {
+        if (r.valid && !r.imported) r.selected = !!selected;
+    });
+    App.renderStudentBulkPreview();
+};
+
 App.renderStudentBulkPreview = function () {
     const body = App.el("studentBulkImportPreviewBody");
     const wrap = App.el("studentBulkImportPreviewWrap");
     const summary = App.el("studentBulkImportSummary");
+    const toolbar = App.el("studentBulkImportSelectionToolbar");
     if (!body || !wrap || !summary) return;
 
     const rows = App.bulkStudentRows || [];
@@ -14406,11 +14445,17 @@ App.renderStudentBulkPreview = function () {
     App.setText("bulkImportInvalidRows",invalid,"0");
     summary.hidden = false;
     wrap.hidden = false;
+    if (toolbar) toolbar.hidden = false;
 
     body.innerHTML = rows.map((r,index)=>{
-        const cls = !r.valid ? "bulk-row-invalid" : (r.warnings.length ? "bulk-row-warning" : "bulk-row-valid");
-        const result = !r.valid ? `غلط: ${r.issues.join("، ")}` : (r.warnings.length ? `تنبیہ: ${r.warnings.join("، ")}` : "درست");
+        const cls = r.imported ? "bulk-row-imported" : (!r.valid ? "bulk-row-invalid" : (r.warnings.length ? "bulk-row-warning" : "bulk-row-valid"));
+        const result = r.imported
+            ? "درآمد شدہ"
+            : (!r.valid ? `غلط: ${r.issues.join("، ")}` : (r.warnings.length ? `تنبیہ: ${r.warnings.join("، ")}` : "درست"));
+        const disabled = (!r.valid || r.imported) ? "disabled" : "";
+        const checked = (r.valid && !r.imported && r.selected) ? "checked" : "";
         return `<tr class="${cls}">
+            <td class="bulk-select-column"><input type="checkbox" class="student-bulk-row-select" data-bulk-row-no="${Number(r.row_no)}" ${checked} ${disabled} aria-label="منتخب"></td>
             <td>${index+1}</td>
             <td data-no-translate>${App.escape(r.wifaq_registration_no || "—")}</td>
             <td data-no-translate>${App.escape(r.legacy_registration_no || "—")}</td>
@@ -14424,8 +14469,16 @@ App.renderStudentBulkPreview = function () {
         </tr>`;
     }).join("");
 
-    const submit = App.el("submitStudentBulkImport");
-    if (submit) submit.disabled = valid === 0;
+    body.querySelectorAll(".student-bulk-row-select").forEach(box => {
+        box.addEventListener("change", function () {
+            const rowNo = Number(this.dataset.bulkRowNo);
+            const row = (App.bulkStudentRows || []).find(x => Number(x.row_no) === rowNo);
+            if (row && row.valid && !row.imported) row.selected = this.checked;
+            App.updateStudentBulkSelectionUI();
+        });
+    });
+
+    App.updateStudentBulkSelectionUI();
 };
 
 App.previewStudentBulkImport = async function () {
@@ -14462,9 +14515,9 @@ App.renderBulkCredentials = function (results) {
 App.submitStudentBulkImport = async function () {
     const message = App.el("studentBulkImportMessage");
     const button = App.el("submitStudentBulkImport");
-    const rows = (App.bulkStudentRows || []).filter(r=>r.valid);
-    if (!rows.length) return App.message(message,"درآمد کے لیے کوئی درست قطار موجود نہیں۔","error");
-    if (!window.confirm(`${rows.length} طالبات کی درخواستیں زیرِ التواء حالت میں درآمد کی جائیں؟`)) return;
+    const rows = (App.bulkStudentRows || []).filter(r=>r.valid && r.selected && !r.imported);
+    if (!rows.length) return App.message(message,"درآمد کے لیے کم از کم ایک طالبہ منتخب کریں۔","error");
+    if (!window.confirm(`${rows.length} منتخب طالبات کی درخواستیں زیرِ التواء حالت میں درآمد کی جائیں؟`)) return;
     if (button) button.disabled = true;
     try {
         App.message(message,"درآمد جاری ہے...","info");
@@ -14490,14 +14543,64 @@ App.submitStudentBulkImport = async function () {
         }));
         const result = await App.authedRpc("admin_bulk_import_student_applications",{p_rows:payload});
         const results = App.asArray(result?.results || result);
-        const ok = results.filter(x=>x.ok).length;
-        const failed = results.length - ok;
+        const ok = results.filter(x=>x && x.ok === true).length;
+        const failedRows = results.filter(x=>!x || x.ok !== true);
+        const failed = failedRows.length;
+
+        const successfulRowNumbers = new Set(
+            results.filter(x => x && x.ok === true).map(x => Number(x.row_no))
+        );
+        (App.bulkStudentRows || []).forEach(r => {
+            if (successfulRowNumbers.has(Number(r.row_no))) {
+                r.imported = true;
+                r.selected = false;
+            }
+        });
+
         App.renderBulkCredentials(results);
-        App.message(message,`درآمد مکمل: ${ok} کامیاب، ${failed} ناکام۔ تمام کامیاب ریکارڈ ایڈمن منظوری کے منتظر ہیں۔`,failed ? "info" : "success");
+        App.renderStudentBulkPreview();
+
+        const failureDetails = failedRows
+            .slice(0, 5)
+            .map(x => `قطار ${App.escape(x?.row_no || "—")}: ${App.escape(x?.error || "نامعلوم خرابی")}`)
+            .join("<br>");
+
+        if (ok === 0) {
+            const detailText = failedRows
+                .slice(0, 3)
+                .map(x => `قطار ${x?.row_no || "—"}: ${x?.error || "نامعلوم خرابی"}`)
+                .join("\n");
+            App.message(
+                message,
+                `کوئی طالبہ درآمد نہیں ہوئی۔${failureDetails ? "<br>" + failureDetails : ""}`,
+                "error"
+            );
+            message?.scrollIntoView?.({behavior:"smooth",block:"center"});
+            window.alert(
+                "درآمد ناکام ہوئی۔\n" +
+                (detailText || "Bulk Import SQL یا database validation چیک کریں۔")
+            );
+        } else {
+            App.message(
+                message,
+                `درآمد مکمل: ${ok} کامیاب، ${failed} ناکام۔ تمام کامیاب ریکارڈ ایڈمن منظوری کے منتظر ہیں۔${failureDetails ? "<br>" + failureDetails : ""}`,
+                failed ? "info" : "success"
+            );
+            message?.scrollIntoView?.({behavior:"smooth",block:"center"});
+            window.alert(`درآمد مکمل\nکامیاب: ${ok}\nناکام: ${failed}`);
+        }
+
         await App.loadAccountApplications();
     } catch (error) {
         console.error("Bulk student import:",error);
-        App.message(message,error?.message || "طالبات درآمد نہیں ہو سکیں۔ پہلے Bulk Import SQL چلائیں۔","error");
+        const rawMessage = App.safe(error?.message || "");
+        const missingRpc = /admin_bulk_import_student_applications|PGRST202|function.*not found/i.test(rawMessage);
+        const friendly = missingRpc
+            ? "Bulk Import SQL ابھی database میں فعال نہیں ہے۔ sql-parts/06-bulk-student-import.sql چلائیں۔"
+            : (rawMessage || "طالبات درآمد نہیں ہو سکیں۔");
+        App.message(message,friendly,"error");
+        message?.scrollIntoView?.({behavior:"smooth",block:"center"});
+        window.alert(friendly);
     } finally {
         if (button) button.disabled = false;
     }
@@ -14518,15 +14621,28 @@ App.initStudentBulkImport = function () {
     const submit = App.el("submitStudentBulkImport");
     const template = App.el("downloadStudentImportTemplate");
     const type = App.el("studentBulkAdmissionType");
+    const selectAllButton = App.el("selectAllStudentBulkRows");
+    const clearSelectionButton = App.el("clearStudentBulkSelection");
+    const masterCheckbox = App.el("selectAllStudentBulkRowsCheckbox");
     if (preview && preview.dataset.bound !== "1") { preview.dataset.bound="1"; preview.addEventListener("click",App.previewStudentBulkImport); }
     if (submit && submit.dataset.bound !== "1") { submit.dataset.bound="1"; submit.addEventListener("click",App.submitStudentBulkImport); }
     if (template && template.dataset.bound !== "1") { template.dataset.bound="1"; template.addEventListener("click",App.downloadStudentImportTemplate); }
+    if (selectAllButton && selectAllButton.dataset.bound !== "1") { selectAllButton.dataset.bound="1"; selectAllButton.addEventListener("click",()=>App.setAllStudentBulkRowsSelected(true)); }
+    if (clearSelectionButton && clearSelectionButton.dataset.bound !== "1") { clearSelectionButton.dataset.bound="1"; clearSelectionButton.addEventListener("click",()=>App.setAllStudentBulkRowsSelected(false)); }
+    if (masterCheckbox && masterCheckbox.dataset.bound !== "1") { masterCheckbox.dataset.bound="1"; masterCheckbox.addEventListener("change",function(){ App.setAllStudentBulkRowsSelected(this.checked); }); }
     if (type && type.dataset.bound !== "1") { type.dataset.bound="1"; type.addEventListener("change",()=>{
         if (App.bulkStudentRows.length) {
-            App.bulkStudentRows = App.bulkStudentRows.map(r=>App.normalizeBulkStudentRow({
-                "رقم التسجیل":r.wifaq_registration_no,"رجسٹریشن":r.legacy_registration_no,"نام":r.name,"ولدیت":r.father_name,
-                "درجہ":r.student_class,"تاريخ پیدائش":r.date_of_birth,"شناختی کارڈ":r.cnic,"رابطہ نمبر":r.phone,"موجودہ پتہ":r.address
-            },r.row_no));
+            App.bulkStudentRows = App.bulkStudentRows.map(r=>{
+                const updated = App.normalizeBulkStudentRow({
+                    "رقم التسجیل":r.wifaq_registration_no,"رجسٹریشن":r.legacy_registration_no,"نام":r.name,"ولدیت":r.father_name,
+                    "درجہ":r.student_class,"تاريخ پیدائش":r.date_of_birth,"شناختی کارڈ":r.cnic,"رابطہ نمبر":r.phone,"موجودہ پتہ":r.address
+                },r.row_no);
+                updated.username = r.username;
+                updated.password = r.password;
+                updated.imported = !!r.imported;
+                updated.selected = updated.valid && !updated.imported && (r.selected !== false);
+                return updated;
+            });
             App.renderStudentBulkPreview();
         }
     }); }

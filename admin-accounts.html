@@ -20,7 +20,7 @@
           rel="stylesheet">
 
     <link rel="stylesheet"
-          href="style.css?v=20260930-final2">
+          href="style.css?v=20260930-bulkselect1">
 </head>
 
 
@@ -1439,7 +1439,7 @@
                     </label>
                     <div class="bulk-import-actions">
                         <button type="button" id="previewStudentBulkImport" class="small-action-button secondary">پیش منظر</button>
-                        <button type="button" id="submitStudentBulkImport" class="small-action-button" disabled>درآمد کریں</button>
+                        <button type="button" id="submitStudentBulkImport" class="small-action-button" disabled>منتخب درآمد کریں</button>
                         <button type="button" id="downloadStudentImportTemplate" class="small-action-button secondary">نمونہ فائل</button>
                     </div>
                 </div>
@@ -1451,10 +1451,17 @@
                     <article><strong id="bulkImportInvalidRows">0</strong><span>غلط</span></article>
                 </div>
 
+                <div class="bulk-import-selection-toolbar" id="studentBulkImportSelectionToolbar" hidden>
+                    <button type="button" id="selectAllStudentBulkRows" class="small-action-button secondary">سب منتخب کریں</button>
+                    <button type="button" id="clearStudentBulkSelection" class="small-action-button secondary">سب ہٹائیں</button>
+                    <strong><span>منتخب</span>: <span id="bulkImportSelectedRows">0</span></strong>
+                </div>
+
                 <div class="responsive-table-wrapper" id="studentBulkImportPreviewWrap" hidden>
                     <table class="portal-table bulk-import-table">
                         <thead>
                             <tr>
+                                <th class="bulk-select-column"><label class="bulk-select-label"><input type="checkbox" id="selectAllStudentBulkRowsCheckbox" aria-label="سب منتخب کریں"><span>منتخب</span></label></th>
                                 <th>#</th>
                                 <th>وفاق نمبر</th>
                                 <th>رجسٹریشن نمبر</th>
@@ -1528,10 +1535,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <script src="i18n.js?v=20260930-final2"></script>
+    <script src="i18n.js?v=20260930-bulkselect1"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="script.js?v=20260930-final2"></script>
+    <script src="script.js?v=20260930-bulkselect1"></script>
 
 </body>
 

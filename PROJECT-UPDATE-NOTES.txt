@@ -44,3 +44,9 @@ IMPORTANT:
 
 IMPORTANT CURRENT SQL INSTRUCTION (supersedes older notes above):
 Use SQL-RUN-IN-ORDER.txt. If Parts 01-05 already succeeded, run ONLY sql-parts/06-bulk-student-import.sql. Do not run the entire database-fixes.sql in the web SQL Editor.
+
+2026-09-30 BULK IMPORT PHONE FIX:
+- Excel often removes the leading 0 from Pakistani mobile numbers stored as numeric cells.
+- 10-digit numbers beginning with 3 are now normalized automatically, e.g. 3412012505 -> 03412012505.
+- +92 / 92 format is normalized to local 03xxxxxxxxx format.
+- Bulk import now shows a visible success/failure alert and the first failed-row database errors instead of appearing to do nothing.

@@ -1,0 +1,10 @@
+BULK STUDENT IMPORT SELECTION UPDATE
+
+- Every valid preview row now has its own checkbox.
+- Use "سب منتخب کریں" to select all valid, not-yet-imported rows.
+- Use "سب ہٹائیں" to clear all selections.
+- The header checkbox also selects/clears all.
+- Only selected rows are imported.
+- Invalid rows cannot be selected.
+- Successfully imported rows are marked as imported and disabled to reduce accidental duplicate imports.
+- No new SQL is required for this selection-only update. Existing sql-parts/06-bulk-student-import.sql remains the bulk import backend.

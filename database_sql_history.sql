@@ -1242,3 +1242,14 @@ grant execute on function public.admin_bulk_import_student_applications(uuid,jso
 revoke all on function public.apply_imported_wifaq_admission_no() from public, anon, authenticated;
 
 commit;
+
+-- =========================================================
+-- 2026-09-30: BULK IMPORT PHONE NORMALIZATION FIX
+-- Excel numeric cells can remove the leading 0 from Pakistani
+-- mobile numbers. The production migration in
+-- sql-parts/06-bulk-student-import.sql now normalizes:
+-- 3412012505 -> 03412012505
+-- 923412012505 -> 03412012505
+-- 00923412012505 -> 03412012505
+-- Re-run Part 06 safely to replace the bulk-import RPC.
+-- =========================================================

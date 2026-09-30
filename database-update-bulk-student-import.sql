@@ -137,6 +137,7 @@ declare
     v_username text;
     v_password text;
     v_admission_type text;
+    v_phone text;
     v_results jsonb := '[]'::jsonb;
     v_ok integer := 0;
     v_failed integer := 0;
@@ -190,6 +191,18 @@ begin
                 v_password := 'Msa#' || substr(replace(gen_random_uuid()::text,'-',''),1,12);
             end if;
 
+            v_phone := regexp_replace(coalesce(v_row->>'phone',''), '[^0-9]', '', 'g');
+            if length(v_phone) = 10 and left(v_phone,1) = '3' then
+                v_phone := '0' || v_phone;
+            elsif length(v_phone) = 12 and left(v_phone,2) = '92' then
+                v_phone := '0' || substr(v_phone,3);
+            elsif length(v_phone) = 14 and left(v_phone,4) = '0092' then
+                v_phone := '0' || substr(v_phone,5);
+            end if;
+            if v_phone ~ '^0+$' or length(v_phone) <> 11 then
+                v_phone := null;
+            end if;
+
             select coalesce(max(id),0) into v_before_id from public.student_applications;
 
             perform public.submit_student_application(
@@ -198,7 +211,7 @@ begin
                 p_father_name      => nullif(btrim(coalesce(v_row->>'father_name','')), ''),
                 p_guardian_name    => nullif(btrim(coalesce(v_row->>'guardian_name','')), ''),
                 p_cnic             => nullif(regexp_replace(coalesce(v_row->>'cnic',''), '[^0-9]', '', 'g'), ''),
-                p_phone            => nullif(regexp_replace(coalesce(v_row->>'phone',''), '[^0-9]', '', 'g'), ''),
+                p_phone            => v_phone,
                 p_date_of_birth    => nullif(v_row->>'date_of_birth','')::date,
                 p_student_class    => btrim(v_row->>'student_class'),
                 p_address          => nullif(btrim(coalesce(v_row->>'address','')), ''),

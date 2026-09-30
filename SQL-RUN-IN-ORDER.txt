@@ -16,3 +16,6 @@ Wait for Success before running the next file.
 Do not paste all parts together; Supabase may reject an oversized query.
 
 The database_sql_history.sql file is reference/history only. Do not run it as an extra migration after the parts above.
+
+PHONE/BULK IMPORT FIX (2026-09-30):
+Re-run sql-parts/06-bulk-student-import.sql once after uploading this project. It is safe to re-run and updates the bulk import RPC with phone normalization.

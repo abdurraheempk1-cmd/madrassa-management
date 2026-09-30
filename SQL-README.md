@@ -34,3 +34,6 @@ Admin review, Admin recovery-code flow, permissions اور helper lock-down۔
 - `database-update-2026-09-30.sql` — older update snapshot.
 - `database-update-bulk-student-import.sql` — Part 06 کی standalone copy.
 - `secure-account-recovery-fix.sql` — recovery security correction reference/update file.
+
+### Bulk import phone fix — 2026-09-30
+Part 06 is idempotent and can be re-run. It now normalizes Pakistani mobile numbers when Excel removes the leading `0`: `3412012505` becomes `03412012505`; `92...` / `0092...` forms are also converted to local `03...` form. The frontend applies the same normalization before sending rows to Supabase and now shows exact failed-row errors visibly.

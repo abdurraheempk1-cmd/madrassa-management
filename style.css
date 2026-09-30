@@ -8449,3 +8449,14 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
 .profile-print-page .professional-document-footer{margin-top:22px;padding-top:14px;border-top:2px solid #174f3b}.profile-print-page .professional-generated{display:flex;justify-content:space-between;gap:12px;color:#5d6c66}.profile-print-page .professional-signatures{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin:36px 8% 18px;text-align:center}.profile-print-page .professional-signatures span{display:block}.profile-print-page .professional-footer-line{display:flex;justify-content:space-between;gap:12px;padding-top:8px;border-top:1px solid #dfe7e3;font-size:12px;color:#586861}
 @media(max-width:700px){.portal-topbar-actions{width:100%}.portal-topbar-actions .small-action-button{flex:1 1 140px}.profile-print-page .professional-metric-grid{grid-template-columns:repeat(2,1fr)}}
 @media print{.profile-print-page .professional-section{box-shadow:none!important;border-color:#cfd9d4!important}.profile-print-page .professional-document-footer{break-inside:avoid}.profile-print-page .professional-table-wrap{overflow:visible!important}}
+
+/* ===== Bulk student import row selection ===== */
+.bulk-import-selection-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:10px 0 12px;padding:10px 12px;border:1px solid #d7e5df;background:#f8fbfa;border-radius:13px}
+.bulk-import-selection-toolbar button{width:auto;min-width:120px;margin:0}
+.bulk-import-selection-toolbar strong{margin-inline-start:auto;font-size:15px;color:#155b43}
+.bulk-select-column{min-width:84px!important;width:84px;text-align:center!important}
+.bulk-select-column input[type="checkbox"]{width:20px;height:20px;accent-color:#176b4c;cursor:pointer}
+.bulk-select-column input[type="checkbox"]:disabled{cursor:not-allowed;opacity:.45}
+.bulk-select-label{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700}
+.bulk-row-imported{background:#eef8f3!important;opacity:.78}
+@media(max-width:700px){.bulk-import-selection-toolbar strong{width:100%;margin-inline-start:0;text-align:center}.bulk-import-selection-toolbar button{flex:1 1 130px}}

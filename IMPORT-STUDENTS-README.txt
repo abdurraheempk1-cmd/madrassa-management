@@ -24,3 +24,11 @@ Admission number behavior:
 - If it is blank, the system creates a temporary admission number.
 - Admin can later replace the temporary number with the official Wifaq number.
 - Admission/Wifaq numbers must remain unique.
+
+PHONE NUMBER NOTE (2026-09-30 FIX)
+Excel may remove the first 0 from a Pakistani mobile number. The importer now fixes this automatically:
+3412012505 -> 03412012505
+923412012505 -> 03412012505
+You may keep phone cells as Text to preserve the leading zero, but it is no longer required for normal Pakistani mobile numbers.
+
+If import fails, the page now displays the exact failed-row error. If it says the Bulk Import RPC/function is missing, run sql-parts/06-bulk-student-import.sql once in Supabase SQL Editor.

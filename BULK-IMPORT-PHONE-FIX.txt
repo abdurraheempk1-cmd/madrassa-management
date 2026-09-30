@@ -1,0 +1,19 @@
+BULK IMPORT PHONE FIX — 2026-09-30
+
+1. Upload/replace the complete madrassa-management-main project on GitHub.
+2. In Supabase SQL Editor, re-run:
+   sql-parts/06-bulk-student-import.sql
+   It is safe to re-run.
+3. Hard refresh/reopen the website.
+4. Admin > Accounts & Approvals > Import Students.
+5. Select Excel/CSV and Preview.
+6. A 10-digit Pakistani mobile such as 3412012505 will now become 03412012505 automatically.
+7. Click Import. The page now shows a visible success/failure alert and exact failed-row errors.
+
+Accepted phone examples:
+03412012505
+3412012505
+923412012505
+00923412012505
+
+All imported students remain PENDING until Admin approval.
