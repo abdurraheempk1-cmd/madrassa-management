@@ -46,7 +46,7 @@
   overflow:visible!important;
   text-overflow:clip!important;
   font-family:system-ui,sans-serif!important;
-  font-size:1.95mm!important;
+  font-size:2.3mm!important;
   line-height:1.2!important;
   letter-spacing:0!important;
 }
@@ -288,4 +288,60 @@
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important
   }
+}
+
+
+/* ---------- v5: QR full-square + slightly larger Wifaq number ---------- */
+.id-card-back-head{
+  min-height:11.5mm!important;
+  padding:1.55mm 3.4mm!important;
+}
+.id-card-back-head strong{
+  font-size:3.25mm!important;
+  line-height:1.35!important;
+}
+.id-card-back-head span{
+  padding:.55mm 1.7mm!important;
+  font-size:2.05mm!important;
+}
+.id-card-back-with-qr{
+  grid-template-columns:minmax(0,1fr) 22.5mm!important;
+  gap:1.55mm!important;
+  padding:1.45mm 3mm 6.7mm!important;
+}
+.id-card-qr-panel{
+  width:22.5mm!important;
+  min-width:22.5mm!important;
+  max-width:22.5mm!important;
+}
+.id-card-qr{
+  width:21.5mm!important;
+  height:21.5mm!important;
+  min-width:21.5mm!important;
+  min-height:21.5mm!important;
+  max-width:21.5mm!important;
+  max-height:21.5mm!important;
+  padding:2.25mm!important;
+  overflow:hidden!important;
+}
+.id-card-qr img,
+.id-card-qr canvas,
+.id-card-qr-code img,
+.id-card-qr-code canvas{
+  width:17mm!important;
+  height:17mm!important;
+  min-width:17mm!important;
+  min-height:17mm!important;
+  max-width:17mm!important;
+  max-height:17mm!important;
+}
+.id-card-qr-panel>span{
+  margin-top:.1mm!important;
+  font-size:1.55mm!important;
+  line-height:1.1!important;
+}
+.id-card-qr-panel>small{
+  margin-top:.08mm!important;
+  font-size:1.15mm!important;
+  line-height:1.05!important;
 }
