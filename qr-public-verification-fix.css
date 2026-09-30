@@ -152,9 +152,7 @@
   box-sizing:border-box!important;
   overflow:visible!important;
 }
-.id-card-qr img,
 .id-card-qr canvas,
-.id-card-qr-code img,
 .id-card-qr-code canvas{
   display:block!important;
   width:18mm!important;
@@ -324,9 +322,7 @@
   padding:2.25mm!important;
   overflow:hidden!important;
 }
-.id-card-qr img,
 .id-card-qr canvas,
-.id-card-qr-code img,
 .id-card-qr-code canvas{
   width:17mm!important;
   height:17mm!important;
@@ -375,4 +371,23 @@
   font-size:2.45mm!important;
   line-height:1.2!important;
   white-space:nowrap!important;
+}
+
+
+/* v6: qrcodejs single-surface rendering */
+.id-card-qr img,
+.id-card-qr-code img{
+  width:17mm!important;
+  height:17mm!important;
+  min-width:17mm!important;
+  min-height:17mm!important;
+  max-width:17mm!important;
+  max-height:17mm!important;
+  margin:0 auto!important;
+  padding:0!important;
+  background:#fff!important;
+  image-rendering:pixelated;
+}
+.id-card-admission-line strong{
+  font-size:2.55mm!important;
 }
