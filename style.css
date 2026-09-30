@@ -9561,3 +9561,112 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
         print-color-adjust: exact !important;
     }
 }
+
+
+/* =========================================================
+   ID CARD FRONT FIT FIX - KEEP ALL FIELDS INSIDE CNIC SIZE
+   ========================================================= */
+
+.id-card-front-head {
+    min-height: 12.4mm;
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+}
+
+.id-card-head-copy strong {
+    font-size: 3.75mm;
+}
+
+.id-card-head-copy small {
+    font-size: 2.05mm;
+}
+
+.id-card-front-body {
+    padding: 1.8mm 3.8mm 13.2mm;
+}
+
+.id-card-title-line {
+    margin-bottom: .15mm;
+    font-size: 2.15mm;
+    line-height: 1.35;
+}
+
+.id-card-front-body h3 {
+    margin: 0 0 .9mm;
+    font-size: 4.15mm;
+    line-height: 1.45;
+}
+
+.id-card-info-grid {
+    gap: .55mm 2.2mm;
+}
+
+.id-card-info-grid > div {
+    padding-bottom: .35mm;
+}
+
+.id-card-info-grid span {
+    font-size: 1.95mm;
+    line-height: 1.25;
+}
+
+.id-card-info-grid strong {
+    margin-top: 0;
+    font-size: 2.45mm;
+    line-height: 1.35;
+}
+
+.id-card-info-grid .id-card-info-wide strong {
+    direction: ltr;
+    text-align: right;
+    font-family: system-ui, sans-serif;
+    font-size: 2.25mm;
+    letter-spacing: .02mm;
+}
+
+.id-card-validity-row {
+    inset-inline-start: 3.8mm;
+    inset-inline-end: 3.8mm;
+    bottom: 5.25mm;
+    min-height: 6.2mm;
+    align-items: center;
+    padding: .7mm 0 .55mm;
+    background: #fff;
+    z-index: 2;
+}
+
+.id-card-validity-row span {
+    font-size: 1.75mm;
+    line-height: 1.2;
+}
+
+.id-card-validity-row strong {
+    margin-top: .1mm;
+    font-size: 2.1mm;
+    line-height: 1.25;
+}
+
+.id-card-number-strip {
+    min-height: 5.2mm;
+    gap: 1.4mm;
+    padding: .75mm 2.4mm;
+    z-index: 3;
+}
+
+.id-card-number-strip span {
+    flex: 0 0 auto;
+    font-size: 1.9mm;
+}
+
+.id-card-number-strip strong {
+    min-width: 0;
+    font-size: 2.08mm;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+.id-card-back-footer strong {
+    font-size: 2.05mm;
+    white-space: nowrap;
+}
+

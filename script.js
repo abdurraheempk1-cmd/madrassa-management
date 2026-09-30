@@ -13913,6 +13913,106 @@ App.idCardResultCardNo = function (result) {
 };
 
 
+App.formatStudentCardNumber =
+    function (
+        record,
+        value = ""
+    ) {
+
+        const dob =
+            App.safe(
+                record?.date_of_birth
+            )
+                .slice(
+                    0,
+                    10
+                )
+                .replace(
+                    /\D/g,
+                    ""
+                );
+
+
+        const wifaq =
+            App.formatWifaqNumber(
+                record?.admission_no ||
+                record?.wifaq_registration_no
+            );
+
+
+        if (
+            dob &&
+            wifaq
+        ) {
+
+            return (
+                dob +
+                "-" +
+                wifaq
+            );
+        }
+
+
+        const raw =
+            App.safe(
+                value
+            )
+                .trim();
+
+
+        const compact =
+            raw.replace(
+                /\D/g,
+                ""
+            );
+
+
+        if (
+            compact.length >= 20
+        ) {
+
+            const rawDob =
+                compact.slice(
+                    0,
+                    8
+                );
+
+            const rawWifaq =
+                compact.slice(
+                    -12
+                );
+
+
+            if (
+                /^\d{8}$/.test(
+                    rawDob
+                ) &&
+                /^14\d{10}$/.test(
+                    rawWifaq
+                )
+            ) {
+
+                return (
+                    rawDob +
+                    "-" +
+                    rawWifaq.slice(0,4) +
+                    "-" +
+                    rawWifaq.slice(4,6) +
+                    "-" +
+                    rawWifaq.slice(6,12)
+                );
+            }
+        }
+
+
+        return (
+            raw ||
+            wifaq ||
+            "—"
+        );
+    };
+
+
 App.idCardCompositeNumber =
     function (
         record,
@@ -13958,30 +14058,11 @@ App.idCardCompositeNumber =
             );
 
 
-        if (
-            dob &&
-            wifaq
-        ) {
-
-            return (
-                dob +
-                "-" +
-                wifaq
-            );
-        }
-
-
-        if (wifaq) {
-
-            return wifaq;
-        }
-
-
         return (
-            App.safe(
+            App.formatStudentCardNumber(
+                record,
                 systemNumber
-            ).trim() ||
-            "—"
+            )
         );
     };
 
@@ -14124,7 +14205,7 @@ App.idCardFrontHtml = function (item) {
             '<div><span>میعاد ختم ہونے کی تاریخ</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
         '</div>' +
 
-        '<div class="id-card-number-strip"><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(item.cardNo || "—") + '</strong></div>' +
+        '<div class="id-card-number-strip"><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(App.formatStudentCardNumber(record,item.cardNo)) + '</strong></div>' +
     '</article>';
 };
 
@@ -14152,7 +14233,7 @@ App.idCardBackHtml = function (item) {
         '</div>' +
 
         '<div class="id-card-back-footer">' +
-            '<div><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(item.cardNo || "—") + '</strong></div>' +
+            '<div><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(App.formatStudentCardNumber(item.record || {},item.cardNo)) + '</strong></div>' +
             '<div><span>کارآمد تا</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
         '</div>' +
     '</article>';
