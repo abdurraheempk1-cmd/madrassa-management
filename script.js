@@ -13868,9 +13868,33 @@ App.registerIdCardBatch =
 App.idCardRecordsCache = {};
 App.idCardCurrentPreview = [];
 
+App.formatWifaqNumber = function (value) {
+    let text = App.safe(value).trim().replace(/\s+/g,"-").replace(/-+/g,"-");
+    if (!text) return "";
+
+    const normal = text.match(/^(14\d{2})-(\d{2})-(\d{1,6})$/);
+    if (normal) {
+        return normal[1] + "-" + normal[2] + "-" + normal[3].padStart(6,"0");
+    }
+
+    const reversed = text.match(/^(\d{1,6})-(\d{2})-(14\d{2})$/);
+    if (reversed) {
+        return reversed[3] + "-" + reversed[2] + "-" + reversed[1].padStart(6,"0");
+    }
+
+    const digits = text.replace(/\D/g,"");
+    if (/^14\d{10}$/.test(digits)) {
+        return digits.slice(0,4) + "-" + digits.slice(4,6) + "-" + digits.slice(6,12);
+    }
+
+    return text;
+};
+
 App.idCardRecordReference = function (type, record) {
     if (!record) return "—";
-    if (type === "student") return record.admission_no || record.wifaq_registration_no || "—";
+    if (type === "student") {
+        return App.formatWifaqNumber(record.admission_no || record.wifaq_registration_no) || "—";
+    }
     if (type === "teacher") return record.teacher_code || record.cnic || record.phone || "—";
     return record.username || record.account_no || record.id || "—";
 };
@@ -13928,15 +13952,10 @@ App.idCardCompositeNumber =
 
 
         const wifaq =
-            App.safe(
+            App.formatWifaqNumber(
                 record?.admission_no ||
                 record?.wifaq_registration_no
-            )
-                .toUpperCase()
-                .replace(
-                    /[^A-Z0-9]/g,
-                    ""
-                );
+            );
 
 
         if (
