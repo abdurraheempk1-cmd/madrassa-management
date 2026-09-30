@@ -151,7 +151,8 @@ App.registerAndPreviewIdCards=async function(type,ids,button=null){
           verificationToken=App.safe(tokenResult?.token||tokenResult?.verification_token).trim();
         }catch(error){
           console.error("Public QR token:",error);
-          throw new Error("QR تصدیق فعال نہیں ہے۔ Supabase میں sql-parts/07-public-id-card-qr-verification.sql چلائیں۔");
+          const detail = App.safe(error?.message || error?.details || error?.hint || "").trim();
+          throw new Error("QR تصدیق تیار نہیں ہو سکی۔" + (detail ? "\n" + detail : ""));
         }
       }
 
