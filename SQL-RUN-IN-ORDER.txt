@@ -19,3 +19,9 @@ The database_sql_history.sql file is reference/history only. Do not run it as an
 
 PHONE/BULK IMPORT FIX (2026-09-30):
 Re-run sql-parts/06-bulk-student-import.sql once after uploading this project. It is safe to re-run and updates the bulk import RPC with phone normalization.
+
+
+STUDENT COMPLETE HISTORY / PHOTO / DUPLICATE UPDATE (2026-09-30):
+After the existing Parts 01-06 are complete, run:
+    database-update-student-complete-history.sql
+This migration is safe to re-run. It adds student photo, update audit history, chronological student history events, and duplicate-safe merge/update support.
