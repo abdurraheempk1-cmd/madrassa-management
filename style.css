@@ -8848,3 +8848,380 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================================================
+   ID CARD - CNIC SIZE / SAME-PAGE FRONT + BACK
+   Pakistan CNIC / ISO ID-1 size: 85.60mm × 53.98mm
+   A4 portrait: up to 5 people per page = 5 fronts + 5 backs
+   ========================================================= */
+
+.id-card-main {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.id-card-date-grid,
+.id-card-batch-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.id-card-date-grid label,
+.id-card-batch-toolbar label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    font-weight: 700;
+    color: #2f4a40;
+}
+
+.id-card-date-grid input,
+.id-card-batch-toolbar select {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+}
+
+.id-card-help {
+    margin: 9px 0 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.id-card-batch-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.id-card-batch-actions button {
+    width: auto;
+    min-width: 130px;
+    margin: 0;
+}
+
+.id-card-preview-section {
+    overflow: hidden;
+}
+
+.id-card-preview-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.id-card-preview-heading h2,
+.id-card-preview-heading p {
+    margin: 0;
+}
+
+.id-card-preview-heading p {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.id-card-preview-heading button {
+    width: auto;
+    min-width: 140px;
+    margin: 0;
+}
+
+.id-card-preview-area {
+    width: 100%;
+    overflow-x: auto;
+    padding: 12px;
+    border-radius: 14px;
+    background: #e9eeeb;
+    -webkit-overflow-scrolling: touch;
+}
+
+.id-card-a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 18px;
+    padding: 10mm;
+    display: grid;
+    grid-template-columns: 85.6mm 85.6mm;
+    grid-auto-rows: 53.98mm;
+    column-gap: 8mm;
+    row-gap: 1.75mm;
+    align-content: start;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .12);
+    direction: rtl;
+}
+
+.id-card {
+    position: relative;
+    width: 85.6mm;
+    height: 53.98mm;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: .3mm solid #1b5d46;
+    border-radius: 3.2mm;
+    background: #fff;
+    color: #15352a;
+    direction: rtl;
+    font-family: "Noto Nastaliq Urdu", serif;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.id-card-front {
+    padding: 4.1mm 4.4mm 3.5mm;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(20, 105, 75, .08), transparent 31%),
+        linear-gradient(145deg, #ffffff 0%, #f4faf7 100%);
+}
+
+.id-card-front:before,
+.id-card-back:before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: 2.4mm;
+    background: #176b4c;
+}
+
+.id-card-brand {
+    display: flex;
+    align-items: center;
+    gap: 2.4mm;
+    padding-inline-start: 1.6mm;
+}
+
+.id-card-brand-icon {
+    width: 8mm;
+    height: 8mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: .2mm solid #cfe0d8;
+    border-radius: 2mm;
+    background: #fff;
+    font-size: 4.8mm;
+    line-height: 1;
+}
+
+.id-card-brand strong,
+.id-card-brand span {
+    display: block;
+}
+
+.id-card-brand strong {
+    font-size: 4.05mm;
+    line-height: 1.55;
+    color: #15583f;
+}
+
+.id-card-brand span {
+    margin-top: -.5mm;
+    font-size: 2.35mm;
+    line-height: 1.5;
+    color: #65756f;
+}
+
+.id-card-role {
+    position: absolute;
+    top: 4.2mm;
+    inset-inline-end: 4.2mm;
+    padding: .8mm 2.5mm;
+    border-radius: 4mm;
+    background: #176b4c;
+    color: #fff;
+    font-size: 2.65mm;
+    font-weight: 700;
+}
+
+.id-card-person {
+    margin-top: 2.5mm;
+    padding-inline-start: 1.8mm;
+}
+
+.id-card-person h3 {
+    margin: 0 0 1.3mm;
+    font-size: 4.45mm;
+    line-height: 1.6;
+    color: #142f26;
+}
+
+.id-card-person p {
+    margin: .35mm 0;
+    font-size: 2.75mm;
+    line-height: 1.55;
+}
+
+.id-card-person b {
+    color: #53675f;
+}
+
+.id-card-dates {
+    position: absolute;
+    inset-inline-start: 4.2mm;
+    inset-inline-end: 4.2mm;
+    bottom: 6.2mm;
+    display: flex;
+    justify-content: space-between;
+    gap: 3mm;
+    font-size: 2.45mm;
+    color: #41564e;
+}
+
+.id-card-number {
+    position: absolute;
+    inset-inline-start: 4.2mm;
+    inset-inline-end: 4.2mm;
+    bottom: 2.3mm;
+    padding-top: 1.1mm;
+    border-top: .2mm solid #cbdad4;
+    direction: ltr;
+    text-align: center;
+    font-family: system-ui, sans-serif;
+    font-size: 2.5mm;
+    font-weight: 700;
+    letter-spacing: .12mm;
+    color: #194c3a;
+}
+
+.id-card-back {
+    padding: 4.2mm 5mm 3.8mm;
+    background:
+        linear-gradient(145deg, #f7fbf9 0%, #ffffff 100%);
+}
+
+.id-card-back-title {
+    text-align: center;
+    font-size: 4.05mm;
+    font-weight: 700;
+    color: #15583f;
+}
+
+.id-card-back-address {
+    margin-top: .5mm;
+    text-align: center;
+    font-size: 2.45mm;
+    color: #66766f;
+}
+
+.id-card-back-rules {
+    margin: 3.6mm 1.8mm 0;
+    padding: 2.6mm 3mm;
+    border: .2mm solid #d9e5df;
+    border-radius: 2mm;
+    background: rgba(255,255,255,.76);
+}
+
+.id-card-back-rules p {
+    margin: .55mm 0;
+    font-size: 2.55mm;
+    line-height: 1.65;
+}
+
+.id-card-back-meta {
+    position: absolute;
+    inset-inline-start: 5mm;
+    inset-inline-end: 5mm;
+    bottom: 3.3mm;
+    display: flex;
+    justify-content: space-between;
+    gap: 2mm;
+    padding-top: 1.5mm;
+    border-top: .2mm solid #d3dfda;
+    font-size: 2.25mm;
+    line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+    .id-card-date-grid,
+    .id-card-batch-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .id-card-preview-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .id-card-preview-heading button {
+        width: 100%;
+    }
+
+    .id-card-preview-area {
+        padding: 8px;
+    }
+}
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@media print {
+    body.id-card-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    body.id-card-page > *:not(.id-card-main),
+    body.id-card-page .id-card-main > *:not(#idCardPreviewSection),
+    body.id-card-page #idCardPreviewSection > *:not(#idCardPreviewArea),
+    body.id-card-page .no-print {
+        display: none !important;
+    }
+
+    body.id-card-page .portal-main,
+    body.id-card-page #idCardPreviewSection,
+    body.id-card-page #idCardPreviewArea {
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    body.id-card-page .id-card-a4-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+        grid-template-columns: 85.6mm 85.6mm !important;
+        grid-auto-rows: 53.98mm !important;
+        column-gap: 8mm !important;
+        row-gap: 1.75mm !important;
+        box-shadow: none !important;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    body.id-card-page .id-card-a4-page:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    body.id-card-page .id-card {
+        width: 85.6mm !important;
+        height: 53.98mm !important;
+        min-width: 85.6mm !important;
+        max-width: 85.6mm !important;
+        min-height: 53.98mm !important;
+        max-height: 53.98mm !important;
+        box-shadow: none !important;
+    }
+}

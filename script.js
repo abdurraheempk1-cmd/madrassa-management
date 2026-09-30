@@ -13866,636 +13866,286 @@ App.registerIdCardBatch =
 
 
 App.idCardRecordsCache = {};
+App.idCardCurrentPreview = [];
 
-App.idCardRecordReference =
-    function (type, record) {
+App.idCardRecordReference = function (type, record) {
+    if (!record) return "—";
+    if (type === "student") return record.admission_no || record.wifaq_registration_no || "—";
+    if (type === "teacher") return record.teacher_code || record.cnic || record.phone || "—";
+    return record.username || record.account_no || record.id || "—";
+};
 
-        if (!record) {
-            return "—";
-        }
+App.idCardRecordName = function (record, fallback = "ریکارڈ") {
+    return App.safe(record?.name || record?.full_name || record?.username || fallback).trim() || fallback;
+};
 
+App.idCardRoleLabel = function (type) {
+    return type === "teacher" ? "استاد" : type === "admin" ? "ایڈمن" : "طالبہ";
+};
+
+App.idCardResultCardNo = function (result) {
+    if (typeof result === "string") return result;
+    return App.safe(result?.card_no || result?.card_number || result?.document_no || result?.number || "").trim();
+};
+
+App.idCardDates = function () {
+    const issueDate = App.val("idCardIssueDate");
+    const expiryDate = App.val("idCardExpiryDate");
+    if (!issueDate) throw new Error("جاری ہونے کی تاریخ منتخب کریں۔");
+    if (!expiryDate) throw new Error("میعاد ختم ہونے کی تاریخ منتخب کریں۔");
+    const issue = new Date(issueDate + "T00:00:00");
+    const expiry = new Date(expiryDate + "T00:00:00");
+    if (Number.isNaN(issue.getTime()) || Number.isNaN(expiry.getTime())) throw new Error("کارڈ کی تاریخیں درست نہیں ہیں۔");
+    if (expiry.getTime() < issue.getTime()) throw new Error("میعاد ختم ہونے کی تاریخ، جاری ہونے کی تاریخ سے پہلے نہیں ہو سکتی۔");
+    return { issueDate, expiryDate };
+};
+
+App.loadIdCardRecords = async function (type) {
+    type = App.safe(type).trim().toLowerCase();
+    if (App.idCardRecordsCache[type] && App.idCardRecordsCache[type].length) return App.idCardRecordsCache[type];
+    let records = [];
+    if (type === "student") records = App.asArray(await App.authedRpc("admin_get_students"));
+    else if (type === "teacher") records = App.asArray(await App.authedRpc("admin_get_teachers"));
+    else if (type === "admin") {
+        const id = Number(App.getAccountId?.() || localStorage.getItem("accountId") || 0);
+        if (id) records = [{ id, name: "موجودہ ایڈمن", username: localStorage.getItem("username") || "" }];
+    }
+    records = records.filter(record => Number(record?.id || 0) > 0).sort((a,b) => App.idCardRecordName(a).localeCompare(App.idCardRecordName(b),"ur"));
+    App.idCardRecordsCache[type] = records;
+    return records;
+};
+
+App.populateIdCardClassOptions = function (records) {
+    const select = App.el("idCardBatchClass");
+    if (!select) return;
+    const selected = App.safe(select.value);
+    const known = Array.from(new Set([
+        ...(Array.isArray(App.CLASSES) ? App.CLASSES : []),
+        ...(records || []).map(item => App.safe(item.student_class).trim()).filter(Boolean)
+    ]));
+    select.innerHTML = '<option value="">تمام جماعتیں</option>' + known.map(item => '<option value="' + App.escape(item) + '">' + App.escape(item) + '</option>').join("");
+    if (known.includes(selected)) select.value = selected;
+};
+
+App.renderIdCardOwnerChoices = function (records, type, search = "") {
+    const select = App.el("idCardOwnerId");
+    if (!select) return;
+    const query = App.safe(search).trim().toLowerCase();
+    const filtered = (records || []).filter(record => {
+        if (!query) return true;
+        const haystack = [App.idCardRecordName(record), App.idCardRecordReference(type,record), record.phone, record.cnic]
+            .map(value => App.safe(value).toLowerCase()).join(" ");
+        return haystack.includes(query);
+    });
+    const typeLabel = App.idCardRoleLabel(type);
+    select.innerHTML = '<option value="">' + App.escape(filtered.length ? typeLabel + " منتخب کریں" : "کوئی مماثل ریکارڈ نہیں ملا") + '</option>' +
+        filtered.map(record => '<option value="' + Number(record.id) + '">' + App.escape(App.idCardRecordName(record,typeLabel) + " — " + App.idCardRecordReference(type,record)) + '</option>').join("");
+};
+
+App.refreshIdCardOwnerChoices = async function () {
+    const type = App.val("idCardOwnerType") || "student";
+    const search = App.val("idCardOwnerSearch");
+    const select = App.el("idCardOwnerId");
+    if (select) select.innerHTML = '<option value="">ریکارڈ لوڈ ہو رہے ہیں...</option>';
+    try {
+        const records = await App.loadIdCardRecords(type);
+        App.renderIdCardOwnerChoices(records,type,search);
+    } catch (error) {
+        console.error("ID card owner list:",error);
+        if (select) select.innerHTML = '<option value="">ریکارڈ لوڈ نہیں ہو سکا</option>';
+    }
+};
+
+App.refreshIdCardBatchChoices = async function () {
+    const type = App.val("idCardBatchOwnerType") || "student";
+    const container = App.el("idCardSelectionList");
+    const classLabel = App.el("idCardBatchClassLabel");
+    if (!container) return;
+    if (classLabel) classLabel.hidden = type !== "student";
+    container.innerHTML = App.empty("ریکارڈ لوڈ ہو رہے ہیں...");
+    try {
+        let records = await App.loadIdCardRecords(type);
         if (type === "student") {
-            return record.admission_no || record.wifaq_registration_no || "—";
+            App.populateIdCardClassOptions(records);
+            const selectedClass = App.val("idCardBatchClass");
+            if (selectedClass) records = records.filter(record => App.safe(record.student_class) === selectedClass);
         }
-
-        if (type === "teacher") {
-            return record.teacher_code || record.cnic || record.phone || "—";
-        }
-
-        return record.username || record.account_no || record.id || "—";
-    };
-
-
-App.idCardRecordName =
-    function (record, fallback = "ریکارڈ") {
-
-        return App.safe(
-            record?.name ||
-            record?.full_name ||
-            record?.username ||
-            fallback
-        ).trim() || fallback;
-    };
-
-
-App.loadIdCardRecords =
-    async function (type) {
-
-        type =
-            App.safe(type)
-                .trim()
-                .toLowerCase();
-
-
-        if (
-            App.idCardRecordsCache[type] &&
-            App.idCardRecordsCache[type].length
-        ) {
-            return App.idCardRecordsCache[type];
-        }
-
-
-        let records = [];
-
-
-        if (type === "student") {
-
-            records =
-                App.asArray(
-                    await App.authedRpc(
-                        "admin_get_students"
-                    )
-                );
-
-        } else if (type === "teacher") {
-
-            records =
-                App.asArray(
-                    await App.authedRpc(
-                        "admin_get_teachers"
-                    )
-                );
-
-        } else if (type === "admin") {
-
-            const id =
-                Number(
-                    App.getAccountId?.() ||
-                    localStorage.getItem("accountId") ||
-                    0
-                );
-
-
-            if (id) {
-
-                records = [
-                    {
-                        id,
-                        name: "موجودہ ایڈمن",
-                        username:
-                            localStorage.getItem(
-                                "username"
-                            ) ||
-                            ""
-                    }
-                ];
-            }
-        }
-
-
-        records =
-            records
-                .filter(
-                    record =>
-                        Number(
-                            record?.id || 0
-                        ) > 0
-                )
-                .sort(
-                    (a, b) =>
-                        App.idCardRecordName(
-                            a
-                        )
-                            .localeCompare(
-                                App.idCardRecordName(
-                                    b
-                                ),
-                                "ur"
-                            )
-                );
-
-
-        App.idCardRecordsCache[type] =
-            records;
-
-
-        return records;
-    };
-
-
-App.renderIdCardOwnerChoices =
-    function (
-        records,
-        type,
-        search = ""
-    ) {
-
-        const select =
-            App.el(
-                "idCardOwnerId"
-            );
-
-
-        if (!select) {
+        if (!records.length) {
+            container.innerHTML = App.empty("کوئی ریکارڈ موجود نہیں۔");
             return;
         }
+        container.innerHTML = '<div class="id-card-selection-grid">' + records.map(record => {
+            const name = App.idCardRecordName(record);
+            const reference = App.idCardRecordReference(type,record);
+            const sub = type === "student" ? App.safe(record.student_class) : App.safe(record.teaching_class || record.qualification);
+            return '<label class="id-card-selection-item"><input type="checkbox" data-id-card-select value="' + Number(record.id) + '"><span><strong>' +
+                App.escape(name) + '</strong><small>' + App.escape(reference + (sub ? " — " + sub : "")) + '</small></span></label>';
+        }).join("") + '</div>';
+    } catch (error) {
+        console.error("ID card batch list:",error);
+        container.innerHTML = App.empty("ریکارڈ لوڈ نہیں ہو سکا۔");
+    }
+};
 
+App.idCardFrontHtml = function (item) {
+    const record = item.record || {};
+    const type = item.type || "student";
+    const role = App.idCardRoleLabel(type);
+    const reference = App.idCardRecordReference(type,record);
+    const secondary = type === "student" ? App.safe(record.student_class) :
+        type === "teacher" ? App.safe(record.teaching_class || record.qualification) : App.safe(record.username);
+    const father = App.safe(record.father_name);
+    const refLabel = type === "student" ? "داخلہ نمبر" : type === "teacher" ? "استاد کوڈ" : "صارف";
+    const secondaryLabel = type === "student" ? "جماعت" : type === "teacher" ? "تدریسی معلومات" : "اکاؤنٹ";
+    return '<article class="id-card id-card-front">' +
+        '<div class="id-card-brand"><div class="id-card-brand-icon">🕌</div><div><strong>' + App.escape(App.NAME) +
+        '</strong><span>' + App.escape(App.ADDRESS) + '</span></div></div>' +
+        '<div class="id-card-role">' + App.escape(role) + '</div>' +
+        '<div class="id-card-person"><h3>' + App.escape(App.idCardRecordName(record,role)) + '</h3>' +
+        (father ? '<p><b>والد:</b> ' + App.escape(father) + '</p>' : '') +
+        '<p><b>' + refLabel + ':</b> <span data-no-translate>' + App.escape(reference) + '</span></p>' +
+        (secondary ? '<p><b>' + secondaryLabel + ':</b> ' + App.escape(secondary) + '</p>' : '') +
+        '</div><div class="id-card-dates"><span><b>جاری:</b> ' + App.escape(App.date(item.issueDate)) +
+        '</span><span><b>میعاد:</b> ' + App.escape(App.date(item.expiryDate)) + '</span></div>' +
+        '<div class="id-card-number" data-no-translate>' + App.escape(item.cardNo || "—") + '</div></article>';
+};
 
-        const query =
-            App.safe(search)
-                .trim()
-                .toLowerCase();
+App.idCardBackHtml = function (item) {
+    return '<article class="id-card id-card-back">' +
+        '<div class="id-card-back-title">' + App.escape(App.NAME) + '</div>' +
+        '<div class="id-card-back-address">' + App.escape(App.ADDRESS) + '</div>' +
+        '<div class="id-card-back-rules"><p>یہ شناختی کارڈ مدرسہ کے ریکارڈ اور شناخت کے لیے جاری کیا گیا ہے۔</p>' +
+        '<p>کارڈ گم ہونے یا خراب ہونے کی صورت میں مدرسہ انتظامیہ کو اطلاع دیں۔</p>' +
+        '<p>کارڈ کی میعاد ختم ہونے کے بعد نیا کارڈ جاری کروائیں۔</p></div>' +
+        '<div class="id-card-back-meta"><span><b>کارڈ نمبر:</b> <span data-no-translate>' + App.escape(item.cardNo || "—") +
+        '</span></span><span><b>جاری:</b> ' + App.escape(App.date(item.issueDate)) +
+        '</span><span><b>میعاد:</b> ' + App.escape(App.date(item.expiryDate)) + '</span></div></article>';
+};
 
+App.renderIdCardPreview = function (items) {
+    const section = App.el("idCardPreviewSection");
+    const area = App.el("idCardPreviewArea");
+    if (!section || !area) return;
+    App.idCardCurrentPreview = Array.isArray(items) ? items : [];
+    if (!App.idCardCurrentPreview.length) {
+        section.hidden = true;
+        area.innerHTML = "";
+        return;
+    }
+    const pages = [];
+    for (let index=0; index<App.idCardCurrentPreview.length; index+=5) pages.push(App.idCardCurrentPreview.slice(index,index+5));
+    area.innerHTML = pages.map((page,pageIndex) =>
+        '<section class="id-card-a4-page" data-id-card-page="' + (pageIndex+1) + '">' +
+        page.map(item => App.idCardFrontHtml(item) + App.idCardBackHtml(item)).join("") +
+        '</section>'
+    ).join("");
+    section.hidden = false;
+    section.scrollIntoView({behavior:"smooth",block:"start"});
+};
 
-        const filtered =
-            (records || [])
-                .filter(
-                    record => {
+App.printIdCardPreview = function () {
+    if (!App.idCardCurrentPreview || !App.idCardCurrentPreview.length) {
+        alert("پہلے شناختی کارڈ تیار کریں۔");
+        return;
+    }
+    window.print();
+};
 
-                        if (!query) {
-                            return true;
-                        }
-
-
-                        const haystack =
-                            [
-                                App.idCardRecordName(
-                                    record
-                                ),
-                                App.idCardRecordReference(
-                                    type,
-                                    record
-                                ),
-                                record.phone,
-                                record.cnic
-                            ]
-                                .map(
-                                    value =>
-                                        App.safe(
-                                            value
-                                        )
-                                            .toLowerCase()
-                                )
-                                .join(" ");
-
-
-                        return haystack.includes(
-                            query
-                        );
-                    }
-                );
-
-
-        const typeLabel =
-            type === "teacher"
-                ? "استاد"
-                : type === "admin"
-                    ? "ایڈمن"
-                    : "طالبہ";
-
-
-        select.innerHTML =
-            '<option value="">' +
-            App.escape(
-                filtered.length
-                    ? typeLabel +
-                      " منتخب کریں"
-                    : "کوئی مماثل ریکارڈ نہیں ملا"
-            ) +
-            '</option>' +
-            filtered
-                .map(
-                    record => {
-
-                        const name =
-                            App.idCardRecordName(
-                                record,
-                                typeLabel
-                            );
-
-
-                        const reference =
-                            App.idCardRecordReference(
-                                type,
-                                record
-                            );
-
-
-                        return (
-                            '<option value="' +
-                            Number(
-                                record.id
-                            ) +
-                            '">' +
-                            App.escape(
-                                name +
-                                " — " +
-                                reference
-                            ) +
-                            '</option>'
-                        );
-                    }
-                )
-                .join("");
-    };
-
-
-App.refreshIdCardOwnerChoices =
-    async function () {
-
-        const type =
-            App.val(
-                "idCardOwnerType"
-            ) ||
-            "student";
-
-
-        const search =
-            App.val(
-                "idCardOwnerSearch"
-            );
-
-
-        const select =
-            App.el(
-                "idCardOwnerId"
-            );
-
-
-        if (select) {
-
-            select.innerHTML =
-                '<option value="">ریکارڈ لوڈ ہو رہے ہیں...</option>';
+App.registerAndPreviewIdCards = async function (type, ids, button = null) {
+    const dates = App.idCardDates();
+    const records = await App.loadIdCardRecords(type);
+    const selected = Array.from(new Set((ids || []).map(Number).filter(Boolean)))
+        .map(id => records.find(record => Number(record.id) === id)).filter(Boolean);
+    if (!selected.length) throw new Error("کوئی ریکارڈ منتخب نہیں کیا گیا۔");
+    const oldText = button?.textContent || "";
+    const output = [];
+    if (button) button.disabled = true;
+    try {
+        for (let index=0; index<selected.length; index+=1) {
+            const record = selected[index];
+            if (button) button.textContent = "تیار ہو رہا ہے " + (index+1) + "/" + selected.length;
+            const result = await App.registerIdCard(type,Number(record.id));
+            output.push({
+                type, record,
+                cardNo: App.idCardResultCardNo(result) || "—",
+                issueDate: dates.issueDate,
+                expiryDate: dates.expiryDate
+            });
         }
-
-
-        try {
-
-            const records =
-                await App.loadIdCardRecords(
-                    type
-                );
-
-
-            App.renderIdCardOwnerChoices(
-                records,
-                type,
-                search
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "ID card owner list:",
-                error
-            );
-
-
-            if (select) {
-
-                select.innerHTML =
-                    '<option value="">ریکارڈ لوڈ نہیں ہو سکا</option>';
-            }
+        App.renderIdCardPreview(output);
+        return output;
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = oldText;
         }
-    };
+    }
+};
 
+App.initIdCards = function () {
+    if (App.currentFile !== "admin-id-cards.html") return;
 
-App.refreshIdCardBatchChoices =
-    async function () {
+    const issueDate = App.el("idCardIssueDate");
+    if (issueDate && !issueDate.value) issueDate.value = App.currentISODate();
 
-        const type =
-            App.val(
-                "idCardBatchOwnerType"
-            ) ||
-            "student";
+    const ownerType = App.el("idCardOwnerType");
+    const ownerSearch = App.el("idCardOwnerSearch");
+    const batchType = App.el("idCardBatchOwnerType");
+    const batchClass = App.el("idCardBatchClass");
 
-
-        const container =
-            App.el(
-                "idCardSelectionList"
-            );
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML =
-            App.empty(
-                "ریکارڈ لوڈ ہو رہے ہیں..."
-            );
-
-
-        try {
-
-            const records =
-                await App.loadIdCardRecords(
-                    type
-                );
-
-
-            if (!records.length) {
-
-                container.innerHTML =
-                    App.empty(
-                        "کوئی ریکارڈ موجود نہیں۔"
-                    );
-
-                return;
-            }
-
-
-            container.innerHTML =
-                '<div class="id-card-selection-grid">' +
-                records
-                    .map(
-                        record => {
-
-                            const name =
-                                App.idCardRecordName(
-                                    record
-                                );
-
-
-                            const reference =
-                                App.idCardRecordReference(
-                                    type,
-                                    record
-                                );
-
-
-                            return (
-                                '<label class="id-card-selection-item">' +
-                                '<input type="checkbox" data-id-card-select value="' +
-                                Number(
-                                    record.id
-                                ) +
-                                '">' +
-                                '<span><strong>' +
-                                App.escape(
-                                    name
-                                ) +
-                                '</strong><small>' +
-                                App.escape(
-                                    reference
-                                ) +
-                                '</small></span>' +
-                                '</label>'
-                            );
-                        }
-                    )
-                    .join("") +
-                '</div>';
-
-
-        } catch (error) {
-
-            console.error(
-                "ID card batch list:",
-                error
-            );
-
-
-            container.innerHTML =
-                App.empty(
-                    "ریکارڈ لوڈ نہیں ہو سکا۔"
-                );
-        }
-    };
-
-
-App.initIdCards =
-    function () {
-
-        if (
-            App.currentFile !==
-            "admin-id-cards.html"
-        ) {
-            return;
-        }
-
-
-        const ownerType =
-            App.el(
-                "idCardOwnerType"
-            );
-
-        const ownerSearch =
-            App.el(
-                "idCardOwnerSearch"
-            );
-
-        const batchType =
-            App.el(
-                "idCardBatchOwnerType"
-            );
-
-
-        if (ownerType) {
-
-            ownerType.addEventListener(
-                "change",
-                function () {
-
-                    if (ownerSearch) {
-                        ownerSearch.value = "";
-                    }
-
-                    App.refreshIdCardOwnerChoices();
-                }
-            );
-        }
-
-
-        if (ownerSearch) {
-
-            ownerSearch.addEventListener(
-                "input",
-                App.refreshIdCardOwnerChoices
-            );
-        }
-
-
-        if (batchType) {
-
-            batchType.addEventListener(
-                "change",
-                App.refreshIdCardBatchChoices
-            );
-        }
-
-
+    if (ownerType) ownerType.addEventListener("change",function(){
+        if (ownerSearch) ownerSearch.value = "";
         App.refreshIdCardOwnerChoices();
-        App.refreshIdCardBatchChoices();
+    });
+    if (ownerSearch) ownerSearch.addEventListener("input",App.refreshIdCardOwnerChoices);
+    if (batchType) batchType.addEventListener("change",App.refreshIdCardBatchChoices);
+    if (batchClass) batchClass.addEventListener("change",App.refreshIdCardBatchChoices);
 
+    App.el("idCardSelectAllVisible")?.addEventListener("click",function(){
+        document.querySelectorAll("#idCardSelectionList [data-id-card-select]").forEach(checkbox => { checkbox.checked = true; });
+    });
+    App.el("idCardClearSelection")?.addEventListener("click",function(){
+        document.querySelectorAll("#idCardSelectionList [data-id-card-select]").forEach(checkbox => { checkbox.checked = false; });
+    });
 
-        const single =
-            App.first(
-                "idCardSingleForm",
-                "singleIdCardForm"
-            );
+    App.refreshIdCardOwnerChoices();
+    App.refreshIdCardBatchChoices();
 
+    const single = App.first("idCardSingleForm","singleIdCardForm");
+    if (single) {
+        App.bindOnce(single,"singleIdCard","submit",async function(event){
+            event.preventDefault();
+            const button = single.querySelector('button[type="submit"]');
+            try {
+                const ownerId = Number(App.val("idCardOwnerId"));
+                if (!ownerId) throw new Error("براہ کرم نام / داخلہ نمبر سے ریکارڈ منتخب کریں۔");
+                const output = await App.registerAndPreviewIdCards(App.val("idCardOwnerType"),[ownerId],button);
+                alert("شناختی کارڈ تیار ہوگیا۔" + (output?.[0]?.cardNo ? "\nکارڈ نمبر: " + output[0].cardNo : ""));
+            } catch (error) {
+                console.error("ID card:",error);
+                alert(error?.message || "شناختی کارڈ تیار نہیں ہو سکا۔");
+            }
+        });
+    }
 
-        if (single) {
+    const batch = App.first("createSelectedIdCards","idCardBatchButton");
+    if (batch) {
+        batch.addEventListener("click",async function(){
+            const ids = Array.from(document.querySelectorAll("#idCardSelectionList [data-id-card-select]:checked"))
+                .map(checkbox => Number(checkbox.value || checkbox.dataset.idCardSelect)).filter(Boolean);
+            try {
+                const output = await App.registerAndPreviewIdCards(App.val("idCardBatchOwnerType") || "student",ids,batch);
+                alert(output.length + " شناختی کارڈ تیار ہوگئے۔ Front اور Back ایک ہی A4 صفحے پر ساتھ رکھے گئے ہیں۔");
+            } catch (error) {
+                console.error("ID card batch:",error);
+                alert(error?.message || "شناختی کارڈ تیار نہیں ہو سکے۔");
+            }
+        });
+    }
 
-            App.bindOnce(
-                single,
-                "singleIdCard",
-                "submit",
-                async function (event) {
-
-                    event.preventDefault();
-
-
-                    try {
-
-                        const ownerId =
-                            Number(
-                                App.val(
-                                    "idCardOwnerId"
-                                )
-                            );
-
-
-                        if (!ownerId) {
-
-                            throw new Error(
-                                "براہ کرم نام / داخلہ نمبر سے ریکارڈ منتخب کریں۔"
-                            );
-                        }
-
-
-                        const result =
-                            await App.registerIdCard(
-
-                                App.val(
-                                    "idCardOwnerType"
-                                ),
-
-                                ownerId
-                            );
-
-
-                        alert(
-                            "شناختی کارڈ تیار ہوگیا۔" +
-                            (
-                                result?.card_no
-                                    ? "\nکارڈ نمبر: " +
-                                    result.card_no
-                                    : ""
-                            )
-                        );
-
-
-                    } catch (error) {
-
-                        console.error(
-                            "ID card:",
-                            error
-                        );
-
-
-                        alert(
-                            error?.message ||
-                            "شناختی کارڈ تیار نہیں ہو سکا۔"
-                        );
-                    }
-                }
-            );
-        }
-
-
-        const batch =
-            App.first(
-                "createSelectedIdCards",
-                "idCardBatchButton"
-            );
-
-
-        if (batch) {
-
-            batch.addEventListener(
-                "click",
-                async function () {
-
-                    const ids =
-                        Array.from(
-                            document
-                                .querySelectorAll(
-                                    "[data-id-card-select]:checked"
-                                )
-                        )
-                            .map(
-                                checkbox =>
-                                    Number(
-                                        checkbox.value ||
-                                        checkbox.dataset
-                                            .idCardSelect
-                                    )
-                            )
-                            .filter(Boolean);
-
-
-                    try {
-
-                        await App.registerIdCardBatch(
-
-                            App.val(
-                                "idCardBatchOwnerType"
-                            ) ||
-                            App.val(
-                                "idCardOwnerType"
-                            ),
-
-                            ids
-                        );
-
-
-                        alert(
-                            "منتخب شناختی کارڈ تیار ہوگئے۔"
-                        );
-
-
-                    } catch (error) {
-
-                        alert(
-                            error?.message ||
-                            "شناختی کارڈ تیار نہیں ہو سکے۔"
-                        );
-                    }
-                }
-            );
-        }
-
-
-        const print =
-            App.first(
-                "idCardPrintButton",
-                "printIdCards"
-            );
-
-
-        if (print) {
-
-            print.addEventListener(
-                "click",
-                App.printCurrentPage
-            );
-        }
-    };
-
+    App.first("idCardPrintButton","printIdCards")?.addEventListener("click",App.printIdCardPreview);
+    App.el("idCardPreviewPrintButton")?.addEventListener("click",App.printIdCardPreview);
+};
 
 /* =====================================================
    ACCOUNTS / APPLICATION APPROVAL
