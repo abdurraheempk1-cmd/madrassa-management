@@ -147,7 +147,7 @@ App.idCardBackHtml=function(item){
         (item.expiryDate?'<div class="id-card-back-field id-card-back-field-wide"><span>میعاد ختم ہونے کی تاریخ</span><strong>'+App.escape(App.date(item.expiryDate))+'</strong></div>':'') +
       '</div>' +
       (qrUrl
-        ? '<div class="id-card-qr-panel"><div class="id-card-qr" data-id-card-qr="'+App.escape(qrUrl)+'"></div><span>تصدیق شدہ ریکارڈ</span><small>QR اسکین کریں — لاگ اِن ضروری نہیں</small></div>'
+        ? '<div class="id-card-qr-panel id-card-qr-only"><div class="id-card-qr" data-id-card-qr="'+App.escape(qrUrl)+'"></div></div>'
         : '') +
     '</div>' +
     '<div class="id-card-back-footer id-card-back-footer-single"><div><span>کارڈ نمبر</span><strong data-no-translate>'+App.escape(App.formatStudentCardNumber(record,item.cardNo))+'</strong></div></div>' +
