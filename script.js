@@ -13888,6 +13888,84 @@ App.idCardResultCardNo = function (result) {
     return App.safe(result?.card_no || result?.card_number || result?.document_no || result?.number || "").trim();
 };
 
+
+App.idCardCompositeNumber =
+    function (
+        record,
+        type,
+        systemNumber = ""
+    ) {
+
+        if (
+            type !== "student"
+        ) {
+
+            return (
+                App.safe(
+                    systemNumber
+                ).trim() ||
+                App.idCardRecordReference(
+                    type,
+                    record
+                ) ||
+                "—"
+            );
+        }
+
+
+        const dob =
+            App.safe(
+                record?.date_of_birth
+            )
+                .slice(
+                    0,
+                    10
+                )
+                .replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+        const wifaq =
+            App.safe(
+                record?.admission_no ||
+                record?.wifaq_registration_no
+            )
+                .toUpperCase()
+                .replace(
+                    /[^A-Z0-9]/g,
+                    ""
+                );
+
+
+        if (
+            dob &&
+            wifaq
+        ) {
+
+            return (
+                dob +
+                "-" +
+                wifaq
+            );
+        }
+
+
+        if (wifaq) {
+
+            return wifaq;
+        }
+
+
+        return (
+            App.safe(
+                systemNumber
+            ).trim() ||
+            "—"
+        );
+    };
+
 App.idCardDates = function () {
     const issueDate = App.val("idCardIssueDate");
     const expiryDate = App.val("idCardExpiryDate");
@@ -13992,35 +14070,75 @@ App.idCardFrontHtml = function (item) {
     const type = item.type || "student";
     const role = App.idCardRoleLabel(type);
     const reference = App.idCardRecordReference(type,record);
-    const secondary = type === "student" ? App.safe(record.student_class) :
-        type === "teacher" ? App.safe(record.teaching_class || record.qualification) : App.safe(record.username);
+    const name = App.idCardRecordName(record,role);
     const father = App.safe(record.father_name);
-    const refLabel = type === "student" ? "داخلہ نمبر" : type === "teacher" ? "استاد کوڈ" : "صارف";
-    const secondaryLabel = type === "student" ? "جماعت" : type === "teacher" ? "تدریسی معلومات" : "اکاؤنٹ";
+    const klass = type === "student"
+        ? App.safe(record.student_class)
+        : App.safe(record.teaching_class || record.qualification || record.username);
+
     return '<article class="id-card id-card-front">' +
-        '<div class="id-card-brand"><div class="id-card-brand-icon">🕌</div><div><strong>' + App.escape(App.NAME) +
-        '</strong><span>' + App.escape(App.ADDRESS) + '</span></div></div>' +
-        '<div class="id-card-role">' + App.escape(role) + '</div>' +
-        '<div class="id-card-person"><h3>' + App.escape(App.idCardRecordName(record,role)) + '</h3>' +
-        (father ? '<p><b>والد:</b> ' + App.escape(father) + '</p>' : '') +
-        '<p><b>' + refLabel + ':</b> <span data-no-translate>' + App.escape(reference) + '</span></p>' +
-        (secondary ? '<p><b>' + secondaryLabel + ':</b> ' + App.escape(secondary) + '</p>' : '') +
-        '</div><div class="id-card-dates"><span><b>جاری:</b> ' + App.escape(App.date(item.issueDate)) +
-        '</span><span><b>میعاد:</b> ' + App.escape(App.date(item.expiryDate)) + '</span></div>' +
-        '<div class="id-card-number" data-no-translate>' + App.escape(item.cardNo || "—") + '</div></article>';
+        '<div class="id-card-front-head">' +
+            '<div class="id-card-mark"><span>ش</span><span>ا</span></div>' +
+            '<div class="id-card-head-copy">' +
+                '<strong>' + App.escape(App.NAME) + '</strong>' +
+                '<small>' + App.escape(App.ADDRESS) + '</small>' +
+            '</div>' +
+            '<div class="id-card-type-chip">' + App.escape(role) + '</div>' +
+        '</div>' +
+
+        '<div class="id-card-front-body">' +
+            '<div class="id-card-title-line">شناختی کارڈ</div>' +
+            '<h3>' + App.escape(name) + '</h3>' +
+            '<div class="id-card-info-grid">' +
+                (father
+                    ? '<div><span>والد کا نام</span><strong>' + App.escape(father) + '</strong></div>'
+                    : '') +
+                (klass
+                    ? '<div><span>' + (type === "student" ? 'جماعت' : 'تدریسی معلومات') + '</span><strong>' + App.escape(klass) + '</strong></div>'
+                    : '') +
+                '<div class="id-card-info-wide"><span>' + (type === "student" ? 'وفاق / داخلہ نمبر' : type === "teacher" ? 'استاد کوڈ' : 'صارف') + '</span><strong data-no-translate>' + App.escape(reference) + '</strong></div>' +
+            '</div>' +
+        '</div>' +
+
+        '<div class="id-card-validity-row">' +
+            '<div><span>جاری ہونے کی تاریخ</span><strong>' + App.escape(App.date(item.issueDate)) + '</strong></div>' +
+            '<div><span>میعاد ختم ہونے کی تاریخ</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
+        '</div>' +
+
+        '<div class="id-card-number-strip"><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(item.cardNo || "—") + '</strong></div>' +
+    '</article>';
 };
+
 
 App.idCardBackHtml = function (item) {
     return '<article class="id-card id-card-back">' +
-        '<div class="id-card-back-title">' + App.escape(App.NAME) + '</div>' +
-        '<div class="id-card-back-address">' + App.escape(App.ADDRESS) + '</div>' +
-        '<div class="id-card-back-rules"><p>یہ شناختی کارڈ مدرسہ کے ریکارڈ اور شناخت کے لیے جاری کیا گیا ہے۔</p>' +
-        '<p>کارڈ گم ہونے یا خراب ہونے کی صورت میں مدرسہ انتظامیہ کو اطلاع دیں۔</p>' +
-        '<p>کارڈ کی میعاد ختم ہونے کے بعد نیا کارڈ جاری کروائیں۔</p></div>' +
-        '<div class="id-card-back-meta"><span><b>کارڈ نمبر:</b> <span data-no-translate>' + App.escape(item.cardNo || "—") +
-        '</span></span><span><b>جاری:</b> ' + App.escape(App.date(item.issueDate)) +
-        '</span><span><b>میعاد:</b> ' + App.escape(App.date(item.expiryDate)) + '</span></div></article>';
+        '<div class="id-card-back-head">' +
+            '<strong>' + App.escape(App.NAME) + '</strong>' +
+            '<span>شرائط و تصدیق</span>' +
+        '</div>' +
+
+        '<div class="id-card-back-content">' +
+            '<div class="id-card-back-address-block">' +
+                '<span>مدرسہ کا پتہ</span>' +
+                '<strong>' + App.escape(App.ADDRESS) + '</strong>' +
+            '</div>' +
+
+            '<div class="id-card-back-rules">' +
+                '<p><i>1</i><span>یہ شناختی کارڈ مدرسہ کے ریکارڈ اور شناخت کے لیے جاری کیا گیا ہے۔</span></p>' +
+                '<p><i>2</i><span>کارڈ گم یا خراب ہونے کی صورت میں مدرسہ انتظامیہ کو اطلاع دیں۔</span></p>' +
+                '<p><i>3</i><span>میعاد ختم ہونے کے بعد نیا شناختی کارڈ جاری کروائیں۔</span></p>' +
+            '</div>' +
+
+            '<div class="id-card-back-note">یہ کارڈ مدرسہ شہناز اختر للبنات کی ملکیت ہے۔</div>' +
+        '</div>' +
+
+        '<div class="id-card-back-footer">' +
+            '<div><span>کارڈ نمبر</span><strong data-no-translate>' + App.escape(item.cardNo || "—") + '</strong></div>' +
+            '<div><span>کارآمد تا</span><strong>' + App.escape(App.date(item.expiryDate)) + '</strong></div>' +
+        '</div>' +
+    '</article>';
 };
+
 
 App.renderIdCardPreview = function (items) {
     const section = App.el("idCardPreviewSection");
@@ -14065,11 +14183,24 @@ App.registerAndPreviewIdCards = async function (type, ids, button = null) {
             const record = selected[index];
             if (button) button.textContent = "تیار ہو رہا ہے " + (index+1) + "/" + selected.length;
             const result = await App.registerIdCard(type,Number(record.id));
+            const systemCardNo = App.idCardResultCardNo(result);
+
             output.push({
-                type, record,
-                cardNo: App.idCardResultCardNo(result) || "—",
-                issueDate: dates.issueDate,
-                expiryDate: dates.expiryDate
+                type,
+                record,
+                cardNo:
+                    App.idCardCompositeNumber(
+                        record,
+                        type,
+                        systemCardNo
+                    ),
+                systemCardNo:
+                    systemCardNo ||
+                    null,
+                issueDate:
+                    dates.issueDate,
+                expiryDate:
+                    dates.expiryDate
             });
         }
         App.renderIdCardPreview(output);
