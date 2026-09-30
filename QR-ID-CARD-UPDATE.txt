@@ -1,0 +1,10 @@
+QR / شناختی کارڈ اپڈیٹ
+
+1) طالبات/خواتین کے کارڈ پر تصویر نہیں دکھائی جاتی۔
+2) استاد/ایڈمن کے مرد ریکارڈ میں photo_url/profile_photo موجود ہو تو تصویر دکھائی جا سکتی ہے۔
+3) وفاق/داخلہ نمبر مکمل width میں دکھایا جاتا ہے۔
+4) مدرسہ رابطہ نمبر صرف ایک بار Back side پر ہے۔
+5) Student QR ایک مختصر random token URL encode کرتا ہے، پورا ریکارڈ QR میں encode نہیں ہوتا۔
+6) QR scan کے لیے Admin login درکار نہیں۔
+7) Public verification میں: وفاق نمبر، نام، والد، محرم (نام/CNIC/فون)، پتہ، فون، CNIC/B-Form، جماعت، تاریخ پیدائش۔
+8) Supabase میں sql-parts/07-public-id-card-qr-verification.sql ایک بار Run کریں۔
