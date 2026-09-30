@@ -1,24 +1,18 @@
-SUPABASE SQL EDITOR — RUN IN THIS ORDER
+SUPABASE SQL - RUN IN THIS ORDER
 
-The full database-fixes.sql is too large for the Supabase web SQL Editor on some accounts/browsers.
-Do NOT paste the full file as one query.
+If Parts 01-05 were already run successfully before this update:
+    Run ONLY: sql-parts/06-bulk-student-import.sql
 
-Open the folder: sql-parts
-Run ONE file at a time and wait for “Success” before continuing:
+For a database where none of the 2026-09-30 update SQL has been run yet:
+    01-core-compatibility.sql
+    02-classes-admission-number.sql
+    03-recovery-tables-helpers.sql
+    04-recovery-request.sql
+    05-recovery-review-permissions.sql
+    06-bulk-student-import.sql
 
-1. 01-core-compatibility.sql
-2. 02-classes-admission-number.sql
-3. 03-recovery-tables-helpers.sql
-4. 04-recovery-request.sql
-5. 05-recovery-review-permissions.sql
+Run ONE file at a time in Supabase SQL Editor.
+Wait for Success before running the next file.
+Do not paste all parts together; Supabase may reject an oversized query.
 
-If any part shows an error, STOP. Do not run the next part. Take a screenshot of the full error and send it to ChatGPT.
-
-After all 5 parts succeed:
-1. Upload/replace the complete website files on GitHub.
-2. Log in as Admin.
-3. Open Admin Settings and create an Admin Recovery Code (minimum 8 characters).
-
-Notes:
-- database_sql_history.sql is for reference/history only.
-- database-fixes.sql remains the complete combined SQL reference; use the split files in Supabase web SQL Editor.
+The database_sql_history.sql file is reference/history only. Do not run it as an extra migration after the parts above.

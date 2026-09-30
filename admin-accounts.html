@@ -463,6 +463,11 @@
 
                 </form>
 
+                <div class="bulk-approval-toolbar">
+                    <label><input type="checkbox" id="selectAllPendingApplications"> <span>تمام زیرِ التواء منتخب کریں</span></label>
+                    <button type="button" id="approveSelectedApplications" class="small-action-button" disabled>منتخب درخواستیں منظور کریں</button>
+                    <span id="selectedApplicationsCount">0 منتخب</span>
+                </div>
 
                 <div class="responsive-table-wrapper">
 
@@ -471,6 +476,7 @@
                         <thead>
 
                             <tr>
+                                <th class="account-select-col">✓</th>
                                 <th>تاریخ</th>
                                 <th>قسم</th>
                                 <th>نام</th>
@@ -487,7 +493,7 @@
 
                             <tr>
 
-                                <td colspan="7"
+                                <td colspan="8"
                                     class="table-empty">
                                     درخواستیں لوڈ کی جا رہی ہیں...
                                 </td>
@@ -521,7 +527,7 @@
                         </h2>
 
                         <p>
-                            تمام طالبات کے Login اکاؤنٹس
+                            تمام طالبات کے لاگ اِن اکاؤنٹس
                         </p>
 
                     </div>
@@ -629,7 +635,7 @@
                                 <th>جماعت</th>
                                 <th>فون</th>
                                 <th>حالت</th>
-                                <th>آخری Login</th>
+                                <th>آخری لاگ اِن</th>
                                 <th>عمل</th>
                             </tr>
 
@@ -674,7 +680,7 @@
                         </h2>
 
                         <p>
-                            تمام اساتذہ کے Login اکاؤنٹس
+                            تمام اساتذہ کے لاگ اِن اکاؤنٹس
                         </p>
 
                     </div>
@@ -753,7 +759,7 @@
                                 <th>استاد نمبر</th>
                                 <th>فون</th>
                                 <th>حالت</th>
-                                <th>آخری Login</th>
+                                <th>آخری لاگ اِن</th>
                                 <th>عمل</th>
                             </tr>
 
@@ -1238,7 +1244,7 @@
                         <div class="profile-detail-item">
 
                             <span>
-                                آخری Login
+                                آخری لاگ اِن
                             </span>
 
                             <strong id="adminAccountDetailsLastLogin">
@@ -1396,6 +1402,67 @@
 
 
 
+
+            <!-- STUDENT BULK IMPORT -->
+            <section class="portal-section bulk-import-section" id="studentBulkImportSection">
+                <div class="portal-section-heading">
+                    <div>
+                        <h2>ایکسل سے طالبات درآمد کریں</h2>
+                        <p>تمام درآمد شدہ طالبات زیرِ التواء رہیں گی اور ایڈمن کی منظوری کے بعد ہی فعال ہوں گی۔</p>
+                    </div>
+                </div>
+
+                <div class="bulk-import-controls">
+                    <label class="bulk-file-field">
+                        <span>ایکسل / سی ایس وی فائل منتخب کریں</span>
+                        <input type="file" id="studentBulkImportFile" accept=".xlsx,.xls,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+                    </label>
+                    <label>
+                        <span>درآمد کی قسم</span>
+                        <select id="studentBulkAdmissionType">
+                            <option value="منتقلی" selected>منتقلی</option>
+                            <option value="auto">خودکار</option>
+                            <option value="نیا داخلہ">نیا داخلہ</option>
+                        </select>
+                    </label>
+                    <div class="bulk-import-actions">
+                        <button type="button" id="previewStudentBulkImport" class="small-action-button secondary">پیش منظر</button>
+                        <button type="button" id="submitStudentBulkImport" class="small-action-button" disabled>درآمد کریں</button>
+                        <button type="button" id="downloadStudentImportTemplate" class="small-action-button secondary">نمونہ فائل</button>
+                    </div>
+                </div>
+
+                <div class="bulk-import-summary" id="studentBulkImportSummary" hidden>
+                    <article><strong id="bulkImportTotalRows">0</strong><span>کل قطاریں</span></article>
+                    <article><strong id="bulkImportValidRows">0</strong><span>درست</span></article>
+                    <article><strong id="bulkImportWarningRows">0</strong><span>تنبیہ</span></article>
+                    <article><strong id="bulkImportInvalidRows">0</strong><span>غلط</span></article>
+                </div>
+
+                <div class="responsive-table-wrapper" id="studentBulkImportPreviewWrap" hidden>
+                    <table class="portal-table bulk-import-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>وفاق نمبر</th>
+                                <th>رجسٹریشن نمبر</th>
+                                <th>نام</th>
+                                <th>والد کا نام</th>
+                                <th>جماعت</th>
+                                <th>تاریخ پیدائش</th>
+                                <th>شناختی کارڈ / ب فارم</th>
+                                <th>رابطہ نمبر</th>
+                                <th>نتیجہ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentBulkImportPreviewBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="studentBulkImportMessage" class="portal-message" hidden></div>
+                <div id="studentBulkImportCredentials" class="bulk-import-credentials" hidden></div>
+            </section>
+
             <!-- ACCOUNT RECOVERY REQUESTS -->
             <section class="portal-section" id="adminRecoveryRequestsSection">
                 <div class="portal-section-heading">
@@ -1447,6 +1514,9 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script src="i18n.js?v=20260930-i18n1"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="script.js?v=20260929-logoutfix1"></script>

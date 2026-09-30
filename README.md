@@ -1,47 +1,44 @@
-# مدرسہ شہناز اختر للبنات — مینجمنٹ سسٹم
+# مدرسہ شہناز اختر للبنات — مکمل مینجمنٹ سسٹم
 
-## تنصیب
+## انسٹال / اپڈیٹ
 
-1. Supabase Dashboard میں **SQL Editor** کھولیں۔
-2. `database-fixes.sql` کا مکمل code Run کریں۔
-3. تمام فائلیں GitHub repository کی root میں upload کریں۔
-4. GitHub Pages یا اپنے hosting provider پر `index.html` کھولیں۔
+### 1) Supabase SQL
+`SQL-RUN-IN-ORDER.txt` کھولیں۔
 
-## اہم بات
+اگر Parts 01-05 پہلے کامیابی سے Run ہو چکے ہیں تو اب صرف:
 
-- `index.html` کا public introduction page اور اس کا account-selection modal محفوظ رکھا گیا ہے۔
-- `database-fixes.sql` موجودہ database کو حذف نہیں کرتا؛ یہ صرف frontend کے لیے درکار secure compatibility functions شامل کرتا ہے۔
-- database میں uppercase اور lowercase ناموں والی parallel tables موجود ہیں۔ موجودہ system کا custom session حصہ uppercase tables استعمال کرتا ہے؛ انہیں ابھی manually delete یا rename نہ کریں۔
-- `madrassa-documents` bucket private رہنا چاہیے۔
+`sql-parts/06-bulk-student-import.sql`
 
-## مکمل کیے گئے صفحات
+Run کریں۔
 
-- Admin finance
-- مدرسہ میں رہائش / آمد و رفت
-- سالانہ ترقی
-- شناختی کارڈ
-- جامع رپورٹس
-- Teacher dashboard
-- Student dashboard
+اگر 30-09-2026 کی SQL ابھی بالکل Run نہیں کی گئی تو `sql-parts` کی 01 سے 06 تک files ایک ایک کرکے numeric order میں Run کریں۔ ہر file کے بعد Success آنے کا انتظار کریں۔ پوری `database-fixes.sql` کو SQL Editor میں ایک ساتھ paste نہ کریں کیونکہ query size limit آ سکتی ہے۔
 
-## بنیادی جانچ
+### 2) GitHub Pages
+اس project folder کی تمام website files اپنے GitHub repository میں replace/upload کریں۔
 
-- JavaScript syntax verification
-- تمام local page links verification
-- duplicate HTML IDs verification
-- Supabase public RPC connectivity verification
-- custom session RPC اور RLS access-path alignment
+### 3) Admin Recovery
+Admin login کریں → Admin Settings → کم از کم 8 حروف/ہندسوں کا Recovery Code محفوظ کریں۔
 
-## 30-09-2026 Update
+### 4) Multiple Students Import
+Admin → Accounts & Approvals → **ایکسل سے طالبات درآمد کریں**۔
 
-- نئی جماعت: **اعدادیہ**
-- طالبہ کا Admission Number خالی ہو تو temporary نمبر خود بن سکتا ہے۔
-- Admin طالبہ کا Admission/Wifaq Number edit کر سکتا ہے؛ duplicate نمبر قبول نہیں ہوگا۔
-- Login page پر Student, Teacher اور Admin کے لیے **صارف نام بھول گئے؟** اور **پاس ورڈ بھول گئے؟** شامل ہیں۔
-- Student/Teacher recovery میں شناخت کی تصدیق کے بعد request Admin approval کے لیے جاتی ہے۔
-- Admin پہلے `admin-settings.html` میں اپنا محفوظ Recovery Code مقرر کرے۔
-- Recovery requests `admin-accounts.html` میں approve/reject کی جا سکتی ہیں۔
-- SQL history/reference کے لیے `database_sql_history.sql` اور `SQL-README.md` شامل ہیں۔
+Excel/CSV منتخب کریں → Preview → Import۔ تمام imported records Pending رہیں گے۔ Admin ایک یا متعدد pending applications منتخب کرکے approve کر سکتا ہے۔
 
-### Database update
-Supabase SQL Editor میں backup کے بعد مکمل `database-fixes.sql` Run کریں۔ اگر پرانا cumulative SQL پہلے Run ہو چکا ہو تو صرف `database-update-2026-09-30.sql` بھی Run کیا جا سکتا ہے۔
+`import-samples/` میں template اور آپ کے فراہم کردہ 42 rows کی ready CSV موجود ہے۔
+
+### 5) Languages
+ہر page پر اردو، English، العربية اور پښتو language option موجود ہے۔ منتخب language browser میں save رہتی ہے اور navigation کے ساتھ برقرار رہتی ہے۔ Print/PDF labels بھی selected language follow کرتے ہیں، جبکہ طالبات/اساتذہ کے اصل saved names, numbers, phone, CNIC اور addresses جیسے data کو اصل شکل میں رکھا جاتا ہے۔
+
+### 6) Professional Print / PDF
+Complete Profile report اب official document style میں بنتی ہے: madrassa header, identity summary, structured sections, financial/attendance/result sections, clean tables, signature/stamp area۔ Internal technical database fields print report میں نہیں دکھائے جاتے۔
+
+## اہم SQL files
+- `sql-parts/01-core-compatibility.sql`
+- `sql-parts/02-classes-admission-number.sql`
+- `sql-parts/03-recovery-tables-helpers.sql`
+- `sql-parts/04-recovery-request.sql`
+- `sql-parts/05-recovery-review-permissions.sql`
+- `sql-parts/06-bulk-student-import.sql`
+- `database_sql_history.sql` — صرف knowledge/reference کے لیے cumulative SQL history
+
+مزید ہدایات کے لیے `RUN-FIRST.txt`, `SQL-RUN-IN-ORDER.txt`, `SQL-README.md` اور `IMPORT-STUDENTS-README.txt` دیکھیں۔

@@ -27,3 +27,20 @@ IMPORTANT:
 - Admin recovery code now performs secure self-recovery without requiring another Admin approval.
 - Admin recovery code minimum length increased to 8.
 - Student/Teacher recovery remains Admin-approved.
+
+2026-09-30 BULK IMPORT + LANGUAGE + PDF UPDATE:
+- Added Excel/CSV bulk student import in Admin Accounts & Approvals.
+- Imported records remain pending until Admin approval.
+- Added multi-select / approve-selected for pending applications.
+- Wifaq registration number is preserved and becomes official admission number on approval.
+- Rows without Wifaq number continue with temporary admission number until Admin edits it.
+- Included import-samples/student-import-template.csv.
+- Included import-samples/students-ready-for-import.csv with the 42 rows supplied for migration reference.
+- Added a persistent language selector to every page: Urdu, English, Arabic and Pashto.
+- UI text, generated messages and print/PDF labels follow the selected language where translations are defined; saved person/data values are kept as stored.
+- Rebuilt profile print/PDF presentation as a professional official document with identity card, section cards, summaries, clean tables, signatures and stamp area.
+- Internal technical fields such as owner_id, owner_type, student_id, approval internals and password-related fields are hidden from the professional print report.
+- Added SQL Part 06 and documented it in database_sql_history.sql.
+
+IMPORTANT CURRENT SQL INSTRUCTION (supersedes older notes above):
+Use SQL-RUN-IN-ORDER.txt. If Parts 01-05 already succeeded, run ONLY sql-parts/06-bulk-student-import.sql. Do not run the entire database-fixes.sql in the web SQL Editor.

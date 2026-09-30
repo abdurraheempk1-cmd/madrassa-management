@@ -3139,7 +3139,7 @@
                 const confirmPassword = App.val("recoveryConfirmPassword");
 
                 if (pin.length < 4) {
-                    App.setRecoveryMessage("recoveryRequestMessage", "درخواست PIN کم از کم 4 ہندسوں/حروف کا ہونا چاہیے۔", "error");
+                    App.setRecoveryMessage("recoveryRequestMessage", "درخواست پن کم از کم 4 ہندسوں/حروف کا ہونا چاہیے۔", "error");
                     return;
                 }
                 if (type === "password") {
@@ -4152,6 +4152,9 @@ App.profileLabel =
             admission_no:
                 "داخلہ نمبر",
 
+            legacy_registration_no:
+                "رجسٹریشن نمبر",
+
             admission_type:
                 "داخلہ کی قسم",
 
@@ -4381,7 +4384,43 @@ App.profileLabel =
                 "تخلیق وقت",
 
             updated_at:
-                "آخری تبدیلی"
+                "آخری تبدیلی",
+
+            balance:
+                "بیلنس",
+
+            total_due:
+                "کل واجب الادا",
+
+            total_paid:
+                "کل ادا شدہ",
+
+            total_charged:
+                "کل مقررہ رقم",
+
+            student_name:
+                "طالبہ کا نام",
+
+            fee_type:
+                "فیس کی قسم",
+
+            fee_type_name:
+                "فیس کی قسم",
+
+            status_label:
+                "حالت",
+
+            last_login:
+                "آخری لاگ اِن",
+
+            last_login_at:
+                "آخری لاگ اِن",
+
+            issued_by_name:
+                "جاری کنندہ",
+
+            verified_by_name:
+                "تصدیق کنندہ"
         };
 
 
@@ -13888,7 +13927,7 @@ App.renderAccountApplications =
         if (!pendingRecords.length) {
             container.innerHTML =
                 container.tagName.toLowerCase() === "tbody"
-                    ? `<tr><td colspan="7" class="table-empty">کوئی زیرِ التواء درخواست موجود نہیں۔</td></tr>`
+                    ? `<tr><td colspan="8" class="table-empty">کوئی زیرِ التواء درخواست موجود نہیں۔</td></tr>`
                     : App.empty("کوئی زیرِ التواء درخواست موجود نہیں۔");
             return;
         }
@@ -13910,6 +13949,7 @@ App.renderAccountApplications =
                 const created = App.date(item.created_at || item.submitted_at || item.application_date || item.created_on);
                 return `
                     <tr>
+                        <td class="account-select-cell"><input type="checkbox" data-account-select="${App.escape(applicationKey)}" aria-label="منتخب کریں"></td>
                         <td>${App.escape(created || "—")}</td>
                         <td>${App.escape(typeUrdu)}</td>
                         <td>${App.escape(item.name || item.full_name || "—")}</td>
@@ -13961,7 +14001,53 @@ App.renderAccountApplications =
                 App.reviewAccountApplication(button.dataset.accountReject, "rejected");
             });
         });
+
+        container.querySelectorAll("[data-account-select]").forEach(box => {
+            box.addEventListener("change", App.updateBulkApprovalSelection);
+        });
+        App.updateBulkApprovalSelection();
     };
+
+App.updateBulkApprovalSelection = function () {
+    const boxes = Array.from(document.querySelectorAll("[data-account-select]"));
+    const selected = boxes.filter(box => box.checked);
+    App.setText("selectedApplicationsCount", `${selected.length} منتخب`, "0 منتخب");
+    const button = App.el("approveSelectedApplications");
+    if (button) button.disabled = selected.length === 0;
+    const all = App.el("selectAllPendingApplications");
+    if (all) {
+        all.checked = boxes.length > 0 && selected.length === boxes.length;
+        all.indeterminate = selected.length > 0 && selected.length < boxes.length;
+    }
+};
+
+App.approveSelectedApplications = async function () {
+    const keys = Array.from(document.querySelectorAll("[data-account-select]:checked")).map(box => box.dataset.accountSelect).filter(Boolean);
+    if (!keys.length) return;
+    if (!window.confirm(`${keys.length} منتخب درخواستیں منظور کی جائیں؟`)) return;
+    const note = window.prompt("ایڈمن نوٹ:", "Bulk import / multiple approval");
+    if (note === null) return;
+    const button = App.el("approveSelectedApplications");
+    if (button) button.disabled = true;
+    let ok = 0, failed = 0;
+    for (const key of keys) {
+        try {
+            const [requestedType, rawId] = App.safe(key).split(":");
+            const applicationId = Number(rawId);
+            const record = App.accountApplications.find(item => Number(item.id) === applicationId && App.safe(item.application_type || "student") === requestedType);
+            const type = App.safe(record?.application_type || requestedType).toLowerCase();
+            const rpcName = type === "teacher" ? "admin_approve_teacher_application" : "admin_approve_student_application";
+            await App.authedRpc(rpcName,{p_application_id:applicationId,p_admin_note:note || null});
+            ok++;
+        } catch (error) {
+            failed++;
+            console.error("Bulk approval:",key,error);
+        }
+    }
+    alert(`منظوری مکمل: ${ok} کامیاب، ${failed} ناکام۔`);
+    await App.loadAccountApplications();
+    if (button) button.disabled = false;
+};
 
 App.reviewAccountApplication =
     async function (
@@ -14118,6 +14204,334 @@ App.loadAccountApplications =
         }
     };
 
+
+/* =====================================================
+   ADMIN BULK STUDENT IMPORT (EXCEL / CSV)
+   Imported rows remain PENDING until Admin approval.
+   ===================================================== */
+
+App.bulkStudentRows = [];
+
+App.bulkHeaderKey = function (value) {
+    return App.safe(value)
+        .replace(/[\u200c\u200d\ufeff]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+};
+
+App.bulkPick = function (row, aliases) {
+    if (!row || typeof row !== "object") return "";
+    const normalized = new Map();
+    Object.entries(row).forEach(([key, value]) => {
+        normalized.set(App.bulkHeaderKey(key), value);
+    });
+    for (const alias of aliases) {
+        const key = App.bulkHeaderKey(alias);
+        if (normalized.has(key)) return normalized.get(key);
+    }
+    return "";
+};
+
+App.bulkNormalizeClass = function (value) {
+    const raw = App.safe(value).replace(/\s+/g, " ").trim();
+    const map = {
+        "خاصہ سال اول": "ثانویہ خاصہ سال اول",
+        "خاصہ سال دوم": "ثانویہ خاصہ سال دوم",
+        "ثانویہ خاصہ اول": "ثانویہ خاصہ سال اول",
+        "ثانویہ خاصہ دوم": "ثانویہ خاصہ سال دوم",
+        "عالیہ اول": "عالیہ سال اول",
+        "عالیہ دوم": "عالیہ سال دوم",
+        "عالمیہ اول": "عالمیہ سال اول",
+        "عالمیہ دوم": "عالمیہ سال دوم / دورۂ حدیث",
+        "عالمیہ دوم / دورہ حدیث": "عالمیہ سال دوم / دورۂ حدیث",
+        "دورہ حدیث": "عالمیہ سال دوم / دورۂ حدیث",
+        "دورۂ حدیث": "عالمیہ سال دوم / دورۂ حدیث"
+    };
+    return map[raw] || raw;
+};
+
+App.bulkParseDate = function (value) {
+    if (value === null || value === undefined || value === "") return null;
+    if (typeof value === "number" && window.XLSX?.SSF?.parse_date_code) {
+        const d = window.XLSX.SSF.parse_date_code(value);
+        if (d?.y && d?.m && d?.d) {
+            return `${String(d.y).padStart(4,"0")}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
+        }
+    }
+    let text = App.safe(value).trim();
+    if (!text) return null;
+    const iso = text.match(/^(\d{4})[-\/]([01]?\d)[-\/]([0-3]?\d)$/);
+    if (iso) return `${iso[1]}-${String(iso[2]).padStart(2,"0")}-${String(iso[3]).padStart(2,"0")}`;
+    const dmy = text.match(/^([0-3]?\d)[-\/]([01]?\d)[-\/](\d{4})$/);
+    if (dmy) return `${dmy[3]}-${String(dmy[2]).padStart(2,"0")}-${String(dmy[1]).padStart(2,"0")}`;
+
+    const months = {
+        "جنوری":1,"فروری":2,"مارچ":3,"اپریل":4,"مئی":5,"جون":6,
+        "جولائی":7,"اگست":8,"ستمبر":9,"اکتوبر":10,"نومبر":11,"دسمبر":12,
+        "january":1,"february":2,"march":3,"april":4,"may":5,"june":6,
+        "july":7,"august":8,"september":9,"october":10,"november":11,"december":12
+    };
+    text = text.replace(/،/g, ",").replace(/,/g, " ").replace(/\s+/g," ").trim();
+    const parts = text.split(" ");
+    if (parts.length >= 3) {
+        const day = Number(App.normalizeDigits(parts[0]));
+        const month = months[parts[1].toLowerCase()] || months[parts[1]];
+        const year = Number(App.normalizeDigits(parts[2]));
+        if (day >= 1 && day <= 31 && month && year >= 1900 && year <= 2200) {
+            return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+        }
+    }
+    return null;
+};
+
+App.bulkRandomPassword = function () {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    const bytes = new Uint32Array(10);
+    if (window.crypto?.getRandomValues) window.crypto.getRandomValues(bytes);
+    else for (let i=0;i<bytes.length;i++) bytes[i] = Math.floor(Math.random()*0xffffffff);
+    let out = "Msa#";
+    for (let i=0;i<bytes.length;i++) out += chars[bytes[i] % chars.length];
+    return out;
+};
+
+App.bulkUsername = function (legacy, wifaq, rowNo) {
+    let base = App.normalizeDigits(legacy || "") || App.safe(wifaq).replace(/[^0-9A-Za-z]/g, "") || String(rowNo);
+    base = base.slice(-12) || String(rowNo);
+    return `std${base}_${String(Date.now()).slice(-4)}${rowNo}`.toLowerCase();
+};
+
+App.normalizeBulkStudentRow = function (row, rowNo) {
+    const wifaq = App.safe(App.bulkPick(row,["رقم التسجیل","رقم التسجيل","وفاق نمبر","wifaq number","wifaq_no","admission_no"])).trim();
+    const legacy = App.safe(App.bulkPick(row,["رجسٹریشن","رجسٹریشن نمبر","registration","registration no","registration_no"])).trim();
+    const name = App.safe(App.bulkPick(row,["نام","طالبہ کا نام","name","student name"])).trim();
+    const father = App.safe(App.bulkPick(row,["ولدیت","والد کا نام","father","father name","father_name"])).trim();
+    const klass = App.bulkNormalizeClass(App.bulkPick(row,["درجہ","جماعت","کلاس","class","student_class"]));
+    const dobRaw = App.bulkPick(row,["تاريخ پیدائش","تاریخ پیدائش","date of birth","dob","date_of_birth"]);
+    const dob = App.bulkParseDate(dobRaw);
+    const cnicRaw = App.safe(App.bulkPick(row,["شناختی کارڈ","شناختی کارڈ نمبر","ب فارم","cnic","b-form","bform"])).trim();
+    const phoneRaw = App.safe(App.bulkPick(row,["رابطہ نمبر","فون نمبر","phone","mobile","contact"])).trim();
+    const address = App.safe(App.bulkPick(row,["موجودہ پتہ","پتہ","address","current address"])).trim();
+    const cnicDigits = App.normalizeDigits(cnicRaw);
+    const phoneDigits = App.normalizePhone(phoneRaw);
+    const cnic = (!cnicDigits || /^0+$/.test(cnicDigits) || cnicDigits.length !== 13) ? null : cnicDigits;
+    const phone = (!phoneDigits || /^0+$/.test(phoneDigits) || phoneDigits.length !== 11) ? null : phoneDigits;
+    const issues = [];
+    const warnings = [];
+
+    if (!name) issues.push("نام موجود نہیں");
+    if (!klass) issues.push("جماعت موجود نہیں");
+    else if (!App.CLASSES.includes(klass)) issues.push("غیر معروف جماعت");
+    if (!father) warnings.push("والد کا نام خالی ہے");
+    if (!dob) warnings.push("تاریخ پیدائش خالی یا غیر درست ہے");
+    if (!cnicDigits || /^0+$/.test(cnicDigits)) warnings.push("شناختی کارڈ / ب فارم خالی ہے");
+    else if (cnicDigits.length !== 13) warnings.push("شناختی کارڈ / ب فارم 13 ہندسوں کا نہیں؛ خالی درآمد ہوگا");
+    if (!phoneDigits || /^0+$/.test(phoneDigits)) warnings.push("رابطہ نمبر خالی ہے");
+    else if (phoneDigits.length !== 11) warnings.push("رابطہ نمبر 11 ہندسوں کا نہیں؛ خالی درآمد ہوگا");
+    if (!wifaq) warnings.push("وفاق نمبر موجود نہیں؛ منظوری پر عارضی داخلہ نمبر بنے گا");
+
+    const selection = App.val("studentBulkAdmissionType") || "منتقلی";
+    const admissionType = selection === "auto"
+        ? (App.NEW_ADMISSION_CLASSES.includes(klass) ? "نیا داخلہ" : "منتقلی")
+        : selection;
+
+    if (admissionType === "نیا داخلہ" && klass && !App.NEW_ADMISSION_CLASSES.includes(klass)) {
+        issues.push("اس جماعت کے لیے نیا داخلہ قابل قبول نہیں؛ منتقلی منتخب کریں");
+    }
+
+    return {
+        row_no: rowNo,
+        wifaq_registration_no: wifaq || null,
+        legacy_registration_no: legacy || null,
+        admission_type: admissionType,
+        name,
+        father_name: father || null,
+        guardian_name: father || null,
+        student_class: klass || null,
+        date_of_birth: dob,
+        cnic,
+        phone,
+        address: address || null,
+        residence_type: "گھر",
+        previous_madrassa: null,
+        transfer_date: null,
+        mahrams: [],
+        username: App.bulkUsername(legacy,wifaq,rowNo),
+        password: App.bulkRandomPassword(),
+        issues,
+        warnings,
+        valid: issues.length === 0
+    };
+};
+
+App.readStudentBulkFile = async function (file) {
+    if (!file) throw new Error("فائل منتخب کریں۔");
+    const name = App.safe(file.name).toLowerCase();
+    let records = [];
+
+    if (window.XLSX) {
+        const buffer = await file.arrayBuffer();
+        const workbook = window.XLSX.read(buffer,{type:"array",cellDates:false});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        records = window.XLSX.utils.sheet_to_json(sheet,{defval:"",raw:true});
+    } else if (name.endsWith(".csv") || name.endsWith(".tsv")) {
+        const text = await file.text();
+        const delimiter = name.endsWith(".tsv") ? "\t" : ",";
+        const lines = text.split(/\r?\n/).filter(line => line.trim());
+        const headers = (lines.shift() || "").split(delimiter).map(x=>x.replace(/^\ufeff/,"").trim());
+        records = lines.map(line => {
+            const cells = line.split(delimiter);
+            return Object.fromEntries(headers.map((h,i)=>[h,cells[i] ?? ""]));
+        });
+    } else {
+        throw new Error("ایکسل فائل پڑھنے کا نظام دستیاب نہیں۔ صفحہ دوبارہ لوڈ کریں یا سی ایس وی فائل استعمال کریں۔");
+    }
+
+    return records.map((row,index)=>App.normalizeBulkStudentRow(row,index+2));
+};
+
+App.renderStudentBulkPreview = function () {
+    const body = App.el("studentBulkImportPreviewBody");
+    const wrap = App.el("studentBulkImportPreviewWrap");
+    const summary = App.el("studentBulkImportSummary");
+    if (!body || !wrap || !summary) return;
+
+    const rows = App.bulkStudentRows || [];
+    const valid = rows.filter(r=>r.valid).length;
+    const warnings = rows.filter(r=>r.valid && r.warnings.length).length;
+    const invalid = rows.filter(r=>!r.valid).length;
+    App.setText("bulkImportTotalRows",rows.length,"0");
+    App.setText("bulkImportValidRows",valid,"0");
+    App.setText("bulkImportWarningRows",warnings,"0");
+    App.setText("bulkImportInvalidRows",invalid,"0");
+    summary.hidden = false;
+    wrap.hidden = false;
+
+    body.innerHTML = rows.map((r,index)=>{
+        const cls = !r.valid ? "bulk-row-invalid" : (r.warnings.length ? "bulk-row-warning" : "bulk-row-valid");
+        const result = !r.valid ? `غلط: ${r.issues.join("، ")}` : (r.warnings.length ? `تنبیہ: ${r.warnings.join("، ")}` : "درست");
+        return `<tr class="${cls}">
+            <td>${index+1}</td>
+            <td data-no-translate>${App.escape(r.wifaq_registration_no || "—")}</td>
+            <td data-no-translate>${App.escape(r.legacy_registration_no || "—")}</td>
+            <td data-no-translate>${App.escape(r.name || "—")}</td>
+            <td data-no-translate>${App.escape(r.father_name || "—")}</td>
+            <td>${App.escape(r.student_class || "—")}</td>
+            <td data-no-translate>${App.escape(r.date_of_birth || "—")}</td>
+            <td data-no-translate>${App.escape(r.cnic ? App.formatCNIC(r.cnic) : "—")}</td>
+            <td data-no-translate>${App.escape(r.phone || "—")}</td>
+            <td>${App.escape(result)}</td>
+        </tr>`;
+    }).join("");
+
+    const submit = App.el("submitStudentBulkImport");
+    if (submit) submit.disabled = valid === 0;
+};
+
+App.previewStudentBulkImport = async function () {
+    const file = App.el("studentBulkImportFile")?.files?.[0];
+    const message = App.el("studentBulkImportMessage");
+    try {
+        App.message(message,"فائل پڑھی جا رہی ہے...","info");
+        App.bulkStudentRows = await App.readStudentBulkFile(file);
+        if (!App.bulkStudentRows.length) throw new Error("فائل میں کوئی طالبہ موجود نہیں۔");
+        App.renderStudentBulkPreview();
+        App.message(message,`${App.bulkStudentRows.length} قطاریں پڑھ لی گئی ہیں۔ درآمد سے پہلے پیش منظر چیک کریں۔`,"success");
+    } catch (error) {
+        console.error("Bulk student preview:",error);
+        App.bulkStudentRows = [];
+        App.message(message,error?.message || "فائل نہیں پڑھی جا سکی۔","error");
+    }
+};
+
+App.renderBulkCredentials = function (results) {
+    const box = App.el("studentBulkImportCredentials");
+    if (!box) return;
+    const success = (results || []).filter(r=>r.ok).map(r=>{
+        const source = App.bulkStudentRows.find(x=>Number(x.row_no)===Number(r.row_no));
+        return source ? {name:source.name,username:source.username,password:source.password,wifaq:source.wifaq_registration_no,application_no:r.application_no} : null;
+    }).filter(Boolean);
+    if (!success.length) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML = `<h3>عارضی لاگ اِن معلومات</h3><p>منظوری کے بعد اکاؤنٹ کے لیے یہ عارضی معلومات استعمال ہوں گی۔ محفوظ جگہ پر رکھیں۔</p>
+        <div class="responsive-table-wrapper"><table><thead><tr><th>نام</th><th>وفاق نمبر</th><th>عارضی صارف نام</th><th>عارضی پاس ورڈ</th><th>درخواست نمبر</th></tr></thead><tbody>
+        ${success.map(x=>`<tr><td data-no-translate>${App.escape(x.name)}</td><td data-no-translate>${App.escape(x.wifaq||"—")}</td><td data-no-translate>${App.escape(x.username)}</td><td data-no-translate>${App.escape(x.password)}</td><td data-no-translate>${App.escape(x.application_no||"—")}</td></tr>`).join("")}
+        </tbody></table></div>`;
+};
+
+App.submitStudentBulkImport = async function () {
+    const message = App.el("studentBulkImportMessage");
+    const button = App.el("submitStudentBulkImport");
+    const rows = (App.bulkStudentRows || []).filter(r=>r.valid);
+    if (!rows.length) return App.message(message,"درآمد کے لیے کوئی درست قطار موجود نہیں۔","error");
+    if (!window.confirm(`${rows.length} طالبات کی درخواستیں زیرِ التواء حالت میں درآمد کی جائیں؟`)) return;
+    if (button) button.disabled = true;
+    try {
+        App.message(message,"درآمد جاری ہے...","info");
+        const payload = rows.map(r=>({
+            row_no:r.row_no,
+            wifaq_registration_no:r.wifaq_registration_no,
+            legacy_registration_no:r.legacy_registration_no,
+            admission_type:r.admission_type,
+            name:r.name,
+            father_name:r.father_name,
+            guardian_name:r.guardian_name,
+            cnic:r.cnic,
+            phone:r.phone,
+            date_of_birth:r.date_of_birth,
+            student_class:r.student_class,
+            address:r.address,
+            residence_type:r.residence_type,
+            previous_madrassa:r.previous_madrassa,
+            transfer_date:r.transfer_date,
+            mahrams:r.mahrams,
+            username:r.username,
+            password:r.password
+        }));
+        const result = await App.authedRpc("admin_bulk_import_student_applications",{p_rows:payload});
+        const results = App.asArray(result?.results || result);
+        const ok = results.filter(x=>x.ok).length;
+        const failed = results.length - ok;
+        App.renderBulkCredentials(results);
+        App.message(message,`درآمد مکمل: ${ok} کامیاب، ${failed} ناکام۔ تمام کامیاب ریکارڈ ایڈمن منظوری کے منتظر ہیں۔`,failed ? "info" : "success");
+        await App.loadAccountApplications();
+    } catch (error) {
+        console.error("Bulk student import:",error);
+        App.message(message,error?.message || "طالبات درآمد نہیں ہو سکیں۔ پہلے Bulk Import SQL چلائیں۔","error");
+    } finally {
+        if (button) button.disabled = false;
+    }
+};
+
+App.downloadStudentImportTemplate = function () {
+    const csv = "\ufeffرقم التسجیل,رجسٹریشن,نام,ولدیت,درجہ,تاريخ پیدائش,شناختی کارڈ,رابطہ نمبر,موجودہ پتہ\n1447-05-000001,1,مثالی طالبہ,مثالی والد,ثانویہ خاصہ سال اول,01 جنوری 2012,15103-0000000-0,03000000000,گاؤں مثال ضلع بونیر\n";
+    const blob = new Blob([csv],{type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "student-import-template.csv";
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+};
+
+App.initStudentBulkImport = function () {
+    const preview = App.el("previewStudentBulkImport");
+    const submit = App.el("submitStudentBulkImport");
+    const template = App.el("downloadStudentImportTemplate");
+    const type = App.el("studentBulkAdmissionType");
+    if (preview && preview.dataset.bound !== "1") { preview.dataset.bound="1"; preview.addEventListener("click",App.previewStudentBulkImport); }
+    if (submit && submit.dataset.bound !== "1") { submit.dataset.bound="1"; submit.addEventListener("click",App.submitStudentBulkImport); }
+    if (template && template.dataset.bound !== "1") { template.dataset.bound="1"; template.addEventListener("click",App.downloadStudentImportTemplate); }
+    if (type && type.dataset.bound !== "1") { type.dataset.bound="1"; type.addEventListener("change",()=>{
+        if (App.bulkStudentRows.length) {
+            App.bulkStudentRows = App.bulkStudentRows.map(r=>App.normalizeBulkStudentRow({
+                "رقم التسجیل":r.wifaq_registration_no,"رجسٹریشن":r.legacy_registration_no,"نام":r.name,"ولدیت":r.father_name,
+                "درجہ":r.student_class,"تاريخ پیدائش":r.date_of_birth,"شناختی کارڈ":r.cnic,"رابطہ نمبر":r.phone,"موجودہ پتہ":r.address
+            },r.row_no));
+            App.renderStudentBulkPreview();
+        }
+    }); }
+};
+
 App.initAccountsPage =
     async function () {
 
@@ -14142,6 +14556,22 @@ App.initAccountsPage =
 
         await App.loadAccountApplications();
         await App.loadRecoveryRequests();
+        App.initStudentBulkImport();
+
+        const selectAllPending = App.el("selectAllPendingApplications");
+        if (selectAllPending && selectAllPending.dataset.bound !== "1") {
+            selectAllPending.dataset.bound = "1";
+            selectAllPending.addEventListener("change", function () {
+                document.querySelectorAll("[data-account-select]").forEach(box => { box.checked = selectAllPending.checked; });
+                App.updateBulkApprovalSelection();
+            });
+        }
+
+        const approveSelected = App.el("approveSelectedApplications");
+        if (approveSelected && approveSelected.dataset.bound !== "1") {
+            approveSelected.dataset.bound = "1";
+            approveSelected.addEventListener("click", App.approveSelectedApplications);
+        }
 
         const refreshRecovery = App.el("refreshRecoveryRequests");
         if (refreshRecovery && refreshRecovery.dataset.bound !== "1") {
@@ -18582,6 +19012,179 @@ App.initAdminReports =
     };
 
 
+
+/* =====================================================
+   PROFESSIONAL PROFILE / PDF RENDERER
+   Hides internal database fields and presents official sections.
+   ===================================================== */
+
+App.professionalHiddenKeys = new Set([
+    "id","student_id","teacher_id","admin_id","account_id","owner_id","owner_type",
+    "created_by","updated_by","approved_by","approved_at","reviewed_by","reviewed_at",
+    "password","password_hash","requested_password_hash","secret","token","session_token",
+    "file_path","storage_path","bucket","internal_id","application_id","fee_type_id",
+    "homework_id","announcement_id","attendance_id","marks_id","document_id","transaction_id"
+]);
+
+App.professionalKeyHidden = function (key) {
+    key = App.safe(key).toLowerCase();
+    return App.professionalHiddenKeys.has(key) || /(^|_)(owner|student|teacher|account)_?id$/.test(key) || /_uuid$/.test(key);
+};
+
+App.professionalSectionTitle = function (key) {
+    const map = {
+        personal:"ذاتی معلومات", student:"ذاتی معلومات", teacher:"ذاتی معلومات", admin:"ذاتی معلومات",
+        account:"اکاؤنٹ کی معلومات", mahrams:"محرم کی تفصیلات", student_mahrams:"محرم کی تفصیلات",
+        attendance:"مکمل حاضری", attendance_history:"مکمل حاضری", class_attendance_history:"مکمل حاضری",
+        marks:"امتحانات اور نتائج", results:"امتحانات اور نتائج", marks_ratings:"امتحانات اور نتائج",
+        fees:"فیس کی مکمل تفصیل", fee_history:"فیس کی مکمل تفصیل", salary:"تنخواہ کی مکمل تفصیل",
+        salary_history:"تنخواہ کی مکمل تفصیل", homework:"ہوم ورک کی تاریخ", announcements:"اعلانات کی تاریخ",
+        hostel_history:"مدرسہ میں رہائش — آمد و رفت کی مکمل تاریخ", hostel:"مدرسہ میں رہائش — آمد و رفت کی مکمل تاریخ",
+        promotion_history:"کلاس اور ترقی کی تاریخ", promotions:"کلاس اور ترقی کی تاریخ",
+        uploaded_documents:"جمع شدہ دستاویزات", documents:"جمع شدہ دستاویزات",
+        issued_documents:"جاری شدہ دستاویزات", feedback:"فیڈ بیک اور نوٹس", ratings:"ریٹنگ",
+        assignments:"تدریسی ذمہ داریاں", teacher_assignments:"تدریسی ذمہ داریاں",
+        activity:"ریکارڈ اور سرگرمی کی تاریخ", activity_history:"ریکارڈ اور سرگرمی کی تاریخ",
+        history:"مکمل تاریخ", balance:"مالی خلاصہ", summary:"خلاصہ", charges:"واجب رقوم", payments:"ادائیگیاں"
+    };
+    return map[key] || App.profileSectionTitle(key);
+};
+
+App.professionalPrimitivePairs = function (obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return [];
+    return Object.entries(obj).filter(([key,value]) => {
+        if (App.professionalKeyHidden(key)) return false;
+        if (value === null || value === undefined || value === "") return false;
+        return typeof value !== "object";
+    }).map(([key,value]) => [App.profileLabel(key), App.profileDisplayValue(key,value)]);
+};
+
+App.professionalNestedEntries = function (obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return [];
+    return Object.entries(obj).filter(([key,value]) => {
+        if (App.professionalKeyHidden(key)) return false;
+        if (value === null || value === undefined) return false;
+        return typeof value === "object" && (Array.isArray(value) ? value.length : Object.keys(value).length);
+    });
+};
+
+App.professionalTable = function (records) {
+    records = App.asArray(records).filter(item => item && typeof item === "object" && !Array.isArray(item));
+    if (!records.length) return App.empty("کوئی ریکارڈ موجود نہیں۔");
+    const keys = [];
+    records.forEach(item => Object.keys(item).forEach(key => {
+        if (!App.professionalKeyHidden(key) && item[key] !== null && item[key] !== undefined && item[key] !== "" && typeof item[key] !== "object" && !keys.includes(key)) keys.push(key);
+    }));
+    const visible = keys.slice(0,8);
+    if (!visible.length) return App.empty("کوئی ریکارڈ موجود نہیں۔");
+    return `<div class="professional-table-wrap"><table class="professional-table"><thead><tr>${visible.map(k=>`<th>${App.escape(App.profileLabel(k))}</th>`).join("")}</tr></thead><tbody>${records.map(item=>`<tr>${visible.map(k=>`<td>${App.escape(App.profileDisplayValue(k,item[k]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+};
+
+App.professionalMetrics = function (obj) {
+    const pairs = App.professionalPrimitivePairs(obj);
+    if (!pairs.length) return "";
+    return `<div class="professional-metric-grid">${pairs.map(([label,value])=>`<div class="professional-metric"><span>${App.escape(label)}</span><strong>${App.escape(value)}</strong></div>`).join("")}</div>`;
+};
+
+App.professionalObject = function (obj, depth = 0) {
+    if (!obj || typeof obj !== "object") return "";
+    if (Array.isArray(obj)) return App.professionalTable(obj);
+    let html = "";
+    const pairs = App.professionalPrimitivePairs(obj);
+    if (pairs.length) html += App.infoGrid(pairs);
+    for (const [key,value] of App.professionalNestedEntries(obj)) {
+        let body = "";
+        if (Array.isArray(value)) body = App.professionalTable(value);
+        else {
+            const nestedPairs = App.professionalPrimitivePairs(value);
+            const nestedNested = App.professionalNestedEntries(value);
+            if (nestedPairs.length && nestedNested.length === 0 && ["balance","summary"].includes(key)) body = App.professionalMetrics(value);
+            else body = App.professionalObject(value,depth+1);
+        }
+        if (body) html += `<div class="professional-subsection"><h4>${App.escape(App.professionalSectionTitle(key))}</h4>${body}</div>`;
+    }
+    return html;
+};
+
+App.professionalFindObject = function (data, paths) {
+    for (const path of paths) {
+        let value = data;
+        for (const part of path.split(".")) value = value && typeof value === "object" ? value[part] : null;
+        if (value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length) return value;
+    }
+    return null;
+};
+
+App.professionalFindValue = function (data, keys) {
+    const seen = new Set();
+    const queue = [data];
+    while (queue.length) {
+        const obj = queue.shift();
+        if (!obj || typeof obj !== "object" || seen.has(obj)) continue;
+        seen.add(obj);
+        for (const key of keys) if (obj[key] !== null && obj[key] !== undefined && obj[key] !== "") return obj[key];
+        Object.values(obj).forEach(v => { if (v && typeof v === "object") queue.push(v); });
+    }
+    return "";
+};
+
+App.renderProfessionalProfile = function (data, type) {
+    data = data || {};
+    const personal = App.professionalFindObject(data,["core.personal","core.student","core.teacher","core.admin","personal","student","teacher","admin","profile"]) || {};
+    const account = App.professionalFindObject(data,["core.account","account"]) || {};
+    const name = App.professionalFindValue(personal,["name","full_name"]) || App.professionalFindValue(data,["name","full_name"]) || "—";
+    const admission = App.professionalFindValue(personal,["admission_no","teacher_code","username"]);
+    const klass = App.professionalFindValue(personal,["student_class","teaching_class","designation"]);
+    const phone = App.professionalFindValue(personal,["phone"]);
+    const roleName = type === "teacher" ? "استاد" : type === "admin" ? "ایڈمن" : "طالبہ";
+
+    const personalPairs = App.professionalPrimitivePairs(personal).filter(([label]) => !["ریکارڈ نمبر"].includes(label));
+    const accountPairs = App.professionalPrimitivePairs(account).filter(([label]) => ["صارف نام","حالت","اکاؤنٹ حالت","آخری لاگ اِن"].includes(label));
+
+    const used = new Set([personal,account]);
+    const candidates = [
+        ["mahrams","student_mahrams"], ["attendance","attendance_history","class_attendance_history"],
+        ["marks","results","marks_ratings"], ["fees","fee_history"], ["salary","salary_history"],
+        ["homework"], ["announcements"], ["hostel_history","hostel"], ["promotion_history","promotions"],
+        ["feedback"], ["ratings"], ["assignments","teacher_assignments"], ["uploaded_documents","documents"],
+        ["issued_documents"], ["activity","activity_history"]
+    ];
+    const sections = [];
+    for (const names of candidates) {
+        let value = null, key = names[0];
+        for (const n of names) {
+            value = data[n] || data?.core?.[n] || data?.history?.[n] || data?.results?.[n] || null;
+            if (value) { key = n; break; }
+        }
+        if (!value || used.has(value) || (Array.isArray(value) && !value.length) || (!Array.isArray(value) && typeof value === "object" && !Object.keys(value).length)) continue;
+        used.add(value);
+        const body = Array.isArray(value) ? App.professionalTable(value) : App.professionalObject(value);
+        if (body) sections.push(`<section class="professional-section"><div class="professional-section-title"><span></span><h3>${App.escape(App.professionalSectionTitle(key))}</h3></div>${body}</section>`);
+    }
+
+    return `
+      <section class="professional-identity-card">
+        <div class="professional-avatar">${type === "teacher" ? "👩‍🏫" : type === "admin" ? "🛡️" : "👩‍🎓"}</div>
+        <div class="professional-identity-main">
+          <span class="professional-role-badge">${App.escape(roleName)}</span>
+          <h2 data-no-translate>${App.escape(name)}</h2>
+          <div class="professional-identity-meta">
+            ${admission ? `<span><b>${App.escape(type === "student" ? "داخلہ نمبر" : type === "teacher" ? "استاد کوڈ" : "صارف نام")}</b><em data-no-translate>${App.escape(admission)}</em></span>` : ""}
+            ${klass ? `<span><b>${App.escape(type === "student" ? "جماعت" : "تدریسی جماعت")}</b><em>${App.escape(klass)}</em></span>` : ""}
+            ${phone ? `<span><b>${App.escape("فون نمبر")}</b><em data-no-translate>${App.escape(phone)}</em></span>` : ""}
+          </div>
+        </div>
+      </section>
+      ${personalPairs.length ? `<section class="professional-section"><div class="professional-section-title"><span></span><h3>ذاتی معلومات</h3></div>${App.infoGrid(personalPairs)}</section>` : ""}
+      ${accountPairs.length ? `<section class="professional-section"><div class="professional-section-title"><span></span><h3>اکاؤنٹ کی معلومات</h3></div>${App.infoGrid(accountPairs)}</section>` : ""}
+      ${sections.join("")}
+      <footer class="professional-document-footer">
+        <div class="professional-generated"><span>ریکارڈ تیار کرنے کی تاریخ:</span><strong id="printGeneratedDate">${App.escape(App.dateTime(new Date()))}</strong></div>
+        <div class="professional-signatures"><div><span>____________________</span><b>ایڈمن دستخط</b></div><div><span>____________________</span><b>مدرسہ مہر</b></div></div>
+        <div class="professional-footer-line"><strong>${App.escape(App.NAME)}</strong><span>${App.escape(App.ADDRESS)}</span></div>
+      </footer>`;
+};
+
 /* =====================================================
    PRINT PROFILE PAGE
    ===================================================== */
@@ -18735,10 +19338,9 @@ App.initPrintProfilePage =
             if (container) {
 
                 container.innerHTML =
-                    App.renderDeepProfile(
+                    App.renderProfessionalProfile(
                         data,
-                        type +
-                        "-profile"
+                        type
                     ) ||
                     App.empty(
                         "پروفائل ریکارڈ موجود نہیں۔"
@@ -18758,6 +19360,12 @@ App.initPrintProfilePage =
 
             App.setText(
                 "printProfileTitle",
+                (type === "teacher"
+                    ? "استاد کا مکمل پروفائل"
+                    : type === "admin"
+                        ? "ایڈمن کا مکمل پروفائل"
+                        : "طالبہ کا مکمل پروفائل") +
+                " — " +
                 name
             );
 

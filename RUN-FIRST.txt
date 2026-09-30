@@ -1,13 +1,25 @@
 1) SUPABASE DATABASE
 Open SQL-RUN-IN-ORDER.txt.
-In Supabase SQL Editor, run the 5 files inside the sql-parts folder ONE AT A TIME in numeric order.
-Do not paste database-fixes.sql as one large query in the web SQL Editor.
+- If Parts 01-05 were already run successfully: run ONLY sql-parts/06-bulk-student-import.sql.
+- If none of the 2026-09-30 SQL was run yet: run Parts 01 through 06 ONE AT A TIME.
+Do not paste all SQL parts together in the web SQL Editor.
 
 2) WEBSITE
-After all 5 SQL parts show Success, upload/replace the complete website project files in GitHub.
+Upload/replace the COMPLETE website project in GitHub after the required SQL part(s) show Success.
 
 3) ADMIN RECOVERY
 Log in as Admin, open Admin Settings, and create a Recovery Code of at least 8 characters.
 
-4) IMPORTANT
-If any SQL part shows an error, stop before running the next part and send the full error screenshot.
+4) BULK STUDENT IMPORT
+Admin -> Accounts & Approvals -> "ایکسل سے طالبات درآمد کریں".
+Select Excel/CSV -> Preview -> Import.
+Imported students remain Pending until Admin approval.
+You can select multiple pending applications and approve them together.
+Sample/template files are in the import-samples folder.
+
+5) LANGUAGE
+Every page has Urdu / English / Arabic / Pashto selection.
+The selected language is saved in the browser and used across pages and print/PDF reports.
+
+6) IMPORTANT
+If any SQL part shows an error, stop before running the next part and keep the full error screenshot.
