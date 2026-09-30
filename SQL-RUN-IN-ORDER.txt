@@ -38,3 +38,14 @@ PROMOTION / CLASS UPGRADE FIX (2026-09-30):
 This removes the new-admission eligibility check from the permanent Students table.
 The restriction stays on student applications only, so existing students can progress
 through all valid classes.
+
+
+PROMOTION RPC FIX:
+    Run: sql-parts/10-promotion-rpcs.sql
+
+This creates:
+- admin_promote_student
+- admin_promote_selected_students
+- admin_promote_whole_class
+- admin_student_promotion_history
+and student_promotion_history.
