@@ -8427,3 +8427,25 @@ html[dir="ltr"] .professional-section,html[dir="ltr"] .professional-identity-car
 
 .bulk-approval-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:12px 0;padding:10px 12px;border:1px solid #dbe7e1;border-radius:12px;background:#f8fbfa}
 .bulk-approval-toolbar label{display:flex;align-items:center;gap:7px;margin:0;font-weight:700}.bulk-approval-toolbar input[type="checkbox"]{width:19px;height:19px}.bulk-approval-toolbar button{width:auto;margin:0;min-height:42px}.bulk-approval-toolbar span{font-size:13px;color:#5a6f66}.account-select-col{width:46px;text-align:center!important}.account-select-cell{text-align:center!important}.account-select-cell input{width:18px;height:18px}
+
+
+/* ===== 2026-09-30 FINAL REUPLOAD: VISIBLE BULK IMPORT + PRINT HARDENING ===== */
+.portal-topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bulk-import-shortcut{background:#176b4c!important;color:#fff!important;font-weight:700!important}
+#studentBulkImportSection{scroll-margin-top:90px;border:2px solid rgba(23,107,76,.18);box-shadow:0 10px 28px rgba(23,107,76,.08)}
+#studentBulkImportSection .portal-section-heading h2{font-size:1.35rem}
+.profile-print-page .professional-section{margin:14px 0 0;padding:16px 18px;border:1px solid #dce8e2;border-radius:14px;background:#fff;box-shadow:0 4px 16px rgba(20,63,49,.05)}
+.profile-print-page .professional-section-title{display:flex;align-items:center;gap:9px;margin-bottom:12px;border-bottom:1px solid #e5ece8;padding-bottom:8px}
+.profile-print-page .professional-section-title span{width:5px;height:26px;border-radius:4px;background:#174f3b}
+.profile-print-page .professional-section-title h3{margin:0;color:#174f3b;font-size:18px}
+.profile-print-page .professional-identity-card{display:flex;gap:16px;align-items:center;padding:18px;border:1px solid #d8e6df;border-radius:16px;background:linear-gradient(135deg,#f3faf6,#fff);margin-bottom:14px}
+.profile-print-page .professional-avatar{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:#e7f2ec;font-size:36px;flex:0 0 auto}
+.profile-print-page .professional-role-badge{display:inline-block;padding:2px 12px;border-radius:999px;background:#174f3b;color:#fff;font-size:12px}
+.profile-print-page .professional-identity-main h2{margin:4px 0 7px;font-size:24px;color:#172b24}
+.profile-print-page .professional-identity-meta{display:flex;gap:8px 16px;flex-wrap:wrap}
+.profile-print-page .professional-identity-meta span{display:flex;gap:6px;align-items:center}.profile-print-page .professional-identity-meta b{color:#52655d;font-weight:600}.profile-print-page .professional-identity-meta em{font-style:normal;font-weight:700}
+.profile-print-page .professional-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.profile-print-page .professional-metric{padding:12px;border-radius:12px;background:#f6faf8;border:1px solid #e1ebe6;text-align:center}.profile-print-page .professional-metric span{display:block;color:#65766e;font-size:12px}.profile-print-page .professional-metric strong{display:block;margin-top:4px;font-size:18px;color:#174f3b}
+.profile-print-page .professional-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}.profile-print-page .professional-table th{background:#eef6f2;color:#174f3b;font-weight:700}.profile-print-page .professional-table th,.profile-print-page .professional-table td{padding:8px 7px;border-bottom:1px solid #e4ebe7}.profile-print-page .professional-table tr:last-child td{border-bottom:0}
+.profile-print-page .professional-document-footer{margin-top:22px;padding-top:14px;border-top:2px solid #174f3b}.profile-print-page .professional-generated{display:flex;justify-content:space-between;gap:12px;color:#5d6c66}.profile-print-page .professional-signatures{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin:36px 8% 18px;text-align:center}.profile-print-page .professional-signatures span{display:block}.profile-print-page .professional-footer-line{display:flex;justify-content:space-between;gap:12px;padding-top:8px;border-top:1px solid #dfe7e3;font-size:12px;color:#586861}
+@media(max-width:700px){.portal-topbar-actions{width:100%}.portal-topbar-actions .small-action-button{flex:1 1 140px}.profile-print-page .professional-metric-grid{grid-template-columns:repeat(2,1fr)}}
+@media print{.profile-print-page .professional-section{box-shadow:none!important;border-color:#cfd9d4!important}.profile-print-page .professional-document-footer{break-inside:avoid}.profile-print-page .professional-table-wrap{overflow:visible!important}}

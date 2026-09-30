@@ -19027,8 +19027,31 @@ App.professionalHiddenKeys = new Set([
 ]);
 
 App.professionalKeyHidden = function (key) {
-    key = App.safe(key).toLowerCase();
-    return App.professionalHiddenKeys.has(key) || /(^|_)(owner|student|teacher|account)_?id$/.test(key) || /_uuid$/.test(key);
+    key = App.safe(key).toLowerCase().trim();
+    const compact = key.replace(/[^a-z0-9]/g, "");
+    const hiddenCompact = new Set([
+        "id","studentid","teacherid","adminid","accountid","ownerid","ownertype",
+        "createdby","updatedby","approvedby","approvedat","reviewedby","reviewedat",
+        "password","passwordhash","requestedpasswordhash","secret","token","sessiontoken",
+        "filepath","storagepath","bucket","internalid","applicationid","feetypeid",
+        "homeworkid","announcementid","attendanceid","marksid","documentid","transactionid",
+        "studentname","admissionno","studentclass","lastlogin"
+    ]);
+    return App.professionalHiddenKeys.has(key) || hiddenCompact.has(compact) ||
+           /(^|_)(owner|student|teacher|account)_?id$/.test(key) || /_uuid$/.test(key);
+};
+
+App.professionalLabel = function (key) {
+    const raw = App.safe(key).toLowerCase().trim();
+    const compact = raw.replace(/[^a-z0-9]/g, "");
+    const aliases = {
+        balance: "بقایا", totaldue: "کل بقایا", totalpaid: "کل ادا شدہ",
+        totalcharged: "کل واجب فیس", amount: "رقم", status: "حالت",
+        paymentmethod: "ادائیگی کا طریقہ", paymentreference: "حوالہ نمبر",
+        feeperiod: "فیس مدت", duedate: "آخری تاریخ", paymentat: "ادائیگی کی تاریخ",
+        receivedfrom: "وصول کنندہ / ادا کنندہ", notes: "نوٹس", note: "نوٹ"
+    };
+    return aliases[compact] || App.profileLabel(key);
 };
 
 App.professionalSectionTitle = function (key) {
@@ -19077,7 +19100,7 @@ App.professionalTable = function (records) {
     }));
     const visible = keys.slice(0,8);
     if (!visible.length) return App.empty("کوئی ریکارڈ موجود نہیں۔");
-    return `<div class="professional-table-wrap"><table class="professional-table"><thead><tr>${visible.map(k=>`<th>${App.escape(App.profileLabel(k))}</th>`).join("")}</tr></thead><tbody>${records.map(item=>`<tr>${visible.map(k=>`<td>${App.escape(App.profileDisplayValue(k,item[k]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+    return `<div class="professional-table-wrap"><table class="professional-table"><thead><tr>${visible.map(k=>`<th>${App.escape(App.professionalLabel(k))}</th>`).join("")}</tr></thead><tbody>${records.map(item=>`<tr>${visible.map(k=>`<td>${App.escape(App.profileDisplayValue(k,item[k]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
 };
 
 App.professionalMetrics = function (obj) {
@@ -19139,7 +19162,7 @@ App.renderProfessionalProfile = function (data, type) {
     const roleName = type === "teacher" ? "استاد" : type === "admin" ? "ایڈمن" : "طالبہ";
 
     const personalPairs = App.professionalPrimitivePairs(personal).filter(([label]) => !["ریکارڈ نمبر"].includes(label));
-    const accountPairs = App.professionalPrimitivePairs(account).filter(([label]) => ["صارف نام","حالت","اکاؤنٹ حالت","آخری لاگ اِن"].includes(label));
+    const accountPairs = App.professionalPrimitivePairs(account).filter(([label]) => ["صارف نام","حالت","اکاؤنٹ حالت"].includes(label));
 
     const used = new Set([personal,account]);
     const candidates = [

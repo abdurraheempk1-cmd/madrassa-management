@@ -1,0 +1,12 @@
+IMPORTANT — upload/replace ALL files in this folder on GitHub.
+
+This build uses cache-busting version tags so Chrome/GitHub Pages loads the newest script.js, style.css and i18n.js.
+
+After upload:
+1. Wait 1–2 minutes for GitHub Pages.
+2. Close the old website tab.
+3. Open the site again.
+4. Admin > Accounts & Approval now has a visible “طالبات درآمد کریں” shortcut at the top and in the sidebar.
+5. Print Profile uses the professional renderer and hides internal database fields.
+
+SQL: If sql-parts/06-bulk-student-import.sql has not been run yet, run it once in Supabase SQL Editor.

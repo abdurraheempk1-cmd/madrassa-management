@@ -20,7 +20,7 @@
           rel="stylesheet">
 
     <link rel="stylesheet"
-          href="style.css">
+          href="style.css?v=20260930-final2">
 </head>
 
 
@@ -140,6 +140,12 @@
 
                 </a>
 
+                <a href="admin-accounts.html#studentBulkImportSection"
+                   class="portal-nav-link">
+                    <span>⬆</span>
+                    <strong>طالبات درآمد کریں</strong>
+                </a>
+
                 <a href="admin-settings.html"
                    class="portal-nav-link">
                     <span>⚙</span>
@@ -188,10 +194,16 @@
 
                 </div>
 
-                <a href="admin.html"
-                   class="small-action-button">
-                    ڈیش بورڈ
-                </a>
+                <div class="portal-topbar-actions">
+                    <a href="#studentBulkImportSection"
+                       class="small-action-button bulk-import-shortcut">
+                        طالبات درآمد کریں
+                    </a>
+                    <a href="admin.html"
+                       class="small-action-button secondary">
+                        ڈیش بورڈ
+                    </a>
+                </div>
 
             </section>
 
@@ -1516,10 +1528,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <script src="i18n.js?v=20260930-i18n1"></script>
+    <script src="i18n.js?v=20260930-final2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="script.js?v=20260929-logoutfix1"></script>
+    <script src="script.js?v=20260930-final2"></script>
 
 </body>
 
