@@ -5250,12 +5250,121 @@ App.renderStudentList =
         }
 
 
-        container.innerHTML =
+        const rows =
             records
                 .map(
-                    App.studentShortCard
+                    (student, index) => {
+
+                        const id =
+                            Number(
+                                student.id
+                            );
+
+
+                        return `
+                            <tr>
+                                <td class="student-table-serial">
+                                    ${index + 1}
+                                </td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="student-table-name"
+                                        data-student-open="${id}"
+                                    >
+                                        ${App.escape(
+                                            student.name ||
+                                            "—"
+                                        )}
+                                    </button>
+                                </td>
+
+                                <td>
+                                    <strong data-no-translate>
+                                        ${App.escape(
+                                            student.admission_no ||
+                                            "—"
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${App.escape(
+                                        student.father_name ||
+                                        "—"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${App.escape(
+                                        student.student_class ||
+                                        "—"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${App.escape(
+                                        student.residence_type ||
+                                        "—"
+                                    )}
+                                </td>
+
+                                <td data-no-translate>
+                                    ${App.escape(
+                                        student.phone ||
+                                        "—"
+                                    )}
+                                </td>
+
+                                <td>
+                                    <div class="student-table-actions">
+                                        <button
+                                            type="button"
+                                            class="small-action-button"
+                                            data-student-open="${id}"
+                                        >
+                                            مکمل تفصیل
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="small-action-button secondary"
+                                            data-student-print="${id}"
+                                        >
+                                            پرنٹ / PDF
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 )
                 .join("");
+
+
+        container.innerHTML = `
+            <div class="responsive-table-wrapper student-table-wrapper">
+                <table class="portal-table student-list-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>طالبہ کا نام</th>
+                            <th>داخلہ نمبر</th>
+                            <th>والد کا نام</th>
+                            <th>جماعت</th>
+                            <th>رہائش</th>
+                            <th>فون نمبر</th>
+                            <th>عمل</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </div>
+        `;
 
 
         container
