@@ -3305,7 +3305,7 @@
             const rows = App.asArray(await App.authedRpc("admin_get_recovery_requests"));
             App.recoveryRequests = rows;
             App.renderRecoveryRequests(rows);
-            App.message("adminRecoveryRequestsMessage", "", "");
+            App.hide("adminRecoveryRequestsMessage");
         } catch (error) {
             console.error("Recovery requests:", error);
             App.renderRecoveryRequests([]);
@@ -15554,7 +15554,7 @@ App.loadApprovalPage = async function () {
 
     try {
         students = App.asArray(await App.authedRpc("admin_get_student_applications"));
-        App.message("studentApplicationsMessage", "", "");
+        App.hide("studentApplicationsMessage");
     } catch (error) {
         console.error("Approval student applications:", error);
         App.message("studentApplicationsMessage", "طالبات کی درخواستیں لوڈ نہیں ہو سکیں۔", "error");
@@ -15562,7 +15562,7 @@ App.loadApprovalPage = async function () {
 
     try {
         teachers = App.asArray(await App.authedRpc("admin_get_teacher_applications"));
-        App.message("teacherApplicationsMessage", "", "");
+        App.hide("teacherApplicationsMessage");
     } catch (error) {
         console.error("Approval teacher applications:", error);
         App.message("teacherApplicationsMessage", "اساتذہ کی درخواستیں لوڈ نہیں ہو سکیں۔", "error");
