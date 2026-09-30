@@ -1,53 +1,198 @@
-/* Public QR + ID card compatibility fixes */
-.id-card-admission-line{grid-column:1/-1!important;min-width:0!important}
-.id-card-admission-line strong,
-.id-card-full-number b,
-.id-card-number-strip strong{
+/* Public QR + ID card compatibility fixes - v4 */
+
+/* ---------- FRONT CARD: keep Wifaq number fully visible ---------- */
+.id-card-front-body.no-photo{
+  padding:1.35mm 3.6mm 10.4mm!important;
+}
+.id-card-front-body.no-photo .id-card-title-line{
+  margin-bottom:.15mm!important;
+  font-size:1.9mm!important;
+  line-height:1.2!important;
+}
+.id-card-front-body.no-photo h3{
+  margin:0 0 .55mm!important;
+  font-size:3.8mm!important;
+  line-height:1.35!important;
+}
+.id-card-front-body.no-photo .id-card-info-grid{
+  gap:.35mm 1.7mm!important;
+}
+.id-card-front-body.no-photo .id-card-info-grid>div{
+  padding-bottom:.22mm!important;
+}
+.id-card-front-body.no-photo .id-card-info-grid span{
+  font-size:1.65mm!important;
+  line-height:1.15!important;
+}
+.id-card-front-body.no-photo .id-card-info-grid strong{
+  margin-top:.08mm!important;
+  font-size:2.15mm!important;
+  line-height:1.22!important;
+}
+
+.id-card-admission-line{
+  grid-column:1/-1!important;
+  min-width:0!important;
+  overflow:visible!important;
+}
+.id-card-admission-line strong{
   display:block!important;
   width:100%!important;
   max-width:100%!important;
+  direction:ltr!important;
+  unicode-bidi:isolate!important;
+  text-align:right!important;
+  white-space:nowrap!important;
   overflow:visible!important;
   text-overflow:clip!important;
-  white-space:normal!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
-  direction:ltr!important;
-  unicode-bidi:plaintext!important;
-  font-size:clamp(10px,2.1vw,14px)!important;
-  line-height:1.35!important
+  font-family:system-ui,sans-serif!important;
+  font-size:1.95mm!important;
+  line-height:1.2!important;
+  letter-spacing:0!important;
 }
+
+.id-card-validity-row{
+  bottom:5.25mm!important;
+  min-height:4.25mm!important;
+  padding-top:.35mm!important;
+  background:#fff!important;
+  z-index:2!important;
+}
+.id-card-validity-row span{
+  font-size:1.5mm!important;
+  line-height:1.1!important;
+}
+.id-card-validity-row strong{
+  margin-top:.05mm!important;
+  font-size:1.8mm!important;
+  line-height:1.15!important;
+}
+.id-card-validity-single{
+  grid-template-columns:1fr!important;
+}
+.id-card-validity-single>div{
+  padding-inline-start:0!important;
+  border-inline-start:0!important;
+}
+
+.id-card-number-strip{
+  min-height:5.1mm!important;
+  padding:.55mm 2.1mm!important;
+  z-index:3!important;
+}
+.id-card-number-strip span{
+  flex:0 0 auto!important;
+  font-size:1.65mm!important;
+}
+.id-card-number-strip strong{
+  display:block!important;
+  min-width:0!important;
+  max-width:100%!important;
+  width:auto!important;
+  direction:ltr!important;
+  unicode-bidi:isolate!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  font-family:system-ui,sans-serif!important;
+  font-size:1.9mm!important;
+  line-height:1.15!important;
+  letter-spacing:0!important;
+}
+
+/* ---------- BACK CARD: QR must stay inside the physical card ---------- */
 .id-card-back-footer.id-card-back-footer-single{
-  grid-template-columns:1fr!important
+  grid-template-columns:1fr!important;
+}
+.id-card-back-with-qr{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 23mm!important;
+  gap:1.7mm!important;
+  align-items:start!important;
+  padding:2.15mm 3.1mm 7.7mm!important;
+}
+.id-card-back-details{
+  min-width:0!important;
+  gap:.9mm 1.5mm!important;
+}
+.id-card-back-field{
+  padding:.75mm 1mm!important;
+}
+.id-card-back-field span{
+  font-size:1.55mm!important;
+  line-height:1.15!important;
+}
+.id-card-back-field strong{
+  font-size:1.95mm!important;
+  line-height:1.25!important;
+}
+
+.id-card-qr-panel{
+  width:23mm!important;
+  min-width:23mm!important;
+  max-width:23mm!important;
+  text-align:center!important;
+  overflow:visible!important;
 }
 .id-card-qr{
+  width:22mm!important;
+  height:22mm!important;
+  min-width:22mm!important;
+  min-height:22mm!important;
+  max-width:22mm!important;
+  max-height:22mm!important;
+  margin:0 auto .45mm!important;
+  padding:2mm!important;
+  border:.2mm solid #cbdcd4!important;
+  border-radius:1.2mm!important;
   background:#fff!important;
-  padding:10px!important;
-  border-radius:10px!important;
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
-  min-width:164px!important;
-  min-height:164px!important
+  box-sizing:border-box!important;
+  overflow:visible!important;
 }
-.id-card-qr img,.id-card-qr canvas,.id-card-qr-code img,.id-card-qr-code canvas{
+.id-card-qr img,
+.id-card-qr canvas,
+.id-card-qr-code img,
+.id-card-qr-code canvas{
   display:block!important;
+  width:18mm!important;
+  height:18mm!important;
+  min-width:18mm!important;
+  min-height:18mm!important;
+  max-width:18mm!important;
+  max-height:18mm!important;
   margin:auto!important;
+  padding:0!important;
   background:#fff!important;
-  image-rendering:pixelated
+  image-rendering:pixelated;
 }
+.id-card-qr-panel>span{
+  font-size:1.7mm!important;
+  line-height:1.15!important;
+}
+.id-card-qr-panel>small{
+  margin-top:.15mm!important;
+  font-size:1.35mm!important;
+  line-height:1.15!important;
+}
+
+/* ---------- Male teacher/admin photo only ---------- */
 .id-card-person-photo{
-  width:76px;
-  height:92px;
-  border:1px solid #d7e3de;
-  border-radius:10px;
+  width:18mm;
+  height:22mm;
+  border:.2mm solid #d7e3de;
+  border-radius:1.8mm;
   overflow:hidden;
   background:#f4f8f6;
   flex:0 0 auto
 }
 .id-card-person-photo img{width:100%;height:100%;object-fit:cover}
-.id-card-front-body.has-photo{display:flex;gap:12px;align-items:flex-start}
+.id-card-front-body.has-photo{display:flex;gap:2.2mm;align-items:flex-start}
 .id-card-front-body.has-photo .id-card-main-info{min-width:0;flex:1}
 
+/* ---------- Public verification page ---------- */
 .public-verification-page{
   margin:0;
   min-height:100vh;
@@ -122,10 +267,25 @@
   gap:8px;
   color:#52635d
 }
+
 @media(max-width:600px){
   .verification-summary,.verification-grid,.verification-mahram-card{grid-template-columns:1fr}
   .verification-wide{grid-column:auto}
   .verification-shell{width:min(100% - 14px,900px);margin-top:10px}
   .verification-state,.verification-content{padding:14px}
-  .id-card-front-body.has-photo{gap:8px}
+  .id-card-front-body.has-photo{gap:1.5mm}
+}
+
+@media print{
+  body.id-card-page .id-card-admission-line strong{
+    white-space:nowrap!important;
+    overflow:visible!important;
+    text-overflow:clip!important
+  }
+  body.id-card-page .id-card-qr,
+  body.id-card-page .id-card-qr img,
+  body.id-card-page .id-card-qr canvas{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important
+  }
 }
