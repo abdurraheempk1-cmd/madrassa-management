@@ -287,8 +287,16 @@
                 return;
             }
 
+            const messageText =
+                App.safe(text);
+
+            const messageType =
+                App.safe(type)
+                    .trim()
+                    .toLowerCase();
+
             node.textContent =
-                text || "";
+                messageText;
 
             node.classList.remove(
                 "success",
@@ -297,11 +305,29 @@
                 "info"
             );
 
-            node.classList.add(
-                type
-            );
+            if (
+                messageType &&
+                [
+                    "success",
+                    "error",
+                    "warning",
+                    "info"
+                ].includes(
+                    messageType
+                )
+            ) {
+                node.classList.add(
+                    messageType
+                );
+            }
 
-            node.hidden = false;
+            /*
+               Empty text means "clear this message".
+               Never pass an empty token to classList.add(), because
+               browsers throw a DOMTokenList error for "".
+            */
+            node.hidden =
+                !messageText.trim();
         };
 
 
