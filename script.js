@@ -4971,18 +4971,343 @@ App.fetchCompleteProfile =
         ownerId
     ) {
 
-        return App.authedRpc(
-            "admin_print_profile_data",
-            {
-                p_owner_type:
-                    ownerType,
+        const type =
+            App.safe(
+                ownerType
+            )
+                .trim()
+                .toLowerCase();
 
-                p_owner_id:
-                    Number(
-                        ownerId
-                    )
+        const id =
+            Number(
+                ownerId
+            );
+
+
+        /*
+           Full profile RPC is preferred, but older/imported student records
+           can occasionally make that large RPC slow or fail.  Do not leave
+           the profile stuck on "loading".  For students we fall back to the
+           core Students record and load independent history sections that
+           are available.
+        */
+
+        let fullResponse = null;
+        let fullError = null;
+
+        try {
+
+            const timeout =
+                new Promise(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+
+                        window.setTimeout(
+                            function () {
+                                reject(
+                                    new Error(
+                                        "PROFILE_LOAD_TIMEOUT"
+                                    )
+                                );
+                            },
+                            12000
+                        );
+                    }
+                );
+
+
+            fullResponse =
+                await Promise.race(
+                    [
+                        App.authedRpc(
+                            "admin_print_profile_data",
+                            {
+                                p_owner_type:
+                                    type,
+
+                                p_owner_id:
+                                    id
+                            }
+                        ),
+                        timeout
+                    ]
+                );
+
+
+        } catch (error) {
+
+            fullError =
+                error;
+
+            console.warn(
+                "Complete profile primary RPC:",
+                error
+            );
+        }
+
+
+        if (
+            type !== "student"
+        ) {
+
+            if (
+                fullError
+            ) {
+                throw fullError;
             }
-        );
+
+            return fullResponse;
+        }
+
+
+        const responseHasData =
+            fullResponse &&
+            typeof fullResponse ===
+                "object";
+
+
+        let data =
+            responseHasData
+                ? (
+                    fullResponse.data &&
+                    typeof fullResponse.data ===
+                        "object"
+                        ? fullResponse.data
+                        : fullResponse
+                )
+                : {};
+
+
+        let student =
+            Array.isArray(
+                App.students
+            )
+                ? App.students.find(
+                    item =>
+                        Number(
+                            item?.id
+                        ) ===
+                        id
+                )
+                : null;
+
+
+        if (
+            !student
+        ) {
+
+            try {
+
+                const records =
+                    App.asArray(
+                        await App.authedRpc(
+                            "admin_get_students"
+                        )
+                    );
+
+
+                student =
+                    records.find(
+                        item =>
+                            Number(
+                                item?.id
+                            ) ===
+                            id
+                    ) ||
+                    null;
+
+
+            } catch (error) {
+
+                console.warn(
+                    "Student profile fallback record:",
+                    error
+                );
+            }
+        }
+
+
+        const existingPersonal =
+            App.professionalFindObject
+                ? App.professionalFindObject(
+                    data,
+                    [
+                        "core.personal",
+                        "core.student",
+                        "personal",
+                        "student",
+                        "profile"
+                    ]
+                )
+                : null;
+
+
+        if (
+            student &&
+            !existingPersonal
+        ) {
+
+            data =
+                Object.assign(
+                    {},
+                    data,
+                    {
+                        student:
+                            student,
+
+                        personal:
+                            student
+                    }
+                );
+        }
+
+
+        /*
+           When the big profile RPC failed, retrieve independent sections
+           separately.  Each one is isolated, so one missing module cannot
+           stop the rest of the profile from opening.
+        */
+
+        if (
+            fullError ||
+            !responseHasData
+        ) {
+
+            const requests = [
+                [
+                    "fees",
+                    "admin_student_fee_history",
+                    {
+                        p_student_id:
+                            id
+                    }
+                ],
+                [
+                    "hostel_history",
+                    "admin_student_hostel_history",
+                    {
+                        p_student_id:
+                            id
+                    }
+                ],
+                [
+                    "promotion_history",
+                    "admin_student_promotion_history",
+                    {
+                        p_student_id:
+                            id
+                    }
+                ],
+                [
+                    "documents",
+                    "admin_document_history",
+                    {
+                        p_owner_type:
+                            "student",
+
+                        p_owner_id:
+                            id
+                    }
+                ],
+                [
+                    "issued_documents",
+                    "admin_issued_document_history",
+                    {
+                        p_owner_type:
+                            "student",
+
+                        p_owner_id:
+                            id
+                    }
+                ]
+            ];
+
+
+            const settled =
+                await Promise.allSettled(
+                    requests.map(
+                        item =>
+                            App.authedRpc(
+                                item[1],
+                                item[2]
+                            )
+                    )
+                );
+
+
+            settled.forEach(
+                (
+                    result,
+                    index
+                ) => {
+
+                    if (
+                        result.status !==
+                        "fulfilled"
+                    ) {
+                        return;
+                    }
+
+
+                    const key =
+                        requests[
+                            index
+                        ][0];
+
+
+                    const value =
+                        result.value;
+
+
+                    if (
+                        value !== null &&
+                        value !== undefined
+                    ) {
+
+                        data[
+                            key
+                        ] =
+                            value;
+                    }
+                }
+            );
+        }
+
+
+        if (
+            !student &&
+            !Object.keys(
+                data ||
+                {}
+            ).length &&
+            fullError
+        ) {
+
+            throw fullError;
+        }
+
+
+        if (
+            fullResponse &&
+            fullResponse.data &&
+            typeof fullResponse.data ===
+                "object"
+        ) {
+
+            return Object.assign(
+                {},
+                fullResponse,
+                {
+                    data:
+                        data
+                }
+            );
+        }
+
+
+        return data;
     };
 
 
@@ -5597,14 +5922,29 @@ App.openStudentCompleteDetails =
             );
 
 
+        const basicHtml =
+            student
+                ? App.renderProfessionalProfile(
+                    {
+                        student:
+                            student,
+
+                        personal:
+                            student
+                    },
+                    "student"
+                )
+                : App.empty(
+                    "مکمل ریکارڈ لوڈ ہو رہا ہے..."
+                );
+
+
         const loading =
             App.openGeneratedPanel(
                 "generatedStudentCompleteDetails",
                 student?.name ||
                 "طالبہ کا مکمل پروفائل",
-                App.empty(
-                    "مکمل ریکارڈ لوڈ ہو رہا ہے..."
-                )
+                basicHtml
             );
 
 
