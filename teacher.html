@@ -1,7 +1,668 @@
-<!doctype html>
-<html lang="ur" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>استاد پورٹل</title><link rel="stylesheet" href="style.css?v=20260930-bulkselect1"></head>
-<body class="portal-page"><header class="portal-top"><button type="button" data-sidebar-toggle>☰</button><div><h1>استاد پورٹل</h1><p>مدرسہ شہناز اختر للبنات</p></div><button type="button" data-logout>لاگ آؤٹ</button></header>
-<nav class="portal-nav"><a href="teacher.html">پروفائل</a><a href="attendance.html">حاضری</a><a href="teacher-students.html">طالبات</a><a href="teacher-marks.html">نمبرات</a><a href="teacher-homework.html">ہوم ورک</a><a href="teacher-announcements.html">اعلانات</a><a href="teacher-feedback.html">تبصرے</a><a href="teacher-settings.html">ترتیبات</a></nav>
-<main class="portal-main"><section class="portal-hero"><h2>خوش آمدید، <span id="teacherName">استاد</span></h2><p>تدریسی ریکارڈ اور روزمرہ امور</p></section><section id="profile" class="portal-panel"><h2>استاد پروفائل</h2><div class="profile-grid"><p><b>نام:</b> <span id="teacherProfileName">—</span></p><p><b>استاد کوڈ:</b> <span id="teacherProfileCode">—</span></p><p><b>فون:</b> <span id="teacherProfilePhone">—</span></p><p><b>شناختی نمبر:</b> <span id="teacherProfileCNIC">—</span></p><p><b>تعلیم:</b> <span id="teacherProfileQualification">—</span></p><p><b>جماعت:</b> <span id="teacherProfileClass">—</span></p><p><b>مضمون:</b> <span id="teacherProfileSubject">—</span></p><p><b>تجربہ:</b> <span id="teacherProfileExperience">—</span></p><p><b>تاریخ تقرری:</b> <span id="teacherProfileJoiningDate">—</span></p></div></section></main>
-<script src="i18n.js?v=20260930-bulkselect1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="script.js?v=20260930-bulkselect1"></script></body></html>
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        استاد ڈیش بورڈ | مدرسہ شہناز اختر للبنات
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css?v=20261004-teacher-dashboard2"
+    >
+
+    <style>
+        body.teacher-dashboard-page {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #f4f7f5;
+            color: #173228;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        .teacher-dashboard-page .portal-main {
+            width: 100%;
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        .teacher-dashboard-hero {
+            width: 100%;
+            min-height: 175px;
+            padding: 28px 26px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg,#074a32,#0b6a47);
+            border-radius: 20px;
+            color: #fff;
+            box-shadow: 0 10px 28px rgba(7,74,50,.14);
+        }
+
+        .teacher-dashboard-hero::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            left: -80px;
+            bottom: -120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+        }
+
+        .teacher-dashboard-hero > div {
+            position: relative;
+            z-index: 2;
+        }
+
+        .teacher-dashboard-label {
+            display: block;
+            margin-bottom: 3px;
+            color: #d6e9df;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .teacher-dashboard-hero h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 2;
+        }
+
+        .teacher-dashboard-hero p {
+            margin: 3px 0 0;
+            color: rgba(255,255,255,.78);
+            font-size: 11px;
+        }
+
+        .teacher-dashboard-badge {
+            position: relative;
+            z-index: 2;
+            padding: 8px 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.10);
+            color: #fff;
+            font-size: 10px;
+        }
+
+        .teacher-dashboard-actions {
+            display: grid;
+            grid-template-columns: repeat(4,minmax(0,1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .teacher-dashboard-action {
+            min-width: 0;
+            min-height: 88px;
+            padding: 10px 7px;
+            border: 1px solid #dfe8e3;
+            border-radius: 14px;
+            background: #fff;
+            color: #17372b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(20,65,45,.04);
+            text-decoration: none;
+        }
+
+        .teacher-dashboard-action span {
+            width: 34px;
+            height: 34px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #eaf4ef;
+            font-family: Arial,sans-serif;
+            font-size: 14px;
+        }
+
+        .teacher-dashboard-action strong {
+            color: #17372b;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        .teacher-dashboard-card {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 16px;
+            border: 1px solid #dfe8e3;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(20,65,45,.04);
+        }
+
+        .teacher-dashboard-card-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .teacher-dashboard-card-heading h2 {
+            margin: 0;
+            color: #15372a;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .teacher-dashboard-card-heading p {
+            margin: 0;
+            color: #839087;
+            font-size: 9px;
+        }
+
+        .teacher-profile-grid {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 8px;
+        }
+
+        .teacher-profile-item {
+            min-width: 0;
+            min-height: 76px;
+            padding: 10px 12px;
+            border: 1px solid #e2ebe6;
+            border-radius: 12px;
+            background: #f9fbfa;
+        }
+
+        .teacher-profile-item span {
+            display: block;
+            color: #76847c;
+            font-size: 9px;
+            margin-bottom: 4px;
+        }
+
+        .teacher-profile-item strong {
+            display: block;
+            color: #17372b;
+            font-size: 12px;
+            line-height: 1.9;
+            word-break: break-word;
+        }
+
+        .teacher-profile-highlight {
+            background: #edf7f2;
+            border-color: #cfe3d8;
+        }
+
+        .teacher-dashboard-footer {
+            padding: 14px;
+            text-align: center;
+            color: #75827b;
+            font-size: 9px;
+        }
+
+        @media (max-width: 850px) {
+            .teacher-dashboard-page .portal-main {
+                padding: 9px;
+            }
+
+            .teacher-dashboard-hero {
+                min-height: 150px;
+                padding: 22px 18px;
+                margin-bottom: 8px;
+                border-radius: 17px;
+            }
+
+            .teacher-dashboard-label {
+                font-size: 10px;
+            }
+
+            .teacher-dashboard-hero h1 {
+                font-size: 27px;
+                line-height: 2;
+            }
+
+            .teacher-dashboard-hero p {
+                font-size: 9px;
+            }
+
+            .teacher-dashboard-badge {
+                display: none;
+            }
+
+            .teacher-dashboard-actions {
+                grid-template-columns: repeat(2,minmax(0,1fr));
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+
+            .teacher-dashboard-action {
+                min-height: 72px;
+                border-radius: 12px;
+            }
+
+            .teacher-dashboard-action span {
+                width: 29px;
+                height: 29px;
+                font-size: 12px;
+            }
+
+            .teacher-dashboard-action strong {
+                font-size: 9px;
+            }
+
+            .teacher-dashboard-card {
+                margin-bottom: 8px;
+                padding: 11px;
+                border-radius: 13px;
+            }
+
+            .teacher-profile-grid {
+                grid-template-columns: repeat(2,minmax(0,1fr));
+                gap: 6px;
+            }
+
+            .teacher-profile-item {
+                min-height: 66px;
+                padding: 8px 9px;
+            }
+
+            .teacher-profile-item span {
+                font-size: 8px;
+            }
+
+            .teacher-profile-item strong {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 370px) {
+            .teacher-dashboard-hero h1 {
+                font-size: 24px;
+            }
+
+            .teacher-profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="teacher-portal-page teacher-dashboard-page">
+
+    <header class="portal-mobile-header">
+
+        <button
+            type="button"
+            class="portal-menu-button"
+            id="teacherMenuButton"
+            aria-label="مینو"
+        >
+            ☰
+        </button>
+
+        <div class="portal-mobile-title">
+            مدرسہ شہناز اختر للبنات
+        </div>
+
+    </header>
+
+
+    <div class="portal-layout">
+
+
+        <aside
+            class="portal-sidebar"
+            id="teacherSidebar"
+        >
+
+            <div class="portal-brand">
+
+                <div class="portal-brand-icon">
+                    🕌
+                </div>
+
+                <h2>
+                    مدرسہ شہناز اختر للبنات
+                </h2>
+
+                <p>
+                    گاؤں ہل غورغشتوں، ضلع بونیر
+                </p>
+
+                <span class="portal-role-label">
+                    استاد پورٹل
+                </span>
+
+            </div>
+
+
+            <nav class="portal-navigation">
+
+                <a
+                    href="teacher.html"
+                    class="portal-nav-link active"
+                >
+                    <span>⌂</span>
+                    <strong>ڈیش بورڈ</strong>
+                </a>
+
+                <a
+                    href="teacher.html#profile"
+                    class="portal-nav-link"
+                >
+                    <span>👤</span>
+                    <strong>پروفائل</strong>
+                </a>
+
+                <a
+                    href="attendance.html"
+                    class="portal-nav-link"
+                >
+                    <span>✓</span>
+                    <strong>حاضری</strong>
+                </a>
+
+                <a
+                    href="teacher-students.html"
+                    class="portal-nav-link"
+                >
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a
+                    href="teacher-marks.html"
+                    class="portal-nav-link"
+                >
+                    <span>▤</span>
+                    <strong>نمبرات</strong>
+                </a>
+
+                <a
+                    href="teacher-homework.html"
+                    class="portal-nav-link"
+                >
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a
+                    href="teacher-announcements.html"
+                    class="portal-nav-link"
+                >
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a
+                    href="teacher-feedback.html"
+                    class="portal-nav-link"
+                >
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+                <a
+                    href="teacher-settings.html"
+                    class="portal-nav-link"
+                >
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </nav>
+
+
+            <div class="portal-sidebar-footer">
+
+                <button
+                    type="button"
+                    id="teacherLogoutButton"
+                    class="portal-logout-button"
+                >
+                    خروج
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <div
+            class="portal-sidebar-overlay"
+            id="teacherSidebarOverlay"
+        ></div>
+
+
+        <main class="portal-main">
+
+
+            <section class="teacher-dashboard-hero">
+
+                <div>
+
+                    <span class="teacher-dashboard-label">
+                        تدریسی نظام
+                    </span>
+
+                    <h1>
+                        خوش آمدید،
+                        <span id="teacherName">
+                            استاد
+                        </span>
+                    </h1>
+
+                    <p>
+                        حاضری، طالبات، نمبرات اور تدریسی امور
+                    </p>
+
+                </div>
+
+                <span class="teacher-dashboard-badge">
+                    استاد ڈیش بورڈ
+                </span>
+
+            </section>
+
+
+            <section class="teacher-dashboard-actions">
+
+                <a
+                    href="attendance.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>✓</span>
+                    <strong>حاضری درج کریں</strong>
+                </a>
+
+                <a
+                    href="teacher-students.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>👥</span>
+                    <strong>طالبات</strong>
+                </a>
+
+                <a
+                    href="teacher-marks.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>▤</span>
+                    <strong>نمبرات</strong>
+                </a>
+
+                <a
+                    href="teacher-homework.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>📚</span>
+                    <strong>ہوم ورک</strong>
+                </a>
+
+                <a
+                    href="teacher-announcements.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>🔔</span>
+                    <strong>اعلانات</strong>
+                </a>
+
+                <a
+                    href="teacher-feedback.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>✎</span>
+                    <strong>طالبات کے نوٹس</strong>
+                </a>
+
+                <a
+                    href="#profile"
+                    class="teacher-dashboard-action"
+                >
+                    <span>👤</span>
+                    <strong>پروفائل</strong>
+                </a>
+
+                <a
+                    href="teacher-settings.html"
+                    class="teacher-dashboard-action"
+                >
+                    <span>⚙</span>
+                    <strong>ترتیبات</strong>
+                </a>
+
+            </section>
+
+
+            <section
+                id="profile"
+                class="teacher-dashboard-card"
+            >
+
+                <div class="teacher-dashboard-card-heading">
+
+                    <div>
+
+                        <h2>
+                            استاد پروفائل
+                        </h2>
+
+                        <p>
+                            ذاتی اور تدریسی معلومات
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-profile-grid">
+
+                    <div class="teacher-profile-item teacher-profile-highlight">
+                        <span>نام</span>
+                        <strong id="teacherProfileName">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item teacher-profile-highlight">
+                        <span>استاد کوڈ</span>
+                        <strong id="teacherProfileCode">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>فون نمبر</span>
+                        <strong id="teacherProfilePhone">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>شناختی نمبر</span>
+                        <strong id="teacherProfileCNIC">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>تعلیم</span>
+                        <strong id="teacherProfileQualification">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>جماعت</span>
+                        <strong id="teacherProfileClass">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>مضمون</span>
+                        <strong id="teacherProfileSubject">—</strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>تجربہ</span>
+                        <strong>
+                            <span id="teacherProfileExperience">—</span>
+                            سال
+                        </strong>
+                    </div>
+
+                    <div class="teacher-profile-item">
+                        <span>تاریخ تقرری</span>
+                        <strong id="teacherProfileJoiningDate">—</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <footer class="teacher-dashboard-footer">
+                مدرسہ شہناز اختر للبنات — گاؤں ہل غورغشتوں، ضلع بونیر
+            </footer>
+
+
+        </main>
+
+    </div>
+
+
+    <script src="i18n.js?v=20261004-teacher-dashboard2"></script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <script src="script.js?v=20261004-teacher-dashboard2"></script>
+
+</body>
+
+</html>
