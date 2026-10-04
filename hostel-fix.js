@@ -10,6 +10,8 @@ App.initHostelPage = async function () {
     if (!session) return;
 
     const studentSelect = App.el("hostelStudentId");
+    const studentSearch = App.el("hostelStudentSearch");
+    const classFilter = App.el("hostelClassFilter");
     const mahramSelect = App.el("hostelMahramId");
     const movementSelect = App.el("hostelMovementId");
     const historyBody = App.el("hostelHistoryBody");
@@ -21,6 +23,7 @@ App.initHostelPage = async function () {
     const returnSubmit = App.el("hostelReturnSubmit");
 
     let students = [];
+    let filteredStudents = [];
     let currentHistory = [];
 
     function message(text, kind) {
@@ -118,14 +121,14 @@ App.initHostelPage = async function () {
         };
     }
 
-    function renderHistory(history) {
+    function renderHistory(history, selectedStudent) {
         currentHistory = Array.isArray(history) ? history : [];
 
         if (!historyBody) return;
 
         if (!currentHistory.length) {
             historyBody.innerHTML =
-                '<tr><td colspan="6" class="hostel-history-empty">کوئی آمد و رفت ریکارڈ موجود نہیں۔</td></tr>';
+                '<tr><td colspan="7" class="hostel-history-empty">کوئی آمد و رفت ریکارڈ موجود نہیں۔</td></tr>';
         } else {
             historyBody.innerHTML = currentHistory.map(item => {
                 const returned =
@@ -134,7 +137,14 @@ App.initHostelPage = async function () {
                     item.returned_date ||
                     null;
 
+                const studentName =
+                    item.student_name ||
+                    selectedStudent?.name ||
+                    students.find(s => Number(s.id) === Number(item.student_id))?.name ||
+                    "—";
+
                 return '<tr>' +
+                    '<td>' + App.escape(studentName) + '</td>' +
                     '<td>' + App.escape(App.dateTime(item.exit_at || item.exited_at || item.created_at)) + '</td>' +
                     '<td>' + App.escape(item.mahram_name || item.exit_person_name || "—") + '</td>' +
                     '<td>' + App.escape(item.destination || "—") + '</td>' +
@@ -171,8 +181,132 @@ App.initHostelPage = async function () {
         }
     }
 
+    function studentMatchesFilters(student) {
+        const query = App.safe(studentSearch?.value).trim().toLowerCase();
+        const klass = App.safe(classFilter?.value).trim();
+
+        if (klass && App.safe(student.student_class).trim() !== klass) {
+            return false;
+        }
+
+        if (!query) return true;
+
+        const haystack = [
+            student.name,
+            student.father_name,
+            student.guardian_name,
+            student.admission_no,
+            student.phone,
+            student.cnic,
+            student.student_class
+        ].map(v => App.safe(v).toLowerCase()).join(" ");
+
+        return haystack.includes(query);
+    }
+
+    function refreshStudentSelect() {
+        if (!studentSelect) return;
+
+        const previous = studentSelect.value;
+        filteredStudents = students.filter(studentMatchesFilters);
+
+        studentSelect.innerHTML =
+            '<option value="">ایک طالبہ منتخب کریں</option>' +
+            '<option value="all">تمام طالبات (' + filteredStudents.length + ')</option>' +
+            filteredStudents.map(student => {
+                const residence = App.safe(student.residence_type).trim();
+                const label =
+                    (student.admission_no || "—") +
+                    " — " +
+                    (student.name || "—") +
+                    (student.student_class ? " — " + student.student_class : "") +
+                    (residence ? " — " + residence : "");
+
+                return '<option value="' + Number(student.id) + '">' +
+                    App.escape(label) +
+                '</option>';
+            }).join("");
+
+        if ([...studentSelect.options].some(o => o.value === previous)) {
+            studentSelect.value = previous;
+        } else {
+            studentSelect.value = "";
+        }
+
+        studentSelect.disabled = filteredStudents.length === 0;
+
+        if (!filteredStudents.length) {
+            message("اس تلاش / جماعت میں کوئی طالبہ نہیں ملی۔", "error");
+        } else {
+            message("ایک طالبہ یا تمام طالبات منتخب کریں۔");
+        }
+    }
+
+    async function loadAllFilteredStudents() {
+        setFormsEnabled(false);
+
+        if (mahramSelect) {
+            mahramSelect.innerHTML = '<option value="">تمام طالبات میں روانگی درج نہیں کی جا سکتی</option>';
+            mahramSelect.disabled = true;
+        }
+
+        if (movementSelect) {
+            movementSelect.innerHTML = '<option value="">واپسی کے لیے ایک طالبہ منتخب کریں</option>';
+            movementSelect.disabled = true;
+        }
+
+        if (meta) {
+            meta.textContent =
+                "کل طالبات: " + filteredStudents.length +
+                (classFilter?.value ? " | جماعت: " + classFilter.value : " | تمام جماعتیں");
+        }
+
+        if (!filteredStudents.length) {
+            renderHistory([]);
+            message("کوئی طالبہ موجود نہیں۔", "error");
+            return;
+        }
+
+        message("تمام منتخب طالبات کی آمد و رفت کی تاریخ لوڈ ہو رہی ہے...");
+
+        const settled = await Promise.allSettled(
+            filteredStudents.map(student =>
+                App.getStudentHostelHistory(Number(student.id))
+                    .then(history =>
+                        App.asArray(history).map(item => ({
+                            ...item,
+                            student_id: item.student_id || student.id,
+                            student_name: item.student_name || student.name
+                        }))
+                    )
+            )
+        );
+
+        const combined = settled
+            .filter(r => r.status === "fulfilled")
+            .flatMap(r => r.value)
+            .sort((a,b) => {
+                const da = new Date(a.exit_at || a.exited_at || a.created_at || 0).getTime();
+                const db = new Date(b.exit_at || b.exited_at || b.created_at || 0).getTime();
+                return db - da;
+            });
+
+        renderHistory(combined);
+        message(
+            "تمام طالبات کی تاریخ دکھائی جا رہی ہے۔ روانگی یا واپسی درج کرنے کے لیے ایک طالبہ منتخب کریں۔",
+            "success"
+        );
+    }
+
     async function loadSelectedStudent() {
-        const studentId = Number(studentSelect?.value || 0);
+        const selectedValue = App.safe(studentSelect?.value).trim();
+
+        if (selectedValue === "all") {
+            await loadAllFilteredStudents();
+            return;
+        }
+
+        const studentId = Number(selectedValue || 0);
 
         if (!studentId) {
             setFormsEnabled(false);
@@ -186,7 +320,7 @@ App.initHostelPage = async function () {
             }
             if (historyBody) {
                 historyBody.innerHTML =
-                    '<tr><td colspan="6" class="hostel-history-empty">طالبہ منتخب کریں۔</td></tr>';
+                    '<tr><td colspan="7" class="hostel-history-empty">طالبہ منتخب کریں۔</td></tr>';
             }
             if (meta) meta.textContent = "";
             message("طالبہ منتخب کریں۔");
@@ -215,7 +349,7 @@ App.initHostelPage = async function () {
                 ? App.asArray(results[0].value)
                 : [];
 
-        renderHistory(history);
+        renderHistory(history, student);
 
         let profile =
             results[1].status === "fulfilled"
@@ -280,29 +414,23 @@ App.initHostelPage = async function () {
             .filter(item => Number(item?.id) > 0)
             .sort((a,b) => App.safe(a.name).localeCompare(App.safe(b.name),"ur"));
 
-        if (studentSelect) {
-            studentSelect.innerHTML =
-                '<option value="">طالبہ منتخب کریں</option>' +
-                students.map(student => {
-                    const residence = App.safe(student.residence_type).trim();
-                    const label =
-                        (student.admission_no || "—") +
-                        " — " +
-                        (student.name || "—") +
-                        (residence ? " — " + residence : "");
-
-                    return '<option value="' + Number(student.id) + '">' +
-                        App.escape(label) +
-                    '</option>';
-                }).join("");
-
-            studentSelect.disabled = students.length === 0;
+        if (classFilter) {
+            classFilter.innerHTML =
+                '<option value="">تمام جماعتیں</option>' +
+                (Array.isArray(App.CLASSES) ? App.CLASSES : [])
+                    .map(klass =>
+                        '<option value="' + App.escape(klass) + '">' +
+                            App.escape(klass) +
+                        '</option>'
+                    )
+                    .join("");
         }
+
+        filteredStudents = students.slice();
+        refreshStudentSelect();
 
         if (!students.length) {
             message("کوئی طالبہ موجود نہیں۔", "error");
-        } else {
-            message("طالبہ منتخب کریں۔");
         }
 
     } catch (error) {
@@ -317,6 +445,20 @@ App.initHostelPage = async function () {
 
     if (studentSelect) {
         studentSelect.addEventListener("change", loadSelectedStudent);
+    }
+
+    if (studentSearch) {
+        studentSearch.addEventListener("input", function () {
+            refreshStudentSelect();
+            loadSelectedStudent();
+        });
+    }
+
+    if (classFilter) {
+        classFilter.addEventListener("change", function () {
+            refreshStudentSelect();
+            loadSelectedStudent();
+        });
     }
 
     if (exitForm) {
