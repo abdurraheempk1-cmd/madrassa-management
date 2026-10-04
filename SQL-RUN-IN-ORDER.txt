@@ -57,3 +57,10 @@ HOSTEL / MOVEMENT MAHRAM SEARCH:
 This exposes the stored approved mahram JSON to the Admin movement page so:
 - Student -> all approved mahrams
 - Mahram -> all connected students
+
+
+ATTENDANCE STATUS FIX:
+    Run: sql-parts/12-attendance-status-fix.sql
+
+Allows present, absent, leave and late (plus Urdu equivalents) in Attendance.status.
+Fixes Attendance_status_check errors when saving رخصت / تاخیر.
