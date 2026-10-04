@@ -93,7 +93,8 @@ App.initHostelPage = async function () {
             item.id ||
             item.mahram_id ||
             item.student_mahram_id ||
-            item.value ||
+            item.mahram_index ||
+            (index + 1) ||
             0
         );
 
@@ -773,11 +774,28 @@ App.initHostelPage = async function () {
     }
 
     try {
-        students =
-            App.asArray(
+        let studentResponse = null;
+
+        try {
+            studentResponse =
+                await App.authedRpc(
+                    "admin_get_students_with_mahrams"
+                );
+        } catch (error) {
+            console.warn(
+                "Students with mahrams RPC:",
+                error
+            );
+
+            studentResponse =
                 await App.authedRpc(
                     "admin_get_students"
-                )
+                );
+        }
+
+        students =
+            App.asArray(
+                studentResponse
             )
                 .filter(
                     item => Number(item?.id) > 0
