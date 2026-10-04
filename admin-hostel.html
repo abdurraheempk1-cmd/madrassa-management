@@ -4,17 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>مدرسہ میں رہائش</title>
-  <link rel="stylesheet" href="style.css?v=20261004-hostel3">
+  <link rel="stylesheet" href="style.css?v=20261004-hostel4">
   <style>
     .hostel-status{margin-top:10px;padding:10px 12px;border:1px solid #dbe6df;border-radius:12px;background:#f7faf8;line-height:1.8}
     .hostel-status.error{border-color:#efc7c7;background:#fff5f5;color:#8a1f1f}
     .hostel-status.success{border-color:#b9dfca;background:#f1fbf5;color:#17613d}
-    .hostel-student-meta{margin-top:8px;color:#5d6d65;font-size:13px}
+    .hostel-student-meta{margin-top:8px;color:#5d6d65;font-size:13px;line-height:1.8}
     .hostel-actions-disabled{opacity:.55;pointer-events:none}
     .hostel-history-empty{text-align:center;padding:18px;color:#78857f}
-    .hostel-student-filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-    .hostel-student-filters input,.hostel-student-filters select{width:100%}
-    @media(max-width:680px){.hostel-student-filters{grid-template-columns:1fr}}
+    .movement-search-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .movement-search-grid input,.movement-search-grid select{width:100%}
+    .connected-students{display:grid;gap:8px;margin-top:10px}
+    .connected-student-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #dfe9e3;border-radius:12px;background:#fff}
+    .connected-student-row input{width:18px;height:18px;flex:0 0 auto}
+    .connected-student-row span{display:block;min-width:0}
+    .connected-student-row strong{display:block}
+    .connected-student-row small{display:block;color:#718078;margin-top:2px}
+    .movement-select-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .movement-select-tools button{width:auto;min-height:38px;margin:0;padding:6px 12px}
+    .movement-selected-count{margin-inline-start:auto;font-weight:700;color:#176b4c}
+    .movement-mode-note{margin-top:8px;color:#6b7b73;font-size:13px}
+    @media(max-width:680px){
+      .movement-search-grid{grid-template-columns:1fr}
+      .movement-selected-count{width:100%;margin-inline-start:0}
+    }
   </style>
 </head>
 <body class="portal-page">
@@ -27,38 +40,73 @@
 <main class="portal-main">
 
   <section class="portal-panel">
-    <div class="hostel-student-filters">
-      <label>
-        تلاش
-        <input id="hostelStudentSearch" type="search" placeholder="نام، داخلہ نمبر، والد یا فون سے تلاش کریں">
-      </label>
-      <label>
-        جماعت
-        <select id="hostelClassFilter">
-          <option value="">تمام جماعتیں</option>
-        </select>
-      </label>
+    <h2>طالبہ یا محرم تلاش کریں</h2>
+
+    <div class="movement-search-grid">
+      <div>
+        <label>
+          طالبہ تلاش کریں
+          <input id="hostelStudentSearch" type="search" placeholder="نام، داخلہ نمبر، والد یا فون">
+        </label>
+
+        <label>
+          طالبہ
+          <select id="hostelStudentId">
+            <option value="">طالبات لوڈ ہو رہی ہیں...</option>
+          </select>
+        </label>
+
+        <p class="movement-mode-note">طالبہ منتخب کرنے پر اس کے تمام منظور شدہ محرم دکھیں گے۔</p>
+      </div>
+
+      <div>
+        <label>
+          محرم تلاش کریں
+          <input id="hostelMahramSearch" type="search" placeholder="محرم کا نام، شناختی نمبر یا فون">
+        </label>
+
+        <label>
+          محرم
+          <select id="hostelGlobalMahramId">
+            <option value="">محرم لوڈ ہو رہے ہیں...</option>
+          </select>
+        </label>
+
+        <p class="movement-mode-note">محرم منتخب کرنے پر اس سے منسلک تمام طالبات دکھیں گی۔</p>
+      </div>
     </div>
 
-    <label>
-      طالبہ
-      <select id="hostelStudentId">
-        <option value="">طالبات لوڈ ہو رہی ہیں...</option>
-      </select>
-    </label>
     <div id="hostelStudentMeta" class="hostel-student-meta"></div>
-    <div id="hostelPageMessage" class="hostel-status">طالبہ منتخب کریں۔</div>
+    <div id="hostelPageMessage" class="hostel-status">طالبہ یا محرم منتخب کریں۔</div>
+  </section>
+
+  <section class="portal-panel" id="hostelConnectedStudentsPanel" hidden>
+    <h2>اس محرم کے ساتھ جانے والی طالبات</h2>
+
+    <div class="movement-select-tools">
+      <button type="button" id="hostelSelectAllConnected" class="secondary">سب منتخب کریں</button>
+      <button type="button" id="hostelClearConnected" class="secondary">سب ہٹائیں</button>
+      <span id="hostelConnectedSelectedCount" class="movement-selected-count">0 منتخب</span>
+    </div>
+
+    <div id="hostelConnectedStudentsList" class="connected-students"></div>
   </section>
 
   <section class="portal-panel">
     <h2>روانگی درج کریں</h2>
     <form id="hostelExitForm" class="portal-form hostel-actions-disabled">
-      <select id="hostelMahramId">
-        <option value="">پہلے طالبہ منتخب کریں</option>
-      </select>
+
+      <label>
+        منظور شدہ محرم
+        <select id="hostelMahramId">
+          <option value="">پہلے طالبہ یا محرم منتخب کریں</option>
+        </select>
+      </label>
+
       <input id="hostelDestination" placeholder="منزل">
       <input id="hostelReason" placeholder="وجہ">
       <textarea id="hostelExitNotes" placeholder="نوٹ"></textarea>
+
       <button type="submit" id="hostelExitSubmit" disabled>روانگی محفوظ کریں</button>
     </form>
   </section>
@@ -67,7 +115,7 @@
     <h2>واپسی درج کریں</h2>
     <form id="hostelReturnForm" class="portal-form hostel-actions-disabled">
       <select id="hostelMovementId">
-        <option value="">پہلے طالبہ منتخب کریں</option>
+        <option value="">پہلے ایک طالبہ منتخب کریں</option>
       </select>
       <input id="hostelReturnPersonName" placeholder="ساتھ لانے والے کا نام">
       <input id="hostelReturnRelation" placeholder="رشتہ">
@@ -94,7 +142,7 @@
           </tr>
         </thead>
         <tbody id="hostelHistoryBody">
-          <tr><td colspan="7" class="hostel-history-empty">طالبہ منتخب کریں۔</td></tr>
+          <tr><td colspan="7" class="hostel-history-empty">طالبہ یا محرم منتخب کریں۔</td></tr>
         </tbody>
       </table>
     </div>
@@ -102,9 +150,9 @@
 
 </main>
 
-<script src="i18n.js?v=20261004-hostel3"></script>
+<script src="i18n.js?v=20261004-hostel4"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20261004-hostel3"></script>
-<script src="hostel-fix.js?v=20261004-hostel3"></script>
+<script src="script.js?v=20261004-hostel4"></script>
+<script src="hostel-fix.js?v=20261004-hostel4"></script>
 </body>
 </html>
