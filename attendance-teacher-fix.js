@@ -168,17 +168,86 @@ App.initTeacherAttendance = async function () {
         if (!quiet) showMessage("سابقہ حاضری لوڈ ہو رہی ہے...","info");
 
         try {
-            const records = App.asArray(
-                await App.authedRpc(
-                    "attendance_get_records",
-                    {
-                        p_date: date || null,
-                        p_period: periodText ? Number(periodText) : null,
-                        p_class: className || null,
-                        p_teacher_id: App.attendanceTeacherId
-                    }
-                )
-            );
+            let records = [];
+
+            if (periodText) {
+                records =
+                    App.asArray(
+                        await App.authedRpc(
+                            "attendance_get_records",
+                            {
+                                p_date: date || null,
+                                p_period: Number(periodText),
+                                p_class: className || null,
+                                p_teacher_id: App.attendanceTeacherId
+                            }
+                        )
+                    );
+            } else {
+                /*
+                   The backend attendance_get_records RPC does not reliably
+                   treat NULL period as "all periods". Load periods 1..6
+                   separately, then merge them on the page.
+                */
+                const settled =
+                    await Promise.allSettled(
+                        [1,2,3,4,5,6].map(
+                            period =>
+                                App.authedRpc(
+                                    "attendance_get_records",
+                                    {
+                                        p_date: date || null,
+                                        p_period: period,
+                                        p_class: className || null,
+                                        p_teacher_id: App.attendanceTeacherId
+                                    }
+                                )
+                        )
+                    );
+
+                records =
+                    settled
+                        .filter(
+                            result =>
+                                result.status === "fulfilled"
+                        )
+                        .flatMap(
+                            result =>
+                                App.asArray(
+                                    result.value
+                                )
+                        )
+                        .sort(
+                            (a,b) => {
+                                const ad =
+                                    App.safe(
+                                        a.attendance_date
+                                    );
+
+                                const bd =
+                                    App.safe(
+                                        b.attendance_date
+                                    );
+
+                                if (ad !== bd) {
+                                    return bd.localeCompare(ad);
+                                }
+
+                                return (
+                                    Number(
+                                        a.period_number ||
+                                        a.period ||
+                                        0
+                                    ) -
+                                    Number(
+                                        b.period_number ||
+                                        b.period ||
+                                        0
+                                    )
+                                );
+                            }
+                        );
+            }
 
             renderHistory(records);
 
