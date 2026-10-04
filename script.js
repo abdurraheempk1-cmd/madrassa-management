@@ -10250,13 +10250,35 @@ App.saveAttendance =
                         );
 
 
+                    const rawStatus =
+                        App.safe(
+                            select.value
+                        )
+                            .trim()
+                            .toLowerCase();
+
+                    const statusMap = {
+                        "present": "present",
+                        "absent": "absent",
+                        "leave": "leave",
+                        "late": "late",
+                        "حاضر": "present",
+                        "غیر حاضر": "absent",
+                        "غیرحاضر": "absent",
+                        "رخصت": "leave",
+                        "تاخیر": "late"
+                    };
+
                     return {
 
                         student_id:
                             studentId,
 
                         status:
-                            select.value,
+                            statusMap[
+                                rawStatus
+                            ] ||
+                            rawStatus,
 
                         note:
                             note
