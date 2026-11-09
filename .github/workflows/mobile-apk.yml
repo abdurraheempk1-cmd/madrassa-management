@@ -1,0 +1,104 @@
+name: Build Madrassa Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "mobile-app/**"
+      - ".github/workflows/mobile-apk.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Generate Android project
+        working-directory: mobile-app
+        run: |
+          rm -rf generated
+          mkdir generated
+          cd generated
+          flutter create             --platforms=android             --org pk.msalhall             --project-name madrassa             .
+
+      - name: Copy Madrassa source
+        working-directory: mobile-app
+        run: |
+          rm -rf generated/lib
+          cp -R lib generated/lib
+          cp pubspec.yaml generated/pubspec.yaml
+          cp analysis_options.yaml generated/analysis_options.yaml
+
+      - name: Configure Android app
+        working-directory: mobile-app/generated
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          content = manifest.read_text(encoding="utf-8")
+          if "android.permission.INTERNET" not in content:
+              content = content.replace(
+                  "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">",
+                  "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <uses-permission android:name=\"android.permission.INTERNET\" />",
+              )
+          content = content.replace(
+              'android:label="madrassa"',
+              'android:label="مدرسہ شہناز اختر"',
+          )
+          manifest.write_text(content, encoding="utf-8")
+
+          gradle_kts = Path("android/app/build.gradle.kts")
+          if gradle_kts.exists():
+              value = gradle_kts.read_text(encoding="utf-8")
+              value = value.replace(
+                  "minSdk = flutter.minSdkVersion",
+                  "minSdk = 23",
+              )
+              gradle_kts.write_text(value, encoding="utf-8")
+
+          gradle = Path("android/app/build.gradle")
+          if gradle.exists():
+              value = gradle.read_text(encoding="utf-8")
+              value = value.replace(
+                  "minSdkVersion flutter.minSdkVersion",
+                  "minSdkVersion 23",
+              )
+              gradle.write_text(value, encoding="utf-8")
+          PY
+
+      - name: Install dependencies
+        working-directory: mobile-app/generated
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: mobile-app/generated
+        run: flutter analyze
+
+      - name: Build release APK
+        working-directory: mobile-app/generated
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: madrassa-android-apk
+          path: mobile-app/generated/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
