@@ -234,7 +234,8 @@ class _AdminStudentsScreenState extends State<AdminStudentsScreen> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _selectedClass,
+                  key: ValueKey(_selectedClass),
+                  initialValue: _selectedClass,
                   decoration: const InputDecoration(
                     labelText: 'جماعت',
                     prefixIcon: Icon(Icons.class_rounded),
