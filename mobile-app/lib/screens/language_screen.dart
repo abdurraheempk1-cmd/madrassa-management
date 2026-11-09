@@ -63,20 +63,31 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   (language) => Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Card(
-                      child: RadioListTile<AppLanguage>(
-                        value: language,
-                        groupValue: _selected,
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() => _selected = value);
-                          }
+                      clipBehavior: Clip.antiAlias,
+                      child: ListTile(
+                        onTap: () {
+                          setState(() => _selected = language);
                         },
+                        leading: Icon(
+                          _selected == language
+                              ? Icons.check_circle_rounded
+                              : Icons.circle_outlined,
+                          color: _selected == language
+                              ? AppTheme.primary
+                              : Colors.grey,
+                        ),
                         title: Text(
                           language.nativeName,
                           style: const TextStyle(
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        trailing: _selected == language
+                            ? const Icon(
+                                Icons.done_rounded,
+                                color: AppTheme.primary,
+                              )
+                            : null,
                       ),
                     ),
                   ),

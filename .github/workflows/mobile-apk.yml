@@ -44,6 +44,7 @@ jobs:
           cp -R lib generated/lib
           cp pubspec.yaml generated/pubspec.yaml
           cp analysis_options.yaml generated/analysis_options.yaml
+          rm -rf generated/test
 
       - name: Configure Android app
         working-directory: mobile-app/generated
