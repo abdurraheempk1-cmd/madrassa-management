@@ -3,6 +3,8 @@ import '../core/app_config.dart';
 import '../core/app_language.dart';
 import '../core/app_theme.dart';
 import '../models/app_session.dart';
+import '../services/backend_service.dart';
+import 'admin_students_screen.dart';
 import '../widgets/module_card.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -10,11 +12,13 @@ class DashboardScreen extends StatelessWidget {
     super.key,
     required this.session,
     required this.language,
+    required this.backend,
     required this.onLogout,
   });
 
   final AppSession session;
   final AppLanguage language;
+  final BackendService backend;
   final Future<void> Function() onLogout;
 
   @override
@@ -119,6 +123,19 @@ class DashboardScreen extends StatelessWidget {
                       title: item.title,
                       icon: item.icon,
                       onTap: () {
+                        if (session.role == 'admin' &&
+                            item.title == 'طالبات') {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => AdminStudentsScreen(
+                                backend: backend,
+                                session: session,
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(language.text('moduleSoon')),

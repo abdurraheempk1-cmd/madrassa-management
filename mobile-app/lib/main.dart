@@ -189,6 +189,7 @@ class _MadrassaAppState extends State<MadrassaApp>
                 : DashboardScreen(
                     session: _session!,
                     language: _language,
+                    backend: widget.backend,
                     onLogout: _logout,
                   );
 

@@ -64,6 +64,18 @@ class BackendService {
     });
   }
 
+  Future<List<Map<String, dynamic>>> getAdminStudents(String token) async {
+    final raw = await _client.rpc(
+      'admin_get_students',
+      params: {'p_token': token},
+    );
+
+    return _asList(raw)
+      ..sort(
+        (a, b) => _number(b['id']).compareTo(_number(a['id'])),
+      );
+  }
+
   Future<void> logout(String token) async {
     try {
       await _client.rpc(
@@ -92,6 +104,38 @@ class BackendService {
     }
 
     return <String, dynamic>{};
+  }
+
+  static List<Map<String, dynamic>> _asList(dynamic value) {
+    dynamic decoded = value;
+
+    if (value is String && value.trim().isNotEmpty) {
+      decoded = jsonDecode(value);
+    }
+
+    if (decoded is List) {
+      return decoded
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList();
+    }
+
+    if (decoded is Map) {
+      final map = Map<String, dynamic>.from(decoded);
+      final data = map['data'];
+      if (data is List) {
+        return data
+            .whereType<Map>()
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+      }
+    }
+
+    return <Map<String, dynamic>>[];
+  }
+
+  static int _number(dynamic value) {
+    return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 
   static String _string(dynamic value) => value?.toString().trim() ?? '';

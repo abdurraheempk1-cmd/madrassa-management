@@ -12,4 +12,20 @@ class AppConfig {
       'sb_publishable_AxbfXMmjCRPS3N7ILRUbQA_U20DE6-s';
 
   static const Duration inactivityTimeout = Duration(minutes: 5);
+
+  static const List<String> classes = [
+    'قاعدہ',
+    'ناظرہ',
+    'ترجمہ',
+    'حفظ',
+    'تجوید',
+    'اعدادیہ',
+    'متوسطہ',
+    'ثانویہ خاصہ سال اول',
+    'ثانویہ خاصہ سال دوم',
+    'عالیہ سال اول',
+    'عالیہ سال دوم',
+    'عالمیہ سال اول',
+    'عالمیہ سال دوم / دورۂ حدیث',
+  ];
 }
